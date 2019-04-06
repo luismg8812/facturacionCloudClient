@@ -7,5 +7,6 @@ export const environment = {
     projectId: "facturacion-cloud",
     storageBucket: "facturacion-cloud.appspot.com",
     messagingSenderId: "260949622588"
-  }
+  },
+  api_server:"https://facturacioncloud2019.herokuapp.com"
 };

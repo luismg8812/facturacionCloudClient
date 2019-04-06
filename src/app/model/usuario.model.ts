@@ -1,25 +1,23 @@
 export class UsuarioModel {
-    public usuarioId: string;
-    public rolId: string;
+    public usuario_id: number;
+    public empresa_id:number;
     public nombre: string;
     public apellido: string;
     public correo: string;
     public clave: string;
-    public fechaRegistro: Date;
+    public fecha_registro: Date;
     public identificacion: string;
     public estado: string;
-    public login: string;
 
     constructor(){
-        this.usuarioId="";
-        this.rolId="";
-        this.nombre="";
-        this.apellido="";
-        this.correo="";
-        this.clave="";
-        this.fechaRegistro=new Date();
-        this.identificacion=""; 
-        this.estado="";
-        this.login="";
+        this.usuario_id= 0,
+        this.empresa_id= 0,
+        this.nombre= "",
+        this.apellido= "",
+        this.correo= "",
+        this.clave= "",
+        this.fecha_registro= new Date(),
+        this.identificacion= "",
+        this.estado= ""
     };
 }

@@ -9,6 +9,9 @@
   </button>
   <div class="collapse navbar-collapse justify-content-end menu-style" id="navbarNav">
     <ul class="navbar-nav ">
+        <span class="navbar-text">
+            <b> {{nombreUsuario}} </b>
+          </span>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
@@ -64,11 +67,9 @@
           <a class="dropdown-item" href="#">Something else here</a>
         </div>
       </li>
-      <span class="navbar-text">
-        <b>Usuario Login</b>
-      </span>
-      <li class="nav-item">
-          <a class="nav-link" routerLink="/login" (click)="cerrarSesision()">Cerrar Session</a>
+      
+      <li class="nav-item" title="Cerrar Sesión">
+          <a class="nav-link" routerLink="/login" (click)="cerrarSesision()">Cerrar Sesión<i class="fas fa-sign-out-alt"></i></a>
         </li>
     </ul>
   </div>
