@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth/auth';
 import {HttpClient} from '@angular/common/http';
 import { UsuarioModel } from '../model/usuario.model';
+import { SubMenuModel } from '../model/submenu.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,8 @@ export class UsuarioService {
     return this.http.get<UsuarioModel>(this.server_api+'/usuario/usuarioByMail?mail='+mail);
   }
 
-  
+  public opcionUsuarioByUsuario(usuarioId:string,menuId:string){
+    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuario?usuarioId='+usuarioId+'&menuId='+menuId);
+  }
   
 }

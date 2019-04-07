@@ -33,7 +33,6 @@ export class LoginComponent implements OnInit {
         console.log(res);
         this.nombreUsuario = res[0];
         let empresa_id = "" + this.nombreUsuario.empresa_id;
-
         this.empresaService.pagosEmpresaByEmpresa(empresa_id).subscribe((res) => {
           let hoy: Date = new Date();
           hoy.setDate(new Date().getDate() + 5);

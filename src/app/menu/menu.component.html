@@ -18,9 +18,8 @@
           Facturación
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+            <a class="dropdown-item" *ngFor="let opfacturacion of facturacion" 
+            routerLink="{{opfacturacion.url}}">{{opfacturacion.nombre}}</a>
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -51,10 +50,9 @@
             Usuarios
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
+            <a class="dropdown-item" *ngFor="let opUsuario of usuarios" 
+               routerLink="{{opUsuario.url}}">{{opUsuario.nombre}}</a>
+         </div>
         </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
