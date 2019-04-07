@@ -9,12 +9,12 @@
         name="nombreUsuarioBusqueda" [ngModelOptions]="{standalone: true}">
     </div>
     <div class="form-group col-md-6">
-      <input class="form-control" id="mailUsuarioBusqueda" [(ngModel)]="usuarioBuscar.login" placeholder="Mail">
+      <input class="form-control" id="mailUsuarioBusqueda" [(ngModel)]="usuarioBuscar.Mail" placeholder="Mail">
     </div>  
   </div>
   <div class="form-row">
       <div class="form-group col-md-6">    
-        <select class="form-control " [(ngModel)]="usuarioBuscar.rol" >
+        <select class="form-control " [(ngModel)]="usuarioBuscar.identificacion" >
           <option value="">Lista de roles</option>
           <option *ngFor="let rol of rolList" value="{{rol.rolId}}">{{rol.nombre}}</option>
         </select>
