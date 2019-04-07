@@ -28,9 +28,8 @@
           Facturación Electrónica
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+            <a class="dropdown-item" *ngFor="let opElectronica of electronica" 
+            routerLink="{{opElectronica.url}}">{{opElectronica.nombre}}</a>
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -39,9 +38,8 @@
             Funciones
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
+              <a class="dropdown-item" *ngFor="let opFunciones of funciones" 
+              routerLink="{{opFunciones.url}}">{{opFunciones.nombre}}</a>
           </div>
         </li>
       <li class="nav-item dropdown">
@@ -60,9 +58,8 @@
           Listados
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+            <a class="dropdown-item" *ngFor="let opListados of listados" 
+            routerLink="{{opListados.url}}">{{opListados.nombre}}</a>
         </div>
       </li>
       

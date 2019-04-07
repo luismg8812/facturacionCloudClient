@@ -1,3 +1,26 @@
-<p>
-  usuario works!
-</p>
+<app-menu></app-menu>
+<div class="container-fluid main">
+  <div class="form-row ">
+    <h3 class="mt-3">Usuarios del sistema</h3>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <input class="form-control" id="nombreUsuarioBusqueda" [(ngModel)]="usuarioBuscar.nombre" placeholder="Nombre"
+        name="nombreUsuarioBusqueda" [ngModelOptions]="{standalone: true}">
+    </div>
+    <div class="form-group col-md-6">
+      <input class="form-control" id="mailUsuarioBusqueda" [(ngModel)]="usuarioBuscar.login" placeholder="Mail">
+    </div>  
+  </div>
+  <div class="form-row">
+      <div class="form-group col-md-6">    
+        <select class="form-control " [(ngModel)]="usuarioBuscar.rol" >
+          <option value="">Lista de roles</option>
+          <option *ngFor="let rol of rolList" value="{{rol.rolId}}">{{rol.nombre}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <input class="form-control" id="identificacionUsuarioBusqueda" [(ngModel)]="usuarioBuscar.identificacion" placeholder="Identificación">
+      </div>
+    </div>
+</div>

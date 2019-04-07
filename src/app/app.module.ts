@@ -10,6 +10,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
 import {HttpClientModule} from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import { from } from 'rxjs';
 import { UsuarioComponent } from './usuario/usuario.component';
@@ -28,7 +29,8 @@ import { EmpresaComponent } from './empresa/empresa.component';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [AngularFireAuth,
     LoginComponent],

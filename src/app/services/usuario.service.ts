@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth/auth';
 import {HttpClient} from '@angular/common/http';
 import { UsuarioModel } from '../model/usuario.model';
 import { SubMenuModel } from '../model/submenu.model';
+import { RolModel } from '../model/rol.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,11 @@ export class UsuarioService {
 
   public opcionUsuarioByUsuario(usuarioId:string,menuId:string){
     return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuario?usuarioId='+usuarioId+'&menuId='+menuId);
+  }
+
+  public getRolByIds(ids:string[]){
+    console.log(this.server_api+'/usuario/getRolByIds?ids='+ids);
+    return this.http.get<RolModel[]>(this.server_api+'/usuario/getRolByIds?ids='+ids);
   }
   
 }
