@@ -18,8 +18,19 @@ export class UsuarioComponent implements OnInit {
 
   public usuarioBuscar: UsuarioModel;
   public rolList: Array<RolModel>;
+  public usuarioList: Array<UsuarioModel>;
+  public rolSelectBuscar:string;
 
   ngOnInit() {
+  }
+
+  buscarUsuarios() {
+    let empresaId:string= sessionStorage.getItem('empresa_id');
+    this.usuarioService.getByUsuario(this.usuarioBuscar,empresaId,this.rolSelectBuscar).subscribe(res => {
+      //TODO hacer el rool en la busqueda para mandarlo por parametro
+      
+      this.usuarioList = res;
+    });
   }
 
   roles() {
@@ -28,5 +39,11 @@ export class UsuarioComponent implements OnInit {
       this.rolList = res;
     });
   }
+
+  nameRol(usuarioId:string){
+    //TODO hacer el metodo que traga la lista de roles por usuario
+    return "";
+  }
+ 
 
 }

@@ -32,5 +32,9 @@ export class UsuarioService {
     console.log(this.server_api+'/usuario/getRolByIds?ids='+ids);
     return this.http.get<RolModel[]>(this.server_api+'/usuario/getRolByIds?ids='+ids);
   }
+
+  getByUsuario(usuario:UsuarioModel, empresaId:string,rolId:string){
+    return this.http.get<UsuarioModel[]>(this.server_api+'/usuario/getByUsuario?usuario='+usuario+'&empresaId='+empresaId+'&rolId='+rolId);
+  }
   
 }

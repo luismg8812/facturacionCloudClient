@@ -23,4 +23,35 @@
         <input class="form-control" id="identificacionUsuarioBusqueda" [(ngModel)]="usuarioBuscar.identificacion" placeholder="Identificación">
       </div>
     </div>
+    <button type="submit" class="btn btn-primary mr-1" (click)="buscarUsuarios()">Buscar</button>
+  <button type="button" (click)="limpiar()" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Crear
+  </button>
+  <div class="mt-2"></div>
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Opciones</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Roles</th>
+          <th scope="col">Correo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of usuarioList">
+          <th scope="row">
+            <button type="button" (click)="EditarUsuarios(user)" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal">
+              Editar
+            </button>
+            <button type="button" (click)="opcionesPorUsuario(user)" class="btn  btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal2">
+              Opciones
+            </button>
+          </th>
+  
+          <td>{{user.nombre}}</td>
+          <td>{{nameRol(user.usuario_id)}}</td>
+          <td>{{user.correo}}</td>
+        </tr>
+      </tbody>
+    </table>
 </div>
