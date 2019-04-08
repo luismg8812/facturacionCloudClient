@@ -13,6 +13,7 @@ export class UsuarioComponent implements OnInit {
 
   constructor(private usuarioService:UsuarioService) { 
     this.usuarioBuscar = new UsuarioModel();
+    this.usuarioCrear = new UsuarioModel();
     this.roles();
   }
 
@@ -20,8 +21,19 @@ export class UsuarioComponent implements OnInit {
   public rolList: Array<RolModel>;
   public usuarioList: Array<UsuarioModel>;
   public rolSelectBuscar:string;
+  public usuarioCrear: UsuarioModel;
 
   ngOnInit() {
+  }
+
+  EditarUsuarios(usuarioSelect: UsuarioModel) {
+    this.usuarioCrear = usuarioSelect;
+    console.log(usuarioSelect);
+  }
+
+  opcionesPorUsuario(user: UsuarioModel) {
+    
+    
   }
 
   buscarUsuarios() {
@@ -45,5 +57,10 @@ export class UsuarioComponent implements OnInit {
     return "";
   }
  
+  limpiar(){
+    this.usuarioCrear=new UsuarioModel();
+  }
+
+
 
 }
