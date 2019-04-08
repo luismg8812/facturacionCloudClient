@@ -68,7 +68,8 @@ export class UsuarioComponent implements OnInit {
     } else {
       this.usuarioCrear.estado = '0';
     }
-   
+    let empresaId=sessionStorage.getItem("empresa_id");
+    this.usuarioCrear.empresa_id=Number(empresaId);
     this.usuarioService.saveUsuario(this.usuarioCrear).subscribe(res => {
       if (res.code ==200 ) {
         $('#exampleModal').modal('hide');
