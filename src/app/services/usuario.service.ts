@@ -36,5 +36,9 @@ export class UsuarioService {
   getByUsuario(usuario:UsuarioModel, empresaId:string,rolId:string){
     return this.http.get<UsuarioModel[]>(this.server_api+'/usuario/getByUsuario?usuario='+usuario+'&empresaId='+empresaId+'&rolId='+rolId);
   }
+
+  saveUsuario(usuario:UsuarioModel){
+    return this.http.post<any>(this.server_api+'/usuario/createUsuario',usuario);
+  }
   
 }

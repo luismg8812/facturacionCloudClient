@@ -54,4 +54,64 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- Modal Crear Usuario-->
+  <div class="modal fade" id="exampleModal"   tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Crear Usuario</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+               <input class="form-control" id="nombreUsuarioCreacion" [(ngModel)]="usuarioCrear.nombre" placeholder="* Nombre" name="nombreUsuarioCreacion">
+              </div>
+              <div class="form-group col-md-6">
+                  <input class="form-control" id="meilUsuarioCrear" [(ngModel)]="usuarioCrear.correo" placeholder="* Correo">
+                </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                  <label for="rolUsuarioCrear">Lista Roles</label>
+              <select multiple class="form-control "  id="rolUsuarioCrear">
+                  <option *ngFor="let rol1 of rolList" (click)="seleccionarRol(rol1)" value="{{rol1.rol_id}}">{{rol1.nombre}}</option>
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                  <label for="Activas">Roles Seleccionados</label>
+                  <select multiple class="form-control" id="Activas">
+                      <option *ngFor="let select of rolListSelect"  (click)="unSeleccionarRol(select)" value="{{select.rol_id}}">{{select.nombre}}</option>
+                  </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                   <input class="form-control" type="number" id="identificacionUsuarioCrear" [(ngModel)]="usuarioCrear.identificacion" placeholder="Identificación">
+                  </div>
+
+
+              <div class="form-check col-md-6">
+                 <input class="form-control" type="password" id="claveUsuarioCrear" [(ngModel)]="usuarioCrear.clave" placeholder="* Clave">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="estadoUsuarioCrear" [(ngModel)]="usuarioCrear.estado">
+                <label class="form-check-label" for="estadoUsuarioCrear">
+                  *Estado
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" (click)="crearUsuario()">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
