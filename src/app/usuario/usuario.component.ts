@@ -70,8 +70,16 @@ export class UsuarioComponent implements OnInit {
     }
     let empresaId=sessionStorage.getItem("empresa_id");
     this.usuarioCrear.empresa_id=Number(empresaId);
-    this.usuarioService.saveUsuario(this.usuarioCrear).subscribe(res => {
+    let rolId:string[]=[];
+    
+    for (var i=0 ; i<this.rolListSelect.length; i++) {    
+      rolId.push(this.rolListSelect[i].rol_id);
+    }
+  
+    //return;
+    this.usuarioService.saveUsuario(this.usuarioCrear,rolId).subscribe(res => {
       if (res.code ==200 ) {
+
         $('#exampleModal').modal('hide');
       } else {
         alert("Algo salio mal Creando el usuario... Comunicate con soporte");

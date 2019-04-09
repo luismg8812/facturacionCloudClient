@@ -84,10 +84,10 @@
               <div class="form-group col-md-6">
                   <label for="Activas">Roles Seleccionados</label>
                   <select multiple class="form-control" id="Activas">
-                      <option *ngFor="let select of rolListSelect"  (click)="unSeleccionarRol(select)" value="{{select.rol_id}}">{{select.nombre}}</option>
+                      <option *ngFor="let select1 of rolListSelect"  (click)="unSeleccionarRol(select1)" value="{{select1.rol_id}}">{{select1.nombre}}</option>
                   </select>
                 </div>
-            </div>
+            </div> 
             <div class="form-row">
                 <div class="form-group col-md-6">
                    <input class="form-control" type="number" id="identificacionUsuarioCrear" [(ngModel)]="usuarioCrear.identificacion" placeholder="Identificación">
