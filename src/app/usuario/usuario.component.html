@@ -114,4 +114,66 @@
         </div>
       </div>
     </div>
+     <!-- Modal Opciones Usuario-->
+  <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">Opciones Usuario</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <h6>Rutas</h6>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="rutasActivas">Activas</label>
+              <select multiple class="form-control" id="rutasActivas">
+                  <option *ngFor="let select of submenuSelect"  (click)="desactivarRuta(select)" value="{{select.subMenuId}}">{{select.nombre}}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="rutasActivas">Inactivas</label>
+              <select multiple class="form-control" id="rutasInactivas">
+                  <option *ngFor="let unSelect of opusuarioUnSelect" (click)="activarRuta(unSelect)"
+                   value="{{unSelect.subMenuId}}">{{unSelect.nombre}}</option>
+
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <h6>Activaciones</h6>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="Activas">Activas</label>
+              <select multiple class="form-control" id="Activas">
+                  <option *ngFor="let select of activacionSelect"  (click)="aplicarActivacion(select)" value="{{select.activacionId}}">{{select.nombre}}</option>
+
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="Inactivas">Inactivas</label>
+              <select multiple class="form-control" id="Inactivas">
+                  <option *ngFor="let unSelect of activacionUnSelect" (click)="desaplicarActivacion(unSelect)"
+                  value="{{unSelect.activacionId}}">{{unSelect.nombre}}</option>
+
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" (click)="guardarRutas()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

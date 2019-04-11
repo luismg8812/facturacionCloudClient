@@ -49,5 +49,10 @@ export class UsuarioService {
   public getRolByUsuario(usuarioId:number){
     return this.http.get<RolUsuarioModel[]>(this.server_api+'/usuario/getRolByUsuario?usuarioId='+usuarioId);
   }
+
+  getSubMenuAll(){
+    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/getSubMenuAll');
+  }
+ 
   
 }

@@ -3,6 +3,7 @@ import { UsuarioModel } from '../model/usuario.model';
 import { RolModel } from '../model/rol.model';
 import {UsuarioService} from '../services/usuario.service';
 import { from } from 'rxjs';
+import { SubMenuModel } from '../model/submenu.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -18,6 +19,8 @@ export class UsuarioComponent implements OnInit {
     this.usuarioCrear = new UsuarioModel();
     this.rolListSelect=[];
     this.roles();
+    this.submenus();
+
   }
 
   public usuarioBuscar: UsuarioModel;
@@ -27,6 +30,9 @@ export class UsuarioComponent implements OnInit {
   public usuarioList: Array<UsuarioModel>;
   public rolSelectBuscar:string;
   public usuarioCrear: UsuarioModel;
+  public subMenuAll: Array<SubMenuModel>;
+  public submenuSelect: Array<SubMenuModel>;
+  public opusuarioUnSelect: Array<SubMenuModel>;
 
   ngOnInit() {
   }
@@ -114,10 +120,7 @@ export class UsuarioComponent implements OnInit {
         } 
         this.rolListSelect.push(rol);
         console.log(this.rolListSelect);
-      }
-      //this.rolListSelect=res;
-      
-      
+      }     
     });
    
   }
@@ -140,6 +143,12 @@ export class UsuarioComponent implements OnInit {
     let ids:string[]=['1','2','5','6']; //se envia los roles sin develop y propietario
     this.usuarioService.getRolByIds(ids).subscribe(res => {
       this.rolList = res;
+    });
+  }
+
+  submenus() {
+    this.usuarioService.getSubMenuAll().subscribe(res => {
+      this.subMenuAll = res;
     });
   }
 
