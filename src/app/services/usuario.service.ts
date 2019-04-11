@@ -4,6 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import { UsuarioModel } from '../model/usuario.model';
 import { SubMenuModel } from '../model/submenu.model';
 import { RolModel } from '../model/rol.model';
+import { RolUsuarioModel } from '../model/rolUsuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,14 @@ export class UsuarioService {
 
   saveUsuario(usuario:UsuarioModel,rolId:Array<string>){
     return this.http.post<any>(this.server_api+'/usuario/createUsuario?rolId='+rolId,usuario);
+  }
+
+  updateUsuario(usuario:UsuarioModel,rolId:Array<string>){
+    return this.http.put<any>(this.server_api+'/usuario/updateUsuario?rolId='+rolId,usuario);
+  }
+
+  public getRolByUsuario(usuarioId:number){
+    return this.http.get<RolUsuarioModel[]>(this.server_api+'/usuario/getRolByUsuario?usuarioId='+usuarioId);
   }
   
 }

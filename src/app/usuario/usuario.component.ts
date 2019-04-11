@@ -55,7 +55,7 @@ export class UsuarioComponent implements OnInit {
       valido = false;
     }else{
       if(this.usuarioCrear.clave.length<6){
-        mensageError += "la clave debe tener mas de 6 caractere\n";
+        mensageError += "la clave debe tener mas de 6 caracteres\n";
       valido = false;
       }
     }
@@ -76,21 +76,50 @@ export class UsuarioComponent implements OnInit {
       rolId.push(this.rolListSelect[i].rol_id);
     }
   
-    //return;
-    this.usuarioService.saveUsuario(this.usuarioCrear,rolId).subscribe(res => {
-      if (res.code ==200 ) {
-
-        $('#exampleModal').modal('hide');
-      } else {
-        alert("Algo salio mal Creando el usuario... Comunicate con soporte");
-        return;
-      }
-    });
+    if(this.usuarioCrear.usuario_id!=0){
+      this.usuarioService.updateUsuario(this.usuarioCrear,rolId).subscribe(res => {
+        if (res.code ==200 ) {
+          $('#exampleModal').modal('hide');
+        } else {
+          alert("Algo salio mal Creando el usuario... Comunicate con soporte");
+          return;
+        }
+      });
+    }else{
+      this.usuarioService.saveUsuario(this.usuarioCrear,rolId).subscribe(res => {
+        if (res.code ==200 ) {
+          $('#exampleModal').modal('hide');
+        } else {
+          alert("Algo salio mal Creando el usuario... Comunicate con soporte");
+          return;
+        }
+      });
+    }
+    
   }
 
-  EditarUsuarios(usuarioSelect: UsuarioModel) {
+  editarUsuarios(usuarioSelect: UsuarioModel) {
     this.usuarioCrear = usuarioSelect;
-    console.log(usuarioSelect);
+    this.roles();
+    this.usuarioService.getRolByUsuario(usuarioSelect.usuario_id).subscribe(res => {
+      this.rolListSelect=[];  
+      for (var i = 0; i < res.length; i++) {
+        let rol:RolModel=new RolModel(); 
+        for (var e = 0; e < this.rolList.length; e++) {
+          if(this.rolList[e].rol_id==res[i].rol_id){
+            rol =this.rolList[e]; 
+            this.rolList.splice(e, 1);
+            break;
+            }
+        } 
+        this.rolListSelect.push(rol);
+        console.log(this.rolListSelect);
+      }
+      //this.rolListSelect=res;
+      
+      
+    });
+   
   }
 
   opcionesPorUsuario(user: UsuarioModel) {
