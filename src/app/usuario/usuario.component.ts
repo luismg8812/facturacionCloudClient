@@ -250,4 +250,31 @@ export class UsuarioComponent implements OnInit {
     */
   }
 
+  guardarRutas(){
+   /* let idSubmenu:Array<string>=[];
+    let idActivacion:Array<string>=[];
+    for (var i = 0; i < this.submenuSelect.length; i++) {
+      idSubmenu.push(this.submenuSelect[i].subMenuId);
+    }
+    for (var i = 0; i < this.activacionSelect.length; i++) {
+      idActivacion.push(this.activacionSelect[i].activacionId);
+    }
+    this.menuService.guardarActivaciones(this.usuarioSelect,idActivacion).subscribe(res => {
+      
+      if (res.responseCode == 200) {
+        console.log("Activaciones guardadas");
+      } else {
+        alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
+        return;
+      }
+    });
+    this.menuService.guardarRutas(this.usuarioSelect,idSubmenu).subscribe(res => {
+      if (res.responseCode == 200) {
+        $('#exampleModal2').modal('hide');
+      } else {
+        alert("Algo salio mal Creando rutas... " + res.message + "\nComunicate con soporte");
+      }
+    });*/
+  }
+
 }
