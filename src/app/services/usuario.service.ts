@@ -29,6 +29,13 @@ export class UsuarioService {
     return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuario?usuarioId='+usuarioId+'&menuId='+menuId);
   }
 
+  
+  public opcionUsuarioByUsuarioSinMenu(usuarioId:string){
+    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuarioSinMenu?usuarioId='+usuarioId);
+  }
+
+  
+
   public getRolByIds(ids:string[]){
     console.log(this.server_api+'/usuario/getRolByIds?ids='+ids);
     return this.http.get<RolModel[]>(this.server_api+'/usuario/getRolByIds?ids='+ids);

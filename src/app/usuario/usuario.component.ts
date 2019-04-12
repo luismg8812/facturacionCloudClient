@@ -33,6 +33,7 @@ export class UsuarioComponent implements OnInit {
   public subMenuAll: Array<SubMenuModel>;
   public submenuSelect: Array<SubMenuModel>;
   public opusuarioUnSelect: Array<SubMenuModel>;
+  public usuarioSelect: UsuarioModel;
 
   ngOnInit() {
   }
@@ -125,10 +126,6 @@ export class UsuarioComponent implements OnInit {
    
   }
 
-  opcionesPorUsuario(user: UsuarioModel) {
-    
-    
-  }
 
   buscarUsuarios() {
     let empresaId:string= sessionStorage.getItem('empresa_id');
@@ -180,5 +177,77 @@ export class UsuarioComponent implements OnInit {
     this.rolList.push(rol);
   }
 
+  desactivarRuta(submenu1:SubMenuModel){
+    for (var i = 0; i < this.submenuSelect.length; i++) {
+      if(this.submenuSelect[i].sub_menu_id==submenu1.sub_menu_id){
+        this.submenuSelect.splice(i, 1);
+        break;
+      }  
+    }
+    this.opusuarioUnSelect.push(submenu1);
+  }
+
+  activarRuta(submenu1:SubMenuModel){
+    for (var i = 0; i < this.opusuarioUnSelect.length; i++) {
+      if(this.opusuarioUnSelect[i].sub_menu_id==submenu1.sub_menu_id){
+        this.opusuarioUnSelect.splice(i, 1);
+        break;
+      }  
+    }
+    this.submenuSelect.push(submenu1);
+  }
+
+  opcionesPorUsuario(user: UsuarioModel) {
+    this.activacionPorUsuario(user ); 
+    this.opusuarioUnSelect = [];
+    this.usuarioSelect = user;
+    this.usuarioService.opcionUsuarioByUsuarioSinMenu(user.usuario_id.toString()).subscribe(res1=>{
+      console.log(res1);
+        this.submenuSelect = res1;
+        for (var e = 0; e < this.subMenuAll.length; e++) {
+          var esta = false;
+          for (var i = 0; i < res1.length; i++) {
+            if (this.subMenuAll[e].sub_menu_id == res1[i].sub_menu_id) {
+              esta = true;
+              break;
+            }
+          }
+          if (!esta) {
+            this.opusuarioUnSelect.push(this.subMenuAll[e]);
+          }
+        }
+    });
+     
+        
+        
+     
+   
+    
+  }
+
+  activacionPorUsuario(user: UsuarioModel) {
+    /*console.log("aqui llega");
+    this.activacionUnSelect = [];
+    this.usuarioSelect = user;
+    this.usuarioService.getActivacionAll().subscribe(activacionAll => {
+      this.activacionAll=activacionAll;
+      this.usuarioService.getActivacionByUsuario(user.usuarioId).subscribe(res1 => {
+        this.activacionSelect = res1;
+        for (var e = 0; e < activacionAll.length; e++) {
+          var esta = false;
+          for (var i = 0; i < res1.length; i++) {
+            if (activacionAll[e].activacionId == res1[i].activacionId) {
+              esta = true;
+              break;
+            }
+          }
+          if (!esta) {
+            this.activacionUnSelect.push(activacionAll[e]);
+          }
+        }
+      });
+    });
+    */
+  }
 
 }
