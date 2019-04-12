@@ -4,6 +4,7 @@ import { RolModel } from '../model/rol.model';
 import {UsuarioService} from '../services/usuario.service';
 import { from } from 'rxjs';
 import { SubMenuModel } from '../model/submenu.model';
+import { ActivacionModel } from '../model/activacion';
 declare var jquery: any;
 declare var $: any;
 
@@ -34,6 +35,8 @@ export class UsuarioComponent implements OnInit {
   public submenuSelect: Array<SubMenuModel>;
   public opusuarioUnSelect: Array<SubMenuModel>;
   public usuarioSelect: UsuarioModel;
+  public activacionSelect: Array<ActivacionModel>;
+  public activacionUnSelect: Array<ActivacionModel>;
 
   ngOnInit() {
   }
