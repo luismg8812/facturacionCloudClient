@@ -5,6 +5,7 @@ import { UsuarioModel } from '../model/usuario.model';
 import { SubMenuModel } from '../model/submenu.model';
 import { RolModel } from '../model/rol.model';
 import { RolUsuarioModel } from '../model/rolUsuario.model';
+import { ActivacionModel } from '../model/activacion';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,10 @@ export class UsuarioService {
     return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuarioSinMenu?usuarioId='+usuarioId);
   }
 
+  public getActivacionByUsuario(usuarioId:string){
+    return this.http.get<ActivacionModel[]>(this.server_api+'/usuario/getActivacionByUsuario?usuarioId='+usuarioId);
+  }
+
   
 
   public getRolByIds(ids:string[]){
@@ -59,6 +64,10 @@ export class UsuarioService {
 
   getSubMenuAll(){
     return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/getSubMenuAll');
+  }
+
+  getActivacioAll(){
+    return this.http.get<ActivacionModel[]>(this.server_api+'/usuario/getActivacionAll');
   }
  
   
