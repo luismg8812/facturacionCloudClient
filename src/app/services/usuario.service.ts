@@ -70,5 +70,12 @@ export class UsuarioService {
     return this.http.get<ActivacionModel[]>(this.server_api+'/usuario/getActivacionAll');
   }
  
+  guardarActivaciones(usuarioId:UsuarioModel,activacionId:Array<string>){
+    return this.http.get<any>(this.server_api+'/usuario/guardarActivaciones?activacionId='+activacionId+'&usuarioId='+usuarioId.usuario_id);
+  }
+
+  guardarRutas(usuarioId:UsuarioModel,subMenuId:Array<string>){
+    return this.http.get<any>(this.server_api+'/usuario/guardarRutas?subMenuId='+subMenuId+'&usuarioId='+usuarioId.usuario_id);
+  }
   
 }

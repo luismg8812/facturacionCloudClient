@@ -159,6 +159,26 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
+  aplicarActivacion(activacion:ActivacionModel){
+    for (var i = 0; i < this.activacionSelect.length; i++) {
+      if(this.activacionSelect[i].activacion_id==activacion.activacion_id){
+        this.activacionSelect.splice(i, 1);
+        break;
+      }  
+    }
+    this.activacionUnSelect.push(activacion);
+  }
+
+  desaplicarActivacion(activacion:ActivacionModel){
+    for (var i = 0; i < this.activacionUnSelect.length; i++) {
+      if(this.activacionUnSelect[i].activacion_id==activacion.activacion_id){
+        this.activacionUnSelect.splice(i, 1);
+        break;
+      }  
+    }
+    this.activacionSelect.push(activacion);
+  }
+
   nameRol(usuarioId: string) {
     //TODO hacer el metodo que traga la lista de roles por usuario
     return "";
@@ -259,30 +279,30 @@ export class UsuarioComponent implements OnInit {
   }
 
   guardarRutas() {
-    /* let idSubmenu:Array<string>=[];
+     let idSubmenu:Array<string>=[];
      let idActivacion:Array<string>=[];
      for (var i = 0; i < this.submenuSelect.length; i++) {
-       idSubmenu.push(this.submenuSelect[i].subMenuId);
+       idSubmenu.push(this.submenuSelect[i].sub_menu_id.toString());
      }
      for (var i = 0; i < this.activacionSelect.length; i++) {
-       idActivacion.push(this.activacionSelect[i].activacionId);
+       idActivacion.push(this.activacionSelect[i].activacion_id);
      }
-     this.menuService.guardarActivaciones(this.usuarioSelect,idActivacion).subscribe(res => {
+     this.usuarioService.guardarActivaciones(this.usuarioSelect,idActivacion).subscribe(res => {
        
-       if (res.responseCode == 200) {
+       if (res.code == 200) {
          console.log("Activaciones guardadas");
        } else {
          alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
          return;
        }
      });
-     this.menuService.guardarRutas(this.usuarioSelect,idSubmenu).subscribe(res => {
-       if (res.responseCode == 200) {
+     this.usuarioService.guardarRutas(this.usuarioSelect,idSubmenu).subscribe(res => {
+       if (res.code == 200) {
          $('#exampleModal2').modal('hide');
        } else {
          alert("Algo salio mal Creando rutas... " + res.message + "\nComunicate con soporte");
        }
-     });*/
+     });
   }
 
 }
