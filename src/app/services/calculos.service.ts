@@ -39,7 +39,7 @@ export class CalculosService {
 		}
 		return valido;
   }
-
+	
   public calcularExcento(doc:DocumentoModel,productos:Array<DocumentoDetalleModel> ){
     let totalReal:number = 0.0;
     let exectoReal:number = 0.0;
@@ -54,17 +54,16 @@ export class CalculosService {
 		// aqui voy toca poner a sumar las variables nuebas para que se reflejen
 		// en el info diario
 		for (var i =0;  i<productos.length; i++) {
-			let costoPublico = productos[i].parcial;
+			let costoPublico:number = productos[i].parcial;
 			let costo = productos[i].costo_producto * productos[i].cantidad ;
       var iva1 =productos[i].impuesto_producto / 100.0;
 			let peso1 = productos[i].peso_producto;
 			peso1 = peso1 * productos[i].cantidad;
-			totalReal += costoPublico;
-			costoTotal+=costo;
-			let temp;
+			totalReal =Number(totalReal)+ Number(costoPublico);
+			costoTotal=costoTotal+costo;
+			let temp:number=0;
 			ivatotal = ivatotal + ((costoPublico / (1 + iva1)) * iva1);
       peso = peso + peso1;
-      console.log("iva:"+iva1);
 			// si es iva del 19 se agrega al documento junto con la base
 			if (iva1 == 0.19) {
 				iva19 = iva19 + ((costoPublico / (1 + iva1)) * iva1);
@@ -78,7 +77,9 @@ export class CalculosService {
 			if (iva1 > 0.0) {
 				temp = costoPublico / (1 + iva1);
 				gravado += temp;
-
+			}else {
+				temp = Number(costoPublico);	
+				exectoReal = Number(exectoReal)+temp;
 			} 
 		}
 		doc.total= totalReal;

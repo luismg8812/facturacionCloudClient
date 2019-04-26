@@ -36,7 +36,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
 
   constructor(public usuarioService: UsuarioService, public clienteService: ClienteService, public productoService: ProductoService,
-    public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService:DocumentoDetalleService) {
+    public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService) {
     let empresa_id: string = sessionStorage.getItem("empresa_id");
 
   }
@@ -108,7 +108,7 @@ export class VentasDiaComponent implements OnInit {
     this.getActivaciones(this.usuarioId);
     sessionStorage.removeItem("documentoIdSelect");
     sessionStorage.removeItem("productoIdSelect");
-    
+
     this.getProductosByEmpresa(this.empresaId);
     this.clienteActivo = false;
     this.guiaTransporteActivo = false;
@@ -132,7 +132,7 @@ export class VentasDiaComponent implements OnInit {
       } else {
         var splitted = element.value.split("|");
         this.clienteSelect = splitted[0];
-        this.document.cliente_id=this.clienteSelect;
+        this.document.cliente_id = this.clienteSelect;
       }
 
     }
@@ -186,7 +186,7 @@ export class VentasDiaComponent implements OnInit {
         return;
       }
     }
-    this.document.tipo_documento_id= this.tipoDocumentSelect;
+    this.document.tipo_documento_id = this.tipoDocumentSelect;
     if (this.empreadoActivo) {
       this.empleadoPV.nativeElement.focus();
     } else {
@@ -243,28 +243,28 @@ export class VentasDiaComponent implements OnInit {
     }
   }
 
-  
+
 
   articuloSelect(element) {
     console.log("articulo select:" + element.value);
-    
-    let productoNombre:string = element.value;
+
+    let productoNombre: string = element.value;
     this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
     console.log(this.productoIdSelect);
-      if (this.productoIdSelect.varios) {
-        this.precioPV.nativeElement.classList.add("d-block");
-        this.precioPV.nativeElement.classList.remove("d-none");
-        this.precioPV.nativeElement.focus();
+    if (this.productoIdSelect.varios) {
+      this.precioPV.nativeElement.classList.add("d-block");
+      this.precioPV.nativeElement.classList.remove("d-none");
+      this.precioPV.nativeElement.focus();
+    } else {
+      if (this.productoIdSelect.balanza == '1') {
+        this.getGramera();// este metodo
+        this.grameraPV.nativeElement.classList.add("d-block");
+        this.grameraPV.nativeElement.classList.remove("d-none");
+        this.grameraPV.nativeElement.focus();
       } else {
-        if (this.productoIdSelect.balanza == '1') {
-          this.getGramera();// este metodo
-          this.grameraPV.nativeElement.classList.add("d-block");
-          this.grameraPV.nativeElement.classList.remove("d-none");
-          this.grameraPV.nativeElement.focus();
-        } else {
-          this.cantidadPV.nativeElement.focus();
-        }
+        this.cantidadPV.nativeElement.focus();
       }
+    }
   }
 
   getGramera() {
@@ -301,31 +301,54 @@ export class VentasDiaComponent implements OnInit {
     if (element.id == "cantidadPV") {
       this.cantidadEnter(element);
     }
-  /*  if (element.id == "precioPV") {
+    if (element.id == "precioPV") {
       this.precioEnter(element);
     }
-    if (element.id == "descuentoPV") {
-      this.carteraPV.nativeElement.focus();
-    }
-    if (element.id == "carteraPV") {
-      this.enterCartera(element);
-    }
-    if (element.id == "tarjetaPV") {
-      this.enterTarjeta(element);
-    }
-    if (element.id == "vrTarjetaPV") {
-      this.efectovoPV.nativeElement.focus();
-    }
-    if (element.id == "efectovoPV") {
-      this.continuaImpresionPV.nativeElement.focus();
-    }
-    if (element.id == "continuaImpresionPV") {
-      this.enterContinuarImpresion(element);
+    /*
+   if (element.id == "descuentoPV") {
+     this.carteraPV.nativeElement.focus();
+   }
+   if (element.id == "carteraPV") {
+     this.enterCartera(element);
+   }
+   if (element.id == "tarjetaPV") {
+     this.enterTarjeta(element);
+   }
+   if (element.id == "vrTarjetaPV") {
+     this.efectovoPV.nativeElement.focus();
+   }
+   if (element.id == "efectovoPV") {
+     this.continuaImpresionPV.nativeElement.focus();
+   }
+   if (element.id == "continuaImpresionPV") {
+     this.enterContinuarImpresion(element);
 
-    }*/
+   }*/
   }
 
-  
+  precioEnter(element) {
+    if (this.codigoBarrasActivo) {
+      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+      this.CodigoBarrasPV.nativeElement.focus();
+    } else {
+      this.articuloPV.nativeElement.focus();
+    }
+    let precio = this.precioPV.nativeElement.value;
+    this.articuloPV.nativeElement.value = "";
+    this.CodigoBarrasPV.nativeElement.value = "";
+
+    console.log("precio enter:" + precio);
+    if (isNaN(precio)) {
+      console.log("no es numérico:" + precio);
+      return;
+    }
+    if (precio == null || precio == '' || precio <= 0) {
+      return;
+    }
+    this.asignarDocumento(1); //se asigna cantidad 1 en x01
+  }
+
+
 
   cantidadEnter(element) {
     let cantidad: number = this.cantidadPV.nativeElement.value;
@@ -354,44 +377,46 @@ export class VentasDiaComponent implements OnInit {
     console.log("//TODO aqui hacer la validacion de stock min");
     console.log("//TODO aqui hacer la validacion de que el producto se agotó");
 
+    this.asignarDocumento(cantidad);
 
-    
+
+  }
+
+  private asignarDocumento(cantidad) {
     if (this.document.documento_id == "") {
       this.document.fecha_registro = this.calculosService.fechaActual();
       this.document.usuario_id = this.usuarioId;
-      this.document.empresa_id=this.empresaId;
+      this.document.empresa_id = this.empresaId;
       this.document.invoice = 1; // se envia invoice por enviar
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
-          this.document.documento_id=res.documento_id; 
+          this.document.documento_id = res.documento_id;
           this.asignarDocumentoDetalle(cantidad);
-          
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
           return;
         }
-      });  
-    }else{
+      });
+    } else {
       this.asignarDocumentoDetalle(cantidad);
       console.log(this.document);
-    
-    }
 
-    
+    }
   }
 
- 
 
-  private asignarDocumentoDetalle(cantidad: number){
+
+
+  private asignarDocumentoDetalle(cantidad: number) {
     let docDetalle = new DocumentoDetalleModel();
     docDetalle.cantidad = cantidad;
-    docDetalle.impuesto_producto=Number(this.productoIdSelect.impuesto);
-    docDetalle.peso_producto=Number(this.productoIdSelect.peso);
+    docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
+    docDetalle.peso_producto = Number(this.productoIdSelect.peso);
     docDetalle.producto_id = this.productoIdSelect.producto_id;
     docDetalle.documento_id = this.document.documento_id;
     docDetalle.nombre_producto = this.productoIdSelect.nombre;
     docDetalle.costo_producto = this.productoIdSelect.costo;
-    docDetalle.fecha_registro=this.calculosService.fechaActual();
+    docDetalle.fecha_registro = this.calculosService.fechaActual();
     docDetalle.estado = 1;
     //se valida promocion
     if (this.calculosService.validarPromo(this.productoIdSelect, cantidad)) {
@@ -399,45 +424,54 @@ export class VentasDiaComponent implements OnInit {
       let cantidadPromo: number = this.productoIdSelect.kg_promo;
       let unitarioPromo: number = precioPromo / cantidadPromo;
       docDetalle.parcial = cantidad * unitarioPromo;
-      docDetalle.unitario=unitarioPromo;
+      docDetalle.unitario = unitarioPromo;
     } else {
       if (cantidad != null && this.productoIdSelect.costo_publico != null) {
-        docDetalle.parcial = cantidad * this.productoIdSelect.costo_publico;
-        docDetalle.unitario=this.productoIdSelect.costo_publico;
+        if (this.productoIdSelect.varios) {
+          let precio: number = this.precioPV.nativeElement.value;
+
+          console.log("precio");
+          console.log(precio);
+          docDetalle.parcial = precio;
+          docDetalle.unitario = precio;
+          this.precioPV.nativeElement.value = "";
+        } else {
+          docDetalle.parcial = cantidad * this.productoIdSelect.costo_publico;
+          docDetalle.unitario = this.productoIdSelect.costo_publico;
+
+        }
       } else {
         docDetalle.parcial = 0;
-        docDetalle.unitario=0;
+        docDetalle.unitario = 0;
       }
     }
-    
-   
-   
+    console.log(docDetalle);
     this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
-      if(res.code==200){
-        docDetalle.documento_detalle_id=res.documento_detalle_id;
+      if (res.code == 200) {
+        docDetalle.documento_detalle_id = res.documento_detalle_id;
         this.productos.unshift(docDetalle);
-      }else{
-        alert("Error agregando producto: "+res.error);
-      } 
-      this.document=this.calculosService.calcularExcento(this.document,this.productos);   
+      } else {
+        alert("Error agregando producto: " + res.error);
+      }
+      this.document = this.calculosService.calcularExcento(this.document, this.productos);
       this.documentoService.updateDocumento(this.document).subscribe(res => {
         if (res.code != 200) {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
           return;
         }
-      }); 
+      });
       let newCantidad: number = this.productoIdSelect.cantidad;
       this.productoIdSelect.cantidad = newCantidad - docDetalle.cantidad;
       this.restarCantidadesSubProducto(docDetalle);
       this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
-        if(res.code == 200){
+        if (res.code == 200) {
           //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
-        }else  {
+        } else {
           alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
           return;
         }
-      });  
-    
+      });
+
     });
   }
 
@@ -446,6 +480,9 @@ export class VentasDiaComponent implements OnInit {
   }
 
   scapeTecla(element) {
+    this.estadoDivBotones("d-block");
+    this.siguientePV.nativeElement.focus();
+    this.estadoDivProducto("d-none") // se muestra el div de producto
   }
 
   controlTeclas(event, element) {
@@ -536,7 +573,7 @@ export class VentasDiaComponent implements OnInit {
     this.empreadoActivo = false;
     this.codigoBarrasActivo = false;
     this.clienteSelect = null;
-    this.productoIdSelect=null;
+    this.productoIdSelect = null;
     this.tipoDocumentSelect = null;
     this.empleadoSelect = "";
     this.document = new DocumentoModel();
@@ -687,12 +724,12 @@ export class VentasDiaComponent implements OnInit {
   }
 
   ocultarPrecio() {
-    /*this.precioPV.nativeElement.classList.remove("d-block");
-    this.precioPV.nativeElement.classList.add("d-none");*/
+    this.precioPV.nativeElement.classList.remove("d-block");
+    this.precioPV.nativeElement.classList.add("d-none");
   }
-  ocultarGramera(){
-   /* this.grameraPV.nativeElement.classList.remove("d-block");
-    this.grameraPV.nativeElement.classList.add("d-none");*/
+  ocultarGramera() {
+    this.grameraPV.nativeElement.classList.remove("d-block");
+    this.grameraPV.nativeElement.classList.add("d-none");
   }
 
 }
