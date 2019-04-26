@@ -1,36 +1,162 @@
 <app-menu></app-menu>
 <div class="container-fluid main">
-  <div class="form-row">
-     <h4 class="mt-3">Punto de venta Día</h4>
-</div>
-<div class="form-row">
-    <div class="form-group col-md-2 col-sm-2">Documento: {{document.documento_id}}</div>
-    <div class="form-group col-md-2 col-sm-2">Fecha: {{document.fecha_registro | date: 'dd/MM/yyyy'}} </div>
-    <div class="form-group col-md-4 col-sm-2">
-        <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
-            (keyup.enter)="enterTecla(clientePV)" (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)">
-        <datalist id="browsers">
-            <option *ngFor="let cliente of clientes" value="{{cliente.cliente_id}}|{{cliente.nombre}}|{{cliente.documento}}">{{cliente.nombre}}
-                {{cliente.documento}}
-            </option>
-        </datalist>
+    <div class="form-row">
+        <h4 class="mt-3">Punto de venta Día</h4>
     </div>
+    <div class="form-row">
+        <div class="form-group col-md-2 col-sm-2">Documento: {{document.documento_id}}</div>
+        <div class="form-group col-md-2 col-sm-2">Fecha: {{document.fecha_registro | date: 'dd/MM/yyyy'}} </div>
+        <div class="form-group col-md-4 col-sm-2">
+            <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
+                (keyup.enter)="enterTecla(clientePV)" (change)="enterTecla(clientePV)"
+                (keydown.esc)="scapeTecla(clientePV)">
+            <datalist id="browsers">
+                <option *ngFor="let cliente of clientes"
+                    value="{{cliente.cliente_id}}|{{cliente.nombre}}|{{cliente.documento}}">{{cliente.nombre}}
+                    {{cliente.documento}}
+                </option>
+            </datalist>
+        </div>
 
-    <div class="form-group col-md-2 col-sm-2">
-        <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control" id="tipoDocumentoPV"
-            (keyup.F)="enterTecla(tipoDocumentoPV)" (keyup.C)="enterTecla(tipoDocumentoPV)" (keyup.R)="enterTecla(tipoDocumentoPV)"
-            (keydown.enter)="enterTecla(tipoDocumentoPV)" (keydown.esc)="scapeTecla(clientePV)">
+        <div class="form-group col-md-2 col-sm-2">
+            <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control"
+                id="tipoDocumentoPV" (keyup.F)="enterTecla(tipoDocumentoPV)" (keyup.C)="enterTecla(tipoDocumentoPV)"
+                (keyup.R)="enterTecla(tipoDocumentoPV)" (keydown.enter)="enterTecla(tipoDocumentoPV)"
+                (keydown.esc)="scapeTecla(clientePV)">
+        </div>
+        <div class="form-group col-md-2 col-sm-2">
+            <input list="empleados" name="empleadoPV" #empleadoPV placeholder="Empleado" class="form-control"
+                id="empleadoPV" (keydown.enter)="enterTecla(empleadoPV)" (change)="enterTecla(empleadoPV)"
+                (keydown.esc)="scapeTecla(clientePV)">
+            <datalist id="empleados">
+                <option value="prueba">prueba</option>
+                <option value="prueba2">prueba2</option>
+            </datalist>
+        </div>
     </div>
-    <div class="form-group col-md-2 col-sm-2">
-        <input list="empleados" name="empleadoPV" #empleadoPV placeholder="Empleado" class="form-control" id="empleadoPV"
-            (keydown.enter)="enterTecla(empleadoPV)" (change)="enterTecla(empleadoPV)" (keydown.esc)="scapeTecla(clientePV)">
-        <datalist id="empleados">
-            <option value="prueba">prueba</option>
-            <option value="prueba2">prueba2</option>
-        </datalist>
+    <hr />
+    <div class="form-row">
+        <div class="form-group col-md-1 col-sm-4" id="divSiguiente" #divSiguiente>
+            <button type="button" class="btn btn-primary btn-sm" id="siguientePV" autofocus #siguientePV
+                (keyup)="controlTeclas($event,siguientePV)" (keyup.enter)="enterTecla(siguientePV)">Siguiente</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divAnterior" #divAnterior>
+            <button type="button" class="btn btn-primary btn-sm" id="anteriorPV" #anteriorPV
+                (keyup)="controlTeclas($event,anteriorPV)" (keyup.enter)="enterTecla(anteriorPV)">Anterior</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divPrimera" #divPrimera>
+            <button type="button" class="btn btn-primary btn-sm" id="primeraPV" #primeraPV
+                (keyup)="controlTeclas($event,primeraPV)" (keyup.enter)="enterTecla(primeraPV)">Primera</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divUltima" #divUltima>
+            <button type="button" class="btn btn-primary btn-sm" id="ultimaPV" #ultimaPV
+                (keyup)="controlTeclas($event,ultimaPV)" (keyup.enter)="enterTecla(ultimaPV)">Ultima</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divBuscar" #divBuscar>
+            <button type="button" class="btn btn-primary btn-sm" id="buscarPV" #buscarPV
+                (keyup)="controlTeclas($event,buscarPV)" (keyup.enter)="enterTecla(buscarPV)">Buscar</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divNueva" #divNueva>
+            <button type="button" class="btn btn-primary btn-sm" id="nuevaPV" (click)="nuevafactura()" #nuevaPV
+                (keyup)="controlTeclas($event,nuevaPV)" (keyup.enter)="enterTecla(nuevaPV)">Nueva</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divImprimir" #divImprimir>
+            <button type="button" class="btn btn-primary btn-sm" id="imprimirPV" #imprimirPV
+                (keyup)="controlTeclas($event,imprimirPV)" (keyup.enter)="enterTecla(imprimirPV)">Imprimir</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divOpciones" #divOpciones>
+            <button type="button" class="btn btn-primary btn-sm" id="opcionPV" #opcionPV
+                (keyup)="controlTeclas($event,opcionPV)" (keyup.enter)="enterTecla(opcionPV)">Opciones</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divFin" #divFin>
+            <button type="button" class="btn btn-primary btn-sm" id="finPV" #finPV (keyup)="controlTeclas($event,finPV)"
+                routerLink="/menu" (keyup.enter)="enterTecla(finPV)">Fin</button>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6 col-sm-2">
+                <input name="CodigoBarrasPV" #CodigoBarrasPV placeholder="Codigo de Barras" class="form-control"
+                    id="CodigoBarrasPV" (keydown.enter)="enterTecla(CodigoBarrasPV)" (blur)="ocultarCodigoBarras()"
+                    (keydown.esc)="scapeTecla(clientePV)">
+            </div>
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group col-sm-2 d-none" id="divCodigo" #divCodigo>
+                <input name="codigoPV" #codigoPV placeholder="Código" class="form-control" id="codigoPV"
+                    (keydown.enter)="enterTecla(codigoPV)" (keydown.esc)="scapeTecla(clientePV)">
+            </div>
+            <div class="form-group col-sm-4 d-none" id="divArticulo" #divArticulo>
+                <input list="articulos" name="articuloPV" #articuloPV placeholder="Articulo" class="form-control"
+                    id="articuloPV" (keydown.enter)="enterTecla(articuloPV)" (change)="articuloSelect(articuloPV)"
+                    (keydown.esc)="scapeTecla(clientePV)">
+                <datalist id="articulos">
+                    <option *ngFor="let producto of productosAll" [value]="producto.nombre">
+                        Costo:{{producto.costo_publico}} Cantidad:{{producto.cantidad}} id:{{producto.producto_id}}
+                    </option>
+                </datalist>
+            </div>
+            <div class="form-group col-sm-2 d-none" id="divCantidad" #divCantidad>
+                <input name="cantidadPV" #cantidadPV placeholder="Cantidad" class="form-control" id="cantidadPV"
+                    (keydown.enter)="enterTecla(cantidadPV)" (keydown.esc)="scapeTecla(cantidadPV)">
+                <input name="precioPV" #precioPV placeholder="$ Precio" class="form-control d-none" id="precioPV"
+                    (keydown.enter)="enterTecla(precioPV)" (keydown.esc)="scapeTecla(precioPV)"
+                    (blur)="ocultarPrecio()">
+                <input name="grameraPV" #grameraPV placeholder="$ Precio" class="form-control d-none" id="grameraPV"
+                    (keydown.enter)="enterTecla(grameraPV)" (keydown.esc)="scapeTecla(grameraPV)"
+                    (blur)="ocultarGramera()">
+            </div>
+            <div class="form-group col-sm-2 d-none" id="divUnitario" #divUnitario>
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Unitario">
+            </div>
+            <div class="form-group col-sm-2 d-none" id="divParcial" #divParcial>
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Parcial">
+            </div>
+        </div>
+        <div class="form-row col-md-12 ">
+            <div class=" col-md-6 col-sm-6 border border-primary ">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col col-md-2 col-sm-2">Cod</th>
+                            <th scope="col col-md-4 col-sm-4">Artículo</th>
+                            <th scope="col col-md-2 col-sm-2">Cantidad</th>
+                            <th scope="col col-md-2 col-sm-2">Unitario</th>
+                            <th scope="col col-md-2 col-sm-2">Parcial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let producto of productos">
+                            <td>{{producto.producto_id}}</td>
+                            <td>{{producto.nombre_producto}}</td>
+                            <td>{{producto.cantidad}}</td>
+                            <td>{{producto.unitario}}</td>
+                            <td>{{producto.parcial}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-row col-md-6 col-sm-6 border border-primary">
+                <div class="form-group col-md-4 col-sm-6">
+                    Peso kg:
+                    <h3>{{document.peso_total}}</h3>
+                </div>
+                <div class="form-group col-md-4 col-sm-6">
+                    Vr Exento:
+                    <h3>{{document.excento}}</h3>
+                </div>
+                <div class="form-group col-md-4 col-sm-6">
+                    Vr Gravado:
+                    <h3>{{document.gravado}}</h3>
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                    Vr Iva:
+                    <h3>{{document.iva}}</h3>
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                    Total:
+                    <h3 style="color:red">{{document.total}}</h3>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<hr />
-
-
-

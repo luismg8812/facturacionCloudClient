@@ -14,4 +14,12 @@ export class ProductoService {
   public getProductosByEmpresa(empresaId:string){
     return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductosByEmpresa?empresaId='+empresaId);
   }
+
+  public getProductoById(productoId:string,empresaId:string){
+    return this.http.get<ProductoModel>(this.server_api+'/producto/getProductoById?empresaId='+empresaId+'&productoId='+productoId);
+  }
+
+  public updateCantidad(productoId:ProductoModel){
+    return this.http.put<any>(this.server_api+'/producto/updateCantidad',productoId);
+  }
 }

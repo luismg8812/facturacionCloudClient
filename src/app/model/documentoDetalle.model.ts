@@ -1,33 +1,31 @@
 export class DocumentoDetalleModel {
-    public documentoDetalleId:string;
-    public documentoId:string;
-    public productoId:string;
-    public fechaRegistro:Date;
-    public fechaActualiza:Date;
-    public estado:string;
-    public parcial:string;
-    public s1:string;
-    public s2:string;
-    public cantidad2:string;
-    public cantidad1:string;
-    public impresoComanda:string;
-    public cantidad:string;
-    public unitario:string;
+    public documento_detalle_id:string;
+    public documento_id:string;
+    public producto_id:number;
+    public fecha_registro:Date;
+    public estado:number;
+    public parcial:number;
+    public impresoComanda:number;
+    public cantidad:number;
+    public unitario:number;
+    public nombre_producto:string;
+    public costo_producto:number;
+    public impuesto_producto:number;
+    public peso_producto:number;
     
     constructor(){
-       this.documentoDetalleId="";
-       this.documentoId="";
-       this.productoId=""; 
-       this.fechaRegistro=new Date;
-       this.fechaActualiza=new Date;
-       this.estado="";
-       this.parcial="";
-       this.s1="";
-       this.s2="";
-       this.cantidad2="";
-       this.cantidad1="";
-       this.impresoComanda="";
-       this.cantidad="";
-       this.unitario="";
+       this.documento_detalle_id=null;
+       this.documento_id=null;
+       this.producto_id=null; 
+       this.fecha_registro=new Date;
+       this.estado=0;
+       this.parcial=0;
+       this.impresoComanda=0;
+       this.cantidad=0;
+       this.unitario=0;
+       this.costo_producto=0;
+       this.nombre_producto="";
+       this.impuesto_producto=0.0;
+       this.peso_producto=0;
     }
 }
