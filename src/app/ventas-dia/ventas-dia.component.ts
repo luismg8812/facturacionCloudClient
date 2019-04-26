@@ -55,10 +55,10 @@ export class VentasDiaComponent implements OnInit {
   public empresaId: number;
   public usuarioId: number;
   public tipoDocumentSelect: number;
-  private empleadoSelect: string;
-  private productoIdSelect: ProductoModel;
+  public empleadoSelect: string;
+  public productoIdSelect: ProductoModel;
 
-  private productos: Array<DocumentoDetalleModel>;
+  public productos: Array<DocumentoDetalleModel>;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -684,6 +684,15 @@ export class VentasDiaComponent implements OnInit {
       this.divUnitario.nativeElement.classList.remove("d-block");
       this.divParcial.nativeElement.classList.remove("d-block");
     }
+  }
+
+  ocultarPrecio() {
+    /*this.precioPV.nativeElement.classList.remove("d-block");
+    this.precioPV.nativeElement.classList.add("d-none");*/
+  }
+  ocultarGramera(){
+   /* this.grameraPV.nativeElement.classList.remove("d-block");
+    this.grameraPV.nativeElement.classList.add("d-none");*/
   }
 
 }
