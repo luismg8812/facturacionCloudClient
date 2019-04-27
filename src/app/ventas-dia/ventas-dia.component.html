@@ -8,18 +8,17 @@
         <div class="form-group col-md-2 col-sm-2">Fecha: {{document.fecha_registro | date: 'dd/MM/yyyy'}} </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
-                (keyup.enter)="enterTecla(clientePV)" (change)="enterTecla(clientePV)"
+            (keyup.enter)="enterTecla(clientePV)" (change)="enterTecla(clientePV)"
                 (keydown.esc)="scapeTecla(clientePV)">
             <datalist id="browsers">
-                <option *ngFor="let cliente of clientes"
-                    value="{{cliente.cliente_id}}|{{cliente.nombre}}|{{cliente.documento}}">{{cliente.nombre}}
-                    {{cliente.documento}}
+                <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
+                    Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
                 </option>
             </datalist>
         </div>
 
         <div class="form-group col-md-2 col-sm-2">
-            <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control"
+            <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control" 
                 id="tipoDocumentoPV" (keyup.F)="enterTecla(tipoDocumentoPV)" (keyup.C)="enterTecla(tipoDocumentoPV)"
                 (keyup.R)="enterTecla(tipoDocumentoPV)" (keydown.enter)="enterTecla(tipoDocumentoPV)"
                 (keydown.esc)="scapeTecla(clientePV)">
@@ -61,7 +60,7 @@
                 (keyup)="controlTeclas($event,nuevaPV)" (keyup.enter)="enterTecla(nuevaPV)">Nueva</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divImprimir" #divImprimir>
-            <button type="button" class="btn btn-primary btn-sm" id="imprimirPV" #imprimirPV
+            <button type="button" class="btn btn-primary btn-sm" id="imprimirPV" (click)="imprimirModal()" #imprimirPV
                 (keyup)="controlTeclas($event,imprimirPV)" (keyup.enter)="enterTecla(imprimirPV)">Imprimir</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divOpciones" #divOpciones>
@@ -111,6 +110,54 @@
             </div>
             <div class="form-group col-sm-2 d-none" id="divParcial" #divParcial>
                 <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Parcial">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-6 col-md-12 d-none" id="divImprimirModal" #divImprimirModal>
+                <div class="row ">
+
+                    <div class="col col-ms-2 ">
+                        <h5 #descuentoLavel name="descuentoLavel" id="descuentoLavel" class="d-none">Descuento: </h5>
+                        <input name="descuentoPV" #descuentoPV placeholder="Descuento" class="form-control d-none"
+                            id="descuentoPV" (keydown.enter)="enterTecla(descuentoPV)"
+                            (keydown.esc)="scapeTecla(descuentoPV)">
+                    </div>
+                    <div class="col col-ms-1 ">
+                        <h5 class="d-none" #impresoraLavel name="impresoraLavel" id="impresoraLavel">Impresora: </h5>
+                        <input name="impresoraPV" #impresoraPV placeholder="Impresora" class="form-control d-none"
+                            id="impresoraPV" (keydown.enter)="enterTecla(impresoraPV)"
+                            (keydown.esc)="scapeTecla(impresoraPV)">
+                    </div>
+
+                    <div class="col col-ms-1">
+                        <h5 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago: </h5>
+                        <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV" data-toggle="tooltip" title=""
+                            (keydown.enter)="enterTecla(tipoPagoPV)" (keydown.esc)="scapeTecla(tipoPagoPV)">
+                    </div>   
+                    <div class="col col-ms-1">
+                        <h5 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">Valor pago: </h5>
+                        <input name="valorTipoPagoPV" #valorTipoPagoPV placeholder="Valor tipo Pago"
+                            class="form-control" id="valorTipoPagoPV" (keydown.enter)="enterTecla(valorTipoPagoPV)"
+                            (keydown.esc)="scapeTecla(valorTipoPagoPV)">
+                    </div>         
+                    <div class="col col-ms-1">
+                        <h5>Efectivo: </h5>
+                        <input name="efectovoPV" #efectovoPV placeholder="Efectivo" class="form-control" id="efectovoPV"
+                            (keydown.enter)="enterTecla(efectovoPV)" (keydown.esc)="scapeTecla(efectovoPV)">
+                    </div>
+                    <div class="col col-ms-1">
+                        <h5>Cambio:</h5>
+                     <h4 style="color:red">{{document.cambio}}</h4>
+                    </div>
+                   
+                    <div class="col col-ms-2">
+                            <h5>Continúa Impresión? </h5>
+                        <input name="continuaImpresionPV" #continuaImpresionPV placeholder="S/N?" class="form-control"
+                            id="continuaImpresionPV" (keydown.enter)="enterTecla(continuaImpresionPV)"
+                            (keydown.esc)="scapeTecla(continuaImpresionPV)"
+                            (keydown.S)="enterTecla(continuaImpresionPV)" (keydown.N)="cancelarImpresion()">
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-row col-md-12 ">

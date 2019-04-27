@@ -6,11 +6,11 @@ import { ClienteService } from '../services/cliente.service';
 import { ClienteModel } from '../model/cliente.model';
 import { ProductoService } from '../services/producto.service';
 import { ProductoModel } from '../model/producto.model';
-import { DocumentoDetalleVoModel } from '../model/documentoDetalleVo.model';
 import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
 import { DocumentoService } from '../services/documento.service';
 import { CalculosService } from '../services/calculos.service';
 import { DocumentoDetalleService } from '../services/documento-detalle.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -26,7 +26,8 @@ export class VentasDiaComponent implements OnInit {
   readonly EMPLEADOS: string = '18';
   readonly CODIGO_BARRAS: string = '7';
   readonly DESCUENTOS: string = '10';
-
+  readonly MULTIPLE_IMPRESORA: string = '4';
+  readonly TIPOS_PAGOS: string = '20';
 
 
 
@@ -36,7 +37,8 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
 
   constructor(public usuarioService: UsuarioService, public clienteService: ClienteService, public productoService: ProductoService,
-    public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService) {
+    public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
+    private router: Router,) {
     let empresa_id: string = sessionStorage.getItem("empresa_id");
 
   }
@@ -51,6 +53,8 @@ export class VentasDiaComponent implements OnInit {
   public empreadoActivo: boolean = false;
   public codigoBarrasActivo: boolean = false;
   public descuentosActivo: boolean = false;
+  public multipleImpresoraActivo: boolean = false;
+  public TipoPagosActivo: boolean = false;
   public clienteSelect: number;
   public empresaId: number;
   public usuarioId: number;
@@ -91,11 +95,26 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("divFin") divFin: ElementRef;
   @ViewChild("imprimirBtn") imprimirBtn: ElementRef;
 
+
+  @ViewChild("divImprimirModal") divImprimirModal: ElementRef;
   @ViewChild("divCantidad") divCantidad: ElementRef; // div de donde se busca  la cantidad
   @ViewChild("divCodigo") divCodigo: ElementRef; // div de donde se busca el codigo del producto
   @ViewChild("divArticulo") divArticulo: ElementRef; // div de donde se busca el articulo
   @ViewChild("divUnitario") divUnitario: ElementRef; // div de donde se busca el articulo
   @ViewChild("divParcial") divParcial: ElementRef; // div de donde se busca el articulo
+
+  //impresion
+
+  @ViewChild("impresoraLavel") impresoraLavel: ElementRef;
+  @ViewChild("impresoraPV") impresoraPV: ElementRef; // controla la impresora que se desea imprimir
+  @ViewChild("descuentoPV") descuentoPV: ElementRef;
+  @ViewChild("descuentoLavel") descuentoLavel: ElementRef;
+  @ViewChild("tipoPagoLavel") tipoPagoLavel: ElementRef;
+  @ViewChild("tipoPagoPV") tipoPagoPV: ElementRef;
+  @ViewChild("valorTipoPagoLavel") valorTipoPagoLavel: ElementRef;
+  @ViewChild("valorTipoPagoPV") valorTipoPagoPV: ElementRef;
+  @ViewChild("efectovoPV") efectovoPV: ElementRef;
+  @ViewChild("continuaImpresionPV") continuaImpresionPV: ElementRef;
 
   ngOnInit() {
     this.empresaId = Number(sessionStorage.getItem("empresa_id"));
@@ -120,6 +139,7 @@ export class VentasDiaComponent implements OnInit {
     this.empleadoSelect = "";
     this.document = new DocumentoModel();
     this.productos = [];
+    this.tipoPagoPV.nativeElement.title ='1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale. Si ingresa varios tipos de pago hagalo separados por un espacio ej: 1,2,3';
   }
 
   clienteSelectFun(element) {
@@ -127,11 +147,11 @@ export class VentasDiaComponent implements OnInit {
       alert("El cliente es obligatorio");
       return;
     } else {
-      if (element.value.indexOf("|") == -1) {
+      if (element.value == "") {
         alert("se creará cliente");
       } else {
-        var splitted = element.value.split("|");
-        this.clienteSelect = splitted[0];
+        let cliente = this.clientes.find(product => product.nombre === element.value);
+        this.clienteSelect = cliente.cliente_id;
         this.document.cliente_id = this.clienteSelect;
       }
 
@@ -276,9 +296,7 @@ export class VentasDiaComponent implements OnInit {
     if (element.id == "nuevaPV") {
       this.nuevafactura();
     }
-    if (element.id == "imprimirPV") {
-      this.imprimirModal();
-    }
+
     if (element.id == "clientePV") {
       this.clienteSelectFun(element);
     }
@@ -304,27 +322,76 @@ export class VentasDiaComponent implements OnInit {
     if (element.id == "precioPV") {
       this.precioEnter(element);
     }
-    /*
-   if (element.id == "descuentoPV") {
-     this.carteraPV.nativeElement.focus();
-   }
-   if (element.id == "carteraPV") {
-     this.enterCartera(element);
-   }
-   if (element.id == "tarjetaPV") {
-     this.enterTarjeta(element);
-   }
-   if (element.id == "vrTarjetaPV") {
-     this.efectovoPV.nativeElement.focus();
-   }
-   if (element.id == "efectovoPV") {
-     this.continuaImpresionPV.nativeElement.focus();
-   }
-   if (element.id == "continuaImpresionPV") {
-     this.enterContinuarImpresion(element);
-
-   }*/
+    if (element.id == "descuentoPV") {
+      this.descuentoEnter();
+    }
+    if (element.id == "impresoraPV") {
+      this.impresoraEnter();
+    }
+    if (element.id == "tipoPagoPV") {
+      this.valorTipoPagoPV.nativeElement.focus();
+      
+    }
+    if(element.id == "valorTipoPagoPV"){
+      this.efectovoPV.nativeElement.focus();
+    }
+    if (element.id == "efectovoPV") {
+     this.efectivoEnter(element);
+    }
+    
+    if (element.id == "continuaImpresionPV") {
+      this.enterContinuarImpresion(element);
+ 
+    }
   }
+
+  enterContinuarImpresion(element){
+    if (this.document.documento_id == "") {
+      alert("El documento esta corructo, por favor vuelva a crearlo");
+      return;
+    }
+
+    this.limpiar();
+    this.scapeTecla(null) ;
+    //configuracionService()
+  }
+
+  cancelarImpresion(){
+    console.log("presiona cancelar impresion");
+    this.divImprimirModal.nativeElement.classList.remove("d-block");
+    this.divImprimirModal.nativeElement.classList.add("d-none");
+    this.scapeTecla(null);
+  }
+   
+  efectivoEnter(element){
+    let efectivo:number=element.value;
+    if(!isNaN(efectivo) && element.value!=''){
+
+      this.document.cambio=efectivo-this.document.total;
+    }
+    this.continuaImpresionPV.nativeElement.focus();
+  }
+
+  impresoraEnter(){
+    if(this.TipoPagosActivo){
+      this.tipoPagoPV.nativeElement.focus();
+    }else{
+      this.efectovoPV.nativeElement.focus();
+    }
+  }
+
+  descuentoEnter(){
+    if(this.multipleImpresoraActivo){
+      this.impresoraPV.nativeElement.focus();
+    }else{
+      if(this.TipoPagosActivo){
+        this.tipoPagoPV.nativeElement.focus();
+      }else{
+        this.efectovoPV.nativeElement.focus();
+      }
+    }
+  }
+
 
   precioEnter(element) {
     if (this.codigoBarrasActivo) {
@@ -481,8 +548,11 @@ export class VentasDiaComponent implements OnInit {
 
   scapeTecla(element) {
     this.estadoDivBotones("d-block");
-    this.siguientePV.nativeElement.focus();
     this.estadoDivProducto("d-none") // se muestra el div de producto
+    this.divImprimirModal.nativeElement.classList.remove("d-block");
+    this.divImprimirModal.nativeElement.classList.add("d-none");
+    this.siguientePV.nativeElement.focus();
+    
   }
 
   controlTeclas(event, element) {
@@ -557,6 +627,9 @@ export class VentasDiaComponent implements OnInit {
     if (event.keyCode == 78) { //cuando se presiona la tacla N 		 
       this.nuevafactura();
     }
+    if (event.keyCode == 70) { //cuando se presiona la tacla f
+      this.router.navigate(['/login']);
+    }
     if (event.keyCode == 73) { //cuando se presiona la tacla i 		 
       this.imprimirModal();
     }
@@ -585,7 +658,8 @@ export class VentasDiaComponent implements OnInit {
     this.cantidadPV.nativeElement.value = "";
     this.precioPV.nativeElement.value = "";
     this.productos = [];
-    //this.descuentoPV.nativeElement.value = "";
+    this.descuentoPV.nativeElement.value = "";
+    this.efectovoPV.nativeElement.value="";
 
   }
 
@@ -619,6 +693,14 @@ export class VentasDiaComponent implements OnInit {
         console.log("descuentos activos ");
         this.descuentosActivo = true;
       }
+      if (this.activaciones[e].activacion_id == this.MULTIPLE_IMPRESORA) {
+        console.log("multiple impresora activos ");
+        this.multipleImpresoraActivo = true;
+      }
+      if (this.activaciones[e].activacion_id == this.TIPOS_PAGOS) {
+        console.log("tipos pagos activos ");
+        this.TipoPagosActivo = true;
+      }
     }
     if (this.clienteActivo) {
       this.clientePV.nativeElement.focus();
@@ -641,6 +723,53 @@ export class VentasDiaComponent implements OnInit {
   }
 
   imprimirModal() {
+    if (this.document.documento_id == "") {
+      alert("debe crear primero una factura");
+      return;
+    }
+    this.divImprimirModal.nativeElement.classList.remove("d-none");
+    this.divImprimirModal.nativeElement.classList.add("d-block");
+    let contador = 0;
+
+    if (this.descuentosActivo) {
+      this.descuentoLavel.nativeElement.classList.remove("d-none");
+      this.descuentoLavel.nativeElement.classList.add("d-block");
+      this.descuentoPV.nativeElement.classList.remove("d-none");
+      this.descuentoPV.nativeElement.classList.add("d-block");
+    }
+    if (this.multipleImpresoraActivo) {
+      this.impresoraLavel.nativeElement.classList.remove("d-none");
+      this.impresoraLavel.nativeElement.classList.add("d-block");
+      this.impresoraPV.nativeElement.classList.remove("d-none");
+      this.impresoraPV.nativeElement.classList.add("d-block");
+    }
+    if (this.TipoPagosActivo) {
+      this.valorTipoPagoLavel.nativeElement.classList.remove("d-none");
+      this.valorTipoPagoLavel.nativeElement.classList.add("d-block");
+
+      this.tipoPagoLavel.nativeElement.classList.remove("d-none");
+      this.tipoPagoLavel.nativeElement.classList.add("d-block");
+
+      this.tipoPagoPV.nativeElement.classList.remove("d-none");
+      this.tipoPagoPV.nativeElement.classList.add("d-block");
+
+      this.valorTipoPagoPV.nativeElement.classList.remove("d-none");
+      this.valorTipoPagoPV.nativeElement.classList.add("d-block");
+    }
+    
+    if (this.descuentosActivo) {
+      this.descuentoPV.nativeElement.focus();
+    } else {
+      if(this.multipleImpresoraActivo){
+        this.impresoraPV.nativeElement.focus();
+      }else{
+        if(this.TipoPagosActivo){
+          this.tipoPagoPV.nativeElement.focus();
+        }else{
+          this.efectovoPV.nativeElement.focus();
+        }
+      }
+    }
   }
 
   getActivaciones(user: number) {

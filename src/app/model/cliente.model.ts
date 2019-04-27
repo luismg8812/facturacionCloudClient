@@ -1,5 +1,5 @@
 export class ClienteModel {
-    public cliente_id:string;
+    public cliente_id:number;
     public empresa_id:string;
     public nombre:string;
     public apellidos:string;
