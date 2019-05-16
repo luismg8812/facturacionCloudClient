@@ -11,6 +11,14 @@ import { DocumentoService } from '../services/documento.service';
 import { CalculosService } from '../services/calculos.service';
 import { DocumentoDetalleService } from '../services/documento-detalle.service';
 import { Router } from '@angular/router';
+import { ConfiguracionModel } from '../model/configuracion.model';
+import { TipoPagoModel } from '../model/tipoPago.model';
+import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
+import { EmpresaService } from '../services/empresa.service';
+import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
+import { ImpresionService } from '../services/impresion.service';
+import { FacturaModel } from '../vo/factura.model';
+import { EmpresaModel } from '../model/empresa.model';
 
 
 @Component({
@@ -29,6 +37,10 @@ export class VentasDiaComponent implements OnInit {
   readonly MULTIPLE_IMPRESORA: string = '4';
   readonly TIPOS_PAGOS: string = '20';
 
+  readonly TIPO_DOCUMENTO_FACTURA: number = 10;
+
+
+
 
 
 
@@ -38,15 +50,16 @@ export class VentasDiaComponent implements OnInit {
 
   constructor(public usuarioService: UsuarioService, public clienteService: ClienteService, public productoService: ProductoService,
     public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
-    private router: Router,) {
-    let empresa_id: string = sessionStorage.getItem("empresa_id");
-
-  }
+    private router: Router, public empresaService: EmpresaService, public impresionService: ImpresionService) { }
 
   public document: DocumentoModel;
+  public tituloFactura: string;
   public activaciones: Array<ActivacionModel>;
   public clientes: Array<ClienteModel>;
+  public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
+  public configuracion: ConfiguracionModel;
   public productosAll: Array<ProductoModel>;
+  public tipoPagosAll: Array<TipoPagoModel>;
   public clienteActivo: boolean = false;
   public guiaTransporteActivo: boolean = false;
   public clienteObligatorioActivo: boolean = false;
@@ -61,8 +74,9 @@ export class VentasDiaComponent implements OnInit {
   public tipoDocumentSelect: number;
   public empleadoSelect: string;
   public productoIdSelect: ProductoModel;
-
+  public imp: string;
   public productos: Array<DocumentoDetalleModel>;
+  public factura:FacturaModel;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -102,9 +116,12 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("divArticulo") divArticulo: ElementRef; // div de donde se busca el articulo
   @ViewChild("divUnitario") divUnitario: ElementRef; // div de donde se busca el articulo
   @ViewChild("divParcial") divParcial: ElementRef; // div de donde se busca el articulo
+  @ViewChild("enPantallaPV") enPantallaPV: ElementRef; // div de donde se busca el articulo
+
 
   //impresion
 
+  @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
   @ViewChild("impresoraLavel") impresoraLavel: ElementRef;
   @ViewChild("impresoraPV") impresoraPV: ElementRef; // controla la impresora que se desea imprimir
   @ViewChild("descuentoPV") descuentoPV: ElementRef;
@@ -123,11 +140,9 @@ export class VentasDiaComponent implements OnInit {
     this.estadoDivProducto("d-none") // se muestra el div de producto
     this.CodigoBarrasPV.nativeElement.classList.add("d-none");
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
-    this.getclientes(this.empresaId);
-    this.getActivaciones(this.usuarioId);
+    this.factura=new FacturaModel();
     sessionStorage.removeItem("documentoIdSelect");
     sessionStorage.removeItem("productoIdSelect");
-
     this.getProductosByEmpresa(this.empresaId);
     this.clienteActivo = false;
     this.guiaTransporteActivo = false;
@@ -139,7 +154,11 @@ export class VentasDiaComponent implements OnInit {
     this.empleadoSelect = "";
     this.document = new DocumentoModel();
     this.productos = [];
-    this.tipoPagoPV.nativeElement.title ='1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale. Si ingresa varios tipos de pago hagalo separados por un espacio ej: 1,2,3';
+    this.tipoPagoPV.nativeElement.title = '1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale. Si ingresa varios tipos de pago hagalo separados por un espacio ej: 1,2,3';
+    this.getclientes(this.empresaId);
+    this.getConfiguracion(this.empresaId);
+    this.getActivaciones(this.usuarioId);
+    this.getImpresorasEmpresa(this.empresaId);
   }
 
   clienteSelectFun(element) {
@@ -153,6 +172,7 @@ export class VentasDiaComponent implements OnInit {
         let cliente = this.clientes.find(product => product.nombre === element.value);
         this.clienteSelect = cliente.cliente_id;
         this.document.cliente_id = this.clienteSelect;
+        this.factura.cliente=cliente;
       }
 
     }
@@ -179,23 +199,27 @@ export class VentasDiaComponent implements OnInit {
       case '': {
         console.log("factura de venta por defecto");
         this.tipoDocumentSelect = 10;
+        this.factura.nombreTipoDocumento="FACTURA DE VENTA";
         break;
       }
       case 'c':
       case 'C': {
         this.tipoDocumentSelect = 4;
         console.log("cotizacion");
+        this.factura.nombreTipoDocumento="COTIZACIÓN";
         break;
       }
       case 'r':
       case 'R': {
         this.tipoDocumentSelect = 9;
         console.log("remision");
+        this.factura.nombreTipoDocumento="FACTURA DE VENTA.";
         break;
       }
       case 'f':
       case 'F': {
         this.tipoDocumentSelect = 10;
+        this.factura.nombreTipoDocumento="FACTURA DE VENTA";
         console.log("Factura");
         break;
       }
@@ -330,63 +354,308 @@ export class VentasDiaComponent implements OnInit {
     }
     if (element.id == "tipoPagoPV") {
       this.valorTipoPagoPV.nativeElement.focus();
-      
+
     }
-    if(element.id == "valorTipoPagoPV"){
+    if (element.id == "valorTipoPagoPV") {
       this.efectovoPV.nativeElement.focus();
     }
     if (element.id == "efectovoPV") {
-     this.efectivoEnter(element);
+      this.efectivoEnter(element);
     }
-    
+    if (element.id == "enPantallaPV") {
+      this.continuaImpresionPV.nativeElement.focus();
+    }
+
     if (element.id == "continuaImpresionPV") {
       this.enterContinuarImpresion(element);
- 
+
     }
   }
 
-  enterContinuarImpresion(element){
+  enterContinuarImpresion(element) {
     if (this.document.documento_id == "") {
       alert("El documento esta corructo, por favor vuelva a crearlo");
       return;
     }
+    console.log(this.configuracion);
+    let numImpresiones = this.configuracion.numero_impresion;
+    let impresora = this.impresoraPV.nativeElement.value;
+    if (this.document.tipo_documento_id == null) {
+      this.document.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
+    }
+    if (this.document.cliente_id == null) {
+      //si el cliente es nulo se asigna el varios por defecto
+      this.document.cliente_id = 1;
+    }
+    //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
+    this.document.impreso = 1;
+    this.verificarDescuento();
+    this.calcularProporcion();
+    this.calcularInfoDiario();
+    this.asignarTipoPago();
+    this.asignarConsecutivo(numImpresiones);
 
-    this.limpiar();
-    this.scapeTecla(null) ;
-    //configuracionService()
+
+
   }
 
-  cancelarImpresion(){
+  calcularInfoDiario() {
+    let fechaDocumento: Date = this.document.fecha_registro;
+    //let fechaInicio = this.calculosService.fechaInicial(fechaDocumento);
+    //let fechaFinal = this.calculosService.fechaFinal(fechaDocumento);
+		/*let  infoList = documentoService.buscarInfodiarioByFecha(fechaInicio, fechaFinal);
+		boolean anulado = false;
+		try {
+			InfoDiario infoDiario = Calculos.calcularInfoDiario(getDocumento(), infoList, e, anulado);
+
+			if (infoDiario.getInfoDiarioId() == null) {
+				documentoService.save(infoDiario);
+			} else {
+				documentoService.update(infoDiario);
+			}
+
+		} catch (FactException e1) {
+			log.error("Error calculando registro de informe diario" + e1.getMessage());
+		}*/
+  }
+
+  asignarTipoPago() {
+    let des1 = this.descuentoPV.nativeElement.value;
+    let tiposPagosList: TipoPagoModel[] = [];
+    if (des1 == "") {
+      //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
+      let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
+      tipoPagoDocumento.documento_id = this.document.documento_id;
+      tipoPagoDocumento.fecha_registro = new Date;
+      tipoPagoDocumento.tipo_pago_id = 1;//efectivo por defecto
+      tipoPagoDocumento.valor = this.document.total;
+      this.documentoService.saveTipoPagoDocumento(tipoPagoDocumento).subscribe(res => {
+
+      });
+    } else {
+
+    }
+  }
+
+  verificarDescuento() {
+    let des1 = this.descuentoPV.nativeElement.value;
+    if (des1 != 0.0 && des1 != "") {
+      let desTemp = 0.0; // si el descuento es mayor o menor que 100 entonces se calcula el
+      // descuento en %
+      desTemp = 0.0;
+      if (des1 < -100.0 || des1 > 100.0) {
+        this.document.descuento = des1;
+        desTemp = (des1 * 100) / this.document.total;
+        console.log("% descuento:" + desTemp);
+      } else {
+        this.document.descuento = (this.document.total * des1) / 100;
+        desTemp = des1;
+        console.log("% descuento:" + desTemp);
+      }
+      if (desTemp < -50 || desTemp > 50) {
+        return;
+      }
+      let des = desTemp / 100;
+      let temp: DocumentoDetalleModel[];
+      for (var i = 0; i < this.productos.length; i++) {
+        let parcialDescuento = this.productos[i].parcial + (this.productos[i].parcial * des);
+        let unitarioDescuento = this.productos[i].unitario + (this.productos[i].unitario * des);
+        this.productos[i].parcial = parcialDescuento;
+        this.productos[i].unitario = unitarioDescuento;
+        temp.unshift(this.productos[i]);
+      }
+      let totalTemp = this.document.total;
+      let ivaTemp = this.document.iva + (this.document.iva * des);
+      let excentoTemp = this.document.excento + (this.document.excento * des);
+      let gravadoTemp = this.document.gravado + (this.document.gravado * des);
+      this.document.total = totalTemp;
+      this.document.saldo = totalTemp;
+      this.document.iva = ivaTemp;
+      this.document.excento = excentoTemp;
+      this.document.gravado = gravadoTemp;
+      this.productos = temp;
+      // se valida si el descuento es mayor o menor a 1.5
+      /*if (desTemp >= 1.5 || desTemp <= -1.5) {
+        Evento evento = new Evento();
+        TipoEvento tipoEvento = new TipoEvento();
+        tipoEvento.setTipoEventoId(2l); // se asigna tipo evento igual a
+                        // descuento mayor al 1.5
+        evento.setFechaRegistro(new Date());
+        evento.setTipoEventoId(tipoEvento);
+        evento.setUsuarioId(usuario());
+        evento.setCampo("" + getDocumento().getDocumentoId());
+        evento.setValorActual("" + totalTemp);
+        evento.setValorAnterior("" + getDescuento());
+        eventoService.save(evento);
+      }*/
+
+      if (des1 < -100.0 || des1 > 100.0) {
+        this.document.descuento = des1;
+        desTemp = (des1 * 100) / this.document.total;
+        console.log("% descuento:" + desTemp);
+      } else {
+        this.document.descuento = (this.document.total * des1) / 100;
+        desTemp = des1;
+        console.log("% descuento:" + desTemp);
+      }
+      if (desTemp < -50 || desTemp > 50) {
+        alert("El descuento no puede ser mayor o menor al 15%");
+        return;
+      }
+    }
+  }
+
+  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel) {
+    console.log("entra a imprimir factura");
+    let tituloDocumento: string = "";
+    let impresora = this.impresoraPV.nativeElement.value;
+    if (impresora == "") {
+      impresora = 1;
+    }
+    let pantalla = this.enPantallaPV.nativeElement.value;
+    if(pantalla==""){
+      pantalla="false";
+    }
+    if(numeroImpresiones==undefined){
+      numeroImpresiones=1;
+    }
+    let tipoImpresion = "";
+     
+    for (var i = 0; i < this.impresoraEmpresa.length; i++) {
+      console.log(numeroImpresiones);
+      if (impresora == this.impresoraEmpresa[i].numero_impresora) {
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+      }
+    }
+    console.log(tipoImpresion);
+    tituloDocumento = this.tituloFactura + "_" + this.document.consecutivo_dian + "_" + impresora + "_" + pantalla + "_" + numeroImpresiones + "_" + tipoImpresion;
+    
+   this.factura.documento = this.document;
+   this.factura.detalle = this.productos
+   this.factura.titulo = tituloDocumento;
+   this.factura.empresa = empresa;
+   this.factura.nombreUsuario= sessionStorage.getItem("nombreUsuario"); 
+    for (var i = 0; i < numeroImpresiones; i++) {
+    switch (tipoImpresion) {
+      case "TXT":
+        this.descargarArchivo(this.impresionService.imprimirFacturaTxt(this.factura, this.configuracion), tituloDocumento+'.txt');
+        break;
+      default:
+        alert("no tiene un tipo impresion");
+        //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
+        //    enPantalla, e);
+        break;
+    }
+    }
+  }
+
+  descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    const url = window.URL.createObjectURL(contenidoEnBlob);
+    const link = this.downloadZipLink.nativeElement;
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  asignarConsecutivo(numImpresiones: number) {
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      let empr = res;
+      console.log(empr);
+      let con: number;
+      let consecutivo: string;
+      switch (this.document.tipo_documento_id) {
+        case 9:
+          con = empr[0].consecutivo;
+          consecutivo = res[0].letra_consecutivo + con;
+          this.document.consecutivo_dian = consecutivo;
+          console.log("consecutivo documentoId: " + consecutivo);
+          this.tituloFactura = "FACTURA DE VENTA.";
+          break;
+        case 4:
+          this.document.consecutivo_dian = this.document.documento_id// es necesario asignar el
+          // consecutivo dian
+          console.log("consecutivo Cotizacion: " + this.document.consecutivo_dian);
+          this.tituloFactura = "No. DE COTIZACIÓN";
+          break;
+        default:
+          // log
+          console.log(empr[0].consecutivo);
+          con = empr[0].consecutivo + 1;
+          // dentro de try se valida si faltan 500 facturas para
+          // llegar hasta el tope
+
+          let topeConsecutivo = res[0].autorizacion_hasta;
+          let consegutivo = con;
+          if (consegutivo + 500 > topeConsecutivo) {
+            alert(" se esta agotando el consegutivo DIAN");
+          }
+          if (consegutivo > topeConsecutivo) {
+            alert("Se agotó el consecutivo DIAN");
+            return;
+          }
+
+          consecutivo = res[0].letra_consecutivo + con.toString();
+          console.log("consecutivo Dian: " + consecutivo);
+          this.document.consecutivo_dian = consecutivo;
+          this.tituloFactura = "FACTURA DE VENTA";
+          res[0].consecutivo = con;
+          this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
+            console.log("consecutivo actualizado");
+            console.log(this.document);
+            this.documentoService.updateDocumento(this.document).subscribe(res => {
+              if (res.code != 200) {
+                alert("error creando documento, por favor inicie nuevamente la creación del documento");
+                return;
+              }
+              this.imprimirFactura(numImpresiones, empr[0]);
+              this.limpiar();
+              this.scapeTecla(null);
+            });
+          });
+
+          break;
+      }
+    });
+  }
+
+
+  calcularProporcion() {
+    //TODO hay que calcular la proporcion, crear las tablas
+    //hacer los metodos de busqueda aqui
+  }
+
+  cancelarImpresion() {
     console.log("presiona cancelar impresion");
     this.divImprimirModal.nativeElement.classList.remove("d-block");
     this.divImprimirModal.nativeElement.classList.add("d-none");
     this.scapeTecla(null);
   }
-   
-  efectivoEnter(element){
-    let efectivo:number=element.value;
-    if(!isNaN(efectivo) && element.value!=''){
 
-      this.document.cambio=efectivo-this.document.total;
+  efectivoEnter(element) {
+    let efectivo: number = element.value;
+    if (!isNaN(efectivo) && element.value != '') {
+
+      this.document.cambio = efectivo - this.document.total;
     }
-    this.continuaImpresionPV.nativeElement.focus();
+    this.enPantallaPV.nativeElement.focus();
   }
 
-  impresoraEnter(){
-    if(this.TipoPagosActivo){
+  impresoraEnter() {
+    if (this.TipoPagosActivo) {
       this.tipoPagoPV.nativeElement.focus();
-    }else{
+    } else {
       this.efectovoPV.nativeElement.focus();
     }
   }
 
-  descuentoEnter(){
-    if(this.multipleImpresoraActivo){
+  descuentoEnter() {
+    if (this.multipleImpresoraActivo) {
       this.impresoraPV.nativeElement.focus();
-    }else{
-      if(this.TipoPagosActivo){
+    } else {
+      if (this.TipoPagosActivo) {
         this.tipoPagoPV.nativeElement.focus();
-      }else{
+      } else {
         this.efectovoPV.nativeElement.focus();
       }
     }
@@ -552,7 +821,7 @@ export class VentasDiaComponent implements OnInit {
     this.divImprimirModal.nativeElement.classList.remove("d-block");
     this.divImprimirModal.nativeElement.classList.add("d-none");
     this.siguientePV.nativeElement.focus();
-    
+
   }
 
   controlTeclas(event, element) {
@@ -659,7 +928,9 @@ export class VentasDiaComponent implements OnInit {
     this.precioPV.nativeElement.value = "";
     this.productos = [];
     this.descuentoPV.nativeElement.value = "";
-    this.efectovoPV.nativeElement.value="";
+    this.efectovoPV.nativeElement.value = "";
+    this.tituloFactura = "";
+    this.factura=new FacturaModel();
 
   }
 
@@ -756,16 +1027,16 @@ export class VentasDiaComponent implements OnInit {
       this.valorTipoPagoPV.nativeElement.classList.remove("d-none");
       this.valorTipoPagoPV.nativeElement.classList.add("d-block");
     }
-    
+
     if (this.descuentosActivo) {
       this.descuentoPV.nativeElement.focus();
     } else {
-      if(this.multipleImpresoraActivo){
+      if (this.multipleImpresoraActivo) {
         this.impresoraPV.nativeElement.focus();
-      }else{
-        if(this.TipoPagosActivo){
+      } else {
+        if (this.TipoPagosActivo) {
           this.tipoPagoPV.nativeElement.focus();
-        }else{
+        } else {
           this.efectovoPV.nativeElement.focus();
         }
       }
@@ -778,6 +1049,13 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
+
+  getImpresorasEmpresa(empresaId: number) {
+    this.clienteService.getImpresorasEmpresa(empresaId.toString()).subscribe(res => {
+      this.impresoraEmpresa = res;
+    });
+  }
+
   getclientes(empresaId: number) {
     this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
       this.clientes = res;
@@ -785,9 +1063,21 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
+  getConfiguracion(empresaId: number) {
+    this.clienteService.getConfiguracionByEmpresa(empresaId.toString()).subscribe(res => {
+      this.configuracion = res;
+    });
+  }
+
   getProductosByEmpresa(empresaId: number) {
     this.productoService.getProductosByEmpresa(empresaId.toString()).subscribe(res => {
       this.productosAll = res;
+    });
+  }
+
+  getTipoPago() {
+    this.clienteService.getTipoPago().subscribe(res => {
+      this.tipoPagosAll = res;
     });
   }
 

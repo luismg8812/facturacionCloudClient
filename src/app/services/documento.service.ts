@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { DocumentoModel } from '../model/documento.model';
+import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,4 +19,9 @@ export class DocumentoService {
   updateDocumento(documentoId:DocumentoModel){
     return this.http.post<any>(this.server_api+'/documento/updateDocumento',documentoId);
   }
+
+  saveTipoPagoDocumento(tipoPagoDocumentoId:TipoPagoDocumentoModel){
+    return this.http.post<any>(this.server_api+'/documento/createTipoPagoDocumento',tipoPagoDocumentoId);
+  }
+
 }
