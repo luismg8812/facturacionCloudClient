@@ -499,7 +499,7 @@ export class VentasDiaComponent implements OnInit {
         console.log("% descuento:" + desTemp);
       }
       if (desTemp < -50 || desTemp > 50) {
-        alert("El descuento no puede ser mayor o menor al 15%");
+        alert("El descuento no puede ser mayor o menor al 50%");
         return;
       }
     }
@@ -1149,6 +1149,12 @@ export class VentasDiaComponent implements OnInit {
   ocultarGramera() {
     this.grameraPV.nativeElement.classList.remove("d-block");
     this.grameraPV.nativeElement.classList.add("d-none");
+  }
+
+  formatearNumber(number:number){
+    let formato:string="";
+    formato=new Intl.NumberFormat().format(number);
+    return formato;
   }
 
 }

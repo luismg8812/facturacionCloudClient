@@ -184,9 +184,9 @@
                         <tr *ngFor="let producto of productos">
                             <td>{{producto.producto_id}}</td>
                             <td>{{producto.nombre_producto}}</td>
-                            <td>{{producto.cantidad}}</td>
-                            <td>{{producto.unitario}}</td>
-                            <td>{{producto.parcial}}</td>
+                            <td>{{formatearNumber(producto.cantidad)}}</td>
+                            <td>{{formatearNumber(producto.unitario)}}</td>
+                            <td>{{formatearNumber(producto.parcial)}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -194,23 +194,26 @@
             <div class="form-row col-md-6 col-sm-6 border border-primary">
                 <div class="form-group col-md-4 col-sm-6">
                     Peso kg:
-                    <h3>{{document.peso_total}}</h3>
+                    <h3>{{formatearNumber(document.peso_total)}}</h3>
                 </div>
                 <div class="form-group col-md-4 col-sm-6">
                     Vr Exento:
-                    <h3>{{document.excento}}</h3>
+                    <h3>{{formatearNumber(document.excento)}}</h3>
                 </div>
                 <div class="form-group col-md-4 col-sm-6">
                     Vr Gravado:
-                    <h3>{{document.gravado}}</h3>
+                    <h3>{{formatearNumber(document.gravado)}}</h3>
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
                     Vr Iva:
-                    <h3>{{document.iva}}</h3>
+                    <h3>{{formatearNumber(document.iva)}}</h3>
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
                     Total:
-                    <h3 style="color:red">{{document.total}}</h3>
+                    <h3 style="color:red">
+                        {{formatearNumber(document.total)
+                        }}
+                    </h3>
                 </div>
             </div>
         </div>
