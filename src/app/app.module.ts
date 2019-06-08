@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { EmpresaComponent } from './empresa/empresa.component';
 import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
+import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
     MenuComponent,
     UsuarioComponent,
     EmpresaComponent,
-    VentasDiaComponent
+    VentasDiaComponent,
+    CuadreCajaComponent
   ],
   imports: [
     BrowserModule,

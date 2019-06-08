@@ -30,6 +30,12 @@ export class UsuarioService {
     return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuario?usuarioId='+usuarioId+'&menuId='+menuId);
   }
 
+  public opcionPuntoVentaByUsuario(usuarioId:string){
+    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionPuntoVentaByUsuario?usuarioId='+usuarioId);
+  }
+
+  
+
   
   public opcionUsuarioByUsuarioSinMenu(usuarioId:string){
     return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuarioSinMenu?usuarioId='+usuarioId);

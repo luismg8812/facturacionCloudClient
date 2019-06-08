@@ -19,6 +19,7 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { ImpresionService } from '../services/impresion.service';
 import { FacturaModel } from '../vo/factura.model';
 import { EmpresaModel } from '../model/empresa.model';
+import { SubMenuModel } from '../model/submenu.model';
 
 
 @Component({
@@ -77,6 +78,7 @@ export class VentasDiaComponent implements OnInit {
   public imp: string;
   public productos: Array<DocumentoDetalleModel>;
   public factura:FacturaModel;
+  public opciones: Array<SubMenuModel>;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -132,6 +134,8 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("valorTipoPagoPV") valorTipoPagoPV: ElementRef;
   @ViewChild("efectovoPV") efectovoPV: ElementRef;
   @ViewChild("continuaImpresionPV") continuaImpresionPV: ElementRef;
+  @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
+  
 
   ngOnInit() {
     this.empresaId = Number(sessionStorage.getItem("empresa_id"));
@@ -159,6 +163,7 @@ export class VentasDiaComponent implements OnInit {
     this.getConfiguracion(this.empresaId);
     this.getActivaciones(this.usuarioId);
     this.getImpresorasEmpresa(this.empresaId);
+    this.opcionesSubmenu();
   }
 
   clienteSelectFun(element) {
@@ -370,6 +375,16 @@ export class VentasDiaComponent implements OnInit {
       this.enterContinuarImpresion(element);
 
     }
+
+    if (element.id == "cuadreCajaPV") {
+     // alert("cuadre de caja");
+      this.cuadreCajaModal.nativeElement.click();
+      //this.continuaImpresionPV.nativeElement.focus();
+      //this.enterContinuarImpresion(element);
+
+    }
+
+    
   }
 
   enterContinuarImpresion(element) {
@@ -902,6 +917,9 @@ export class VentasDiaComponent implements OnInit {
     if (event.keyCode == 73) { //cuando se presiona la tacla i 		 
       this.imprimirModal();
     }
+    if (event.keyCode == 79) { //cuando se presiona la tacla f
+      alert("presiona la tecla o");
+    }
   }
 
   limpiar() {
@@ -1046,6 +1064,14 @@ export class VentasDiaComponent implements OnInit {
   getActivaciones(user: number) {
     this.usuarioService.getActivacionByUsuario(user.toString()).subscribe(res => {
       this.activaciones = res;
+    });
+  }
+
+  public opcionesSubmenu() {
+    let usuario_id = sessionStorage.getItem('usuario_id');
+    this.usuarioService.opcionPuntoVentaByUsuario(usuario_id).subscribe((res) => {
+      this.opciones=res;
+      console.log(this.opciones);
     });
   }
 
