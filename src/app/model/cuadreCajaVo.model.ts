@@ -1,4 +1,4 @@
-export class DocumentoDetalleVoModel {
+export class CuadreCajaVoModel {
     public totalFacturas: number;
     public documentosNoImpresos: number;
     public abonosDia: number;
@@ -24,8 +24,8 @@ export class DocumentoDetalleVoModel {
     public diferencia: number;
 
     constructor(){
-        this. totalFacturas=0;
-        this. documentosNoImpresos=0;
+        this.totalFacturas=0;
+        this.documentosNoImpresos=0;
         this. abonosDia=0;
         this. avanceEfectivo=0;
         this. chequesRecogidos=0;

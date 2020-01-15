@@ -9,10 +9,11 @@
     <div class="modal-body">
         <div class="row">
             <div class="col col-md-3">
+                
               Total facturas
             </div>
             <div class="col col-md-3">
-                 <input  class="form-control">
+                 <input  class="form-control" [(ngModel)]="cuadreCajaVo.totalFacturas" readonly>
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -22,7 +23,7 @@
                 Doc. No impresos
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.documentosNoImpresos" readonly>
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -32,7 +33,7 @@
                 Abonos del día
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.abonosDia" readonly>
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -42,7 +43,7 @@
                 Avance Efectivo
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.avanceEfectivo" readonly>
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -52,7 +53,7 @@
                 Cheques recogidos
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.chequesRecogidos" readonly>
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -62,7 +63,7 @@
                 Otros 
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.otros" (blur)="calcularTotalIngresos()">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -72,7 +73,7 @@
                 Base
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.base" (blur)="calcularTotalIngresos()">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -82,7 +83,7 @@
                 Consignaciones
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.consignaciones" readonly>
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -94,7 +95,7 @@
             <div class="col col-md-3">
                 
               </div>
-              <div class="col col-md-3">  <input  class="form-control"></div>
+              <div class="col col-md-3">  <input  class="form-control" [(ngModel)]="cuadreCajaVo.totalIngresos" readonly></div>
               <div class="col col-md-3"></div> 
         </div>
         <div class="row">
@@ -102,7 +103,7 @@
                 Vr. en fajos
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.fajos">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -112,7 +113,7 @@
                 Moneda
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.moneda">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -122,7 +123,7 @@
                 Efectivo
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.efectivo">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -132,7 +133,7 @@
                 Cheques
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.cheques">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -142,7 +143,7 @@
                 Tarjetas de crédito y débito
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.tarjetas">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -152,7 +153,7 @@
                 Varios
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.varios">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -162,7 +163,7 @@
                 Vales
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.vales">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -172,7 +173,7 @@
                 Cartera
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.cartera">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -182,7 +183,7 @@
                 Gastado
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.gastado">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -192,7 +193,7 @@
                 Nomina
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.nomina">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -202,7 +203,7 @@
                 Descuento
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.descuento">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -212,7 +213,7 @@
                 Propina
             </div>
             <div class="col col-md-3">
-                  <input  class="form-control">
+                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.propina">
               </div>
               <div class="col col-md-3"></div>
               <div class="col col-md-3"></div> 
@@ -224,7 +225,7 @@
             <div class="col col-md-3">
                 
               </div>
-              <div class="col col-md-3">  <input  class="form-control"></div>
+              <div class="col col-md-3">  <input  class="form-control" [(ngModel)]="cuadreCajaVo.totalCaja"></div>
               <div class="col col-md-3"></div> 
         </div>
         <div class="row">
@@ -235,7 +236,7 @@
                 
               </div>
               <div class="col col-md-3"></div>
-              <div class="col col-md-3">  <input  class="form-control"></div> 
+              <div class="col col-md-3">  <input  class="form-control" [(ngModel)]="cuadreCajaVo.diferencia"></div> 
         </div>
     </div>
     <div class="modal-footer">
