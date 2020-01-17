@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProductoModel } from '../model/producto.model';
 import {HttpClient} from '@angular/common/http';
+import { ParametrosModel } from '../model/parametros.model';
 
 
 @Injectable({
@@ -10,7 +11,8 @@ export class ProductoService {
 
   constructor(public http:HttpClient) { }
 
-  public server_api ='https://facturacioncloud2019.herokuapp.com';
+  parametros: ParametrosModel = new ParametrosModel;
+  public server_api =this.parametros.serverUrl;
   public getProductosByEmpresa(empresaId:string){
     return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductosByEmpresa?empresaId='+empresaId);
   }

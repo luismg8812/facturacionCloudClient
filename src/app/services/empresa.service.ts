@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {PagosEmpresaModel} from '../model/pagosEmpresa.model';
 import { EmpresaModel } from '../model/empresa.model';
+import { ParametrosModel } from '../model/parametros.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmpresaService {
 
-  public server_api ='https://facturacioncloud2019.herokuapp.com';
+  parametros: ParametrosModel = new ParametrosModel;
+  public server_api =this.parametros.serverUrl;
   constructor(public http:HttpClient) { }
 
   public pagosEmpresaByEmpresa(empresa_id:string){

@@ -6,13 +6,15 @@ import { SubMenuModel } from '../model/submenu.model';
 import { RolModel } from '../model/rol.model';
 import { RolUsuarioModel } from '../model/rolUsuario.model';
 import { ActivacionModel } from '../model/activacion';
+import { ParametrosModel } from '../model/parametros.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
 
-  public server_api ='https://facturacioncloud2019.herokuapp.com';
+  parametros: ParametrosModel = new ParametrosModel;
+  public server_api =this.parametros.serverUrl;
   constructor(public afauth: AngularFireAuth, public http:HttpClient) { }
 
   loginUsuario(usuario: string, clave: string) {

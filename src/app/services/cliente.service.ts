@@ -4,6 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import { ConfiguracionModel } from '../model/configuracion.model';
 import { TipoPagoModel } from '../model/tipoPago.model';
 import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
+import { ParametrosModel } from '../model/parametros.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 export class ClienteService {
 
   constructor(public http:HttpClient) { }
-
-  public server_api ='https://facturacioncloud2019.herokuapp.com';
+  parametros: ParametrosModel = new ParametrosModel;
+  public server_api =this.parametros.serverUrl;
   public getClientesByEmpresa(empresaId:string){
     return this.http.get<ClienteModel[]>(this.server_api+'/cliente/getClientesByEmpresa?empresaId='+empresaId);
   }

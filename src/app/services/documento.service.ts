@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { DocumentoModel } from '../model/documento.model';
 import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 import { CuadreCajaVoModel } from '../model/cuadreCajaVo.model';
+import { ParametrosModel } from '../model/parametros.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ export class DocumentoService {
 
   constructor(public http: HttpClient) { }
 
-  public server_api = 'https://facturacioncloud2019.herokuapp.com';
-
+  parametros: ParametrosModel = new ParametrosModel;
+  public server_api =this.parametros.serverUrl;
   saveDocumento(documentoId: DocumentoModel) {
     return this.http.post<any>(this.server_api + '/documento/createDocumento', documentoId);
   }
