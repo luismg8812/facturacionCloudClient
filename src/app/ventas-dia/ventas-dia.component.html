@@ -8,7 +8,7 @@
         <div class="form-group col-md-2 col-sm-2">Fecha: {{document.fecha_registro | date: 'dd/MM/yyyy'}} </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
-                (keyup.enter)="enterTecla(clientePV)" (change)="enterTecla(clientePV)"
+                 (change)="enterTecla(clientePV)"
                 (keydown.esc)="scapeTecla(clientePV)">
             <datalist id="browsers">
                 <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
