@@ -167,21 +167,24 @@ export class VentasDiaComponent implements OnInit {
   }
 
   clienteSelectFun(element) {
+    console.log(this.clientes);
     if (this.clienteObligatorioActivo && element.value == '') {
       alert("El cliente es obligatorio");
       return;
     } else {
-      if (element.value == "") {
+      let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
+      
+      if (cliente==undefined) {
         alert("se creará cliente");
-      } else {
-        let cliente = this.clientes.find(product => product.nombre === element.value);
+      } else {  
+        console.log(cliente);
         this.clienteSelect = cliente.cliente_id;
         this.document.cliente_id = this.clienteSelect;
         this.factura.cliente=cliente;
       }
 
     }
-    console.log("cliente select:" + element.value);
+    console.log("cliente select:" +this.clienteSelect);
     if (this.guiaTransporteActivo) {
       this.tipoDocumentoPV.nativeElement.focus();
     } else {
@@ -1085,8 +1088,9 @@ export class VentasDiaComponent implements OnInit {
   getclientes(empresaId: number) {
     this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
       this.clientes = res;
-
+      console.log("lista de clientes cargados: "+this.clientes.length);
     });
+    
   }
 
   getConfiguracion(empresaId: number) {

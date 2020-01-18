@@ -93,7 +93,7 @@ export class UsuarioComponent implements OnInit {
         if (res.code == 200) {
           $('#exampleModal').modal('hide');
         } else {
-          alert("Algo salio mal Creando el usuario... Comunicate con soporte");
+          alert("Algo salio mal modificando el usuario el usuario... Comunicate con soporte");
           return;
         }
       });
