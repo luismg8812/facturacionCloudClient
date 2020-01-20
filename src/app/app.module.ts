@@ -15,6 +15,7 @@ import { UsuarioComponent } from './usuario/usuario.component';
 import { EmpresaComponent } from './empresa/empresa.component';
 import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
+import { OtComponent } from './ot/ot.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
     UsuarioComponent,
     EmpresaComponent,
     VentasDiaComponent,
-    CuadreCajaComponent
+    CuadreCajaComponent,
+    OtComponent
   ],
   imports: [
     BrowserModule,
