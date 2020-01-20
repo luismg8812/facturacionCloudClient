@@ -1,0 +1,98 @@
+<app-menu></app-menu>
+<div class="container-fluid main">
+  <div class="form-row">
+    <h4 class="mt-3">Orden de trabajo</h4>
+  </div>
+  <br />
+  <div class="form-row">
+    <div class="form-group col-md-1 col-sm-5 ">
+      <button type="button" class="btn btn-primary btn-sm" id="anterior">Anterior</button>
+    </div>
+    <div class="form-group col-md-1 col-sm-5 ">
+      <button type="button" class="btn btn-primary btn-sm" id="siguiente">Siguiente</button>
+    </div>
+    <div class="form-group col-md-1 col-sm-5 ">
+      <button type="button" class="btn btn-primary btn-sm" id="buscar">Buscar</button>
+    </div>
+    <div class="form-group col-md-1 col-sm-5 ">
+      <button type="button" class="btn btn-primary btn-sm" id="Nueva" (click)="nuevaOrden()">Nueva</button>
+    </div>
+    <div class="form-group col-md-1 col-sm-5 ">
+      <button type="button" class="btn btn-primary btn-sm" id="buscar">Buscar</button>
+    </div>
+    <div class="form-group col-md-1 col-sm-5 ">
+      <button type="button" class="btn btn-primary btn-sm" id="imprimir">Imprimir</button>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-4">
+      <b>Usuario Que crea:</b> {{nombreUsuario}}
+    </div>
+    <div class="form-group col-md-4">
+      <b># Orden de pedido:</b> {{documento.documento_id}}
+    </div>
+    <div class="form-group col-md-4">
+      <b>Fecha entrada:</b> {{documento.fecha_registro}}
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-4 col-sm-2">
+      <b>Fecha entrega:</b> {{documento.fecha_entrega}}
+    </div>
+    <div class="form-group col-md-4 col-sm-2">
+      <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
+        (change)="clienteSelectFun(clientePV)">
+      <datalist id="browsers">
+        <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
+          Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
+        </option>
+      </datalist>
+    </div>
+    <div class="form-group col-md-4 col-sm-2">
+      <input class="form-control" id="placa" placeholder="* Placa" name="placa" #placa required  (blur)="agregarPlaca(placa)">
+    </div>
+  </div>
+  <div class="form-row">
+    <textarea class="form-control " id="descripcionCliente" #descripcionCliente placeholder="Descripción cliente"
+      required  (blur)="agregarDescripcionCliente(descripcionCliente)"></textarea>
+  </div>
+  <br />
+  <div class="form-row">
+    <textarea class="form-control " (blur)="agregarObservacion(observacion)" id="observacion" #observacion placeholder="Observación" required></textarea>
+  </div>
+  <br/>
+  <div class="form-row">
+    <div class="form-group col-md-3 col-sm-5 ">
+      <button type="button" class="btn btn-primary btn-sm" id="imprimir">Agregar repuesto</button>
+    </div>
+  </div>
+  
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Opciones</th>
+        <th scope="col">Id producto</th>
+        <th scope="col">Nombre Producto</th>
+        <th scope="col">Fecha ingreso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ordenes of ordenesList">
+        <th scope="row">
+          <button type="button" (click)="editarUsuarios(user)" class="btn btn-secondary btn-sm" data-toggle="modal"
+            data-target="#exampleModal">
+            Editar
+          </button>
+          <button type="button" (click)="opcionesPorUsuario(user)" class="btn  btn-secondary btn-sm" data-toggle="modal"
+            data-target="#exampleModal2">
+            Eliminar
+          </button>
+        </th>
+
+        <td>{{user.nombre}}</td>
+        <td>{{nameRol(user.usuario_id)}}</td>
+        <td>{{user.correo}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

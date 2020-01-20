@@ -7,6 +7,7 @@ export class DocumentoModel {
     public empleado_id:number;
     public empresa_id:number;
     public fecha_registro:Date;
+    public fecha_entrega:Date;
     public consecutivo_dian:string;
     public impreso:number;
     public total:number;
@@ -30,7 +31,8 @@ export class DocumentoModel {
     public letra_consecutivo:string;
     public invoice:number;
     public anulado:number;
-    
+    public descripcion_cliente:string;
+    public descripcion_trabajador:string;
 
     constructor(){
         this. documento_id="";
@@ -41,6 +43,7 @@ export class DocumentoModel {
         this. empleado_id=null;
         this.empresa_id=null;
         this. fecha_registro=new Date;
+        this. fecha_entrega=new Date;
         this. consecutivo_dian="";
         this. impreso=0;
         this. total=0;
@@ -64,6 +67,8 @@ export class DocumentoModel {
         this. letra_consecutivo="";
         this. invoice=0;
         this. anulado=0;
+        this.descripcion_cliente="";
+        this.descripcion_trabajador="";
     };
 }
 
