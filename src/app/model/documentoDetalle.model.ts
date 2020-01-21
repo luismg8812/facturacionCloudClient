@@ -12,6 +12,7 @@ export class DocumentoDetalleModel {
     public costo_producto:number;
     public impuesto_producto:number;
     public peso_producto:number;
+    public descripcion:string;
     
     constructor(){
        this.documento_detalle_id=null;
@@ -27,5 +28,6 @@ export class DocumentoDetalleModel {
        this.nombre_producto="";
        this.impuesto_producto=0.0;
        this.peso_producto=0;
+       this.descripcion="";
     }
 }
