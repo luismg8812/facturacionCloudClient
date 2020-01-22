@@ -6,17 +6,14 @@
   <br />
   <div class="form-row">
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="anterior">Anterior</button>
+      <button type="button" class="btn btn-primary btn-sm" id="anterior" (click)="teclaAnteriorSiguiente('anterior')">Anterior</button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="siguiente">Siguiente</button>
+      <button type="button" class="btn btn-primary btn-sm" id="siguiente" (click)="teclaAnteriorSiguiente('siguiente')">Siguiente</button>
     </div>
   
     <div class="form-group col-md-2 col-sm-2 ">
       <button type="button" class="btn btn-primary btn-sm" id="Nueva" (click)="nuevaOrden()">Nueva Orden de trabajo</button>
-    </div>
-    <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="buscar">Buscar</button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
       <button type="button" class="btn btn-primary btn-sm" id="imprimir">Imprimir</button>
@@ -47,54 +44,57 @@
       </datalist>
     </div>
     <div class="form-group col-md-4 col-sm-2">
-      <input class="form-control" id="placa" placeholder="* Placa" name="placa" #placa required  (blur)="agregarPlaca(placa)">
+      <input class="form-control" id="placa" placeholder="* Placa" name="placa" #placa required
+        (blur)="agregarPlaca(placa)">
     </div>
   </div>
   <div class="form-row">
     <textarea class="form-control " id="descripcionCliente" #descripcionCliente placeholder="Descripción cliente"
-      required  (blur)="agregarDescripcionCliente(descripcionCliente)"></textarea>
+      required (blur)="agregarDescripcionCliente(descripcionCliente)"></textarea>
   </div>
   <br />
   <div class="form-row">
-    <textarea class="form-control " (blur)="agregarObservacion(observacion)" id="observacion" #observacion placeholder="Observación" required></textarea>
+    <textarea class="form-control " (blur)="agregarObservacion(observacion)" id="observacion" #observacion
+      placeholder="Observación" required></textarea>
   </div>
-  <br/>
+  <br />
   <div class="form-row">
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Agregar repuesto
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Agregar repuesto</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="form-group col-md-6 col-sm-2">
-            <textarea class="form-control " id="item" #item placeholder="Nombre repuesto"
-            required  ></textarea>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+      Agregar repuesto
+    </button>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Agregar repuesto</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <div class="form-group col-md-6 col-sm-2">
-            <input class="form-control" id="cantidad"  type="number" placeholder="* Cantidad" name="cantidad" #cantidad required >
+          <div class="modal-body">
+            <div class="form-row">
+              <div class="form-group col-md-6 col-sm-2">
+                <textarea class="form-control " id="item" #item placeholder="Nombre repuesto" required></textarea>
+              </div>
+              <div class="form-group col-md-6 col-sm-2">
+                <input class="form-control" id="cantidad" type="number" placeholder="* Cantidad" name="cantidad"
+                  #cantidad required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="agregardetalle(item,cantidad)">Agregar</button>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)= "agregardetalle(item,cantidad)">Agregar</button>
-      </div>
     </div>
   </div>
-</div>
-  </div>
-  
+  <br />
   <table class="table table-hover">
     <thead>
       <tr>
@@ -107,8 +107,8 @@
     <tbody>
       <tr *ngFor="let ordenes of detallesList">
         <th scope="row">
-          <button type="button" (click)="editarItem(ordenes,cantidad,item)" class="btn btn-secondary btn-sm" data-toggle="modal"
-            data-target="#exampleModal">
+          <button type="button" (click)="editarItem(ordenes,cantidad,item)" class="btn btn-secondary btn-sm"
+            data-toggle="modal" data-target="#exampleModal">
             Editar
           </button>
           <button type="button" (click)="eliminarItem(ordenes)" class="btn  btn-secondary btn-sm" data-toggle="modal"
