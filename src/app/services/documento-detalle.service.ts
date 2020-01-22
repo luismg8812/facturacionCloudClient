@@ -15,4 +15,12 @@ export class DocumentoDetalleService {
   saveDocumentoDetalle(documentoDetalleId:DocumentoDetalleModel){
     return this.http.post<any>(this.server_api+'/documentoDetalle/createDocumentoDetalle',documentoDetalleId);
   }
+
+  updateDocumentoDetalle(documentoDetalleId:DocumentoDetalleModel){
+    return this.http.post<any>(this.server_api+'/documentoDetalle/updateDocumentoDetalle',documentoDetalleId);
+  }
+
+  getDocumentoDetalleByDocumento(documentoId) {
+    return this.http.get<DocumentoDetalleModel[]>(this.server_api + '/documentoDetalle/getDocumentoDetalleByDocumento?documento_id='+documentoId);
+  }
 }

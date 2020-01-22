@@ -19,10 +19,11 @@ export class OtComponent implements OnInit {
   public clientes: Array<ClienteModel>;
   public empresaId: number;
   public documento: DocumentoModel = new DocumentoModel();
-  public ordenesList: Array<DocumentoModel>;
+  public ordenesList: Array<DocumentoModel> =[];
   public usuarioId: number;
   public detallesList: Array<DocumentoDetalleModel> = [];
-  public detalleSelect: DocumentoDetalleModel = new DocumentoDetalleModel();;
+  public detalleSelect: DocumentoDetalleModel = new DocumentoDetalleModel();
+  public indexSelect: number = 0;
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
@@ -105,7 +106,7 @@ export class OtComponent implements OnInit {
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
     this.item.nativeElement.value = "";
-    
+    this.indexSelect=0;
   }
   agregarObservacion(element) {
     if (this.documento.documento_id == "") {
@@ -182,14 +183,14 @@ export class OtComponent implements OnInit {
     } else {
       this.detalleSelect.descripcion = value;
       this.detalleSelect.cantidad = cantidad.value;
-      //this.documentoDetalleService.saveDocumentoDetalle(this.detalleSelect).subscribe(res => {
-        //if (res.code == 200) {
-          //this.detalleSelect.documento_detalle_id = res.documento_detalle_id;
-          //this.detallesList.unshift(docDetalle);
-        //} else {
-         // alert("Error agregando repuesto: " + res.error);
-       // }
-      //});
+      this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
+        if (res.code == 200) {
+          //this.documentoService.
+          alert("si edita");
+        } else {
+          alert("Error agregando repuesto: " + res.error);
+        }
+      });
       this.detalleSelect = new DocumentoDetalleModel();
     }
 
@@ -205,5 +206,63 @@ export class OtComponent implements OnInit {
     this.detalleSelect = articulo;
     $('#exampleModal').modal('show');
   }
+
+  teclaAnteriorSiguiente(apcion:string){
+     
+    if(this.ordenesList.length==0){   
+      
+      let tipoDocumentoId: Array<number>=[11];
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId,this.empresaId.toString(),this.usuarioId.toString(),'').subscribe(res => {
+        this.ordenesList = res;
+        console.log("lista de docuemntos cargados: "+this.ordenesList.length);
+        if(this.ordenesList.length==0){
+          alert("No existen documentos");
+          return;
+        }
+        console.log(apcion+":"+this.ordenesList.length);
+        this.documento = this.ordenesList[this.ordenesList.length-1];
+        this.indexSelect=this.ordenesList.length-1;
+        this.asignarValores(this.documento.documento_id);
+        return;      
+      });  
+    }else{
+      if('anterior'==apcion && this.indexSelect!=0){
+        this.indexSelect=this.indexSelect-1;
+        this.documento = this.ordenesList[this.indexSelect];
+      }
+      if('anterior' ==apcion && this.indexSelect==-1){
+        alert("No existen mas documentos");
+      }
+
+      if('siguiente'==apcion && this.indexSelect!=this.ordenesList.length-1){
+        this.indexSelect=this.indexSelect+1;
+        this.documento = this.ordenesList[this.indexSelect];
+      }
+      if('siguiente'==apcion && this.indexSelect==this.ordenesList.length){
+        alert("No existen mas documentos");
+      }
+
+    }
+    
+    console.log ("actual:"+this.documento.documento_id  );
+    this.asignarValores(this.documento.documento_id);
+  }
+
+  teclaSiguiente(){
+   
+   }
+
+   asignarValores(documento_id:string){
+    if(documento_id!=''){
+      this.placa.nativeElement.value = this.documento.detalle_entrada;
+    this.clientePV.nativeElement.value = this.documento.cliente_id;
+    this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
+    this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
+      this.documentoDetalleService.getDocumentoDetalleByDocumento(documento_id).subscribe(res => {
+        this.detallesList = res;
+        console.log("detalles encontrados:"+res.length );
+      });  
+    }
+   }
 
 }
