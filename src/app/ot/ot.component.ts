@@ -230,18 +230,10 @@ export class OtComponent implements OnInit {
         this.indexSelect=this.indexSelect-1;
         this.documento = this.ordenesList[this.indexSelect];
       }
-      if('anterior' ==apcion && this.indexSelect==-1){
-        alert("No existen mas documentos");
-      }
-
       if('siguiente'==apcion && this.indexSelect!=this.ordenesList.length-1){
         this.indexSelect=this.indexSelect+1;
         this.documento = this.ordenesList[this.indexSelect];
       }
-      if('siguiente'==apcion && this.indexSelect==this.ordenesList.length){
-        alert("No existen mas documentos");
-      }
-
     }
     
     console.log ("actual:"+this.documento.documento_id  );
@@ -255,7 +247,13 @@ export class OtComponent implements OnInit {
    asignarValores(documento_id:string){
     if(documento_id!=''){
       this.placa.nativeElement.value = this.documento.detalle_entrada;
-    this.clientePV.nativeElement.value = this.documento.cliente_id;
+      let cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
+      let nombre ="";
+      if(cliente!=undefined){
+        nombre=cliente.nombre;
+      }
+      console.log(cliente);
+    this.clientePV.nativeElement.value = nombre ;
     this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
     this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
       this.documentoDetalleService.getDocumentoDetalleByDocumento(documento_id).subscribe(res => {
