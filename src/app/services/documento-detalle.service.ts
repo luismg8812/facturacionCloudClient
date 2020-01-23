@@ -20,7 +20,7 @@ export class DocumentoDetalleService {
     return this.http.post<any>(this.server_api+'/documentoDetalle/updateDocumentoDetalle',documentoDetalleId);
   }
 
-  getDocumentoDetalleByDocumento(documentoId) {
+  getDocumentoDetalleByDocumento(documentoId:string) {
     return this.http.get<DocumentoDetalleModel[]>(this.server_api + '/documentoDetalle/getDocumentoDetalleByDocumento?documento_id='+documentoId);
   }
 }
