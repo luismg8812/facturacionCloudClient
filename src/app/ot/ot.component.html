@@ -6,10 +6,12 @@
   <br />
   <div class="form-row">
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="anterior" (click)="teclaAnteriorSiguiente('anterior')">Anterior</button>
+      <button type="button" class="btn btn-primary btn-sm" id="anterior"
+        (click)="teclaAnteriorSiguiente('anterior')">Anterior</button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="siguiente" (click)="teclaAnteriorSiguiente('siguiente')">Siguiente</button>
+      <button type="button" class="btn btn-primary btn-sm" id="siguiente"
+        (click)="teclaAnteriorSiguiente('siguiente')">Siguiente</button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
       <button type="button" class="btn btn-primary btn-sm" id="buscar">Buscar</button>
@@ -65,7 +67,7 @@
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
       Agregar repuesto
     </button>
-    
+
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
       aria-hidden="true">
@@ -113,10 +115,11 @@
             data-toggle="modal" data-target="#exampleModal">
             Editar
           </button>
-          <button type="button" (click)="eliminarItem(ordenes)" class="btn  btn-secondary btn-sm" data-toggle="modal"
-            data-target="#exampleModal2">
+          <!-- Button trigger modal -->
+          <button type="button" (click)="eliminarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#eliminarModal">
             Eliminar
           </button>
+          
         </th>
 
         <td>{{ordenes.documento_detalle_id}}</td>
@@ -126,5 +129,26 @@
     </tbody>
   </table>
 
+  <!-- Modal -->
+  <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Eliminar Repuesto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Estas seguro de eliminar este repuesto?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" (click)="eliminar()">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>

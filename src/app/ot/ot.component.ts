@@ -186,7 +186,7 @@ export class OtComponent implements OnInit {
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code == 200) {
           //this.documentoService.
-          alert("si edita");
+         
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
@@ -263,4 +263,33 @@ export class OtComponent implements OnInit {
     }
    }
 
+   eliminarItem(articulo){
+
+    this.detalleSelect = articulo;
+    
+   }
+
+   isBigEnough(element, index, array) { 
+     
+    return (element != this.detalleSelect); 
+ } 
+           
+ 
+
+   eliminar(){
+    this.detalleSelect.estado=0; 
+    this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
+      if (res.code == 200) {
+        this.documentoDetalleService.getDocumentoDetalleByDocumento(this.documento.documento_id).subscribe(res => {
+          this.detallesList = res;
+          this.detalleSelect = new DocumentoDetalleModel();
+          console.log("detalles encontrados:"+res.length );
+        });  
+      } else {
+        alert("Error agregando repuesto: " + res.error);
+      }
+    });
+    $('#eliminarModal').modal('hide');
+    
+   }
 }
