@@ -6,21 +6,24 @@
   <br />
   <div class="form-row">
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="anterior"
+      <button type="button" class="btn btn-primary " id="anterior"
         (click)="teclaAnteriorSiguiente('anterior')">Anterior</button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="siguiente"
+      <button type="button" class="btn btn-primary " id="siguiente"
         (click)="teclaAnteriorSiguiente('siguiente')">Siguiente</button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="buscar">Buscar</button>
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#buscarModal">
+        Buscar
+      </button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="Nueva" (click)="nuevaOrden()">Nueva</button>
+      <button type="button" class="btn btn-primary " id="Nueva" (click)="nuevaOrden()">Nueva</button>
     </div>
     <div class="form-group col-md-1 col-sm-5 ">
-      <button type="button" class="btn btn-primary btn-sm" id="imprimir">Imprimir</button>
+      <button type="button" class="btn btn-primary " id="imprimir">Imprimir</button>
     </div>
   </div>
   <div class="form-row">
@@ -58,8 +61,16 @@
   </div>
   <br />
   <div class="form-row">
-    <textarea class="form-control " (blur)="agregarObservacion(observacion)" id="observacion" #observacion
-      placeholder="Observación" required></textarea>
+    <div class="form-group col-md-6 col-sm-1">
+      <textarea class="form-control " (blur)="agregarObservacion(observacion)" id="observacion" #observacion
+        placeholder="Observación" required></textarea>
+    </div>
+    <div class="form-group col-md-6 col-sm-1">
+      <div class="custom-file">
+        <input type="file" class="custom-file-input" capture="camera" id="customFileLang" lang="es">
+        <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+      </div>
+    </div>
   </div>
   <br />
   <div class="form-row">
@@ -89,6 +100,16 @@
                   #cantidad required>
               </div>
             </div>
+            <br />
+            <div class="form-row">
+
+              <div class="form-group col-md-12 col-sm-1">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" capture="camera" id="fotoRepuesto" lang="es">
+                  <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -116,10 +137,11 @@
             Editar
           </button>
           <!-- Button trigger modal -->
-          <button type="button" (click)="eliminarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#eliminarModal">
+          <button type="button" (click)="eliminarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+            data-target="#eliminarModal">
             Eliminar
           </button>
-          
+
         </th>
 
         <td>{{ordenes.documento_detalle_id}}</td>
@@ -147,6 +169,77 @@
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <button type="button" class="btn btn-primary" (click)="eliminar()">Eliminar</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal buscar -->
+  <div class="modal fade  bd-example-modal-xl" id="buscarModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Buscar Orden de trabajo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-1">
+              Fecha Inicial
+              <input class="form-control" type="date" value="2020-01-01" id="fechaIni" #fechaIni>
+            </div>
+            <div class="form-group col-md-6 col-sm-1">
+              Fecha Final
+              <input class="form-control" type="date" value="2020-12-31" id="fechaFin" #fechaFin>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-2">
+              <input list="browsers2" name="clienteBuscarPV" #clienteBuscarPV placeholder="Cliente" class="form-control"
+                id="clienteBuscarPV">
+              <datalist id="browsers2">
+                <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
+                  Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
+                </option>
+              </datalist>
+            </div>
+            <div class="form-group col-md-6 col-sm-2">
+              <input class="form-control" id="placaBuscar" placeholder="Placa" name="placaBuscar" #placaBuscar required>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary"
+            (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar</button>
+          <br />
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Opciones</th>
+                <th scope="col"># Orden</th>
+                <th scope="col">Nombre Cliente</th>
+                <th scope="col">Placa</th>
+                <th scope="col">Encargado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ordenes of ordenesBuscarList">
+                <th scope="row">
+                  <button type="button"  class="btn btn-secondary btn-sm"
+                    data-toggle="modal" data-target="#exampleModal">
+                    Editar
+                  </button>
+                </th>
+                <td>{{ordenes.documento_id}}</td>
+                <td>{{nombreCliente(ordenes.cliente_id)}}</td>
+                <td>{{ordenes.detalle_entrada}}</td>
+                <td>{{nombreUsuarioFiltro(ordenes.usuario_id)}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>

@@ -6,6 +6,8 @@ import { DocumentoService } from '../services/documento.service';
 import { DocumentoDetalleService } from '../services/documento-detalle.service';
 import { CalculosService } from '../services/calculos.service';
 import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
+import { UsuarioService } from '../services/usuario.service';
+import { UsuarioModel } from '../model/usuario.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -19,11 +21,13 @@ export class OtComponent implements OnInit {
   public clientes: Array<ClienteModel>;
   public empresaId: number;
   public documento: DocumentoModel = new DocumentoModel();
-  public ordenesList: Array<DocumentoModel> =[];
+  public ordenesList: Array<DocumentoModel> = [];
+  public ordenesBuscarList: Array<DocumentoModel> = [];
   public usuarioId: number;
   public detallesList: Array<DocumentoDetalleModel> = [];
   public detalleSelect: DocumentoDetalleModel = new DocumentoDetalleModel();
   public indexSelect: number = 0;
+  public usuarioList: Array<UsuarioModel> = [];
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
@@ -31,13 +35,14 @@ export class OtComponent implements OnInit {
   @ViewChild("observacion") item: ElementRef;
 
 
-  constructor(public clienteService: ClienteService, public documentoService: DocumentoService,
+  constructor(public usuarioService: UsuarioService,public clienteService: ClienteService, public documentoService: DocumentoService,
     public documentoDetalleService: DocumentoDetalleService, public calculosService: CalculosService) { }
 
   ngOnInit() {
     this.empresaId = Number(sessionStorage.getItem("empresa_id"));
     this.nombreUsuario = sessionStorage.getItem('nombreUsuario');
     this.getclientes(this.empresaId);
+    this.buscarUsuarios();
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
   }
 
@@ -106,7 +111,7 @@ export class OtComponent implements OnInit {
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
     this.item.nativeElement.value = "";
-    this.indexSelect=0;
+    this.indexSelect = 0;
   }
   agregarObservacion(element) {
     if (this.documento.documento_id == "") {
@@ -186,7 +191,7 @@ export class OtComponent implements OnInit {
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code == 200) {
           //this.documentoService.
-         
+
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
@@ -207,89 +212,116 @@ export class OtComponent implements OnInit {
     $('#exampleModal').modal('show');
   }
 
-  teclaAnteriorSiguiente(apcion:string){
-     
-    if(this.ordenesList.length==0){   
-      
-      let tipoDocumentoId: Array<number>=[11];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId,this.empresaId.toString(),this.usuarioId.toString(),'').subscribe(res => {
+  teclaAnteriorSiguiente(apcion: string) {
+
+    if (this.ordenesList.length == 0) {
+
+      let tipoDocumentoId: Array<number> = [11];
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '').subscribe(res => {
         this.ordenesList = res;
-        console.log("lista de docuemntos cargados: "+this.ordenesList.length);
-        if(this.ordenesList.length==0){
+        console.log("lista de docuemntos cargados: " + this.ordenesList.length);
+        if (this.ordenesList.length == 0) {
           alert("No existen documentos");
           return;
         }
-        console.log(apcion+":"+this.ordenesList.length);
-        this.documento = this.ordenesList[this.ordenesList.length-1];
-        this.indexSelect=this.ordenesList.length-1;
+        console.log(apcion + ":" + this.ordenesList.length);
+        this.documento = this.ordenesList[this.ordenesList.length - 1];
+        this.indexSelect = this.ordenesList.length - 1;
         this.asignarValores(this.documento.documento_id);
-        return;      
-      });  
-    }else{
-      if('anterior'==apcion && this.indexSelect!=0){
-        this.indexSelect=this.indexSelect-1;
+        return;
+      });
+    } else {
+      if ('anterior' == apcion && this.indexSelect != 0) {
+        this.indexSelect = this.indexSelect - 1;
         this.documento = this.ordenesList[this.indexSelect];
       }
-      if('siguiente'==apcion && this.indexSelect!=this.ordenesList.length-1){
-        this.indexSelect=this.indexSelect+1;
+      if ('siguiente' == apcion && this.indexSelect != this.ordenesList.length - 1) {
+        this.indexSelect = this.indexSelect + 1;
         this.documento = this.ordenesList[this.indexSelect];
       }
     }
-    
-    console.log ("actual:"+this.documento.documento_id  );
+
+    console.log("actual:" + this.documento.documento_id);
     this.asignarValores(this.documento.documento_id);
   }
 
-  teclaSiguiente(){
-   
-   }
+  teclaSiguiente() {
 
-   asignarValores(documento_id:string){
-    if(documento_id!=''){
+  }
+
+  asignarValores(documento_id: string) {
+    if (documento_id != '') {
       this.placa.nativeElement.value = this.documento.detalle_entrada;
       let cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
-      let nombre ="";
-      if(cliente!=undefined){
-        nombre=cliente.nombre;
+      let nombre = "";
+      if (cliente != undefined) {
+        nombre = cliente.nombre;
       }
       console.log(cliente);
-    this.clientePV.nativeElement.value = nombre ;
-    this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
-    this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
+      this.clientePV.nativeElement.value = nombre;
+      this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
+      this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
       this.documentoDetalleService.getDocumentoDetalleByDocumento(documento_id).subscribe(res => {
         this.detallesList = res;
-        console.log("detalles encontrados:"+res.length );
-      });  
+        console.log("detalles encontrados:" + res.length);
+      });
     }
-   }
+  }
 
-   eliminarItem(articulo){
+  eliminarItem(articulo) {
 
     this.detalleSelect = articulo;
-    
-   }
 
-   isBigEnough(element, index, array) { 
-     
-    return (element != this.detalleSelect); 
- } 
-           
- 
+  }
 
-   eliminar(){
-    this.detalleSelect.estado=0; 
+  isBigEnough(element, index, array) {
+
+    return (element != this.detalleSelect);
+  }
+
+
+
+  eliminar() {
+    this.detalleSelect.estado = 0;
     this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
       if (res.code == 200) {
         this.documentoDetalleService.getDocumentoDetalleByDocumento(this.documento.documento_id).subscribe(res => {
           this.detallesList = res;
           this.detalleSelect = new DocumentoDetalleModel();
-          console.log("detalles encontrados:"+res.length );
-        });  
+          console.log("detalles encontrados:" + res.length);
+        });
       } else {
         alert("Error agregando repuesto: " + res.error);
       }
     });
     $('#eliminarModal').modal('hide');
-    
-   }
+  }
+
+  buscarOrdenes(placa, cliente, fechaInicial, fechaFinal) {
+    //let fechaI= this.calculosService.fechaInicial(fechaInicial.value);
+    //let fechaF= this.calculosService.fechaFinal(fechaFinal.value);
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(),placa.value, cliente.value, fechaInicial.value, fechaFinal.value).subscribe(res => {
+      this.ordenesBuscarList = res;
+    });
+  }
+  nombreCliente(id){
+    console.log(id);
+    let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
+    if (cliente == undefined) { 
+      return "";
+    } else{
+      return cliente.nombre;
+    }
+  }
+  buscarUsuarios() {
+    let empresaId: string = sessionStorage.getItem('empresa_id');
+    this.usuarioService.getByUsuario(null, empresaId, null).subscribe(res => {
+      this.usuarioList = res;
+    });
+  }
+  nombreUsuarioFiltro(id){
+    console.log(id);
+    let usuario = this.usuarioList.find(usuario => usuario.usuario_id == id);
+    return usuario==undefined?"":usuario.nombre;
+  }
 }
