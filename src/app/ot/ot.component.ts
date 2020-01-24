@@ -213,9 +213,7 @@ export class OtComponent implements OnInit {
   }
 
   teclaAnteriorSiguiente(apcion: string) {
-
     if (this.ordenesList.length == 0) {
-
       let tipoDocumentoId: Array<number> = [11];
       this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '').subscribe(res => {
         this.ordenesList = res;
@@ -243,10 +241,6 @@ export class OtComponent implements OnInit {
 
     console.log("actual:" + this.documento.documento_id);
     this.asignarValores(this.documento.documento_id);
-  }
-
-  teclaSiguiente() {
-
   }
 
   asignarValores(documento_id: string) {
@@ -323,5 +317,12 @@ export class OtComponent implements OnInit {
     console.log(id);
     let usuario = this.usuarioList.find(usuario => usuario.usuario_id == id);
     return usuario==undefined?"":usuario.nombre;
+  }
+
+  editarOrden(orden:DocumentoModel){
+    this.documento = orden;
+    this.asignarValores(orden.documento_id);
+    $('#buscarModal').modal('hide');
+
   }
 }
