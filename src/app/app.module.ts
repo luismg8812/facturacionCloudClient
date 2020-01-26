@@ -8,8 +8,11 @@ import { MenuComponent } from './menu/menu.component';
 import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
-import {HttpClientModule} from '@angular/common/http';
+import { AngularFireStorage } from '@angular/fire/storage';
+
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { EmpresaComponent } from './empresa/empresa.component';
@@ -33,11 +36,14 @@ import { OtComponent } from './ot/ot.component';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
+    AngularFirestoreModule,
     HttpClientModule,
     FormsModule
   ],
   providers: [AngularFireAuth,
-    LoginComponent],
+    LoginComponent,
+    AngularFireStorage
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

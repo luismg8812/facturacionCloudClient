@@ -9,7 +9,7 @@ export const environment = {
     authDomain: "facturacion-cloud.firebaseapp.com",
     databaseURL: "https://facturacion-cloud.firebaseio.com",
     projectId: "facturacion-cloud",
-    storageBucket: "facturacion-cloud.appspot.com",
+    storageBucket: "gs://facturacion-cloud.appspot.com",
     messagingSenderId: "260949622588"
   },
   api_server:"https://facturacioncloud2019.herokuapp.com"

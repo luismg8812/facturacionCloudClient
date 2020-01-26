@@ -28,7 +28,7 @@
   </div>
   <div class="form-row">
     <div class="form-group col-md-4">
-      <b>Usuario Que crea:</b> {{nombreUsuario}}
+      <b>Usuario Que crea:</b> {{nombreUsuario()}}
     </div>
     <div class="form-group col-md-4">
       <b># Orden de pedido:</b> {{documento.documento_id}}
@@ -66,10 +66,18 @@
         placeholder="Observación" required></textarea>
     </div>
     <div class="form-group col-md-6 col-sm-1">
-      <div class="custom-file">
-        <input type="file" class="custom-file-input" capture="camera" id="customFileLang" lang="es">
-        <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+      <input type="file" class="form-control-file" capture="camera" #fotoOrden id="fotoOrden" aria-describedby="fileHelp"
+         (change)="cargarFotoOrden($event)" >
+         
+    </div>
+  </div>
+  <div class="form-row">
+   
+    <div class="form-group col-md-6 col-sm-1">
+      <div class="container" *ngIf="downloadURL | async; let url">
+        <img [src]="url" alt="Image from AngularFireStorage" width="100%" height="200px">
       </div>
+     
     </div>
   </div>
   <br />
@@ -141,9 +149,7 @@
             data-target="#eliminarModal">
             Eliminar
           </button>
-
         </th>
-
         <td>{{ordenes.documento_detalle_id}}</td>
         <td>{{ordenes.descripcion}}</td>
         <td>{{ordenes.cantidad}}</td>
@@ -163,7 +169,7 @@
           </button>
         </div>
         <div class="modal-body">
-          Estas seguro de eliminar este repuesto?
+          Esta seguro de eliminar este repuesto?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -209,7 +215,6 @@
               <input class="form-control" id="placaBuscar" placeholder="Placa" name="placaBuscar" #placaBuscar required>
             </div>
           </div>
-
           <button type="button" class="btn btn-primary"
             (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar</button>
           <br />
@@ -239,9 +244,7 @@
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   </div>
-
 </div>
