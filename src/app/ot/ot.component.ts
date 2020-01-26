@@ -263,15 +263,15 @@ export class OtComponent implements OnInit {
         nombre = cliente.nombre;
       }
       let parametros: ParametrosModel = new ParametrosModel;
-      if ( parametros.ambiente == 'cloud' ) {
-        this.downloadURL = (this.documento.mac == ''? null: this.afStorage.ref(this.documento.mac).getDownloadURL());     
+      if (parametros.ambiente == 'cloud') {
+        this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).getDownloadURL());
       } else {
-       // console.log("local");
-       // var reader = new FileReader();
-       // reader.readAsDataURL(event.target.files[0]);
-       // reader.onload = (_event) => {
-       //   $('#blah').attr('src', reader.result);
-       // }
+        // console.log("local");
+        // var reader = new FileReader();
+        // reader.readAsDataURL(event.target.files[0]);
+        // reader.onload = (_event) => {
+        //   $('#blah').attr('src', reader.result);
+        // }
       }
       console.log(cliente);
       this.clientePV.nativeElement.value = nombre;
@@ -349,16 +349,17 @@ export class OtComponent implements OnInit {
     if (parametros.ambiente == 'cloud') {
       const id = this.documento.mac == '' ? Math.random().toString(36).substring(2) : this.documento.mac;
       this.ref = this.afStorage.ref(id);
-      this.task = this.ref.put(event.target.files[0]);
-      this.documento.mac = id;
-     
-      this.documentoService.updateDocumento(this.documento).subscribe(res => {
-        if (res.code != 200) {
-          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
-          return;
-        }
+      this.ref.put(event.target.files[0]).then(res => {
+        this.documento.mac = id;
+        this.documentoService.updateDocumento(this.documento).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+        this.downloadURL = this.ref.getDownloadURL();
       });
-      this.downloadURL = this.ref.getDownloadURL();
+
     } else {
       console.log("local");
     }
