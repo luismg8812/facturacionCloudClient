@@ -263,7 +263,7 @@ export class OtComponent implements OnInit {
         nombre = cliente.nombre;
       }
       let parametros: ParametrosModel = new ParametrosModel;
-      if ( parametros.serverUrl == 'cloud' ) {
+      if ( parametros.ambiente == 'cloud' ) {
         this.downloadURL = (this.documento.mac == ''? null: this.afStorage.ref(this.documento.mac).getDownloadURL());     
       } else {
        // console.log("local");
@@ -346,7 +346,7 @@ export class OtComponent implements OnInit {
       return;
     }
     let parametros: ParametrosModel = new ParametrosModel;
-    if (parametros.serverUrl == 'cloud') {
+    if (parametros.ambiente == 'cloud') {
       const id = this.documento.mac == '' ? Math.random().toString(36).substring(2) : this.documento.mac;
       this.ref = this.afStorage.ref(id);
       this.task = this.ref.put(event.target.files[0]);
