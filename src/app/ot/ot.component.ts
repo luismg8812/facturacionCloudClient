@@ -351,13 +351,14 @@ export class OtComponent implements OnInit {
       this.ref = this.afStorage.ref(id);
       this.task = this.ref.put(event.target.files[0]);
       this.documento.mac = id;
-      this.downloadURL = this.afStorage.ref(this.documento.mac).getDownloadURL();
+     
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
         if (res.code != 200) {
           alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
           return;
         }
       });
+      this.downloadURL = this.ref.getDownloadURL();
     } else {
       console.log("local");
     }
