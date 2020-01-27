@@ -350,7 +350,9 @@ export class OtComponent implements OnInit {
     if (parametros.ambiente == 'cloud') {
       const id = this.documento.mac == '' ? Math.random().toString(36).substring(2) : this.documento.mac;
       this.ref = this.afStorage.ref(id);
-      this.task = this.ref.put(event.target.files[0]);
+      this.ref.put(event.target.files[0]).then(res=>{
+        this.downloadURL = this.ref.getDownloadURL();
+      });
       this.documento.mac = id;
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
         if (res.code != 200) {
@@ -358,7 +360,7 @@ export class OtComponent implements OnInit {
           return;
         }
       });
-      this.downloadURL = this.ref.getDownloadURL();
+      
     } else {
       console.log("local");
     }
