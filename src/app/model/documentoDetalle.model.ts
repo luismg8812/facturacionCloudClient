@@ -13,6 +13,8 @@ export class DocumentoDetalleModel {
     public impuesto_producto:number;
     public peso_producto:number;
     public descripcion:string;
+    public url_foto:string;
+    
     
     constructor(){
        this.documento_detalle_id=null;
@@ -29,5 +31,6 @@ export class DocumentoDetalleModel {
        this.impuesto_producto=0.0;
        this.peso_producto=0;
        this.descripcion="";
+       this.url_foto="";
     }
 }

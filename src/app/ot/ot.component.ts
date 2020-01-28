@@ -23,6 +23,8 @@ export class OtComponent implements OnInit {
   public ref: AngularFireStorageReference;
   public task: AngularFireUploadTask;
   public downloadURL: Observable<string>;
+  public downloadURLLocal: any;
+  public downloadURL2: Observable<string>;
 
   public clientes: Array<ClienteModel>;
   public empresaId: number;
@@ -124,6 +126,7 @@ export class OtComponent implements OnInit {
     this.item.nativeElement.value = "";
     this.indexSelect = 0;
     $('#blah').attr('src', '');
+
   }
   agregarObservacion(element) {
     if (this.documento.documento_id == "") {
@@ -189,6 +192,9 @@ export class OtComponent implements OnInit {
       docDetalle.estado = 1;
       docDetalle.cantidad = cantidad.value;
       docDetalle.documento_id = this.documento.documento_id;
+      if ($('#fotoRepuesto')[0].files[0] != undefined) {
+        docDetalle.url_foto = this.cargarFotoRepuesto(docDetalle);
+      }
       this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
         if (res.code == 200) {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
@@ -200,6 +206,9 @@ export class OtComponent implements OnInit {
     } else {
       this.detalleSelect.descripcion = value;
       this.detalleSelect.cantidad = cantidad.value;
+      if ($('#fotoRepuesto')[0].files[0] != undefined) {
+        this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
+      }
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code == 200) {
           //this.documentoService.
@@ -213,6 +222,7 @@ export class OtComponent implements OnInit {
 
     element.value = "";
     cantidad.value = "";
+    this.downloadURL2 = null;
     this.detalleSelect = new DocumentoDetalleModel();
     $('#exampleModal').modal('hide');
   }
@@ -255,6 +265,17 @@ export class OtComponent implements OnInit {
     this.asignarValores(this.documento.documento_id);
   }
 
+  dataURItoBlob(dataURI) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/jpeg' });
+    return blob;
+  }
+
   asignarValores(documento_id: string) {
     if (documento_id != '') {
       this.placa.nativeElement.value = this.documento.detalle_entrada;
@@ -264,15 +285,29 @@ export class OtComponent implements OnInit {
         nombre = cliente.nombre;
       }
       let parametros: ParametrosModel = new ParametrosModel;
-      if ( parametros.ambiente == 'cloud' ) {
-        this.downloadURL = (this.documento.mac == ''? null: this.afStorage.ref(this.documento.mac).getDownloadURL());     
+      if (parametros.ambiente == 'cloud') {
+        this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).getDownloadURL());
       } else {
-       // console.log("local");
-       // var reader = new FileReader();
-       // reader.readAsDataURL(event.target.files[0]);
-       // reader.onload = (_event) => {
-       //   $('#blah').attr('src', reader.result);
-       // }
+        if(this.documento.mac != ''){
+          this.usuarioService.getFile(this.documento.mac == '' ? null : this.documento.mac).subscribe(res => {
+            console.log(res);
+            const imageBlob = this.dataURItoBlob(res);
+            var reader = new FileReader();
+            reader.readAsDataURL(imageBlob);
+            reader.onload = (_event) => {
+              this.downloadURLLocal = reader.result;
+            }
+          });
+        }else{
+          this.downloadURLLocal = null;
+        }
+        
+        // console.log("local");
+        // var reader = new FileReader();
+        // reader.readAsDataURL(event.target.files[0]);
+        // reader.onload = (_event) => {
+        //   $('#blah').attr('src', reader.result);
+        // }
       }
       console.log(cliente);
       this.clientePV.nativeElement.value = nombre;
@@ -350,7 +385,7 @@ export class OtComponent implements OnInit {
     if (parametros.ambiente == 'cloud') {
       const id = this.documento.mac == '' ? Math.random().toString(36).substring(2) : this.documento.mac;
       this.ref = this.afStorage.ref(id);
-      this.ref.put(event.target.files[0]).then(res=>{
+      this.ref.put(event.target.files[0]).then(res => {
         this.downloadURL = this.ref.getDownloadURL();
       });
       this.documento.mac = id;
@@ -360,7 +395,49 @@ export class OtComponent implements OnInit {
           return;
         }
       });
-      
+
+    } else {
+      console.log("local");
+      this.toBase64(event.target.files[0]).then(data => {
+        this.usuarioService.postFile(data, event.target.files[0].name).subscribe(res => {
+          if (res.code != 200) {
+            alert("error subiendo la imagen, por favor intentelo nuevamente");
+            return;
+          }
+        });
+      });
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+      reader.onload = (_event) => {
+        this.downloadURLLocal = reader.result;
+      }
+      this.documento.mac = event.target.files[0].name;
+      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    }
+  }
+
+  toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+
+  cargarFotoRepuesto(detalle: DocumentoDetalleModel) {
+    let parametros: ParametrosModel = new ParametrosModel;
+    if (parametros.ambiente == 'cloud') {
+      const id = detalle.url_foto == '' ? Math.random().toString(36).substring(2) : detalle.url_foto;
+      this.ref = this.afStorage.ref(id);
+      this.ref.put($('#fotoRepuesto')[0].files[0]).then(res => {
+        this.downloadURL2 = this.ref.getDownloadURL();
+      });
+      return id;
+
     } else {
       console.log("local");
     }

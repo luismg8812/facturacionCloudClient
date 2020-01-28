@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth/auth';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { UsuarioModel } from '../model/usuario.model';
 import { SubMenuModel } from '../model/submenu.model';
 import { RolModel } from '../model/rol.model';
 import { RolUsuarioModel } from '../model/rolUsuario.model';
 import { ActivacionModel } from '../model/activacion';
 import { ParametrosModel } from '../model/parametros.model';
+import { Observable } from 'rxjs';
+import { FotoOrdenVoModel } from '../model/fotoOrdenVo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +16,8 @@ import { ParametrosModel } from '../model/parametros.model';
 export class UsuarioService {
 
   parametros: ParametrosModel = new ParametrosModel;
-  public server_api =this.parametros.serverUrl;
-  constructor(public afauth: AngularFireAuth, public http:HttpClient) { }
+  public server_api = this.parametros.serverUrl;
+  constructor(public afauth: AngularFireAuth, public http: HttpClient) { }
 
   loginUsuario(usuario: string, clave: string) {
     return new Promise((resolve, reject) => {
@@ -24,66 +26,80 @@ export class UsuarioService {
     });
   }
 
-  public usuarioByMail(mail:string){   
-    return this.http.get<UsuarioModel>(this.server_api+'/usuario/usuarioByMail?mail='+mail);
+  public usuarioByMail(mail: string) {
+    return this.http.get<UsuarioModel>(this.server_api + '/usuario/usuarioByMail?mail=' + mail);
   }
 
-  public opcionUsuarioByUsuario(usuarioId:string,menuId:string){
-    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuario?usuarioId='+usuarioId+'&menuId='+menuId);
+  public opcionUsuarioByUsuario(usuarioId: string, menuId: string) {
+    return this.http.get<SubMenuModel[]>(this.server_api + '/usuario/opcionUsuarioByUsuario?usuarioId=' + usuarioId + '&menuId=' + menuId);
   }
 
-  public opcionPuntoVentaByUsuario(usuarioId:string){
-    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionPuntoVentaByUsuario?usuarioId='+usuarioId);
+  public opcionPuntoVentaByUsuario(usuarioId: string) {
+    return this.http.get<SubMenuModel[]>(this.server_api + '/usuario/opcionPuntoVentaByUsuario?usuarioId=' + usuarioId);
   }
 
-  
 
-  
-  public opcionUsuarioByUsuarioSinMenu(usuarioId:string){
-    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/opcionUsuarioByUsuarioSinMenu?usuarioId='+usuarioId);
+
+
+  public opcionUsuarioByUsuarioSinMenu(usuarioId: string) {
+    return this.http.get<SubMenuModel[]>(this.server_api + '/usuario/opcionUsuarioByUsuarioSinMenu?usuarioId=' + usuarioId);
   }
 
-  public getActivacionByUsuario(usuarioId:string){
-    return this.http.get<ActivacionModel[]>(this.server_api+'/usuario/getActivacionByUsuario?usuarioId='+usuarioId);
+  public getActivacionByUsuario(usuarioId: string) {
+    return this.http.get<ActivacionModel[]>(this.server_api + '/usuario/getActivacionByUsuario?usuarioId=' + usuarioId);
   }
 
-  
 
-  public getRolByIds(ids:string[]){
-    console.log(this.server_api+'/usuario/getRolByIds?ids='+ids);
-    return this.http.get<RolModel[]>(this.server_api+'/usuario/getRolByIds?ids='+ids);
-  }
 
-  getByUsuario(usuario:UsuarioModel, empresaId:string,rolId:string){
-    return this.http.get<UsuarioModel[]>(this.server_api+'/usuario/getByUsuario?usuario='+usuario+'&empresaId='+empresaId+'&rolId='+rolId);
+  public getRolByIds(ids: string[]) {
+    console.log(this.server_api + '/usuario/getRolByIds?ids=' + ids);
+    return this.http.get<RolModel[]>(this.server_api + '/usuario/getRolByIds?ids=' + ids);
   }
 
-  saveUsuario(usuario:UsuarioModel,rolId:Array<string>){
-    return this.http.post<any>(this.server_api+'/usuario/createUsuario?rolId='+rolId,usuario);
+  getByUsuario(usuario: UsuarioModel, empresaId: string, rolId: string) {
+    return this.http.get<UsuarioModel[]>(this.server_api + '/usuario/getByUsuario?usuario=' + usuario + '&empresaId=' + empresaId + '&rolId=' + rolId);
   }
 
-  updateUsuario(usuario:UsuarioModel,rolId:Array<string>){
-    return this.http.put<any>(this.server_api+'/usuario/updateUsuario?rolId='+rolId,usuario);
+  saveUsuario(usuario: UsuarioModel, rolId: Array<string>) {
+    return this.http.post<any>(this.server_api + '/usuario/createUsuario?rolId=' + rolId, usuario);
   }
 
-  public getRolByUsuario(usuarioId:number){
-    return this.http.get<RolUsuarioModel[]>(this.server_api+'/usuario/getRolByUsuario?usuarioId='+usuarioId);
+  updateUsuario(usuario: UsuarioModel, rolId: Array<string>) {
+    return this.http.put<any>(this.server_api + '/usuario/updateUsuario?rolId=' + rolId, usuario);
   }
 
-  getSubMenuAll(){
-    return this.http.get<SubMenuModel[]>(this.server_api+'/usuario/getSubMenuAll');
+  public getRolByUsuario(usuarioId: number) {
+    return this.http.get<RolUsuarioModel[]>(this.server_api + '/usuario/getRolByUsuario?usuarioId=' + usuarioId);
   }
 
-  getActivacioAll(){
-    return this.http.get<ActivacionModel[]>(this.server_api+'/usuario/getActivacionAll');
-  }
- 
-  guardarActivaciones(usuarioId:UsuarioModel,activacionId:Array<string>){
-    return this.http.get<any>(this.server_api+'/usuario/guardarActivaciones?activacionId='+activacionId+'&usuarioId='+usuarioId.usuario_id);
+  getSubMenuAll() {
+    return this.http.get<SubMenuModel[]>(this.server_api + '/usuario/getSubMenuAll');
   }
 
-  guardarRutas(usuarioId:UsuarioModel,subMenuId:Array<string>){
-    return this.http.get<any>(this.server_api+'/usuario/guardarRutas?subMenuId='+subMenuId+'&usuarioId='+usuarioId.usuario_id);
+  getActivacioAll() {
+    return this.http.get<ActivacionModel[]>(this.server_api + '/usuario/getActivacionAll');
   }
-  
+
+  guardarActivaciones(usuarioId: UsuarioModel, activacionId: Array<string>) {
+    return this.http.get<any>(this.server_api + '/usuario/guardarActivaciones?activacionId=' + activacionId + '&usuarioId=' + usuarioId.usuario_id);
+  }
+
+  guardarRutas(usuarioId: UsuarioModel, subMenuId: Array<string>) {
+    return this.http.get<any>(this.server_api + '/usuario/guardarRutas?subMenuId=' + subMenuId + '&usuarioId=' + usuarioId.usuario_id);
+  }
+
+  postFile(fileToUpload, name: string) {
+    let fotoOrden: FotoOrdenVoModel = new FotoOrdenVoModel();
+    fotoOrden.foto = fileToUpload;
+    fotoOrden.nombre = name;
+    //console.log(URL.createObjectURL(fileToUpload));
+    return this.http.post<any>(this.server_api + '/usuario/postFile', fotoOrden);
+
+  }
+
+  getFile(nombre:string){
+    return this.http.get<any>(this.server_api + '/usuario/getFile?nombre=' + nombre );
+  }
+
+
 }
