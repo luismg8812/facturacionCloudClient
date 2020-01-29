@@ -19,6 +19,7 @@ import { EmpresaComponent } from './empresa/empresa.component';
 import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
 import { OtComponent } from './ot/ot.component';
+import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { OtComponent } from './ot/ot.component';
     EmpresaComponent,
     VentasDiaComponent,
     CuadreCajaComponent,
-    OtComponent
+    OtComponent,
+    GestionOrdenComponent
   ],
   imports: [
     BrowserModule,
