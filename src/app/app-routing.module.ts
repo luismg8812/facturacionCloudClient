@@ -5,6 +5,7 @@ import { MenuComponent } from './menu/menu.component';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { OtComponent } from './ot/ot.component';
+import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
    { path: 'menu', component: MenuComponent },
    { path: 'usuario', component: UsuarioComponent },
    { path: 'ot', component: OtComponent },
+   { path: 'gestionOrden', component: GestionOrdenComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];

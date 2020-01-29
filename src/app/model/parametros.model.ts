@@ -8,5 +8,5 @@ export class ParametrosModel {
         this.ambiente = 'local';
         //this.ambiente = 'cloud';
 
-    }
+    } 
 }

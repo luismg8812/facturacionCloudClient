@@ -40,7 +40,7 @@ export class OtComponent implements OnInit {
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
   @ViewChild("observacion") observacion: ElementRef;
-  @ViewChild("observacion") item: ElementRef;
+  @ViewChild("item") item: ElementRef;
 
 
   constructor(public usuarioService: UsuarioService, public clienteService: ClienteService, public documentoService: DocumentoService,
@@ -354,8 +354,8 @@ export class OtComponent implements OnInit {
       this.ordenesBuscarList = res;
     });
   }
-  nombreCliente(id) {
 
+  nombreCliente(id) {
     let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
     if (cliente == undefined) {
       return "";
@@ -363,6 +363,7 @@ export class OtComponent implements OnInit {
       return cliente.nombre;
     }
   }
+
   buscarUsuarios() {
     let empresaId: string = sessionStorage.getItem('empresa_id');
     this.usuarioService.getByUsuario(null, empresaId, null).subscribe(res => {
@@ -374,6 +375,7 @@ export class OtComponent implements OnInit {
     return usuario == undefined ? "" : usuario.nombre;
   }
 
+  
 
 
   cargarFotoOrden(event) {
