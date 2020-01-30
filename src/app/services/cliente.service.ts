@@ -32,5 +32,8 @@ export class ClienteService {
     return this.http.get<TipoPagoModel[]>(this.server_api+'/cliente/getTipoPago');
   }
 
+  saveCliente(clienteId: ClienteModel) {
+    return this.http.post<any>(this.server_api + '/cliente/saveCliente', clienteId);
+  }
   
 }

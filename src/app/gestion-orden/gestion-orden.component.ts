@@ -38,6 +38,7 @@ export class GestionOrdenComponent implements OnInit {
   public valorTotal: number = 0;
   public ordenesBuscarList: Array<DocumentoModel> = [];
   public ordenesList: Array<DocumentoModel> = [];
+  public clienteNew: ClienteModel=new ClienteModel();
 
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
@@ -77,17 +78,19 @@ export class GestionOrdenComponent implements OnInit {
 
   clienteSelectFun(element) {
     console.log(this.clientes);
+    if (this.documento.documento_id == "") {
+        alert("Debe pulsar el boton nuevo documento");
+        return;
+      }
     let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
     if (cliente == undefined) {
-      alert("El cliente no existe modal de crear cliente");
+      this.clienteNew.nombre=element.value;
+      $('#crearClienteModal').modal('show');
       return;
     } else {
       console.log(cliente);
       this.documento.cliente_id = cliente.cliente_id;
-      if (this.documento.documento_id == "") {
-        alert("Debe pulsar el boton nuevo documento");
-        return;
-      }
+      
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
         if (res.code != 200) {
           alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
@@ -95,6 +98,36 @@ export class GestionOrdenComponent implements OnInit {
         }
       });
     }
+  }
+
+  CrearCliente(){ 
+   // console.log(this.clienteNew);
+   let valido: boolean = true;
+    let mensageError: string = "Son obligatorios:\n ";
+    if (this.clienteNew.nombre == "") {
+      mensageError += "nombre\n";
+      valido = false;
+    }
+    if (this.clienteNew.documento == "") {
+      mensageError += "documento\n";
+      valido = false;
+    }
+    if (valido == false) {
+      alert(mensageError);
+      return;
+    }
+    this.clienteNew.empresa_id=this.empresaId;
+    this.clienteService.saveCliente(this.clienteNew).subscribe(res => {
+      if (res.code == 200) {
+        this.getclientes(this.empresaId);
+        this.clienteNew=new ClienteModel();
+        $('#crearClienteModal').modal('hide');
+      } else {
+        alert("error creando cliente, por favor inicie nuevamente la creación del cliente, si persiste consulte a su proveedor");
+        return;
+      }
+    });
+    
   }
 
   agregarDescripcionCliente(element) {
@@ -239,7 +272,7 @@ export class GestionOrdenComponent implements OnInit {
       this.detalleSelect.impresoComanda = compra.value;
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
-      }
+      } 
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code != 200) {
           alert("Error agregando repuesto: " + res.error);
@@ -327,7 +360,8 @@ export class GestionOrdenComponent implements OnInit {
     this.valorTotal = 0;
   }
 
-  nombreCliente(id) {
+  nombreClienteFun(id) {
+    console.log("id:"+id);
     let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
     if (cliente == undefined) {
       return "";
