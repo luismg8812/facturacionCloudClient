@@ -272,7 +272,7 @@
                       </button>
                     </th>
                     <td>{{ordenes.documento_id}}</td>
-                    <td>{{nombreCliente(ordenes.cliente_id)}}</td>
+                    <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
                     <td>{{ordenes.detalle_entrada}}</td>
                     <td>{{nombreUsuarioFiltro(ordenes.usuario_id)}}</td>
                   </tr>
@@ -303,7 +303,58 @@
           </div>
         </div>
       </div>
-
+      <!-- crear cliente Modal -->
+      <div class="modal fade" id="crearClienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Crear Cliente</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  <input class="form-control" id="nombreCliente" placeholder="* Nombres cliente" name="nombreCliente"
+                    #nombreCliente required [(ngModel)]="clienteNew.nombre">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente" name="apellidoCliente"
+                  #apellidoCliente required [(ngModel)]="clienteNew.apellidos">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  <input class="form-control" id="documentoCliente" placeholder="* Documento cliente" name="documentoCliente"
+                    #documentoCliente required [(ngModel)]="clienteNew.documento">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  <input class="form-control" id="mailCliente" placeholder="* Correo cliente" name="mailCliente"
+                  #mailCliente required [(ngModel)]="clienteNew.mail">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  <input class="form-control" id="direccionCliente" placeholder="* Dirección cliente" name="direccionCliente"
+                    #direccionCliente required [(ngModel)]="clienteNew.direccion">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  <input class="form-control" id="fijoCliente" placeholder="* Fijo cliente" name="fijoCliente"
+                  #fijoCliente required [(ngModel)]="clienteNew.fijo">
+                </div>
+              </div>
+            </div>
+            
+          
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-primary" (click)="CrearCliente()">Crear</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
     <div class="tab-pane container fade" id="factura">En desarrollo...</div>
