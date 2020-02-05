@@ -50,7 +50,10 @@ export class OtComponent implements OnInit {
   public productoFijoActivo: boolean = false;
   public activaciones: Array<ActivacionModel> = [];
   public productosAll: Array<ProductoModel>;
-  public productoIdSelect: ProductoModel;
+  public productoIdSelect: ProductoModel = null;
+  
+  public articuloPV: string = "";
+
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
@@ -169,6 +172,7 @@ export class OtComponent implements OnInit {
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
     this.item.nativeElement.value = "";
+    this.articuloPV = "";
     this.indexSelect = 0;
     $('#blah').attr('src', '');
 
@@ -217,17 +221,21 @@ export class OtComponent implements OnInit {
   }
 
   agregardetalle() {
-    console.log(this.item.nativeElement.value);
+    //console.log(this.item.nativeElement.value);
 
-    if ((this.item.nativeElement.value == undefined || this.item.nativeElement.value == '') && !this.productoFijoActivo) {
-      alert("El nombre del repuesto es obligatorio");
-      return;
+    if (!this.productoFijoActivo  ) {
+      if(this.item.nativeElement ==undefined ||this.item.nativeElement.value==''){
+        alert("El nombre del repuesto es obligatorio");
+        return;
+      }  
+      
     } else {
-      if (this.productoIdSelect == undefined && this.productoFijoActivo) {
+      if ((this.productoIdSelect == null || this.productoIdSelect == undefined) && this.productoFijoActivo) {
         alert("El nombre del repuesto es obligatorio");
         return;
       }
     }
+    
     if (this.cantidad.nativeElement.value == '') {
       alert("La cantidad del repuesto es obligatorio");
       return;
@@ -241,7 +249,6 @@ export class OtComponent implements OnInit {
       return;
     }
     if (this.detalleSelect.documento_detalle_id == null) {
-      console.log(this.item.nativeElement.value);
       let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
       docDetalle.descripcion = (this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value);
       docDetalle.estado = 1;
@@ -260,6 +267,8 @@ export class OtComponent implements OnInit {
         if (res.code == 200) {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
+
+
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
@@ -285,13 +294,10 @@ export class OtComponent implements OnInit {
       });
       this.detalleSelect = new DocumentoDetalleModel();
     }
-    if (this.productoFijoActivo) {
-      this.productoIdSelect = null;
-    } else {
-      this.item.nativeElement.value = "";
-    }
 
-
+    this.productoIdSelect = null;
+    this.item.nativeElement.value = "";
+    this.articuloPV = "";
     this.cantidad.nativeElement.value = "";
     this.downloadURL2 = null;
     this.detalleSelect = new DocumentoDetalleModel();
@@ -321,7 +327,9 @@ export class OtComponent implements OnInit {
   editarItem(articulo) {
     this.cantidad.nativeElement.value = articulo.cantidad;
     if (this.productoFijoActivo) {
-      this.productoIdSelect = null;
+      let productoNombre: string = articulo.descripcion;
+      this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
+      this.articuloPV = articulo.descripcion;
     } else {
       this.item.nativeElement.value = articulo.descripcion;
     }
@@ -391,11 +399,11 @@ export class OtComponent implements OnInit {
             reader.readAsDataURL(imageBlob);
             reader.onload = (_event) => {
               this.downloadURLLocal = reader.result;
-            } 
+            }
           });
         } else {
           this.downloadURLLocal = null;
-        } 
+        }
 
         // console.log("local");
         // var reader = new FileReader();
@@ -404,12 +412,12 @@ export class OtComponent implements OnInit {
         //   $('#blah').attr('src', reader.result);
         // }
       }
-      if(this.documento.linea_vehiculo!=""){
+      if (this.documento.linea_vehiculo != "") {
         this.linea.nativeElement.value = this.documento.linea_vehiculo;
-      }else{
+      } else {
         this.linea.nativeElement.value = "Seleccione Linea";
-      } 
-       
+      }
+
       this.clientePV.nativeElement.value = nombre;
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
       this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
@@ -421,7 +429,7 @@ export class OtComponent implements OnInit {
             let marcaId = this.marcaList.find(ma => ma.marca_vehiculo_id == modelo.marca_vehiculo_id);
             this.marca.nativeElement.value = marcaId.nombre;
             this.modelo.nativeElement.value = modelo.nombre;
-           
+
           });
         });
       } else {
@@ -436,9 +444,9 @@ export class OtComponent implements OnInit {
     }
   }
 
-  asignarLinea(linea){
-    if("Seleccione Linea"!=linea.value && this.documento.documento_id!=""){
-      this.documento.linea_vehiculo=linea.value;
+  asignarLinea(linea) {
+    if ("Seleccione Linea" != linea.value && this.documento.documento_id != "") {
+      this.documento.linea_vehiculo = linea.value;
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
         if (res.code != 200) {
           alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
