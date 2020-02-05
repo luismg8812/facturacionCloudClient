@@ -8,7 +8,7 @@
     <div class="form-group col-md-2 col-sm-12 ">
       <button type="button" class="btn btn-primary " id="anterior"
         (click)="teclaAnteriorSiguiente('anterior')">Anterior</button>
-    
+
       <button type="button" class="btn btn-primary ml-2" id="siguiente"
         (click)="teclaAnteriorSiguiente('siguiente')">Siguiente</button>
     </div>
@@ -22,7 +22,7 @@
     <div class="form-group col-md-2 col-sm-12 ">
       <button type="button" class="btn btn-primary " id="Nueva" (click)="nuevaOrden()">Nueva Orden de trabajo</button>
     </div>
-  
+
   </div>
   <div class="form-row">
     <div class="form-group col-md-12">
@@ -54,6 +54,32 @@
     </div>
   </div>
   <div class="form-row">
+    <div class="form-group col-md-4 col-sm-2">
+      <input list="marcas" name="marca" #marca placeholder="Marca" class="form-control" id="marca"
+      (change)="marcaSelect(marca)">
+    <datalist id="marcas">
+      <option *ngFor="let mar of marcaList" [value]="mar.nombre"> 
+      </option>
+    </datalist>
+    </div>
+    <div class="form-group col-md-4 col-sm-2">
+      <input list="modelos" name="modelo" #modelo placeholder="modelo" class="form-control" id="modelo"
+      (change)="guardarModelo(modelo)">
+    <datalist id="modelos">
+      <option *ngFor="let model of modeloList" [value]="model.nombre"> 
+      </option>
+    </datalist>
+    </div>
+    <div class="form-group col-md-4 col-sm-2">
+      <select class="form-control" id="linea" placeholder="Marca" #linea  (change)="asignarLinea(linea)">
+        <option>Seleccione Linea</option>
+        <option>Automovil</option>
+        <option>Camioneta</option>
+        <option>Moto</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
     <textarea class="form-control " id="descripcionCliente" #descripcionCliente placeholder="Descripción cliente"
       required (blur)="agregarDescripcionCliente(descripcionCliente)"></textarea>
   </div>
@@ -64,8 +90,8 @@
         placeholder="Observación" required></textarea>
     </div>
     <div class="form-group col-md-6 col-sm-1">
-      <input type="file" class="form-control-file" capture="camera" #fotoOrden id="fotoOrden" aria-describedby="fileHelp"
-         (change)="cargarFotoOrden($event)" >       
+      <input type="file" class="form-control-file" capture="camera" #fotoOrden id="fotoOrden"
+        aria-describedby="fileHelp" (change)="cargarFotoOrden($event)">
     </div>
   </div>
   <div class="form-row">
@@ -76,10 +102,10 @@
       <div class="container" *ngIf="downloadURLLocal ; let url">
         <img [src]="url" alt="Image from AngularFireStorage" width="100%" height="200px">
       </div>
-      
+
     </div>
   </div>
-  
+
   <br />
   <div class="form-row">
     <!-- Button trigger modal -->
@@ -100,7 +126,17 @@
           </div>
           <div class="modal-body">
             <div class="form-row">
-              <div class="form-group col-md-6 col-sm-2">
+              <div class="form-group col-md-6 col-sm-2" *ngIf="productoFijoActivo">
+                <input list="articulos" name="articuloPV" #articuloPV placeholder="Articulo" class="form-control"
+                  id="articuloPV"  (change)="articuloSelect(articuloPV)"
+                  >
+                <datalist id="articulos">
+                  <option *ngFor="let producto of productosAll" [value]="producto.nombre">
+                    Costo:{{producto.costo_publico}} Cantidad:{{producto.cantidad}} id:{{producto.producto_id}}
+                  </option>
+                </datalist>
+              </div>
+              <div class="form-group col-md-6 col-sm-2" *ngIf="!productoFijoActivo">
                 <textarea class="form-control " id="item" #item placeholder="Nombre repuesto" required></textarea>
               </div>
               <div class="form-group col-md-6 col-sm-2">
@@ -112,14 +148,14 @@
             <div class="form-row">
 
               <div class="form-group col-md-12 col-sm-1">
-                <input type="file" class="form-control-file" capture="camera" #fotoRepuesto id="fotoRepuesto" aria-describedby="fileHelp"
-                 >
+                <input type="file" class="form-control-file" capture="camera" #fotoRepuesto id="fotoRepuesto"
+                  aria-describedby="fileHelp">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group col-md-6 col-sm-1">
                 <div class="container" *ngIf="downloadURL2 | async; let url2">
-                  <img [src]="url2" alt="Image from AngularFireStorage"  width="100%" height="200px">
+                  <img [src]="url2" alt="Image from AngularFireStorage" width="100%" height="200px">
                 </div>
               </div>
             </div>
@@ -137,7 +173,7 @@
     <thead>
       <tr>
         <th scope="col">Opciones</th>
-        <th scope="col" class="d-none d-sm-block" >Id producto</th>
+        <th scope="col" class="d-none d-sm-block">Id producto</th>
         <th scope="col">Nombre Producto</th>
         <th scope="col">Cantidad</th>
       </tr>
@@ -145,7 +181,7 @@
     <tbody>
       <tr *ngFor="let ordenes of detallesList">
         <th scope="row">
-          <button type="button" (click)="editarItem(ordenes,cantidad,item)" class="btn btn-secondary btn-sm"
+          <button type="button" (click)="editarItem(ordenes)" class="btn btn-secondary btn-sm"
             data-toggle="modal" data-target="#exampleModal">
             Editar
           </button>
@@ -162,7 +198,7 @@
     </tbody>
   </table>
 
-  <!-- Modal -->
+  <!-- Modal eliminar-->
   <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -236,8 +272,8 @@
             <tbody>
               <tr *ngFor="let ordenes of ordenesBuscarList">
                 <th scope="row">
-                  <button type="button"  class="btn btn-secondary btn-sm"
-                    data-toggle="modal" (click)="editarOrden(ordenes)" >
+                  <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
+                    (click)="editarOrden(ordenes)">
                     Editar
                   </button>
                 </th>
