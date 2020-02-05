@@ -7,7 +7,7 @@ import { ModeloMarcaModel } from '../model/modeloMarca.model';
 @Injectable({
   providedIn: 'root'
 })
-export class MarcasService {
+export class MarcasService { 
 
   constructor(public http:HttpClient) { }
 

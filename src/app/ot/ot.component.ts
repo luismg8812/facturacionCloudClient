@@ -391,7 +391,7 @@ export class OtComponent implements OnInit {
             reader.readAsDataURL(imageBlob);
             reader.onload = (_event) => {
               this.downloadURLLocal = reader.result;
-            }
+            } 
           });
         } else {
           this.downloadURLLocal = null;
