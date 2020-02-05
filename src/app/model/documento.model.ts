@@ -6,6 +6,7 @@ export class DocumentoModel {
     public cliente_id:number;
     public empleado_id:number;
     public empresa_id:number;
+    public modelo_marca_id:number;
     public fecha_registro:Date;
     public fecha_entrega:Date;
     public consecutivo_dian:string;
@@ -33,6 +34,8 @@ export class DocumentoModel {
     public anulado:number;
     public descripcion_cliente:string;
     public descripcion_trabajador:string;
+    public linea_vehiculo:string;
+    
 
     constructor(){
         this. documento_id="";
@@ -42,6 +45,7 @@ export class DocumentoModel {
         this. cliente_id=null;
         this. empleado_id=null;
         this.empresa_id=null;
+        this.modelo_marca_id = null;
         this. fecha_registro=new Date;
         this. fecha_entrega=new Date;
         this. consecutivo_dian="";
@@ -69,6 +73,7 @@ export class DocumentoModel {
         this. anulado=0;
         this.descripcion_cliente="";
         this.descripcion_trabajador="";
+        this.linea_vehiculo="";
     };
 }
 

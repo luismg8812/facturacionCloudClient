@@ -11,6 +11,12 @@ import { UsuarioModel } from '../model/usuario.model';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
 import { ParametrosModel } from '../model/parametros.model';
 import { Observable } from 'rxjs';
+import { ActivacionModel } from '../model/activacion';
+import { ProductoModel } from '../model/producto.model';
+import { ProductoService } from '../services/producto.service';
+import { MarcasService } from '../services/marcas.service';
+import { MarcaVehiculoModel } from '../model/marcaVehiculo.model';
+import { ModeloMarcaModel } from '../model/modeloMarca.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -20,6 +26,9 @@ declare var $: any;
   styleUrls: ['./ot.component.css']
 })
 export class OtComponent implements OnInit {
+
+  readonly PRODUCTOS_FIJOS: string = '21';
+
   public ref: AngularFireStorageReference;
   public task: AngularFireUploadTask;
   public downloadURL: Observable<string>;
@@ -36,15 +45,23 @@ export class OtComponent implements OnInit {
   public detalleSelect: DocumentoDetalleModel = new DocumentoDetalleModel();
   public indexSelect: number = 0;
   public usuarioList: Array<UsuarioModel> = [];
+  public marcaList: Array<MarcaVehiculoModel> = [];
+  public modeloList: Array<ModeloMarcaModel> = [];
+  public productoFijoActivo: boolean = false;
+  public activaciones: Array<ActivacionModel> = [];
+  public productosAll: Array<ProductoModel>;
+  public productoIdSelect: ProductoModel;
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
   @ViewChild("observacion") observacion: ElementRef;
   @ViewChild("item") item: ElementRef;
-
-
+  @ViewChild("cantidad") cantidad: ElementRef;
+  @ViewChild("modelo") modelo: ElementRef;
+  @ViewChild("marca") marca: ElementRef;
+  @ViewChild("linea") linea: ElementRef;
   constructor(public usuarioService: UsuarioService, public clienteService: ClienteService, public documentoService: DocumentoService,
-    public documentoDetalleService: DocumentoDetalleService, public calculosService: CalculosService, public afStorage: AngularFireStorage
+    public marcasService: MarcasService, public productoService: ProductoService, public documentoDetalleService: DocumentoDetalleService, public calculosService: CalculosService, public afStorage: AngularFireStorage
   ) { }
 
   ngOnInit() {
@@ -52,6 +69,34 @@ export class OtComponent implements OnInit {
     this.getclientes(this.empresaId);
     this.buscarUsuarios();
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
+    this.getActivaciones(this.usuarioId);
+    this.getProductosByEmpresa(this.empresaId);
+    this.marcas();
+  }
+
+  getActivaciones(user: number) {
+    this.usuarioService.getActivacionByUsuario(user.toString()).subscribe(res => {
+      this.activaciones = res;
+      for (var e = 0; e < this.activaciones.length; e++) {
+        if (this.activaciones[e].activacion_id == this.PRODUCTOS_FIJOS) {
+          console.log("productos fijos activo");
+          this.productoFijoActivo = true;
+        }
+      }
+    });
+  }
+
+  getProductosByEmpresa(empresaId: number) {
+    this.productoService.getProductosByEmpresa(empresaId.toString()).subscribe(res => {
+      this.productosAll = res;
+    });
+  }
+
+  articuloSelect(element) {
+    console.log("articulo select:" + element.value);
+    let productoNombre: string = element.value;
+    this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
+    console.log(this.productoIdSelect);
   }
 
   nombreUsuario() {
@@ -171,14 +216,19 @@ export class OtComponent implements OnInit {
     });
   }
 
-  agregardetalle(element, cantidad) {
-    var value = element.value;
+  agregardetalle() {
+    console.log(this.item.nativeElement.value);
 
-    if (value == '') {
+    if ((this.item.nativeElement.value == undefined || this.item.nativeElement.value == '') && !this.productoFijoActivo) {
       alert("El nombre del repuesto es obligatorio");
       return;
+    } else {
+      if (this.productoIdSelect == undefined && this.productoFijoActivo) {
+        alert("El nombre del repuesto es obligatorio");
+        return;
+      }
     }
-    if (cantidad.value == '') {
+    if (this.cantidad.nativeElement.value == '') {
       alert("La cantidad del repuesto es obligatorio");
       return;
     }
@@ -186,12 +236,23 @@ export class OtComponent implements OnInit {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
+    if (this.cantidad.nativeElement.value > 1500) {
+      alert("La cantidad no puede ser mayor a 1500");
+      return;
+    }
     if (this.detalleSelect.documento_detalle_id == null) {
+      console.log(this.item.nativeElement.value);
       let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
-      docDetalle.descripcion = value;
+      docDetalle.descripcion = (this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value);
       docDetalle.estado = 1;
-      docDetalle.cantidad = cantidad.value;
+      docDetalle.cantidad = this.cantidad.nativeElement.value;
       docDetalle.documento_id = this.documento.documento_id;
+      if (this.productoFijoActivo) {
+
+        docDetalle.producto_id = this.productoIdSelect.producto_id;
+        docDetalle.parcial = docDetalle.cantidad * this.productoIdSelect.costo_publico;
+        docDetalle.unitario = this.productoIdSelect.costo_publico;
+      }
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         docDetalle.url_foto = this.cargarFotoRepuesto(docDetalle);
       }
@@ -204,8 +265,13 @@ export class OtComponent implements OnInit {
         }
       });
     } else {
-      this.detalleSelect.descripcion = value;
-      this.detalleSelect.cantidad = cantidad.value;
+      this.detalleSelect.descripcion = this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value;
+      this.detalleSelect.cantidad = this.cantidad.nativeElement.value;
+      if (this.productoFijoActivo) {
+        this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
+        this.detalleSelect.parcial = this.detalleSelect.cantidad * this.productoIdSelect.costo_publico;
+        this.detalleSelect.unitario = this.productoIdSelect.costo_publico;
+      }
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
       }
@@ -219,17 +285,47 @@ export class OtComponent implements OnInit {
       });
       this.detalleSelect = new DocumentoDetalleModel();
     }
+    if (this.productoFijoActivo) {
+      this.productoIdSelect = null;
+    } else {
+      this.item.nativeElement.value = "";
+    }
 
-    element.value = "";
-    cantidad.value = "";
+
+    this.cantidad.nativeElement.value = "";
     this.downloadURL2 = null;
     this.detalleSelect = new DocumentoDetalleModel();
     $('#exampleModal').modal('hide');
   }
 
-  editarItem(articulo, camtidad, item) {
-    camtidad.value = articulo.cantidad;
-    item.value = articulo.descripcion;
+  marcaSelect(marca) {
+    console.log(marca.value);
+    let marcaId = this.marcaList.find(ma => ma.nombre == marca.value);
+    this.marcasService.getModeloByMarca(marcaId.marca_vehiculo_id).subscribe(res => {
+      this.modeloList = res;
+      console.log(res);
+    });
+  }
+
+  guardarModelo(modelo) {
+    let modeloId = this.modeloList.find(mo => mo.nombre == modelo.value);
+    this.documento.modelo_marca_id = modeloId.modelo_marca_id;
+    this.documentoService.updateDocumento(this.documento).subscribe(res => {
+      if (res.code != 200) {
+        alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
+  }
+
+  editarItem(articulo) {
+    this.cantidad.nativeElement.value = articulo.cantidad;
+    if (this.productoFijoActivo) {
+      this.productoIdSelect = null;
+    } else {
+      this.item.nativeElement.value = articulo.descripcion;
+    }
+
     this.detalleSelect = articulo;
     $('#exampleModal').modal('show');
   }
@@ -288,9 +384,8 @@ export class OtComponent implements OnInit {
       if (parametros.ambiente == 'cloud') {
         this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).getDownloadURL());
       } else {
-        if(this.documento.mac != ''){
+        if (this.documento.mac != '') {
           this.usuarioService.getFile(this.documento.mac == '' ? null : this.documento.mac).subscribe(res => {
-            console.log(res);
             const imageBlob = this.dataURItoBlob(res);
             var reader = new FileReader();
             reader.readAsDataURL(imageBlob);
@@ -298,10 +393,10 @@ export class OtComponent implements OnInit {
               this.downloadURLLocal = reader.result;
             }
           });
-        }else{
+        } else {
           this.downloadURLLocal = null;
-        }
-        
+        } 
+
         // console.log("local");
         // var reader = new FileReader();
         // reader.readAsDataURL(event.target.files[0]);
@@ -309,13 +404,46 @@ export class OtComponent implements OnInit {
         //   $('#blah').attr('src', reader.result);
         // }
       }
-      console.log(cliente);
+      if(this.documento.linea_vehiculo!=""){
+        this.linea.nativeElement.value = this.documento.linea_vehiculo;
+      }else{
+        this.linea.nativeElement.value = "Seleccione Linea";
+      } 
+       
       this.clientePV.nativeElement.value = nombre;
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
       this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
+      if (this.documento.modelo_marca_id != null) {
+        this.marcasService.getModeloById(this.documento.modelo_marca_id).subscribe(res => {
+          let modelo = res[0];
+          this.marcasService.getModeloByMarca(modelo.marca_vehiculo_id).subscribe(modRes => {
+            this.modeloList = modRes;
+            let marcaId = this.marcaList.find(ma => ma.marca_vehiculo_id == modelo.marca_vehiculo_id);
+            this.marca.nativeElement.value = marcaId.nombre;
+            this.modelo.nativeElement.value = modelo.nombre;
+           
+          });
+        });
+      } else {
+        this.marca.nativeElement.value = "";
+        this.modelo.nativeElement.value = "";
+        this.modeloList = [];
+      }
       this.documentoDetalleService.getDocumentoDetalleByDocumento(documento_id).subscribe(res => {
         this.detallesList = res;
         console.log("detalles encontrados:" + res.length);
+      });
+    }
+  }
+
+  asignarLinea(linea){
+    if("Seleccione Linea"!=linea.value && this.documento.documento_id!=""){
+      this.documento.linea_vehiculo=linea.value;
+      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
       });
     }
   }
@@ -370,12 +498,20 @@ export class OtComponent implements OnInit {
       this.usuarioList = res;
     });
   }
+
+  marcas() {
+    this.marcasService.getMarcas().subscribe(res => {
+      this.marcaList = res;
+    });
+  }
+
+
   nombreUsuarioFiltro(id) {
     let usuario = this.usuarioList.find(usuario => usuario.usuario_id == id);
     return usuario == undefined ? "" : usuario.nombre;
   }
 
-  
+
 
 
   cargarFotoOrden(event) {
