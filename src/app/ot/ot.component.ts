@@ -406,20 +406,12 @@ export class OtComponent implements OnInit {
         } else {
           this.downloadURLLocal = null;
         }
-
-        // console.log("local");
-        // var reader = new FileReader();
-        // reader.readAsDataURL(event.target.files[0]);
-        // reader.onload = (_event) => {
-        //   $('#blah').attr('src', reader.result);
-        // }
       }
       if (this.documento.linea_vehiculo != "") {
         this.linea.nativeElement.value = this.documento.linea_vehiculo;
       } else {
         this.linea.nativeElement.value = "Seleccione Linea";
       }
-
       this.clientePV.nativeElement.value = nombre;
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
       this.observacion.nativeElement.value = this.documento.descripcion_trabajador;

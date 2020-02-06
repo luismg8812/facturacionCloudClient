@@ -5,7 +5,7 @@ export class DocumentoDetalleModel {
     public fecha_registro:Date;
     public estado:number;
     public parcial:number;
-    public impresoComanda:number;
+    public impreso_comanda:number;
     public cantidad:number;
     public unitario:number;
     public nombre_producto:string;
@@ -23,7 +23,7 @@ export class DocumentoDetalleModel {
        this.fecha_registro=new Date;
        this.estado=0;
        this.parcial=0;
-       this.impresoComanda=0;
+       this.impreso_comanda=0;
        this.cantidad=0;
        this.unitario=0;
        this.costo_producto=0;

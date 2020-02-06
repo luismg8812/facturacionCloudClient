@@ -128,7 +128,7 @@
             <div class="form-row">
               <div class="form-group col-md-6 col-sm-2" *ngIf="productoFijoActivo">
                 <input list="articulos" name="articuloC" [value]="articuloPV" #articuloC placeholder="Articulo" class="form-control"
-                  id="articuloC"  (change)="articuloSelect(articuloC)"
+                  id="articuloC" (change)="articuloSelect(articuloC)"
                   >
                 <datalist id="articulos">
                   <option *ngFor="let producto of productosAll" [value]="producto.nombre">
