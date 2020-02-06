@@ -171,7 +171,9 @@ export class OtComponent implements OnInit {
     this.clientePV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
-    this.item.nativeElement.value = "";
+    if (!this.productoFijoActivo  ) {
+      this.item.nativeElement.value = "";
+    }
     this.articuloPV = "";
     this.indexSelect = 0;
     $('#blah').attr('src', '');
