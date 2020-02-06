@@ -11,6 +11,12 @@ import { Observable } from 'rxjs';
 import { ParametrosModel } from '../model/parametros.model';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
 import { DocumentoDetalleService } from '../services/documento-detalle.service';
+import { MarcaVehiculoModel } from '../model/marcaVehiculo.model';
+import { MarcasService } from '../services/marcas.service';
+import { ModeloMarcaModel } from '../model/modeloMarca.model';
+import { ProductoService } from '../services/producto.service';
+import { ProductoModel } from '../model/producto.model';
+import { ActivacionModel } from '../model/activacion';
 
 declare var jquery: any;
 declare var $: any;
@@ -21,6 +27,8 @@ declare var $: any;
   styleUrls: ['./gestion-orden.component.css']
 })
 export class GestionOrdenComponent implements OnInit {
+
+  readonly PRODUCTOS_FIJOS: string = '21';
 
   public documento: DocumentoModel = new DocumentoModel();
   public usuarioId: number;
@@ -39,21 +47,73 @@ export class GestionOrdenComponent implements OnInit {
   public ordenesBuscarList: Array<DocumentoModel> = [];
   public ordenesList: Array<DocumentoModel> = [];
   public clienteNew: ClienteModel=new ClienteModel();
+  public marcaList: Array<MarcaVehiculoModel> = [];
+  public modeloList: Array<ModeloMarcaModel> = [];
+  public productosAll: Array<ProductoModel>;
+  public activaciones: Array<ActivacionModel> = [];
+  public productoFijoActivo: boolean = false;
+  public articuloPV: string = "";
+  public productoIdSelect: ProductoModel = null;
+  
 
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
   @ViewChild("observacion") observacion: ElementRef;
   @ViewChild("item") item: ElementRef;
+  @ViewChild("modelo") modelo: ElementRef;
+  @ViewChild("marca") marca: ElementRef;
+  @ViewChild("linea") linea: ElementRef;
+  @ViewChild("cantidad") cantidad: ElementRef;
+  @ViewChild("pCompra") pCompra: ElementRef;
+  @ViewChild("pVenta") pVenta: ElementRef;
+  
 
-  constructor(public documentoDetalleService: DocumentoDetalleService, public afStorage: AngularFireStorage, public calculosService: CalculosService, public documentoService: DocumentoService, public usuarioService: UsuarioService, public clienteService: ClienteService) { }
+  constructor(public productoService: ProductoService,public marcasService: MarcasService,public documentoDetalleService: DocumentoDetalleService, public afStorage: AngularFireStorage, public calculosService: CalculosService, public documentoService: DocumentoService, public usuarioService: UsuarioService, public clienteService: ClienteService) { }
 
   ngOnInit() {
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
     this.empresaId = Number(sessionStorage.getItem("empresa_id"));
     this.buscarUsuarios();
     this.getclientes(this.empresaId);
+    this.marcas();
+    this.getActivaciones(this.usuarioId);
+    this.getProductosByEmpresa(this.empresaId);
+  }
 
+  getProductosByEmpresa(empresaId: number) {
+    this.productoService.getProductosByEmpresa(empresaId.toString()).subscribe(res => {
+      this.productosAll = res;
+    });
+  }
+
+  guardarModelo(modelo) {
+    let modeloId = this.modeloList.find(mo => mo.nombre == modelo.value);
+    this.documento.modelo_marca_id = modeloId.modelo_marca_id;
+    this.documentoService.updateDocumento(this.documento).subscribe(res => {
+      if (res.code != 200) {
+        alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
+  }
+
+  asignarLinea(linea) {
+    if ("Seleccione Linea" != linea.value && this.documento.documento_id != "") {
+      this.documento.linea_vehiculo = linea.value;
+      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    }
+  }
+
+  marcas() {
+    this.marcasService.getMarcas().subscribe(res => {
+      this.marcaList = res;
+    });
   }
 
   nuevaOrden() {
@@ -219,38 +279,56 @@ export class GestionOrdenComponent implements OnInit {
     this.asignarValores(this.documento.documento_id);
   }
 
-  agregardetalle(nombre, cantidad, compra, venta) {
+  articuloSelect(element) {
+    console.log("articulo select:" + element.value);
+    let productoNombre: string = element.value;
+    this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
+    console.log(this.productoIdSelect);
+  }
+
+  agregardetalle() {
 
     if (this.documento.documento_id == '') {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
-    if (nombre.value == '') {
-      alert("El nombre del repuesto es obligatorio");
-      return;
+    if (!this.productoFijoActivo  ) {
+      if(this.item.nativeElement ==undefined ||this.item.nativeElement.value==''){
+        alert("El nombre del repuesto es obligatorio");
+        return;
+      }  
+      
+    } else {
+      if ((this.productoIdSelect == null || this.productoIdSelect == undefined) && this.productoFijoActivo) {
+        alert("El nombre del repuesto es obligatorio");
+        return;
+      }
     }
-    if (cantidad.value == '') {
+    if (this.cantidad.nativeElement.value == '') {
       alert("La cantidad del repuesto es obligatorio");
       return;
     }
-    if (compra.value == '') {
+    if (this.pCompra.nativeElement.value == '') {
       alert("El valor compra del repuesto es obligatorio");
       return;
     }
-    if (venta.value == '') {
+    if (this.pVenta.nativeElement.value == '') {
       alert("El valor venta del repuesto es obligatorio");
       return;
     }
 
     if (this.detalleSelect.documento_detalle_id == null) {
       let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
-      docDetalle.descripcion = nombre.value;
+      docDetalle.descripcion = (this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value);
       docDetalle.estado = 1;
-      docDetalle.cantidad = cantidad.value;
-      docDetalle.unitario = venta.value;
+      docDetalle.cantidad = this.cantidad.nativeElement.value;
+      docDetalle.unitario = this.pVenta.nativeElement.value;
       docDetalle.parcial = docDetalle.cantidad * docDetalle.unitario;
-      docDetalle.impresoComanda = compra.value;
+      docDetalle.impreso_comanda = this.pCompra.nativeElement.value;
       docDetalle.documento_id = this.documento.documento_id;
+      if (this.productoFijoActivo) {
+        this.detalleSelect.producto_id = this.productoIdSelect.producto_id;  
+      }
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         docDetalle.url_foto = this.cargarFotoRepuesto(docDetalle);
       }
@@ -263,13 +341,15 @@ export class GestionOrdenComponent implements OnInit {
           alert("Error agregando repuesto: " + res.error);
         }
       });
-
     } else {
-      this.detalleSelect.descripcion = nombre.value;
-      this.detalleSelect.cantidad = cantidad.value;
-      this.detalleSelect.unitario = venta.value;
-      this.detalleSelect.parcial = this.detalleSelect.cantidad * this.detalleSelect.unitario;
-      this.detalleSelect.impresoComanda = compra.value;
+      this.detalleSelect.descripcion = this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value;
+      this.detalleSelect.cantidad = this.cantidad.nativeElement.value;
+      this.detalleSelect.unitario = this.pVenta.nativeElement.value;
+      this.detalleSelect.impreso_comanda = this.pCompra.nativeElement.value;
+      if (this.productoFijoActivo) {
+        this.detalleSelect.producto_id = this.productoIdSelect.producto_id;  
+      }
+      this.detalleSelect.parcial = this.detalleSelect.cantidad * this.detalleSelect.unitario; 
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
       } 
@@ -280,21 +360,31 @@ export class GestionOrdenComponent implements OnInit {
       });
       this.detalleSelect = new DocumentoDetalleModel();
     }
-    nombre.value = "";
-    cantidad.value = "";
-    venta.value = "";
-    compra.venta = "";
+    this.productoIdSelect = null;
+    this.articuloPV = "";
+    if (!this.productoFijoActivo  ) {
+      this.item.nativeElement.value = "";
+    }
+    this.articuloPV = "";
+    this.cantidad.nativeElement.value = "";
+    this.pVenta.nativeElement.value = "";
+    this.pCompra.nativeElement.value = "";
     this.downloadURL2 = null;
     this.detalleSelect = new DocumentoDetalleModel();
-
     $('#exampleModal').modal('hide');
   }
 
-  editarItem(articulo, camtidad, nombre, venta, compra) {
-    camtidad.value = articulo.cantidad;
-    nombre.value = articulo.descripcion;
-    venta.value = articulo.unitario;
-    compra.value = articulo.impresoComanda;
+  editarItem(articulo) {
+    this.cantidad.nativeElement.value = articulo.cantidad;
+    if (this.productoFijoActivo) {
+      let productoNombre: string = articulo.descripcion;
+      this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
+      this.articuloPV = articulo.descripcion;
+    } else {
+      this.item.nativeElement.value = articulo.descripcion;
+    }
+    this.pVenta.nativeElement.value = articulo.unitario;
+    this.pCompra.nativeElement.value = articulo.impreso_comanda;
     this.detalleSelect = articulo;
     this.calcularTOtal() ;
     $('#exampleModal').modal('show');
@@ -358,6 +448,16 @@ export class GestionOrdenComponent implements OnInit {
     this.item.nativeElement.value = "";
     this.indexSelect = 0;
     this.valorTotal = 0;
+    this.articuloPV = "";
+  }
+
+  marcaSelect(marca) {
+    console.log(marca.value);
+    let marcaId = this.marcaList.find(ma => ma.nombre == marca.value);
+    this.marcasService.getModeloByMarca(marcaId.marca_vehiculo_id).subscribe(res => {
+      this.modeloList = res;
+      console.log(res);
+    });
   }
 
   nombreClienteFun(id) {
@@ -407,10 +507,30 @@ export class GestionOrdenComponent implements OnInit {
           this.downloadURLLocal = null;
         }
       }
-      console.log(cliente);
+      if (this.documento.linea_vehiculo != "") {
+        this.linea.nativeElement.value = this.documento.linea_vehiculo;
+      } else {
+        this.linea.nativeElement.value = "Seleccione Linea";
+      }
       this.clientePV.nativeElement.value = nombre;
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
       this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
+      if (this.documento.modelo_marca_id != null) {
+        this.marcasService.getModeloById(this.documento.modelo_marca_id).subscribe(res => {
+          let modelo = res[0];
+          this.marcasService.getModeloByMarca(modelo.marca_vehiculo_id).subscribe(modRes => {
+            this.modeloList = modRes;
+            let marcaId = this.marcaList.find(ma => ma.marca_vehiculo_id == modelo.marca_vehiculo_id);
+            this.marca.nativeElement.value = marcaId.nombre;
+            this.modelo.nativeElement.value = modelo.nombre;
+
+          });
+        });
+      } else {
+        this.marca.nativeElement.value = "";
+        this.modelo.nativeElement.value = "";
+        this.modeloList = [];
+      }
       this.documentoDetalleService.getDocumentoDetalleByDocumento(documento_id).subscribe(res => {
         this.detallesList = res;
         this.calcularTOtal();
@@ -428,6 +548,18 @@ export class GestionOrdenComponent implements OnInit {
     }
     const blob = new Blob([int8Array], { type: 'image/jpeg' });
     return blob;
+  }
+
+  getActivaciones(user: number) {
+    this.usuarioService.getActivacionByUsuario(user.toString()).subscribe(res => {
+      this.activaciones = res;
+      for (var e = 0; e < this.activaciones.length; e++) {
+        if (this.activaciones[e].activacion_id == this.PRODUCTOS_FIJOS) {
+          console.log("productos fijos activo");
+          this.productoFijoActivo = true;
+        }
+      }
+    });
   }
 
   nombreUsuario() {
