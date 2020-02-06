@@ -296,7 +296,9 @@ export class OtComponent implements OnInit {
     }
 
     this.productoIdSelect = null;
-    this.item.nativeElement.value = "";
+    if (!this.productoFijoActivo  ) {
+      this.item.nativeElement.value = "";
+    }
     this.articuloPV = "";
     this.cantidad.nativeElement.value = "";
     this.downloadURL2 = null;
