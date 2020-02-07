@@ -29,9 +29,11 @@ export class ImpresionService {
      texto.push("FECHA: "+factura.documento.fecha_registro.toString()+"\n");//fecha
      texto.push("CAJERO: "+factura.documento.usuario_id+" "+factura.nombreUsuario+"\n");//fecha
      texto.push("CAJA: "+'\n');
-     texto.push("CLIENTE: "+factura.cliente.nombre+'\n');
-     texto.push("NIT/CC: "+factura.cliente.documento+'\n');
-     texto.push("DIRECCIÓN: "+factura.cliente.direccion+'\n');
+     if(factura.cliente!=undefined ){
+      texto.push("CLIENTE: "+factura.cliente.nombre+'\n');
+      texto.push("NIT/CC: "+factura.cliente.documento+'\n');
+      texto.push("DIRECCIÓN: "+factura.cliente.direccion+'\n');
+     }
      texto.push("VEHÍCULO: "+factura.documento.detalle_entrada+'\n');
      texto.push("DESCRIPCIÓN CLIENTE: "+'\n');
      texto.push(factura.documento.descripcion_cliente+'\n');
@@ -42,8 +44,7 @@ export class ImpresionService {
      texto.push('----------------------------------------\n');
      for(var i=0; i<factura.detalle.length;i++){    
        let nombreProducto:string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 26);
-        let cantidadProducto:string = this.calculosService.cortarCantidades(factura.detalle[i].cantidad.toString(), 12);
-       
+       let cantidadProducto:string = this.calculosService.cortarCantidades(factura.detalle[i].cantidad.toString(), 12);     
        texto.push( nombreProducto + "  " + cantidadProducto   +"\n" );   
      }
      texto.push('----------------------------------------\n');

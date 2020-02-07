@@ -436,11 +436,7 @@ export class GestionOrdenComponent implements OnInit {
       this.factura.empresa = empr[0];
       this.factura.nombreTipoDocumento = tituloDocumento;
       this.factura.nombreUsuario= sessionStorage.getItem("nombreUsuario");
-      if(this.documento.cliente_id!=null){
-        this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
-      }else{
-        this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == 1);//se asigna cliente varios id =1
-      }
+       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
         case "TXT":
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt(this.factura), tituloDocumento+'.txt');
