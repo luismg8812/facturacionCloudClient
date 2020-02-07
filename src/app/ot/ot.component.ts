@@ -69,6 +69,7 @@ export class OtComponent implements OnInit {
   @ViewChild("marca") marca: ElementRef;
   @ViewChild("linea") linea: ElementRef;
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
+  
   constructor(public usuarioService: UsuarioService,
      public clienteService: ClienteService,
       public documentoService: DocumentoService,
