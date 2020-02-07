@@ -12,6 +12,58 @@ export class ImpresionService {
 
   constructor(public calculosService: CalculosService) { }
 
+  imprimirOrdenTxt(factura: FacturaModel) {
+     //Genera un objeto Blob con los datos en un archivo TXT
+     var texto = [];
+     let tamanoMax:number=40;
+     texto.push('----------------------------------------\n');
+     texto.push(this.calculosService.centrarDescripcion(factura.empresa.nombre,tamanoMax)+"\n");//nombre empresa
+     texto.push(this.calculosService.centrarDescripcion(factura.empresa.slogan,tamanoMax)+"\n");//slogan
+     texto.push(this.calculosService.centrarDescripcion(factura.empresa.represente,tamanoMax)+"\n");//representante
+     texto.push(this.calculosService.centrarDescripcion("NIT. "+factura.empresa.nit+" "+factura.empresa.regimen,tamanoMax)+"\n");//nit y regimen
+     texto.push(this.calculosService.centrarDescripcion(factura.empresa.direccion,tamanoMax)+"\n");//direccion
+     texto.push(this.calculosService.centrarDescripcion(factura.empresa.barrio,tamanoMax)+"\n");//barrio
+     texto.push(this.calculosService.centrarDescripcion("TEL: "+factura.empresa.telefono_fijo+" "+factura.empresa.cel,tamanoMax)+"\n");//telefonos
+     texto.push('\n');
+     texto.push("ORDEN DE TRABAJO: " +factura.documento.documento_id+"\n");//consecutivo
+     texto.push("FECHA: "+factura.documento.fecha_registro.toString()+"\n");//fecha
+     texto.push("CAJERO: "+factura.documento.usuario_id+" "+factura.nombreUsuario+"\n");//fecha
+     texto.push("CAJA: "+'\n');
+     texto.push("CLIENTE: "+factura.cliente.nombre+'\n');
+     texto.push("NIT/CC: "+factura.cliente.documento+'\n');
+     texto.push("DIRECCIÓN: "+factura.cliente.direccion+'\n');
+     texto.push("VEHÍCULO: "+factura.documento.detalle_entrada+'\n');
+     texto.push("DESCRIPCIÓN CLIENTE: "+'\n');
+     texto.push(factura.documento.descripcion_cliente+'\n');
+     texto.push("DIAGNOSTICO: "+'\n');
+     texto.push(factura.documento.descripcion_trabajador+'\n');
+     texto.push('----------------------------------------\n');
+     texto.push('DESCRIPCIÓN                       UNIDAD\n');
+     texto.push('----------------------------------------\n');
+     for(var i=0; i<factura.detalle.length;i++){    
+       let nombreProducto:string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 26);
+        let cantidadProducto:string = this.calculosService.cortarCantidades(factura.detalle[i].cantidad.toString(), 12);
+       
+       texto.push( nombreProducto + "  " + cantidadProducto   +"\n" );   
+     }
+     texto.push('----------------------------------------\n');
+     texto.push(this.calculosService.centrarDescripcion("*****GRACIAS POR SU COMPRA*****",tamanoMax)+'\n');
+     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:",tamanoMax)+'\n');
+     texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co",tamanoMax)+'\n');
+     texto.push(this.calculosService.centrarDescripcion("effectivesoftware1@gmail.com",tamanoMax)+'\n');
+     texto.push('\n');
+     texto.push('\n');
+     texto.push('\n');
+     texto.push('\n');
+     texto.push('\n');
+     texto.push('\n');
+     texto.push('\n');
+     texto.push('\n');
+     return new Blob(texto, {
+      type: 'text/plain'
+    });
+  }
+
   imprimirFacturaTxt(factura: FacturaModel, configuracion: ConfiguracionModel) {
     //Genera un objeto Blob con los datos en un archivo TXT
     var texto = [];
