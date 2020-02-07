@@ -17,6 +17,10 @@ import { ModeloMarcaModel } from '../model/modeloMarca.model';
 import { ProductoService } from '../services/producto.service';
 import { ProductoModel } from '../model/producto.model';
 import { ActivacionModel } from '../model/activacion';
+import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
+import { EmpresaService } from '../services/empresa.service';
+import { FacturaModel } from '../vo/factura.model';
+import { ImpresionService } from '../services/impresion.service';
 
 declare var jquery: any;
 declare var $: any;
@@ -54,6 +58,9 @@ export class GestionOrdenComponent implements OnInit {
   public productoFijoActivo: boolean = false;
   public articuloPV: string = "";
   public productoIdSelect: ProductoModel = null;
+  public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
+  public factura:FacturaModel;
+  
   
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -67,9 +74,12 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("cantidad") cantidad: ElementRef;
   @ViewChild("pCompra") pCompra: ElementRef;
   @ViewChild("pVenta") pVenta: ElementRef;
-  
+  @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
-  constructor(public productoService: ProductoService,public marcasService: MarcasService,public documentoDetalleService: DocumentoDetalleService, public afStorage: AngularFireStorage, public calculosService: CalculosService, public documentoService: DocumentoService, public usuarioService: UsuarioService, public clienteService: ClienteService) { }
+  constructor(public productoService: ProductoService,
+    public empresaService:EmpresaService,
+    public impresionService:ImpresionService,
+    public marcasService: MarcasService,public documentoDetalleService: DocumentoDetalleService, public afStorage: AngularFireStorage, public calculosService: CalculosService, public documentoService: DocumentoService, public usuarioService: UsuarioService, public clienteService: ClienteService) { }
 
   ngOnInit() {
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
@@ -79,6 +89,8 @@ export class GestionOrdenComponent implements OnInit {
     this.marcas();
     this.getActivaciones(this.usuarioId);
     this.getProductosByEmpresa(this.empresaId);
+    this.getImpresorasEmpresa(this.empresaId);
+    this.factura=new FacturaModel();
   }
 
   getProductosByEmpresa(empresaId: number) {
@@ -388,6 +400,75 @@ export class GestionOrdenComponent implements OnInit {
     this.detalleSelect = articulo;
     this.calcularTOtal() ;
     $('#exampleModal').modal('show');
+  }
+
+  imprimirOrden(impresora){
+    if (this.documento.documento_id == "") {
+      alert("Debe pulsar el boton nuevo documento");
+      return;
+    }
+    if (impresora.value == "") {
+      impresora.value = 1;
+    }
+    if (this.documento.cliente_id == null) {
+      //si el cliente es nulo se asigna el varios por defecto
+      this.documento.cliente_id = 1;
+    }
+    let tipoImpresion = "";
+     
+    for (var i = 0; i < this.impresoraEmpresa.length; i++) {
+      if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+      }
+    }
+    if(tipoImpresion==""){
+      alert("No existen impresoras configuradas para la empresa");
+      return;
+    }
+    console.log(tipoImpresion);
+    let tituloDocumento: string = "";
+    tituloDocumento = "OrdenTrabajo" + "_" + this.documento.documento_id + "_" + impresora.value  + "_" + tipoImpresion;
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      let empr = res;
+      this.factura.documento = this.documento;
+      this.factura.detalle = this.detallesList;
+      this.factura.titulo = tituloDocumento;
+      this.factura.empresa = empr[0];
+      this.factura.nombreTipoDocumento = tituloDocumento;
+      this.factura.nombreUsuario= sessionStorage.getItem("nombreUsuario");
+      if(this.documento.cliente_id!=null){
+        this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
+      }else{
+        this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == 1);//se asigna cliente varios id =1
+      }
+      switch (tipoImpresion) {
+        case "TXT":
+          this.descargarArchivo(this.impresionService.imprimirOrdenTxt(this.factura), tituloDocumento+'.txt');
+          break;
+        default:
+          alert("no tiene un tipo impresion");
+          //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
+          //    enPantalla, e);
+          break;
+      }
+    }); 
+   
+  }
+
+  descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    const url = window.URL.createObjectURL(contenidoEnBlob);
+    const link = this.downloadZipLink.nativeElement;
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  getImpresorasEmpresa(empresaId: number) {
+    this.clienteService.getImpresorasEmpresa(empresaId.toString()).subscribe(res => {
+      this.impresoraEmpresa = res;
+      console.log("impresoras configuradas en la empresa:" +res.length);
+    });
   }
 
   calcularTOtal() {
