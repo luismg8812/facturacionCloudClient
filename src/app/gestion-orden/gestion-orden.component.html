@@ -429,7 +429,161 @@
         </a>
       </div>
     </div>
-    <div class="tab-pane container fade" id="factura">En desarrollo...</div>
+    <div class="tab-pane container-fluid fade" id="factura">
+      <br />
+      <div class="form-row">
+        <div class="form-group col-md-2 col-sm-12 ">
+          <button type="button" class="btn btn-primary " id="anterior"
+            (click)="teclaAnteriorSiguiente('anterior')">Anterior</button>
 
+          <button type="button" class="btn btn-primary ml-2" id="siguiente"
+            (click)="teclaAnteriorSiguiente('siguiente')">Siguiente</button>
+        </div>
+        <div class="form-group col-md-2 col-sm-12 ">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#buscarModal">
+            Buscar
+          </button>
+          <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#imprimirModal">
+            Imprimir
+          </button>
+        </div>
+        <div class="form-group col-md-4 col-sm-12 ">
+          <button type="button" class="btn btn-primary " id="Nueva" (click)="nuevaFactura()">Nueva Factura</button>
+          <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#entregarModal">
+            Vista previa
+          </button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-9 col-sm-12 ">
+          <div class="form-row">
+            <div class="form-group col-md-4 col-sm-2">
+              <input list="browsers" name="clienteFactura" #clienteFactura placeholder="Cliente" class="form-control" id="clienteFactura"
+                (change)="clienteSelectFactura(clienteFactura)">
+            </div>
+            <div class="form-group col-md-4 col-sm-2">
+              <b>Fecha entrada:</b> {{documentoFactura.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+            </div>
+            <div class="form-group col-md-4">
+              <b>Número de documento:</b> {{documentoFactura.documento_id}}
+            </div>
+          </div>
+          <div class="form-row">
+            <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#agregarOrdenModal">
+              Agregar Ordenes de trabajo
+            </button>
+          </div>
+          Ordenes de trabajo
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Opciones</th>
+                <th scope="col">Empleado</th>
+                <th scope="col">Cliente</th>
+                <th scope="col" >Placa</th>
+                <th scope="col">Total</th>
+                
+    
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ordenes of ordenesFactura">
+                <th scope="row">
+                  <button type="button" (click)="editarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                    data-target="#exampleModal">
+                    Editar
+                  </button>
+                  <!-- Button trigger modal -->
+                  <button type="button" (click)="eliminarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                    data-target="#eliminarModal">
+                    Eliminar
+                  </button>
+                </th>
+                <td></td>
+                <td></td>
+                <td ></td>
+                <td></td>
+                
+    
+              </tr>
+            </tbody>
+          </table>
+          Items
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Opciones</th>
+                <th scope="col">Empleado</th>
+                <th scope="col">Cliente</th>
+                <th scope="col" >Placa</th>
+                <th scope="col">Total</th>
+                
+    
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ordenes of itemsFactura">
+                <th scope="row">
+                  <button type="button" (click)="editarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                    data-target="#exampleModal">
+                    Editar
+                  </button>
+                  <!-- Button trigger modal -->
+                  <button type="button" (click)="eliminarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                    data-target="#eliminarModal">
+                    Eliminar
+                  </button>
+                </th>
+                <td></td>
+                <td></td>
+                <td ></td>
+                <td></td>
+                
+    
+              </tr>
+            </tbody>
+          </table>
+          <div class="form-row">
+            <textarea class="form-control mb-2" id="observacionFactura" #observacionFactura
+            placeholder="Observación" required
+            (blur)="agregarDescripcionCliente(observacionFactura)"></textarea>
+          </div>
+        </div>
+        <div class="form-group col-md-3 col-sm-12 ">
+          <div class="form-group col-md-12 col-sm-12 ">
+            <h5>Vr. exento: $</h5>
+          </div>
+          <div class="form-group col-md-12 col-sm-12 ">
+            <h5>Vr. gravado: $</h5>
+          </div>
+          <div class="form-group col-md-12 col-sm-12 ">
+            <h5>Vr. IVA: $</h5>
+          </div>
+          <div class="form-group col-md-12 col-sm-12 ">
+            <h5>Vr. Total: $</h5>
+          </div>
+        </div>
+      </div>
+
+
+        <!-- Modal agregar ordenes de trabajo -->
+        <div class="modal fade  bd-example-modal-xl" id="agregarOrdenModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Buscar Orden de trabajo</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

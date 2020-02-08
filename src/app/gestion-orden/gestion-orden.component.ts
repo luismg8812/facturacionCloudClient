@@ -35,6 +35,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly PRODUCTOS_FIJOS: string = '21';
 
   public documento: DocumentoModel = new DocumentoModel();
+  public documentoFactura: DocumentoModel = new DocumentoModel();
   public usuarioId: number;
   public empresaId: number;
   public detallesList: Array<DocumentoDetalleModel> = [];
@@ -50,7 +51,7 @@ export class GestionOrdenComponent implements OnInit {
   public valorTotal: number = 0;
   public ordenesBuscarList: Array<DocumentoModel> = [];
   public ordenesList: Array<DocumentoModel> = [];
-  public clienteNew: ClienteModel=new ClienteModel();
+  public clienteNew: ClienteModel = new ClienteModel();
   public marcaList: Array<MarcaVehiculoModel> = [];
   public modeloList: Array<ModeloMarcaModel> = [];
   public productosAll: Array<ProductoModel>;
@@ -59,9 +60,13 @@ export class GestionOrdenComponent implements OnInit {
   public articuloPV: string = "";
   public productoIdSelect: ProductoModel = null;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
-  public factura:FacturaModel;
-  
-  
+  public factura: FacturaModel;
+
+  //factura
+  public ordenesFactura: Array<DocumentoModel> = [];
+  public itemsFactura: Array<DocumentoDetalleModel> = [];
+
+
 
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
@@ -76,10 +81,15 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("pVenta") pVenta: ElementRef;
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
+  //campos de factura
+  @ViewChild("clienteFactura") clienteFactura: ElementRef;
+  @ViewChild("observacionFactura") observacionFactura: ElementRef;
+
+
   constructor(public productoService: ProductoService,
-    public empresaService:EmpresaService,
-    public impresionService:ImpresionService,
-    public marcasService: MarcasService,public documentoDetalleService: DocumentoDetalleService, public afStorage: AngularFireStorage, public calculosService: CalculosService, public documentoService: DocumentoService, public usuarioService: UsuarioService, public clienteService: ClienteService) { }
+    public empresaService: EmpresaService,
+    public impresionService: ImpresionService,
+    public marcasService: MarcasService, public documentoDetalleService: DocumentoDetalleService, public afStorage: AngularFireStorage, public calculosService: CalculosService, public documentoService: DocumentoService, public usuarioService: UsuarioService, public clienteService: ClienteService) { }
 
   ngOnInit() {
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
@@ -90,7 +100,7 @@ export class GestionOrdenComponent implements OnInit {
     this.getActivaciones(this.usuarioId);
     this.getProductosByEmpresa(this.empresaId);
     this.getImpresorasEmpresa(this.empresaId);
-    this.factura=new FacturaModel();
+    this.factura = new FacturaModel();
   }
 
   getProductosByEmpresa(empresaId: number) {
@@ -148,21 +158,40 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
+  nuevaFactura() {
+    console.log("nueva factura");
+    this.limpiarFactura();
+    this.documentoFactura.tipo_documento_id = 10;// SE AGREGA tipo documento =10 factura de venta
+    this.documentoFactura.fecha_registro = this.calculosService.fechaActual();
+    this.documentoFactura.usuario_id = this.usuarioId;
+    this.documentoFactura.empresa_id = this.empresaId;
+    this.documentoFactura.invoice = 1; // invoice 1 sin enviar a la DIAN
+    this.clienteFactura.nativeElement.focus();
+    this.documentoService.saveDocumento(this.documentoFactura).subscribe(res => {
+      if (res.code == 200) {
+        this.documentoFactura.documento_id = res.documento_id;
+      } else {
+        alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+        return;
+      }
+    });
+  }
+
   clienteSelectFun(element) {
     console.log(this.clientes);
     if (this.documento.documento_id == "") {
-        alert("Debe pulsar el boton nuevo documento");
-        return;
-      }
+      alert("Debe pulsar el boton nuevo documento");
+      return;
+    }
     let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
     if (cliente == undefined) {
-      this.clienteNew.nombre=element.value;
+      this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
       return;
     } else {
       console.log(cliente);
       this.documento.cliente_id = cliente.cliente_id;
-      
+
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
         if (res.code != 200) {
           alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
@@ -172,9 +201,31 @@ export class GestionOrdenComponent implements OnInit {
     }
   }
 
-  CrearCliente(){ 
-   // console.log(this.clienteNew);
-   let valido: boolean = true;
+  clienteSelectFactura(element) {
+    if (this.documentoFactura.documento_id == "") {
+      alert("Debe pulsar el boton nueva Factura");
+      return;
+    }
+    let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
+    if (cliente == undefined) {
+      this.clienteNew.nombre = element.value;
+      $('#crearClienteModal').modal('show');
+      return;
+    } else {
+      console.log(cliente);
+      this.documentoFactura.cliente_id = cliente.cliente_id;
+      this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    }
+  }
+
+  CrearCliente() {
+    // console.log(this.clienteNew);
+    let valido: boolean = true;
     let mensageError: string = "Son obligatorios:\n ";
     if (this.clienteNew.nombre == "") {
       mensageError += "nombre\n";
@@ -188,18 +239,18 @@ export class GestionOrdenComponent implements OnInit {
       alert(mensageError);
       return;
     }
-    this.clienteNew.empresa_id=this.empresaId;
+    this.clienteNew.empresa_id = this.empresaId;
     this.clienteService.saveCliente(this.clienteNew).subscribe(res => {
       if (res.code == 200) {
         this.getclientes(this.empresaId);
-        this.clienteNew=new ClienteModel();
+        this.clienteNew = new ClienteModel();
         $('#crearClienteModal').modal('hide');
       } else {
         alert("error creando cliente, por favor inicie nuevamente la creación del cliente, si persiste consulte a su proveedor");
         return;
       }
     });
-    
+
   }
 
   agregarDescripcionCliente(element) {
@@ -245,12 +296,12 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  entregar(){
+  entregar() {
     if (this.documento.documento_id == '') {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
-    this.documento.fecha_entrega=this.calculosService.fechaActual();
+    this.documento.fecha_entrega = this.calculosService.fechaActual();
     this.documentoService.updateDocumento(this.documento).subscribe(res => {
       if (res.code != 200) {
         alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
@@ -304,12 +355,12 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
-    if (!this.productoFijoActivo  ) {
-      if(this.item.nativeElement ==undefined ||this.item.nativeElement.value==''){
+    if (!this.productoFijoActivo) {
+      if (this.item.nativeElement == undefined || this.item.nativeElement.value == '') {
         alert("El nombre del repuesto es obligatorio");
         return;
-      }  
-      
+      }
+
     } else {
       if ((this.productoIdSelect == null || this.productoIdSelect == undefined) && this.productoFijoActivo) {
         alert("El nombre del repuesto es obligatorio");
@@ -339,7 +390,7 @@ export class GestionOrdenComponent implements OnInit {
       docDetalle.impreso_comanda = this.pCompra.nativeElement.value;
       docDetalle.documento_id = this.documento.documento_id;
       if (this.productoFijoActivo) {
-        this.detalleSelect.producto_id = this.productoIdSelect.producto_id;  
+        this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
       }
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         docDetalle.url_foto = this.cargarFotoRepuesto(docDetalle);
@@ -359,12 +410,12 @@ export class GestionOrdenComponent implements OnInit {
       this.detalleSelect.unitario = this.pVenta.nativeElement.value;
       this.detalleSelect.impreso_comanda = this.pCompra.nativeElement.value;
       if (this.productoFijoActivo) {
-        this.detalleSelect.producto_id = this.productoIdSelect.producto_id;  
+        this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
       }
-      this.detalleSelect.parcial = this.detalleSelect.cantidad * this.detalleSelect.unitario; 
+      this.detalleSelect.parcial = this.detalleSelect.cantidad * this.detalleSelect.unitario;
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
-      } 
+      }
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code != 200) {
           alert("Error agregando repuesto: " + res.error);
@@ -374,7 +425,7 @@ export class GestionOrdenComponent implements OnInit {
     }
     this.productoIdSelect = null;
     this.articuloPV = "";
-    if (!this.productoFijoActivo  ) {
+    if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
     }
     this.articuloPV = "";
@@ -398,11 +449,11 @@ export class GestionOrdenComponent implements OnInit {
     this.pVenta.nativeElement.value = articulo.unitario;
     this.pCompra.nativeElement.value = articulo.impreso_comanda;
     this.detalleSelect = articulo;
-    this.calcularTOtal() ;
+    this.calcularTOtal();
     $('#exampleModal').modal('show');
   }
 
-  imprimirOrden(impresora){
+  imprimirOrden(impresora) {
     if (this.documento.documento_id == "") {
       alert("Debe pulsar el boton nuevo documento");
       return;
@@ -415,19 +466,19 @@ export class GestionOrdenComponent implements OnInit {
       this.documento.cliente_id = 1;
     }
     let tipoImpresion = "";
-     
+
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
         tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
       }
     }
-    if(tipoImpresion==""){
+    if (tipoImpresion == "") {
       alert("No existen impresoras configuradas para la empresa");
       return;
     }
     console.log(tipoImpresion);
     let tituloDocumento: string = "";
-    tituloDocumento = "OrdenTrabajo" + "_" + this.documento.documento_id + "_" + impresora.value  + "_" + tipoImpresion;
+    tituloDocumento = "OrdenTrabajo" + "_" + this.documento.documento_id + "_" + impresora.value + "_" + tipoImpresion;
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
       this.factura.documento = this.documento;
@@ -435,11 +486,11 @@ export class GestionOrdenComponent implements OnInit {
       this.factura.titulo = tituloDocumento;
       this.factura.empresa = empr[0];
       this.factura.nombreTipoDocumento = tituloDocumento;
-      this.factura.nombreUsuario= sessionStorage.getItem("nombreUsuario");
-       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
+      this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
+      this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
         case "TXT":
-          this.descargarArchivo(this.impresionService.imprimirOrdenTxt(this.factura), tituloDocumento+'.txt');
+          this.descargarArchivo(this.impresionService.imprimirOrdenTxt(this.factura), tituloDocumento + '.txt');
           break;
         default:
           alert("no tiene un tipo impresion");
@@ -447,8 +498,8 @@ export class GestionOrdenComponent implements OnInit {
           //    enPantalla, e);
           break;
       }
-    }); 
-   
+    });
+
   }
 
   descargarArchivo(contenidoEnBlob, nombreArchivo) {
@@ -463,7 +514,7 @@ export class GestionOrdenComponent implements OnInit {
   getImpresorasEmpresa(empresaId: number) {
     this.clienteService.getImpresorasEmpresa(empresaId.toString()).subscribe(res => {
       this.impresoraEmpresa = res;
-      console.log("impresoras configuradas en la empresa:" +res.length);
+      console.log("impresoras configuradas en la empresa:" + res.length);
     });
   }
 
@@ -528,6 +579,14 @@ export class GestionOrdenComponent implements OnInit {
     this.articuloPV = "";
   }
 
+  limpiarFactura() {
+    this.documentoFactura = new DocumentoModel();
+    this.clienteFactura.nativeElement.value = "";
+    this.observacionFactura.nativeElement.value = "";
+    this.ordenesFactura = [];
+    this.itemsFactura = [];
+  }
+
   marcaSelect(marca) {
     console.log(marca.value);
     let marcaId = this.marcaList.find(ma => ma.nombre == marca.value);
@@ -538,7 +597,7 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   nombreClienteFun(id) {
-    console.log("id:"+id);
+    console.log("id:" + id);
     let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
     if (cliente == undefined) {
       return "";
@@ -570,7 +629,7 @@ export class GestionOrdenComponent implements OnInit {
       if (parametros.ambiente == 'cloud') {
         this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).getDownloadURL());
       } else {
-        if(this.documento.mac != ''){
+        if (this.documento.mac != '') {
           this.usuarioService.getFile(this.documento.mac == '' ? null : this.documento.mac).subscribe(res => {
             console.log(res);
             const imageBlob = this.dataURItoBlob(res);
@@ -580,7 +639,7 @@ export class GestionOrdenComponent implements OnInit {
               this.downloadURLLocal = reader.result;
             }
           });
-        }else{
+        } else {
           this.downloadURLLocal = null;
         }
       }
