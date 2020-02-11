@@ -236,6 +236,11 @@
         </div>
         <div class="modal-body">
           <div class="form-row">
+            <div class="form-group col-md-12 col-sm-10" *ngFor="let imp of impresoraEmpresa">
+              {{imp.numero_impresora}}. {{imp.nombre_impresora}}
+            </div>
+          </div>
+          <div class="form-row">
             <div class="form-group col-md-6 col-sm-10" >
               Digite el número de impresora:
             </div>

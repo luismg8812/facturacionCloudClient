@@ -23,4 +23,9 @@ export class DocumentoDetalleService {
   getDocumentoDetalleByDocumento(documentoId:string) {
     return this.http.get<DocumentoDetalleModel[]>(this.server_api + '/documentoDetalle/getDocumentoDetalleByDocumento?documento_id='+documentoId);
   }
+
+  getDocumentoDetalleByDocumentoList(documentoId:string[]) {
+    return this.http.get<DocumentoDetalleModel[]>(this.server_api + '/documentoDetalle/getDocumentoDetalleByDocumentoList?documento_id='+documentoId);
+  }
+  
 }

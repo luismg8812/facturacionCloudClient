@@ -21,6 +21,7 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { EmpresaService } from '../services/empresa.service';
 import { FacturaModel } from '../vo/factura.model';
 import { ImpresionService } from '../services/impresion.service';
+import { DocumentoOrdenModel } from '../model/documentoOrden.model';
 
 declare var jquery: any;
 declare var $: any;
@@ -65,7 +66,11 @@ export class GestionOrdenComponent implements OnInit {
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
   public itemsFactura: Array<DocumentoDetalleModel> = [];
-
+  public ordenesBuscarListFactura: Array<DocumentoModel> = [];
+  public facturasBuscarList: Array<DocumentoModel> = [];
+  public ordenesBuscarListFacturaSelect: Array<DocumentoModel> = [];
+  public facturasList: Array<DocumentoModel> = [];
+  public indexFacturaSelect: number = 0;
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -83,7 +88,7 @@ export class GestionOrdenComponent implements OnInit {
 
   //campos de factura
   @ViewChild("clienteFactura") clienteFactura: ElementRef;
-  @ViewChild("observacionFactura") observacionFactura: ElementRef;
+  @ViewChild("observacionFact") observacionFact: ElementRef;
 
 
   constructor(public productoService: ProductoService,
@@ -314,11 +319,11 @@ export class GestionOrdenComponent implements OnInit {
   teclaAnteriorSiguiente(apcion: string) {
     if (this.ordenesList.length == 0) {
       let tipoDocumentoId: Array<number> = [11];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '').subscribe(res => {
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '').subscribe(res => {
         this.ordenesList = res;
         console.log("lista de docuemntos cargados: " + this.ordenesList.length);
         if (this.ordenesList.length == 0) {
-          alert("No existen documentos");
+          alert("No existen Ordenes de trabajo");
           return;
         }
         console.log(apcion + ":" + this.ordenesList.length);
@@ -340,6 +345,37 @@ export class GestionOrdenComponent implements OnInit {
 
     console.log("actual:" + this.documento.documento_id);
     this.asignarValores(this.documento.documento_id);
+  }
+
+  teclaAnteriorSiguienteFactura(apcion: string) {
+    if (this.facturasList.length == 0) {
+      let tipoDocumentoId: Array<number> = [10];
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '').subscribe(res => {
+        this.facturasList = res;
+        console.log("lista de facturas cargados: " + this.facturasList.length);
+        if (this.facturasList.length == 0) {
+          alert("No existen facturas");
+          return;
+        }
+        console.log(apcion + ":" + this.facturasList.length);
+        this.documentoFactura = this.facturasList[this.facturasList.length - 1];
+        this.indexFacturaSelect = this.facturasList.length - 1;
+        this.asignarValoresFactura(this.documentoFactura.documento_id);
+        return;
+      });
+    } else {
+      if ('anterior' == apcion && this.indexFacturaSelect != 0) {
+        this.indexFacturaSelect = this.indexFacturaSelect - 1;
+        this.documentoFactura = this.facturasList[this.indexFacturaSelect];
+      }
+      if ('siguiente' == apcion && this.indexFacturaSelect != this.facturasList.length - 1) {
+        this.indexFacturaSelect = this.indexFacturaSelect + 1;
+        this.documentoFactura = this.facturasList[this.indexFacturaSelect];
+      }
+    }
+
+    console.log("actual:" + this.documentoFactura.documento_id);
+    this.asignarValoresFactura(this.documentoFactura.documento_id);
   }
 
   articuloSelect(element) {
@@ -468,8 +504,11 @@ export class GestionOrdenComponent implements OnInit {
     let tipoImpresion = "";
 
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
+      console.log(this.impresoraEmpresa[i].numero_impresora+":"+impresora.value);
       if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
         tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+        console.log(this.impresoraEmpresa[i]);
+        break;
       }
     }
     if (tipoImpresion == "") {
@@ -489,9 +528,12 @@ export class GestionOrdenComponent implements OnInit {
       this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
-        case "TXT":
-          this.descargarArchivo(this.impresionService.imprimirOrdenTxt(this.factura), tituloDocumento + '.txt');
+        case "TXT80MM":
+          this.descargarArchivo(this.impresionService.imprimirOrdenTxt80(this.factura), tituloDocumento + '.txt');
           break;
+          case "TXT50MM":
+            this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
+            break;
         default:
           alert("no tiene un tipo impresion");
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
@@ -560,9 +602,41 @@ export class GestionOrdenComponent implements OnInit {
     $('#eliminarModal').modal('hide');
   }
 
-  buscarOrdenes(placa, cliente, fechaInicial, fechaFinal) {
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, cliente.value, fechaInicial.value, fechaFinal.value).subscribe(res => {
+  buscarOrdenes(placa, clien, fechaInicial, fechaFinal) {
+    let idCliente = "";
+    let tipoDocumentoId = 11;
+    if (clien.value != "") {
+      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      idCliente = cliente.cliente_id.toString();
+    }
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
       this.ordenesBuscarList = res;
+    });
+  }
+
+  buscarFacturas(placa, clien, fechaInicial, fechaFinal) {
+    let idCliente = "";
+    let tipoDocumentoId = 10; // se buscan facturas
+    if (clien.value != "") {
+      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      idCliente = cliente.cliente_id.toString();
+    }
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
+      this.facturasBuscarList = res;
+    });
+  }
+
+
+  buscarOrdenesFactura(placa, clien, fechaInicial, fechaFinal) {
+    let idCliente = "";
+    let tipoDocumentoId = 11;// se buscan ordenes de trabajo
+    if (clien.value != "") {
+      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      idCliente = cliente.cliente_id.toString();
+    }
+
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
+      this.ordenesBuscarListFactura = res;
     });
   }
 
@@ -573,7 +647,9 @@ export class GestionOrdenComponent implements OnInit {
     this.clientePV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
-    this.item.nativeElement.value = "";
+    if (!this.productoFijoActivo) {
+      this.item.nativeElement.value = "";
+    }
     this.indexSelect = 0;
     this.valorTotal = 0;
     this.articuloPV = "";
@@ -582,8 +658,8 @@ export class GestionOrdenComponent implements OnInit {
   limpiarFactura() {
     this.documentoFactura = new DocumentoModel();
     this.clienteFactura.nativeElement.value = "";
-    this.observacionFactura.nativeElement.value = "";
-    this.ordenesFactura = [];
+    this.observacionFact.nativeElement.value = "";
+    this.ordenesBuscarListFacturaSelect = [];
     this.itemsFactura = [];
   }
 
@@ -596,8 +672,121 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
+  selectOrdenAll(e) {
+    console.log(e.target.checked);
+    // console.log($('#selectOdenAl').is(':checked'));
+
+  }
+
+  confirmarAgregarOrdenes(op) {
+    if (op == 'n') {
+      this.ordenesBuscarListFacturaSelect = [];
+      this.ordenesBuscarList = [];
+    } else {
+      if (this.ordenesBuscarListFacturaSelect.length == 0) {
+        alert("Debe seleccionar almenos una orden");
+        return;
+      }
+      this.itemsFactura = [];
+      let ids: string[] = [];
+      for (let d of this.ordenesBuscarListFacturaSelect) {
+        ids.unshift(d.documento_id);
+        let documentoOrden: DocumentoOrdenModel = new DocumentoOrdenModel();
+        documentoOrden.documento_id = this.documentoFactura.documento_id;
+        documentoOrden.orden_id = d.documento_id;
+        this.documentoService.saveDocumentoOrden(documentoOrden).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando documentoOrden, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+          }
+        });
+      }
+      console.log(ids);
+      this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+        this.itemsFactura = res;
+        this.documentoFactura = this.calculosService.calcularExcento(this.documentoFactura, this.itemsFactura);
+        this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+        console.log("detalles encontrados:" + res.length);
+      });
+      //ver por que no suma el total...meter esto dentro del suscribe
+      //tambien crear las tablas de guardar las ordenes y los documentos
+    }
+    $('#agregarOrdenModal').modal('hide');
+  }
+
+
+
+  calcularIva(detalle: DocumentoDetalleModel, impuesto) {
+    console.log(impuesto.value);
+    const index = this.itemsFactura.indexOf(detalle, 0);
+    if (index > -1) {
+      detalle.impuesto_producto = impuesto.value;
+      this.itemsFactura.splice(index, 1, detalle);
+    }
+    this.documentoDetalleService.updateDocumentoDetalle(detalle).subscribe(res => {
+      if (res.code != 200) {
+        alert("Error agregando repuesto: " + res.error);
+      } else {
+        this.documentoFactura = this.calculosService.calcularExcento(this.documentoFactura, this.itemsFactura);
+        this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+      }
+    });
+  }
+
+  eliminarOrden(orden: DocumentoModel) {
+    this.documentoService.deleteDocumentoOrdenByOrden(orden).subscribe(res => {
+      if (res.code != 200) {
+        alert("error eliminando el documentoOrden, por favor inicie nuevamente la creación del documento");
+        return;
+      } else {
+        const index = this.ordenesBuscarListFacturaSelect.indexOf(orden, 0);
+        if (index > -1) {
+          this.ordenesBuscarListFacturaSelect.splice(index, 1);
+          this.confirmarAgregarOrdenes('s')
+        }
+
+      }
+    });
+  }
+
+  selectOrdenOne(or: DocumentoModel, event) {
+    if (this.documentoFactura.documento_id == "") {
+      alert("Debe crear un nuevo documento antes de realizar esta acción");
+      event.target.checked = false;
+      return "";
+    }
+    if (event.target.checked) {
+      this.documentoService.getDocumentoOrdenById(or.documento_id).subscribe(res => {
+        if (res.length > 0) {
+          alert("La orden Seleccionada ya se encuentra asociada a la factura número: " + res[0].documento_id);
+          event.target.checked = false;
+          return;
+        } else {
+          this.ordenesBuscarListFacturaSelect.unshift(or);
+        }
+      });
+
+
+    } else {
+      const index = this.ordenesBuscarListFacturaSelect.indexOf(or, 0);
+      if (index > -1) {
+        this.ordenesBuscarListFacturaSelect.splice(index, 1);
+      }
+    }
+    console.log(this.ordenesBuscarListFacturaSelect);
+  }
+
   nombreClienteFun(id) {
-    console.log("id:" + id);
+
     let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
     if (cliente == undefined) {
       return "";
@@ -615,6 +804,26 @@ export class GestionOrdenComponent implements OnInit {
     this.documento = orden;
     this.asignarValores(orden.documento_id);
     $('#buscarModal').modal('hide');
+  }
+
+  cargarFactura(orden: DocumentoModel) {
+    this.documentoFactura = orden;
+    this.asignarValoresFactura(orden.documento_id);
+    $('#buscarFacturaModal').modal('hide');
+  }
+
+  observacionFactura() {
+    if (this.documentoFactura.documento_id == "") {
+      alert("Debe pulsar el boton nuevo documento");
+      return;
+    }
+    this.documentoFactura.descripcion_trabajador = this.observacionFact.nativeElement.value;
+    this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+      if (res.code != 200) {
+        alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
   }
 
   asignarValores(documento_id: string) {
@@ -672,6 +881,38 @@ export class GestionOrdenComponent implements OnInit {
         this.calcularTOtal();
         console.log("detalles encontrados:" + res.length);
       });
+    }
+  }
+
+  asignarValoresFactura(documento_id: string) {
+    if (documento_id != '') {
+
+      let cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoFactura.cliente_id);
+      let nombre = "";
+      if (cliente != undefined) {
+        nombre = cliente.nombre;
+      }
+      let parametros: ParametrosModel = new ParametrosModel;
+      this.clienteFactura.nativeElement.value = nombre;
+      this.observacionFact.nativeElement.value = this.documentoFactura.descripcion_trabajador;
+      this.documentoService.getOrdenesByDocumentoId(documento_id).subscribe(res => {
+        this.ordenesBuscarListFacturaSelect = res;
+        let ids: string[] = [];
+        for (let d of this.ordenesBuscarListFacturaSelect) {
+          ids.unshift(d.documento_id);
+        }
+        if(ids.length>0){
+          this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+            this.itemsFactura = res;
+            console.log("detalles encontrados:" + res.length);
+          });
+        }else{
+          this.itemsFactura = [];
+        }
+        
+      });
+
+
     }
   }
 

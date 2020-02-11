@@ -4,6 +4,7 @@ import { DocumentoModel } from '../model/documento.model';
 import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 import { CuadreCajaVoModel } from '../model/cuadreCajaVo.model';
 import { ParametrosModel } from '../model/parametros.model';
+import { DocumentoOrdenModel } from '../model/documentoOrden.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,22 @@ export class DocumentoService {
     return this.http.post<any>(this.server_api + '/documento/createDocumento', documentoId);
   }
 
+  saveDocumentoOrden(documentoOrdenId: DocumentoOrdenModel) {
+    return this.http.post<any>(this.server_api + '/documento/createDocumentoOrden', documentoOrdenId);
+  }
+
+  
+
   updateDocumento(documentoId: DocumentoModel) {
     return this.http.post<any>(this.server_api + '/documento/updateDocumento', documentoId);
   }
 
-  saveTipoPagoDocumento(tipoPagoDocumentoId: TipoPagoDocumentoModel) {
+  deleteDocumentoOrdenByOrden(documento_id: DocumentoModel) {
+    return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByOrden', documento_id);
+  }
+
+  
+  saveTipoPagoDocumento(tipoPagoDocumentoId: TipoPagoDocumentoModel) { 
     return this.http.post<any>(this.server_api + '/documento/createTipoPagoDocumento', tipoPagoDocumentoId);
   }
 
@@ -30,14 +42,21 @@ export class DocumentoService {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getDocumentoByTipo?tipoDocumentoId='+tipoDocumentoId+'&empresaId=' + empresaId + '&usuarioId=' + usuarioId + '&cerrado=' + cerrado);
   }
 
+  getDocumentoOrdenById(ordenId: string) {
+    return this.http.get<DocumentoOrdenModel[]>(this.server_api + '/documento/getDocumentoOrdenById?ordenId='+ordenId);
+  }
+  
+  getOrdenesByDocumentoId(documentoId: string) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByDocumentoId?documentoId='+documentoId);
+  }
+  
+
   getCuadreCaja(tipoDocumentoId: number[], empresaId: string, usuarioId: string, cerrado: string) {
     return this.http.get<CuadreCajaVoModel>(this.server_api + '/documento/getCuadreCaja?tipoDocumentoId='+tipoDocumentoId+'&empresaId=' + empresaId + '&usuarioId=' + usuarioId + '&cerrado=' + cerrado);
   }
 
-  getOrdenesTrabajo(empresaId:string, placa: string,  cliente: string, fechaInicial, fechaFinal) {
-    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesTrabajo?empresaId='+empresaId+'&placa='+placa+'&cliente=' + cliente + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal);
+  getOrdenesTrabajo(empresaId:string, placa: string,  cliente: string, fechaInicial, fechaFinal,tipoDocumentoId:number) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesTrabajo?empresaId='+empresaId+'&placa='+placa+'&cliente=' + cliente + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);
   }
-
-  
 
 }

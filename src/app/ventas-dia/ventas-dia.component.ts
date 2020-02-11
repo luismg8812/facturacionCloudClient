@@ -555,9 +555,12 @@ export class VentasDiaComponent implements OnInit {
    this.factura.nombreUsuario= sessionStorage.getItem("nombreUsuario"); 
     for (var i = 0; i < numeroImpresiones; i++) {
     switch (tipoImpresion) {
-      case "TXT":
+      case "TXT80MM":
         this.descargarArchivo(this.impresionService.imprimirFacturaTxt(this.factura, this.configuracion), tituloDocumento+'.txt');
         break;
+        case "TXT50MM":
+          this.descargarArchivo(this.impresionService.imprimirFacturaTxt(this.factura, this.configuracion), tituloDocumento+'.txt');
+          break;
       default:
         alert("no tiene un tipo impresion");
         //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,

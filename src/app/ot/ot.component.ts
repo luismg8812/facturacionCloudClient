@@ -57,7 +57,7 @@ export class OtComponent implements OnInit {
   public productoIdSelect: ProductoModel = null;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public articuloPV: string = "";
-  public factura:FacturaModel;
+  public factura: FacturaModel;
 
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
@@ -69,17 +69,17 @@ export class OtComponent implements OnInit {
   @ViewChild("marca") marca: ElementRef;
   @ViewChild("linea") linea: ElementRef;
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
-  
+
   constructor(public usuarioService: UsuarioService,
-     public clienteService: ClienteService,
-      public documentoService: DocumentoService,
-   public empresaService:EmpresaService,
-    public marcasService: MarcasService, 
+    public clienteService: ClienteService,
+    public documentoService: DocumentoService,
+    public empresaService: EmpresaService,
+    public marcasService: MarcasService,
     public productoService: ProductoService,
-     public documentoDetalleService: DocumentoDetalleService,
-      public calculosService: CalculosService, 
-      public afStorage: AngularFireStorage,
-      public impresionService:ImpresionService
+    public documentoDetalleService: DocumentoDetalleService,
+    public calculosService: CalculosService,
+    public afStorage: AngularFireStorage,
+    public impresionService: ImpresionService
   ) { }
 
   ngOnInit() {
@@ -91,10 +91,10 @@ export class OtComponent implements OnInit {
     this.getProductosByEmpresa(this.empresaId);
     this.marcas();
     this.getImpresorasEmpresa(this.empresaId);
-    this.factura=new FacturaModel();
+    this.factura = new FacturaModel();
   }
 
- 
+
 
   getActivaciones(user: number) {
     this.usuarioService.getActivacionByUsuario(user.toString()).subscribe(res => {
@@ -183,7 +183,7 @@ export class OtComponent implements OnInit {
 
   }
 
-  imprimirOrden(impresora){
+  imprimirOrden(impresora) {
     if (this.documento.documento_id == "") {
       alert("Debe pulsar el boton nuevo documento");
       return;
@@ -196,19 +196,19 @@ export class OtComponent implements OnInit {
       this.documento.cliente_id = 1;
     }
     let tipoImpresion = "";
-     
+
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
         tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
       }
     }
-    if(tipoImpresion==""){
+    if (tipoImpresion == "") {
       alert("No existen impresoras configuradas para la empresa");
       return;
     }
     console.log(tipoImpresion);
     let tituloDocumento: string = "";
-    tituloDocumento = "OrdenTrabajo" + "_" + this.documento.documento_id + "_" + impresora.value  + "_" + tipoImpresion;
+    tituloDocumento = "OrdenTrabajo" + "_" + this.documento.documento_id + "_" + impresora.value + "_" + tipoImpresion;
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
       this.factura.documento = this.documento;
@@ -216,20 +216,24 @@ export class OtComponent implements OnInit {
       this.factura.titulo = tituloDocumento;
       this.factura.empresa = empr[0];
       this.factura.nombreTipoDocumento = tituloDocumento;
-      this.factura.nombreUsuario= sessionStorage.getItem("nombreUsuario");
-        this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
+      this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
+      this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
-        case "TXT":
-          this.descargarArchivo(this.impresionService.imprimirOrdenTxt(this.factura), tituloDocumento+'.txt');
+        case "TXT80MM":
+          this.descargarArchivo(this.impresionService.imprimirOrdenTxt80(this.factura), tituloDocumento + '.txt');
           break;
+        case "TXT50MM":
+          this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
+          break;
+
         default:
           alert("no tiene un tipo impresion");
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
           //    enPantalla, e);
           break;
       }
-    }); 
-   
+    });
+
   }
 
   descargarArchivo(contenidoEnBlob, nombreArchivo) {
@@ -244,7 +248,7 @@ export class OtComponent implements OnInit {
   getImpresorasEmpresa(empresaId: number) {
     this.clienteService.getImpresorasEmpresa(empresaId.toString()).subscribe(res => {
       this.impresoraEmpresa = res;
-      console.log("impresoras configuradas en la empresa:" +res.length);
+      console.log("impresoras configuradas en la empresa:" + res.length);
     });
   }
 
@@ -255,7 +259,7 @@ export class OtComponent implements OnInit {
     this.clientePV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
-    if (!this.productoFijoActivo  ) {
+    if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
     }
     this.articuloPV = "";
@@ -308,19 +312,19 @@ export class OtComponent implements OnInit {
   agregardetalle() {
     //console.log(this.item.nativeElement.value);
 
-    if (!this.productoFijoActivo  ) {
-      if(this.item.nativeElement ==undefined ||this.item.nativeElement.value==''){
+    if (!this.productoFijoActivo) {
+      if (this.item.nativeElement == undefined || this.item.nativeElement.value == '') {
         alert("El nombre del repuesto es obligatorio");
         return;
-      }  
-      
+      }
+
     } else {
       if ((this.productoIdSelect == null || this.productoIdSelect == undefined) && this.productoFijoActivo) {
         alert("El nombre del repuesto es obligatorio");
         return;
       }
     }
-    
+
     if (this.cantidad.nativeElement.value == '') {
       alert("La cantidad del repuesto es obligatorio");
       return;
@@ -381,7 +385,7 @@ export class OtComponent implements OnInit {
     }
 
     this.productoIdSelect = null;
-    if (!this.productoFijoActivo  ) {
+    if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
     }
     this.articuloPV = "";
@@ -564,8 +568,14 @@ export class OtComponent implements OnInit {
     $('#eliminarModal').modal('hide');
   }
 
-  buscarOrdenes(placa, cliente, fechaInicial, fechaFinal) {
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, cliente.value, fechaInicial.value, fechaFinal.value).subscribe(res => {
+  buscarOrdenes(placa, clien, fechaInicial, fechaFinal) {
+    let idCliente = "";
+    let tipoDocumentoId = 11;
+    if (clien.value != "") {
+      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      idCliente = cliente.cliente_id.toString();
+    }
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value,tipoDocumentoId).subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
