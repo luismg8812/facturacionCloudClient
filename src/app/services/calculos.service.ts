@@ -133,7 +133,8 @@ export class CalculosService {
 
 	public cortarDescripcion(nombre: string, maxTamanoNombre: number) {
 		let unit:string = "";
-		let tamañoCantidad:number = nombre.length;
+		nombre=(nombre==undefined?"":nombre);
+		let tamañoCantidad:number = (nombre==undefined?0:nombre.length);
 		if(tamañoCantidad>maxTamanoNombre){
 			unit = nombre.trim().substring(0, maxTamanoNombre);
 		}else{
