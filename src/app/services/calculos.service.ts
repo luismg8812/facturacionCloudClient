@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ProductoModel } from '../model/producto.model';
 import { DocumentoModel } from '../model/documento.model';
 import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
+import { ParametrosModel } from '../model/parametros.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -12,7 +13,11 @@ export class CalculosService {
 
 	public fechaActual() {
 		let fecha = new Date;
-		fecha.setDate(fecha.getDate() - 0.2083);
+		let parametros: ParametrosModel = new ParametrosModel;
+		if (parametros.ambiente == 'cloud') {
+			fecha.setDate(fecha.getDate() - 0.2083);
+			fecha.setDate(fecha.getDate() + 1);
+		}	
 		return fecha;
 	}
 
