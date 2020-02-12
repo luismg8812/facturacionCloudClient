@@ -364,8 +364,8 @@
                   Digite el número de impresora:
                 </div>
                 <div class="form-group col-md-6 col-sm-2">
-                  <input class="form-control" id="impresoraOrden" type="number" placeholder="Digite el número de impresora:"
-                    name="impresoraOrden" #impresoraOrden required>
+                  <input class="form-control" id="impresoraOrden" type="number"
+                    placeholder="Digite el número de impresora:" name="impresoraOrden" #impresoraOrden required>
                 </div>
               </div>
             </div>
@@ -438,7 +438,8 @@
       <br />
       <div class="form-row">
         <div class="form-group col-md-2 col-sm-12 ">
-          <button type="button" class="btn btn-primary " (click)="teclaAnteriorSiguienteFactura('anterior')">Anterior</button>
+          <button type="button" class="btn btn-primary "
+            (click)="teclaAnteriorSiguienteFactura('anterior')">Anterior</button>
 
           <button type="button" class="btn btn-primary ml-2"
             (click)="teclaAnteriorSiguienteFactura('siguiente')">Siguiente</button>
@@ -448,7 +449,7 @@
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#buscarFacturaModal">
             Buscar
           </button>
-          <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#imprimirModalFactura">
+          <button type="button" class="btn btn-primary ml-2" data-toggle="modal" [disabled]="documentoFactura.impreso==1" data-target="#imprimirModalFactura">
             Imprimir
           </button>
         </div>
@@ -463,20 +464,31 @@
         <div class="form-group col-md-9 col-sm-12 ">
           <div class="form-row">
             <div class="form-group col-md-4 col-sm-2">
-              <input list="browsers" name="clienteFactura" #clienteFactura placeholder="Cliente" class="form-control"
+              <input list="browsers" name="clienteFactura" [disabled]="documentoFactura.impreso==1" #clienteFactura placeholder="Cliente" class="form-control"
                 id="clienteFactura" (change)="clienteSelectFactura(clienteFactura)">
             </div>
             <div class="form-group col-md-4 col-sm-2">
-              <b>Fecha entrada:</b> {{documentoFactura.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+              <b>Fecha Documento:</b> {{documentoFactura.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
             </div>
             <div class="form-group col-md-4">
-              <b>Número de documento:</b> {{documentoFactura.documento_id}}
+              <div class="form-row">
+                <b>Número documento Interno: </b> {{documentoFactura.documento_id}}
+              </div>
+              <div class="form-row">
+                <b>Consecutivo DIAN: </b> {{documentoFactura.consecutivo_dian}}
+              </div>
             </div>
           </div>
           <div class="form-row">
-            <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#agregarOrdenModal">
-              Agregar Ordenes de trabajo
-            </button>
+            <div class="form-group col-md-4 col-sm-2">
+              <button type="button" class="btn btn-primary mb-2" [disabled]="documentoFactura.impreso==1" data-toggle="modal" data-target="#agregarOrdenModal">
+                Agregar Ordenes de trabajo
+              </button>
+            </div>
+            <div class="form-group col-md-4 col-sm-2" *ngIf="documentoFactura.impreso==1">
+              <h4 class="factImpresa">FACTURA IMPRESA</h4>
+            </div>
+           
 
           </div>
           Ordenes de trabajo
@@ -484,7 +496,7 @@
             <thead>
               <tr>
                 <th scope="col">Opciones</th>
-                <th scope="col"># Orden</th>
+                <th scope="col">N° Orden</th>
                 <th scope="col">Cliente</th>
                 <th scope="col">Placa</th>
                 <th scope="col">Total</th>
@@ -494,14 +506,13 @@
               <tr *ngFor="let ordenes of ordenesBuscarListFacturaSelect">
                 <th scope="row">
                   <!-- Button trigger modal -->
-                  <button type="button" (click)="eliminarOrden(ordenes)" class="btn btn-secondary btn-sm"
-                   >
+                  <button type="button" (click)="eliminarOrden(ordenes)" [disabled]="documentoFactura.impreso==1" class="btn btn-secondary btn-sm">
                     Eliminar
                   </button>
                 </th>
-                <td>{{nombreUsuarioFiltro(ordenes.usuario_id)}}</td>
                 <td>{{ordenes.documento_id}}</td>
-                <td>{{nombreClienteFun(ordenes.detalle_entrada)}}</td>
+                <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
+                <td>{{ordenes.detalle_entrada}}</td>
                 <td>${{formatearNumber(ordenes.total)}}</td>
 
 
@@ -527,7 +538,8 @@
                 <td>{{ordenes.documento_id}}</td>
                 <td>{{ordenes.cantidad}}</td>
                 <td>${{formatearNumber(ordenes.unitario)}}</td>
-                <td> <select class="form-control" value="{{ordenes.impuesto_producto}}" (change)="calcularIva(ordenes, impuesto) " #impuesto>
+                <td> <select class="form-control" value="{{ordenes.impuesto_producto}}" [disabled]="documentoFactura.impreso==1"
+                    (change)="calcularIva(ordenes, impuesto) " #impuesto>
                     <option>0</option>
                     <option>0.4</option>
                     <option>4</option>
@@ -541,8 +553,8 @@
             </tbody>
           </table>
           <div class="form-row">
-            <textarea class="form-control mb-2" id="observacionFac" #observacionFact placeholder="Observación"
-              required (blur)="observacionFactura()"></textarea>
+            <textarea class="form-control mb-2" id="observacionFac" [disabled]="documentoFactura.impreso==1" #observacionFact placeholder="Observación" required
+              (blur)="observacionFactura()"></textarea>
           </div>
         </div>
         <div class="form-group col-md-3 col-sm-12 ">
@@ -651,107 +663,120 @@
         </div>
       </div>
 
-       <!-- Modal imprimir factura-->
-       <div class="modal fade bd-example-modal-sm" id="imprimirModalFactura" tabindex="-1" role="dialog"
-       aria-labelledby="exampleModalLabel" aria-hidden="true">
-       <div class="modal-dialog modal-sm" role="document">
-         <div class="modal-content">
-           <div class="modal-header">
-             <h5 class="modal-title" id="exampleModalLabel">Imprimir Factura</h5>
-             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-               <span aria-hidden="true">&times;</span>
-             </button>
-           </div>
-           <div class="modal-body">
-            <div class="form-row">
-              <div class="form-group col-md-12 col-sm-10" *ngFor="let imp of impresoraEmpresa">
-                {{imp.numero_impresora}}. {{imp.nombre_impresora}}
+      <!-- Modal imprimir factura-->
+      <div class="modal fade bd-example-modal-sm" id="imprimirModalFactura" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Imprimir Factura</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group col-md-12 col-sm-10" *ngFor="let imp of impresoraEmpresa">
+                  {{imp.numero_impresora}}. {{imp.nombre_impresora}}
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Tipo de pago:
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  <select class="form-control" id="tipoPago" #tipoPago>
+                    <option *ngFor="let tp of tipoPagosAll">{{tp.nombre}}</option>
+
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-10">
+                  Digite el número de impresora:
+                </div>
+                <div class="form-group col-md-6 col-sm-2">
+                  <input class="form-control" id="impresora" type="number" placeholder="Digite el número de impresora:"
+                    name="impresora" #impresora required>
+                </div>
               </div>
             </div>
-             <div class="form-row">
-               <div class="form-group col-md-6 col-sm-10">
-                 Digite el número de impresora:
-               </div>
-               
-               <div class="form-group col-md-6 col-sm-2">
-                 <input class="form-control" id="impresora" type="number" placeholder="Digite el número de impresora:"
-                   name="impresora" #impresora required>
-               </div>
-             </div>
-           </div>
-           <div class="modal-footer">
-             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-             <button type="button" class="btn btn-primary" (click)="imprimirOrden(impresora)">Imprimir</button>
-           </div>
-         </div>
-       </div>
-     </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-primary"
+                (click)="enterContinuarImpresion(impresora)">Imprimir</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-       <!-- Modal buscar -->
-       <div class="modal fade  bd-example-modal-xl" id="buscarFacturaModal" tabindex="-1" role="dialog"
-       aria-labelledby="exampleModalLabel" aria-hidden="true">
-       <div class="modal-dialog modal-xl" role="document">
-         <div class="modal-content">
-           <div class="modal-header">
-             <h5 class="modal-title" id="exampleModalLabel">Buscar Factura</h5>
-             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-               <span aria-hidden="true">&times;</span>
-             </button>
-           </div>
-           <div class="modal-body">
-             <div class="form-row">
-               <div class="form-group col-md-6 col-sm-1">
-                 Fecha Inicial
-                 <input class="form-control" type="date" value="2020-01-01" id="fechaInicial" #fechaInicial>
-               </div>
-               <div class="form-group col-md-6 col-sm-1">
-                 Fecha Final
-                 <input class="form-control" type="date" value="2020-12-31" id="fechaFinal" #fechaFinal>
-               </div>
-             </div>
-             <div class="form-row">
-               <div class="form-group col-md-6 col-sm-2">
-                 <input list="browsers" name="clienteBuscarFacturas" #clienteBuscarFacturas placeholder="Cliente"
-                   class="form-control" id="clienteBuscarFacturas">
-               </div>
-               <div class="form-group col-md-6 col-sm-2">
-                 <input class="form-control" id="placaFactura" placeholder="Placa" name="placaFactura" #placaFactura
-                   required>
-               </div>
-             </div>
-             <button type="button" class="btn btn-primary"
-               (click)="buscarFacturas(placaFactura,clienteBuscarFacturas,fechaInicial,fechaFinal)">Buscar</button>
-             <br />
-             <table class="table table-hover">
-               <thead>
-                 <tr>
-                   <th scope="col">Opciones</th>
-                   <th scope="col"># doc. interno</th>
-                   <th scope="col">Nombre Cliente</th>
-                   <th scope="col">Consecutivo DIAN</th>
-                   <th scope="col">TOTAL</th>
-                   
-                 </tr>
-               </thead>
-               <tbody>
-                 <tr *ngFor="let ordenes of facturasBuscarList">
-                   <th scope="row">
-                     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
-                       (click)="cargarFactura(ordenes)">
-                       Ver
-                     </button>
-                   </th>
-                   <td>{{ordenes.documento_id}}</td>
-                   <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
-                   <td>{{ordenes.consecutivo_dian}}</td>
-                   <td>{{formatearNumber(ordenes.total)}}</td>
-                 </tr>
-               </tbody>
-             </table>
-           </div>
-         </div>
-       </div>
-     </div>
+      <!-- Modal buscar -->
+      <div class="modal fade  bd-example-modal-xl" id="buscarFacturaModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Buscar Factura</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-1">
+                  Fecha Inicial
+                  <input class="form-control" type="date" value="2020-01-01" id="fechaInicial" #fechaInicial>
+                </div>
+                <div class="form-group col-md-6 col-sm-1">
+                  Fecha Final
+                  <input class="form-control" type="date" value="2020-12-31" id="fechaFinal" #fechaFinal>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-2">
+                  <input list="browsers" name="clienteBuscarFacturas" #clienteBuscarFacturas placeholder="Cliente"
+                    class="form-control" id="clienteBuscarFacturas">
+                </div>
+                <div class="form-group col-md-6 col-sm-2">
+                  <input class="form-control" id="placaFactura" placeholder="Placa" name="placaFactura" #placaFactura
+                    required>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary"
+                (click)="buscarFacturas(placaFactura,clienteBuscarFacturas,fechaInicial,fechaFinal)">Buscar</button>
+              <br />
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Opciones</th>
+                    <th scope="col"># doc. interno</th>
+                    <th scope="col">Nombre Cliente</th>
+                    <th scope="col">Consecutivo DIAN</th>
+                    <th scope="col">TOTAL</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ordenes of facturasBuscarList">
+                    <th scope="row">
+                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
+                        (click)="cargarFactura(ordenes)">
+                        Ver
+                      </button>
+                    </th>
+                    <td>{{ordenes.documento_id}}</td>
+                    <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
+                    <td>{{ordenes.consecutivo_dian}}</td>
+                    <td>{{formatearNumber(ordenes.total)}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>

@@ -77,7 +77,7 @@ export class VentasDiaComponent implements OnInit {
   public productoIdSelect: ProductoModel;
   public imp: string;
   public productos: Array<DocumentoDetalleModel>;
-  public factura:FacturaModel;
+  public factura: FacturaModel;
   public opciones: Array<SubMenuModel>;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
@@ -135,7 +135,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("efectovoPV") efectovoPV: ElementRef;
   @ViewChild("continuaImpresionPV") continuaImpresionPV: ElementRef;
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
-  
+
 
   ngOnInit() {
     this.empresaId = Number(sessionStorage.getItem("empresa_id"));
@@ -144,7 +144,7 @@ export class VentasDiaComponent implements OnInit {
     this.estadoDivProducto("d-none") // se muestra el div de producto
     this.CodigoBarrasPV.nativeElement.classList.add("d-none");
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
-    this.factura=new FacturaModel();
+    this.factura = new FacturaModel();
     sessionStorage.removeItem("documentoIdSelect");
     sessionStorage.removeItem("productoIdSelect");
     this.getProductosByEmpresa(this.empresaId);
@@ -173,18 +173,18 @@ export class VentasDiaComponent implements OnInit {
       return;
     } else {
       let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
-      
-      if (cliente==undefined) {
+
+      if (cliente == undefined) {
         alert("se creará cliente");
-      } else {  
+      } else {
         console.log(cliente);
         this.clienteSelect = cliente.cliente_id;
         this.document.cliente_id = this.clienteSelect;
-        this.factura.cliente=cliente;
+        this.factura.cliente = cliente;
       }
 
     }
-    console.log("cliente select:" +this.clienteSelect);
+    console.log("cliente select:" + this.clienteSelect);
     if (this.guiaTransporteActivo) {
       this.tipoDocumentoPV.nativeElement.focus();
     } else {
@@ -207,27 +207,27 @@ export class VentasDiaComponent implements OnInit {
       case '': {
         console.log("factura de venta por defecto");
         this.tipoDocumentSelect = 10;
-        this.factura.nombreTipoDocumento="FACTURA DE VENTA";
+        this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
         break;
       }
       case 'c':
       case 'C': {
         this.tipoDocumentSelect = 4;
         console.log("cotizacion");
-        this.factura.nombreTipoDocumento="COTIZACIÓN";
+        this.factura.nombreTipoDocumento = "COTIZACIÓN";
         break;
       }
       case 'r':
       case 'R': {
         this.tipoDocumentSelect = 9;
         console.log("remision");
-        this.factura.nombreTipoDocumento="FACTURA DE VENTA.";
+        this.factura.nombreTipoDocumento = "FACTURA DE VENTA.";
         break;
       }
       case 'f':
       case 'F': {
         this.tipoDocumentSelect = 10;
-        this.factura.nombreTipoDocumento="FACTURA DE VENTA";
+        this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
         console.log("Factura");
         break;
       }
@@ -380,14 +380,14 @@ export class VentasDiaComponent implements OnInit {
     }
 
     if (element.id == "cuadreCajaPV") {
-     // alert("cuadre de caja");
+      // alert("cuadre de caja");
       this.cuadreCajaModal.nativeElement.click();
       //this.continuaImpresionPV.nativeElement.focus();
       //this.enterContinuarImpresion(element);
 
     }
 
-    
+
   }
 
   enterContinuarImpresion(element) {
@@ -531,14 +531,14 @@ export class VentasDiaComponent implements OnInit {
       impresora = 1;
     }
     let pantalla = this.enPantallaPV.nativeElement.value;
-    if(pantalla==""){
-      pantalla="false";
+    if (pantalla == "") {
+      pantalla = "false";
     }
-    if(numeroImpresiones==undefined){
-      numeroImpresiones=1;
+    if (numeroImpresiones == undefined) {
+      numeroImpresiones = 1;
     }
     let tipoImpresion = "";
-     
+
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       console.log(numeroImpresiones);
       if (impresora == this.impresoraEmpresa[i].numero_impresora) {
@@ -547,26 +547,26 @@ export class VentasDiaComponent implements OnInit {
     }
     console.log(tipoImpresion);
     tituloDocumento = this.tituloFactura + "_" + this.document.consecutivo_dian + "_" + impresora + "_" + pantalla + "_" + numeroImpresiones + "_" + tipoImpresion;
-    
-   this.factura.documento = this.document;
-   this.factura.detalle = this.productos
-   this.factura.titulo = tituloDocumento;
-   this.factura.empresa = empresa;
-   this.factura.nombreUsuario= sessionStorage.getItem("nombreUsuario"); 
+
+    this.factura.documento = this.document;
+    this.factura.detalle = this.productos
+    this.factura.titulo = tituloDocumento;
+    this.factura.empresa = empresa;
+    this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
     for (var i = 0; i < numeroImpresiones; i++) {
-    switch (tipoImpresion) {
-      case "TXT80MM":
-        this.descargarArchivo(this.impresionService.imprimirFacturaTxt(this.factura, this.configuracion), tituloDocumento+'.txt');
-        break;
-        case "TXT50MM":
-          this.descargarArchivo(this.impresionService.imprimirFacturaTxt(this.factura, this.configuracion), tituloDocumento+'.txt');
+      switch (tipoImpresion) {
+        case "TXT80MM":
+          this.descargarArchivo(this.impresionService.imprimirFacturaTxt80(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
-      default:
-        alert("no tiene un tipo impresion");
-        //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
-        //    enPantalla, e);
-        break;
-    }
+        case "TXT50MM":
+          this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + '.txt');
+          break;
+        default:
+          alert("no tiene un tipo impresion");
+          //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
+          //    enPantalla, e);
+          break;
+      }
     }
   }
 
@@ -954,7 +954,7 @@ export class VentasDiaComponent implements OnInit {
     this.descuentoPV.nativeElement.value = "";
     this.efectovoPV.nativeElement.value = "";
     this.tituloFactura = "";
-    this.factura=new FacturaModel();
+    this.factura = new FacturaModel();
 
   }
 
@@ -1076,7 +1076,7 @@ export class VentasDiaComponent implements OnInit {
   public opcionesSubmenu() {
     let usuario_id = sessionStorage.getItem('usuario_id');
     this.usuarioService.opcionPuntoVentaByUsuario(usuario_id).subscribe((res) => {
-      this.opciones=res;
+      this.opciones = res;
       console.log(this.opciones);
     });
   }
@@ -1091,9 +1091,9 @@ export class VentasDiaComponent implements OnInit {
   getclientes(empresaId: number) {
     this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
       this.clientes = res;
-      console.log("lista de clientes cargados: "+this.clientes.length);
+      console.log("lista de clientes cargados: " + this.clientes.length);
     });
-    
+
   }
 
   getConfiguracion(empresaId: number) {
@@ -1184,9 +1184,9 @@ export class VentasDiaComponent implements OnInit {
     this.grameraPV.nativeElement.classList.add("d-none");
   }
 
-  formatearNumber(number:number){
-    let formato:string="";
-    formato=new Intl.NumberFormat().format(number);
+  formatearNumber(number: number) {
+    let formato: string = "";
+    formato = new Intl.NumberFormat().format(number);
     return formato;
   }
 
