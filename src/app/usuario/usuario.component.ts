@@ -5,6 +5,8 @@ import { UsuarioService } from '../services/usuario.service';
 import { from } from 'rxjs';
 import { SubMenuModel } from '../model/submenu.model';
 import { ActivacionModel } from '../model/activacion';
+import { AngularFireAuth } from '@angular/fire/auth/auth';
+import { ParametrosModel } from '../model/parametros.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -15,7 +17,7 @@ declare var $: any;
 })
 export class UsuarioComponent implements OnInit {
 
-  constructor(private usuarioService: UsuarioService) {
+  constructor(private usuarioService: UsuarioService, public afauth: AngularFireAuth, ) {
     this.usuarioBuscar = new UsuarioModel();
     this.usuarioCrear = new UsuarioModel();
     this.rolListSelect = [];
@@ -98,6 +100,16 @@ export class UsuarioComponent implements OnInit {
         }
       });
     } else {
+      let parametros: ParametrosModel = new ParametrosModel;
+      if (parametros.ambiente == 'cloud') {
+        this.usuarioService.saveUsuarioFireBase(this.usuarioCrear.correo, this.usuarioCrear.clave).then(user=>{
+          console.log("guardo usuario");
+        }).catch(error => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(errorCode+":"+errorMessage);
+        });
+      }
       this.usuarioService.saveUsuario(this.usuarioCrear, rolId).subscribe(res => {
         if (res.code == 200) {
           $('#exampleModal').modal('hide');
@@ -159,22 +171,22 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
-  aplicarActivacion(activacion:ActivacionModel){
+  aplicarActivacion(activacion: ActivacionModel) {
     for (var i = 0; i < this.activacionSelect.length; i++) {
-      if(this.activacionSelect[i].activacion_id==activacion.activacion_id){
+      if (this.activacionSelect[i].activacion_id == activacion.activacion_id) {
         this.activacionSelect.splice(i, 1);
         break;
-      }  
+      }
     }
     this.activacionUnSelect.push(activacion);
   }
 
-  desaplicarActivacion(activacion:ActivacionModel){
+  desaplicarActivacion(activacion: ActivacionModel) {
     for (var i = 0; i < this.activacionUnSelect.length; i++) {
-      if(this.activacionUnSelect[i].activacion_id==activacion.activacion_id){
+      if (this.activacionUnSelect[i].activacion_id == activacion.activacion_id) {
         this.activacionUnSelect.splice(i, 1);
         break;
-      }  
+      }
     }
     this.activacionSelect.push(activacion);
   }
@@ -279,30 +291,30 @@ export class UsuarioComponent implements OnInit {
   }
 
   guardarRutas() {
-     let idSubmenu:Array<string>=[];
-     let idActivacion:Array<string>=[];
-     for (var i = 0; i < this.submenuSelect.length; i++) {
-       idSubmenu.push(this.submenuSelect[i].sub_menu_id.toString());
-     }
-     for (var i = 0; i < this.activacionSelect.length; i++) {
-       idActivacion.push(this.activacionSelect[i].activacion_id);
-     }
-     this.usuarioService.guardarActivaciones(this.usuarioSelect,idActivacion).subscribe(res => {
-       
-       if (res.code == 200) {
-         console.log("Activaciones guardadas");
-       } else {
-         alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
-         return;
-       }
-     });
-     this.usuarioService.guardarRutas(this.usuarioSelect,idSubmenu).subscribe(res => {
-       if (res.code == 200) {
-         $('#exampleModal2').modal('hide');
-       } else {
-         alert("Algo salio mal Creando rutas... " + res.message + "\nComunicate con soporte");
-       }
-     });
+    let idSubmenu: Array<string> = [];
+    let idActivacion: Array<string> = [];
+    for (var i = 0; i < this.submenuSelect.length; i++) {
+      idSubmenu.push(this.submenuSelect[i].sub_menu_id.toString());
+    }
+    for (var i = 0; i < this.activacionSelect.length; i++) {
+      idActivacion.push(this.activacionSelect[i].activacion_id);
+    }
+    this.usuarioService.guardarActivaciones(this.usuarioSelect, idActivacion).subscribe(res => {
+
+      if (res.code == 200) {
+        console.log("Activaciones guardadas");
+      } else {
+        alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
+        return;
+      }
+    });
+    this.usuarioService.guardarRutas(this.usuarioSelect, idSubmenu).subscribe(res => {
+      if (res.code == 200) {
+        $('#exampleModal2').modal('hide');
+      } else {
+        alert("Algo salio mal Creando rutas... " + res.message + "\nComunicate con soporte");
+      }
+    });
   }
 
 }

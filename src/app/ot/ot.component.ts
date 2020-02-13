@@ -65,6 +65,8 @@ export class OtComponent implements OnInit {
   @ViewChild("observacion") observacion: ElementRef;
   @ViewChild("item") item: ElementRef;
   @ViewChild("cantidad") cantidad: ElementRef;
+  @ViewChild("articuloC") articuloC: ElementRef;
+  
   @ViewChild("modelo") modelo: ElementRef;
   @ViewChild("marca") marca: ElementRef;
   @ViewChild("linea") linea: ElementRef;
@@ -344,7 +346,7 @@ export class OtComponent implements OnInit {
       docDetalle.cantidad = this.cantidad.nativeElement.value;
       docDetalle.documento_id = this.documento.documento_id;
       if (this.productoFijoActivo) {
-
+        docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
         docDetalle.producto_id = this.productoIdSelect.producto_id;
         docDetalle.parcial = docDetalle.cantidad * this.productoIdSelect.costo_publico;
         docDetalle.unitario = this.productoIdSelect.costo_publico;
@@ -356,7 +358,14 @@ export class OtComponent implements OnInit {
         if (res.code == 200) {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
-
+          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+          console.log(this.detallesList);
+          this.documentoService.updateDocumento(this.documento).subscribe(res => {
+            if (res.code != 200) {
+              alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+          });
 
         } else {
           alert("Error agregando repuesto: " + res.error);
@@ -369,13 +378,21 @@ export class OtComponent implements OnInit {
         this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
         this.detalleSelect.parcial = this.detalleSelect.cantidad * this.productoIdSelect.costo_publico;
         this.detalleSelect.unitario = this.productoIdSelect.costo_publico;
+        this.detalleSelect.impuesto_producto = Number(this.productoIdSelect.impuesto);
       }
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
       }
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code == 200) {
-          //this.documentoService.
+          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+          console.log(this.detallesList);
+          this.documentoService.updateDocumento(this.documento).subscribe(res => {
+            if (res.code != 200) {
+              alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+          });
 
         } else {
           alert("Error agregando repuesto: " + res.error);
@@ -383,13 +400,17 @@ export class OtComponent implements OnInit {
       });
       this.detalleSelect = new DocumentoDetalleModel();
     }
-
+  
     this.productoIdSelect = null;
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
+    }else{
+      this.articuloC.nativeElement.value = "";  
     }
     this.articuloPV = "";
-    this.cantidad.nativeElement.value = "";
+    
+    this.cantidad.nativeElement.value = 1;
+    this.cantidad.nativeElement.value = 1;
     this.downloadURL2 = null;
     this.detalleSelect = new DocumentoDetalleModel();
     $('#exampleModal').modal('hide');
