@@ -26,6 +26,15 @@ export class UsuarioService {
     });
   }
 
+  saveUsuarioFireBase(usuario: string, clave: string) {
+    return new Promise((resolve, reject) => {
+      console.log(usuario);
+      this.afauth.auth.createUserWithEmailAndPassword(usuario, clave).then(userData => resolve(userData), err => reject(err))
+    });
+  }
+
+  
+
   public usuarioByMail(mail: string) {
     return this.http.get<UsuarioModel>(this.server_api + '/usuario/usuarioByMail?mail=' + mail);
   }

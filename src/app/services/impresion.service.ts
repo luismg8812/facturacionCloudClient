@@ -88,6 +88,7 @@ export class ImpresionService {
       texto.push("TELEFONO: " + factura.cliente.fijo + '\n');
     }
     texto.push("VEHÍCULO: " + factura.documento.detalle_entrada + '\n');
+    texto.push("LINEA: " + factura.documento.linea_vehiculo + '\n');
     texto.push("DESCRIPCIÓN CLIENTE: " + factura.documento.descripcion_cliente + '\n');
     texto.push("DIAGNOSTICO: " + factura.documento.descripcion_trabajador + '\n');
     texto.push('--------------------------------\n');
@@ -98,6 +99,8 @@ export class ImpresionService {
       let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 10);
       texto.push(nombreProducto + "  " + totalProducto + "\n");
     }
+    texto.push('--------------------------------\n');
+    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
     texto.push('--------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("*GRACIAS POR SU COMPRA*", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
