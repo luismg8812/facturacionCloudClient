@@ -102,6 +102,9 @@ export class ImpresionService {
     texto.push('--------------------------------\n');
     texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
     texto.push('--------------------------------\n');
+    texto.push('\n');
+    texto.push("El establecimiento no se hace responsable de la pérdida o robo de objetos de valor dejados en la habitación"+'\n');
+    
     texto.push(this.calculosService.centrarDescripcion("*GRACIAS POR SU COMPRA*", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
