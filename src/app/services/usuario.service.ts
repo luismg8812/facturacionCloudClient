@@ -36,7 +36,7 @@ export class UsuarioService {
   
 
   public usuarioByMail(mail: string) {
-    return this.http.get<UsuarioModel>(this.server_api + '/usuario/usuarioByMail?mail=' + mail);
+    return this.http.get<UsuarioModel[]>(this.server_api + '/usuario/usuarioByMail?mail=' + mail);
   }
 
   public opcionUsuarioByUsuario(usuarioId: string, menuId: string) {

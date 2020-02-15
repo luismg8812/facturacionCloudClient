@@ -73,7 +73,16 @@ export class LoginComponent implements OnInit {
       console.log("conexion local");
       sessionStorage.setItem("userLogin", usuario);
       this.usuarioService.usuarioByMail(usuario).subscribe((res1) => {
-        console.log(res1);
+        //console.log(res1);
+        if(res1.length==0){
+          alert("usuario no valido");
+          return;
+        }
+        if(clave!=res1[0].clave){
+          alert("clave no valida");
+          return;
+        }
+        
         this.nombreUsuario = res1[0];
         let empresa_id = "" + this.nombreUsuario.empresa_id;
         sessionStorage.setItem("nombreUsuario", this.nombreUsuario.nombre);
