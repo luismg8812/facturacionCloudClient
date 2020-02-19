@@ -27,6 +27,7 @@ import { TipoPagoModel } from '../model/tipoPago.model';
 import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 import { EmpresaModel } from '../model/empresa.model';
 
+
 declare var jquery: any;
 declare var $: any;
 
@@ -41,8 +42,8 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_PAGO_EFECTIVO: number = 1;
-
-
+  readonly TIPO_IMPRESION_PDFCARTA: string = "PDFCARTA";
+  
   public documento: DocumentoModel = new DocumentoModel();
   public usuarioId: number;
   public empresaId: number;
@@ -681,15 +682,15 @@ export class GestionOrdenComponent implements OnInit {
         tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
       }
     }
-    console.log(tipoImpresion);
+   
     tituloDocumento = this.tituloFactura + "_" + this.documentoFactura.consecutivo_dian + "_" + impresora + "_false_" + numeroImpresiones + "_" + tipoImpresion;
-
     this.factura.documento = this.documentoFactura;
     this.factura.nombreTipoDocumento = this.tituloFactura;
     this.factura.detalle = this.itemsFactura
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
     this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
+    this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoFactura.cliente_id);
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
         case "TXT80MM":
@@ -701,6 +702,10 @@ export class GestionOrdenComponent implements OnInit {
         case "TXTCARTA":
           this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
+        case this.TIPO_IMPRESION_PDFCARTA:       
+          this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion);
+          break;
+       
         default:
           alert("no tiene un tipo impresion");
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
@@ -832,7 +837,6 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   marcaSelect(marca) {
-    console.log(marca.value);
     let marcaId = this.marcaList.find(ma => ma.nombre == marca.value);
     this.marcasService.getModeloByMarca(marcaId.marca_vehiculo_id).subscribe(res => {
       this.modeloList = res;
@@ -868,7 +872,6 @@ export class GestionOrdenComponent implements OnInit {
           }
         });
       }
-      console.log(ids);
       this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
         this.itemsFactura = res;
         this.documentoFactura = this.calculosService.calcularExcento(this.documentoFactura, this.itemsFactura);
@@ -891,7 +894,7 @@ export class GestionOrdenComponent implements OnInit {
 
 
   calcularIva(detalle: DocumentoDetalleModel, impuesto) {
-    console.log(impuesto.value);
+    
     const index = this.itemsFactura.indexOf(detalle, 0);
     if (index > -1) {
       detalle.impuesto_producto = impuesto.value;
@@ -1010,7 +1013,7 @@ export class GestionOrdenComponent implements OnInit {
       } else {
         if (this.documento.mac != '') {
           this.usuarioService.getFile(this.documento.mac == '' ? null : this.documento.mac).subscribe(res => {
-            console.log(res);
+           
             const imageBlob = this.dataURItoBlob(res);
             var reader = new FileReader();
             reader.readAsDataURL(imageBlob);
