@@ -32,7 +32,7 @@ export class ImpresionService {
     texto.push(this.calculosService.centrarDescripcion("TEL: " + factura.empresa.telefono_fijo + " " + factura.empresa.cel, tamanoMax) + "\n");//telefonos
     texto.push('\n');
     texto.push("ORDEN DE TRABAJO: " + factura.documento.documento_id + "\n");//consecutivo
-    texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19) + "\n");//fecha
+    texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toLocaleString(), 19) + "\n");//fecha
     texto.push("CAJERO: " + factura.documento.usuario_id + " " + factura.nombreUsuario + "\n");//fecha
     texto.push("CAJA: " + '\n');
     if (factura.cliente != undefined) {
@@ -61,10 +61,6 @@ export class ImpresionService {
     texto.push('\n');
     texto.push('\n');
     texto.push('\n');
-    texto.push('\n');
-    texto.push('\n');
-    texto.push('\n');
-    texto.push('\n');
     return new Blob(texto, {
       type: 'text/plain'
     });
@@ -85,7 +81,7 @@ export class ImpresionService {
     texto.push(this.calculosService.centrarDescripcion("TEL: " + factura.empresa.telefono_fijo + " " + factura.empresa.cel, tamanoMax) + "\n");//telefonos
     texto.push('\n');
     texto.push("ORDEN DE TRABAJO: " + factura.documento.documento_id + "\n");//consecutivo
-    texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19) + "\n");//fecha
+    texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toLocaleString(), 19) + "\n");//fecha
     texto.push("CAJERO: " + this.calculosService.cortarDescripcion(factura.nombreUsuario, 23) + "\n");//fecha
     texto.push("CAJA: " + '\n');
     if (factura.cliente != undefined) {

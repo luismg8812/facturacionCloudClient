@@ -3,4 +3,6 @@
     background-size: cover;
   }
 
-  
+  .upper {
+    text-transform: uppercase;
+  }
