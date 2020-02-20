@@ -94,7 +94,7 @@
           <select class="form-control" id="linea" placeholder="Marca" #linea (change)="asignarLinea(linea)">
             <option>Seleccione Linea</option>
             <option>Automovil</option>
-            <option>Camioneta</option>
+            <option>Camioneta - Campero</option>
             <option>Moto</option>
           </select>
         </div>
@@ -290,6 +290,8 @@
               </div>
               <button type="button" class="btn btn-primary"
                 (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar</button>
+                <button type="button" class="btn btn-primary ml-2"
+                (click)="buscarOrdenesHoy(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar de Hoy</button>
               <br />
               <table class="table table-hover">
                 <thead>
