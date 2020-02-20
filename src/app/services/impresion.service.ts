@@ -109,7 +109,7 @@ export class ImpresionService {
     texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
     texto.push('--------------------------------\n');
     texto.push('\n');
-    texto.push("El establecimiento no se hace responsable de la pérdida o robo de objetos de valor dejados en la habitación" + '\n');
+    texto.push("El establecimiento no se hace responsable de la pérdida o robo de objetos de valor dejados en el vehículo" + '\n');
 
     texto.push(this.calculosService.centrarDescripcion("*GRACIAS POR SU COMPRA*", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
@@ -238,7 +238,7 @@ export class ImpresionService {
     texto.push('DESCRIPCIÓN CANT  UNIDAD   TOTAL\n');
     texto.push('--------------------------------\n');
     for (var i = 0; i < factura.detalle.length; i++) {
-      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].nombre_producto, 12);
+      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 12);
       let cantidadProducto: string = this.calculosService.cortarCantidades(factura.detalle[i].cantidad.toString(), 3);
       let unidadProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].unitario), 7);
       let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 7);

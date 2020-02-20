@@ -589,6 +589,20 @@ export class OtComponent implements OnInit {
     $('#eliminarModal').modal('hide');
   }
 
+  
+
+  buscarOrdenesHoy(placa, clien) {
+    let idCliente = "";
+    let tipoDocumentoId = 11;
+    if (clien.value != "") {
+      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      idCliente = cliente.cliente_id.toString();
+    }
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(),tipoDocumentoId).subscribe(res => {
+      this.ordenesBuscarList = res;
+    });
+  }
+
   buscarOrdenes(placa, clien, fechaInicial, fechaFinal) {
     let idCliente = "";
     let tipoDocumentoId = 11;
