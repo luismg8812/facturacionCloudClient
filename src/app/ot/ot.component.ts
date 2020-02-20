@@ -303,6 +303,8 @@ export class OtComponent implements OnInit {
     }
     console.log(element.value);
     this.documento.detalle_entrada = element.value;
+    this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase( );
+    element.value=this.documento.detalle_entrada.toUpperCase( );
     this.documentoService.updateDocumento(this.documento).subscribe(res => {
       if (res.code != 200) {
         alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
