@@ -43,7 +43,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_PAGO_EFECTIVO: number = 1;
   readonly TIPO_IMPRESION_PDFCARTA: string = "PDFCARTA";
-  
+
   public documento: DocumentoModel = new DocumentoModel();
   public usuarioId: number;
   public empresaId: number;
@@ -82,7 +82,7 @@ export class GestionOrdenComponent implements OnInit {
   public configuracion: ConfiguracionModel;
   public documentoFactura: DocumentoModel = new DocumentoModel();
   public tipoPagosAll: Array<TipoPagoModel>;
-  public tituloFactura: string;
+  public tituloFactura: string="";
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -296,8 +296,8 @@ export class GestionOrdenComponent implements OnInit {
     }
     console.log(element.value);
     this.documento.detalle_entrada = element.value;
-    this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase( );
-    element.value=this.documento.detalle_entrada.toUpperCase( );
+    this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase();
+    element.value = this.documento.detalle_entrada.toUpperCase();
     this.documentoService.updateDocumento(this.documento).subscribe(res => {
       if (res.code != 200) {
         alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
@@ -326,6 +326,7 @@ export class GestionOrdenComponent implements OnInit {
       return;
     }
     this.documento.fecha_entrega = this.calculosService.fechaActual();
+    this.documento.impreso = 1;
     this.documentoService.updateDocumento(this.documento).subscribe(res => {
       if (res.code != 200) {
         alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
@@ -564,7 +565,7 @@ export class GestionOrdenComponent implements OnInit {
 
   }
 
-  enterContinuarImpresion(impresora: string) {
+  enterContinuarImpresion(impresora1: string) {
     if (this.documentoFactura.documento_id == "") {
       alert("El documento esta corructo, por favor vuelva a crearlo");
       return;
@@ -582,10 +583,49 @@ export class GestionOrdenComponent implements OnInit {
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.documentoFactura.impreso = 1;
 
+    
+    let impresora = this.impresora.nativeElement.value;
+    if (impresora == "") {
+      impresora = 1;
+    }
+    let tipoImpresion = "";
+    for (var i = 0; i < this.impresoraEmpresa.length; i++) {
+      if (impresora == this.impresoraEmpresa[i].numero_impresora) {
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+      }
+    }
+    this.documentoFactura.impresora = impresora;
+    
+    this.actualizarOrdenes();
     //this.calcularInfoDiario();
     this.asignarTipoPago();
-    this.asignarConsecutivo(numImpresiones);
+    this.asignarConsecutivo(numImpresiones,tipoImpresion);
     $('#imprimirModalFactura').modal('hide');
+  }
+
+  actualizarOrdenes() {
+    for (let or of this.ordenesBuscarListFacturaSelect) {
+      or.impreso = 1;
+      this.documentoService.updateDocumento(or).subscribe(res => {
+        if (res.code != 200) {
+          alert("error creando documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    }
+  }
+
+  imprimirCopia() {
+    let tipoImpresion = "";
+    for (var i = 0; i < this.impresoraEmpresa.length; i++) {
+      if (this.documentoFactura.impresora == this.impresoraEmpresa[i].numero_impresora) {
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+      }
+    }
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      this.imprimirFactura(1,res[0],tipoImpresion);
+    });
+    
   }
 
   asignarTipoPago() {
@@ -605,7 +645,7 @@ export class GestionOrdenComponent implements OnInit {
     }
   }
 
-  asignarConsecutivo(numImpresiones: number) {
+  asignarConsecutivo(numImpresiones: number,tipoImpresion:string) {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr: EmpresaModel[] = res;
       let con: number;
@@ -640,7 +680,7 @@ export class GestionOrdenComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-
+         
           consecutivo = res[0].letra_consecutivo + con.toString();
           console.log("consecutivo Dian: " + consecutivo);
           this.documentoFactura.consecutivo_dian = consecutivo;
@@ -649,12 +689,13 @@ export class GestionOrdenComponent implements OnInit {
           this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
             console.log("consecutivo actualizado");
             console.log(this.documentoFactura);
+            
             this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
               if (res.code != 200) {
                 alert("error creando documento, por favor inicie nuevamente la creación del documento");
                 return;
               }
-              this.imprimirFactura(numImpresiones, empr[0]);
+              this.imprimirFactura(numImpresiones, empr[0],tipoImpresion);
               this.limpiarFactura();
 
             });
@@ -665,27 +706,15 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel) {
+  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel,tipoImpresion:string) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
-    let impresora = this.impresora.nativeElement.value;
-    if (impresora == "") {
-      impresora = 1;
-    }
 
     if (numeroImpresiones == undefined) {
       numeroImpresiones = 1;
     }
-    let tipoImpresion = "";
 
-    for (var i = 0; i < this.impresoraEmpresa.length; i++) {
-      console.log(numeroImpresiones);
-      if (impresora == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
-      }
-    }
-   
-    tituloDocumento = this.tituloFactura + "_" + this.documentoFactura.consecutivo_dian + "_" + impresora + "_false_" + numeroImpresiones + "_" + tipoImpresion;
+    tituloDocumento = this.tituloFactura + "_" + this.documentoFactura.consecutivo_dian + "_" + this.documentoFactura.impresora + "_false_" + numeroImpresiones + "_" + tipoImpresion;
     this.factura.documento = this.documentoFactura;
     this.factura.nombreTipoDocumento = this.tituloFactura;
     this.factura.detalle = this.itemsFactura
@@ -704,10 +733,10 @@ export class GestionOrdenComponent implements OnInit {
         case "TXTCARTA":
           this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
-        case this.TIPO_IMPRESION_PDFCARTA:       
+        case this.TIPO_IMPRESION_PDFCARTA:
           this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion);
           break;
-       
+
         default:
           alert("no tiene un tipo impresion");
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
@@ -794,7 +823,7 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(),tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId).subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -908,7 +937,7 @@ export class GestionOrdenComponent implements OnInit {
 
 
   calcularIva(detalle: DocumentoDetalleModel, impuesto) {
-    
+
     const index = this.itemsFactura.indexOf(detalle, 0);
     if (index > -1) {
       detalle.impuesto_producto = impuesto.value;
@@ -1027,7 +1056,7 @@ export class GestionOrdenComponent implements OnInit {
       } else {
         if (this.documento.mac != '') {
           this.usuarioService.getFile(this.documento.mac == '' ? null : this.documento.mac).subscribe(res => {
-           
+
             const imageBlob = this.dataURItoBlob(res);
             var reader = new FileReader();
             reader.readAsDataURL(imageBlob);

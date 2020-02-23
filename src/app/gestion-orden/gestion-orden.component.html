@@ -59,7 +59,7 @@
           <b>Fecha entrega:</b> {{documento.fecha_entrega | date: 'dd/MM/yyyy, h:mm a'}}
         </div>
         <div class="form-group col-md-4 col-sm-2">
-          <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
+          <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1" class="form-control" id="clientePV"
             (change)="clienteSelectFun(clientePV)">
           <datalist id="browsers">
             <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
@@ -68,7 +68,7 @@
           </datalist>
         </div>
         <div class="form-group col-md-4 col-sm-2 upper">
-          <input class="form-control upper" id="placa" placeholder="* Placa" name="placa" #placa required
+          <input class="form-control upper" id="placa" placeholder="* Placa" [disabled]="documento.impreso==1" name="placa" #placa required
             (blur)="agregarPlaca(placa)">
         </div>
       </div>
@@ -83,7 +83,7 @@
           </datalist>
         </div>
         <div class="form-group col-md-4 col-sm-2">
-          <input list="modelos" name="modelo" #modelo placeholder="modelo" class="form-control" id="modelo"
+          <input list="modelos" name="modelo" #modelo placeholder="modelo"  [disabled]="documento.impreso==1" class="form-control" id="modelo"
             (change)="guardarModelo(modelo)">
           <datalist id="modelos">
             <option *ngFor="let model of modeloList" [value]="model.nombre">
@@ -91,7 +91,7 @@
           </datalist>
         </div>
         <div class="form-group col-md-4 col-sm-2">
-          <select class="form-control" id="linea" placeholder="Marca" #linea (change)="asignarLinea(linea)">
+          <select class="form-control" id="linea" placeholder="Marca" [disabled]="documento.impreso==1" #linea (change)="asignarLinea(linea)">
             <option>Seleccione Linea</option>
             <option>Automovil</option>
             <option>Camioneta - Campero</option>
@@ -102,10 +102,10 @@
 
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-1">
-          <textarea class="form-control mb-2" id="descripcionCliente" #descripcionCliente
+          <textarea class="form-control mb-2" id="descripcionCliente" [disabled]="documento.impreso==1" #descripcionCliente
             placeholder="Descripción cliente" required
             (blur)="agregarDescripcionCliente(descripcionCliente)"></textarea>
-          <textarea class="form-control " (blur)="agregarObservacion(observacion)" id="observacion" #observacion
+          <textarea class="form-control " (blur)="agregarObservacion(observacion)" [disabled]="documento.impreso==1" id="observacion" #observacion
             placeholder="Observación" required></textarea>
         </div>
         <div class="form-group col-md-6 col-sm-1">
@@ -120,7 +120,7 @@
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-1">
           <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          <button type="button" class="btn btn-primary" data-toggle="modal" [disabled]="documento.impreso==1" data-target="#exampleModal">
             Agregar repuesto
           </button>
         </div>
@@ -145,12 +145,12 @@
         <tbody>
           <tr *ngFor="let ordenes of detallesList">
             <th scope="row">
-              <button type="button" (click)="editarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+              <button type="button" (click)="editarItem(ordenes)" [disabled]="documento.impreso==1" class="btn btn-secondary btn-sm" data-toggle="modal"
                 data-target="#exampleModal">
                 Editar
               </button>
               <!-- Button trigger modal -->
-              <button type="button" (click)="eliminarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+              <button type="button" (click)="eliminarItem(ordenes)" [disabled]="documento.impreso==1" class="btn btn-secondary btn-sm" data-toggle="modal"
                 data-target="#eliminarModal">
                 Eliminar
               </button>
@@ -457,8 +457,8 @@
         </div>
         <div class="form-group col-md-4 col-sm-12 ">
           <button type="button" class="btn btn-primary " id="Nueva" (click)="nuevaFactura()">Nueva Factura</button>
-          <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#entregarModal">
-            Vista previa
+          <button type="button" class="btn btn-primary ml-2"  (click)="imprimirCopia()" [disabled]="documentoFactura.impreso!=1 ">
+            Imprimir Copia
           </button>
         </div>
       </div>

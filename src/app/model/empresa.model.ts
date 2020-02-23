@@ -22,4 +22,5 @@ export class EmpresaModel {
     public impuesto:string;
     public consecutivo:number;
     public actividad_economica:string;
+    public url_logo:string;
 }
