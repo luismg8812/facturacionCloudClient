@@ -256,7 +256,7 @@ export class ImpresionService {
     texto.push('\n');
     texto.push('\n');
     texto.push('\n');
-   
+
     return new Blob(texto, {
       type: 'text/plain'
     });
@@ -277,7 +277,7 @@ export class ImpresionService {
     return Observable.create((observer: Observer<string>) => {
       let img = new Image();
       img.crossOrigin = 'Anonymous';
-      img.src = url;  img.src = url;
+      img.src = url; img.src = url;
       if (!img.complete) {
         img.onload = () => {
           observer.next(this.getBase64Image(img));
@@ -300,12 +300,12 @@ export class ImpresionService {
     var ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
     var dataURL = canvas.toDataURL("image/png");
-   // console.log(dataURL);
+    // console.log(dataURL);
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
   }
 
   private crearHeader(factura: FacturaModel, configuracion: ConfiguracionModel, pagina: number, numPaginas: number) {
-   
+
     this.doc.setFontType('bold')
     this.doc.setFontSize(9);
     this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);
@@ -332,11 +332,11 @@ export class ImpresionService {
     this.doc.line(157, 52, 157, 58) // vertical line    
     this.doc.line(181, 52, 181, 58) // vertical line    
     this.doc.text(factura.documento.consecutivo_dian, 175, 18);
-    this.doc.text(this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(),19), 160, 35);
-    
-    this.doc.text(this.calculosService.cortarCantidades( new Intl.NumberFormat().format(factura.documento.total),15), 183, 275);
-    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.descuento),15), 183, 280);
-    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total),15), 183, 285);
+    this.doc.text(this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19), 160, 35);
+
+    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 15), 183, 275);
+    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.descuento), 15), 183, 280);
+    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 15), 183, 285);
     //datos del cliente
     this.doc.text("CÓDIGO", 4, 57);
     this.doc.text("CANT", 20, 57);
@@ -356,10 +356,13 @@ export class ImpresionService {
     this.doc.text("TOTAL:     $", 159, 285);
 
     this.doc.setFontType('normal');
-    this.doc.text(factura.cliente.nombre + " " + factura.cliente.apellidos, 25, 44);
-    this.doc.text(factura.cliente.direccion, 25, 49);
-    this.doc.text(factura.cliente.documento, 130, 44);
-    this.doc.text(factura.cliente.celular, 130, 49);
+    if (factura.cliente != undefined) {
+      this.doc.text(factura.cliente.nombre + " " + factura.cliente.apellidos, 25, 44);
+      this.doc.text(factura.cliente.direccion, 25, 49);
+      this.doc.text(factura.cliente.documento, 130, 44);
+      this.doc.text(factura.cliente.celular, 130, 49);
+    }
+
     this.doc.text("Pagina " + pagina + " de " + numPaginas, 110, 39);
 
     this.doc.setFontSize(6);
@@ -369,50 +372,50 @@ export class ImpresionService {
     this.doc.text(this.calculosService.centrarDescripcion("Representante Legal: " + factura.empresa.represente, 77), 90, 22);
     this.doc.text(this.calculosService.centrarDescripcion("Dirección: " + factura.empresa.direccion, 77), 90, 25);
     this.doc.text(this.calculosService.centrarDescripcion("Telefono: " + factura.empresa.telefono_fijo, 77), 90, 28);
-    this.doc.text("RECIBÍ CONFORME: " , 4, 281);
-    this.doc.text("NIT: " , 4, 286);
+    this.doc.text("RECIBÍ CONFORME: ", 4, 281);
+    this.doc.text("NIT: ", 4, 286);
     this.doc.text("VENDEDOR: ADMINISTRADOR DEL SISTEMA ", 82, 288);
     this.doc.text("OBSERVACIÓN: " + factura.documento.descripcion_trabajador, 4, 275);
   }
 
-  
+
 
   imprimirFacturaPDFCarta(factura: FacturaModel, configuracion: ConfiguracionModel) {
-    let imgData=factura.empresa.url_logo;
+    let imgData = factura.empresa.url_logo;
     let tope: number = 41.0;// esta variable controla el nuero de productos por pagina en la factura
     this.doc = new jsPDF();
-    console.log("# de detalles:"+ factura.detalle.length);
-    let div:number=factura.detalle.length / tope;
-      let numPaginas = Math.ceil(div);
-      let contadorP=0;
-      let posy=63; //controla la posicion de y para los productos
+    console.log("# de detalles:" + factura.detalle.length);
+    let div: number = factura.detalle.length / tope;
+    let numPaginas = Math.ceil(div);
+    let contadorP = 0;
+    let posy = 63; //controla la posicion de y para los productos
     this.getBase64ImageFromURL(imgData).subscribe(base64data => {
       let base64Image = 'data:image/jpg;base64,' + base64data;
       for (let i = 0; i < numPaginas; i++) {
-        this.doc.addImage(base64Image, 'JPEG', 10, 4,)
+        this.doc.addImage(base64Image, 'JPEG', 10, 4)
         this.crearHeader(factura, configuracion, (i + 1), numPaginas);
         this.doc.setFontType('normal');
         this.doc.setFontSize(9);
-        for(let e=0;e<tope; e++){
-          if(contadorP<factura.detalle.length){       
-            let codigo=factura.detalle[contadorP].documento_detalle_id;
-            let cantidad=factura.detalle[contadorP].cantidad;
-            let descripcion=factura.detalle[contadorP].descripcion;
-            let unitario=factura.detalle[contadorP].unitario;
-            let parcial=factura.detalle[contadorP].parcial;
-            contadorP=contadorP+1;
+        for (let e = 0; e < tope; e++) {
+          if (contadorP < factura.detalle.length) {
+            let codigo = factura.detalle[contadorP].documento_detalle_id;
+            let cantidad = factura.detalle[contadorP].cantidad;
+            let descripcion = factura.detalle[contadorP].descripcion;
+            let unitario = factura.detalle[contadorP].unitario;
+            let parcial = factura.detalle[contadorP].parcial;
+            contadorP = contadorP + 1;
             this.doc.text(codigo, 4, posy);
             this.doc.text(cantidad, 20, posy);
             this.doc.text(descripcion, 35, posy);
-            this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(unitario),20), 115, posy);
+            this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(unitario), 20), 115, posy);
             this.doc.text(parcial, 182, posy);
-            posy=posy+5;
-          }else{
+            posy = posy + 5;
+          } else {
             break;
           }
-          if(e+1==tope){
+          if (e + 1 == tope) {
             this.doc.addPage();
-            posy=63;
+            posy = 63;
           }
         }
       }
