@@ -35,6 +35,7 @@ export class DocumentoModel {
     public descripcion_cliente:string;
     public descripcion_trabajador:string;
     public linea_vehiculo:string;
+    public impresora:number;
     
 
     constructor(){
@@ -74,6 +75,7 @@ export class DocumentoModel {
         this.descripcion_cliente="";
         this.descripcion_trabajador="";
         this.linea_vehiculo="";
+        this.impresora=0;
     };
 }
 

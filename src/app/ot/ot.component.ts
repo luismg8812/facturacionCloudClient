@@ -504,7 +504,7 @@ export class OtComponent implements OnInit {
       }
       let parametros: ParametrosModel = new ParametrosModel;
       if (parametros.ambiente == 'cloud') {
-        this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).getDownloadURL());
+        this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).child('').getDownloadURL());
       } else {
         if (this.documento.mac != '') {
           this.usuarioService.getFile(this.documento.mac == '' ? null : this.documento.mac).subscribe(res => {
