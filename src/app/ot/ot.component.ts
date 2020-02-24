@@ -21,6 +21,8 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { FacturaModel } from '../vo/factura.model';
 import { EmpresaService } from '../services/empresa.service';
 import { ImpresionService } from '../services/impresion.service';
+import { EmpleadoModel } from '../model/empleado.model';
+import { EmpleadoService } from '../services/empleado.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -32,6 +34,7 @@ declare var $: any;
 export class OtComponent implements OnInit {
 
   readonly PRODUCTOS_FIJOS: string = '21';
+  readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
 
   public ref: AngularFireStorageReference;
   public task: AngularFireUploadTask;
@@ -52,14 +55,19 @@ export class OtComponent implements OnInit {
   public marcaList: Array<MarcaVehiculoModel> = [];
   public modeloList: Array<ModeloMarcaModel> = [];
   public productoFijoActivo: boolean = false;
+  public empleadoOrdenActivo: boolean = false;
   public activaciones: Array<ActivacionModel> = [];
   public productosAll: Array<ProductoModel>;
   public productoIdSelect: ProductoModel = null;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public articuloPV: string = "";
   public factura: FacturaModel;
+  public empleados: Array<EmpleadoModel>;
+  
 
   @ViewChild("clientePV") clientePV: ElementRef;
+  @ViewChild("empleadoPV") empleadoPV: ElementRef;
+  
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
   @ViewChild("observacion") observacion: ElementRef;
@@ -81,7 +89,8 @@ export class OtComponent implements OnInit {
     public documentoDetalleService: DocumentoDetalleService,
     public calculosService: CalculosService,
     public afStorage: AngularFireStorage,
-    public impresionService: ImpresionService
+    public impresionService: ImpresionService,
+    public empleadoService:EmpleadoService
   ) { }
 
   ngOnInit() {
@@ -93,6 +102,7 @@ export class OtComponent implements OnInit {
     this.getProductosByEmpresa(this.empresaId);
     this.marcas();
     this.getImpresorasEmpresa(this.empresaId);
+    this.getEmpleados();
     this.factura = new FacturaModel();
   }
 
@@ -106,6 +116,11 @@ export class OtComponent implements OnInit {
           console.log("productos fijos activo");
           this.productoFijoActivo = true;
         }
+        if (this.activaciones[e].activacion_id == this.ACTIVAR_EMPLEADOS_ORDEN) {
+          console.log("empleados en orden activo");
+          this.empleadoOrdenActivo = true;
+        }  
+
       }
     });
   }
@@ -143,7 +158,7 @@ export class OtComponent implements OnInit {
  */
 
   clienteSelectFun(element) {
-    console.log(this.clientes);
+    //console.log(this.clientes);
     let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
     if (cliente == undefined) {
       alert("El cliente no existe");
@@ -151,6 +166,28 @@ export class OtComponent implements OnInit {
     } else {
       console.log(cliente);
       this.documento.cliente_id = cliente.cliente_id;
+      if (this.documento.documento_id == "") {
+        alert("Debe pulsar el boton nuevo documento");
+        return;
+      }
+      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    }
+  }
+
+  empleadoSelectFun(element) {
+    console.log(this.empleados);
+    let empleado = this.empleados.find(empleado => empleado.nombre == element.value);
+    if (empleado == undefined) {
+      alert("El Empleado no existe");
+      return;
+    } else {
+      console.log(empleado);
+      this.documento.empleado_id = empleado.empleado_id;
       if (this.documento.documento_id == "") {
         alert("Debe pulsar el boton nuevo documento");
         return;
@@ -259,6 +296,7 @@ export class OtComponent implements OnInit {
     this.detallesList = [];
     this.placa.nativeElement.value = "";
     this.clientePV.nativeElement.value = "";
+    this.empleadoPV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
     if (!this.productoFijoActivo) {
@@ -502,6 +540,11 @@ export class OtComponent implements OnInit {
       if (cliente != undefined) {
         nombre = cliente.nombre;
       }
+      let empleado = this.empleados.find(empleado => empleado.empleado_id == this.documento.empleado_id);
+      let nombreEmpleado = "";
+      if (empleado != undefined) {
+        nombreEmpleado = empleado.nombre;
+      }
       let parametros: ParametrosModel = new ParametrosModel;
       if (parametros.ambiente == 'cloud') {
         this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).child('').getDownloadURL());
@@ -525,6 +568,7 @@ export class OtComponent implements OnInit {
         this.linea.nativeElement.value = "Seleccione Linea";
       }
       this.clientePV.nativeElement.value = nombre;
+      this.empleadoPV.nativeElement.value = nombreEmpleado;
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
       this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
       if (this.documento.modelo_marca_id != null) {
@@ -644,6 +688,13 @@ export class OtComponent implements OnInit {
     let usuario = this.usuarioList.find(usuario => usuario.usuario_id == id);
     return usuario == undefined ? "" : usuario.nombre;
   }
+
+  getEmpleados(){
+    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+      this.empleados = res;
+    });
+  }
+  
 
 
 
