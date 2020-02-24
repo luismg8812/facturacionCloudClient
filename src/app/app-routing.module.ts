@@ -6,6 +6,8 @@ import { UsuarioComponent } from './usuario/usuario.component';
 import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { OtComponent } from './ot/ot.component';
 import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
+import { NominaComponent } from './nomina/nomina.component';
+import { EmpleadoComponent } from './empleado/empleado.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -14,6 +16,8 @@ const routes: Routes = [
    { path: 'usuario', component: UsuarioComponent },
    { path: 'ot', component: OtComponent },
    { path: 'gestionOrden', component: GestionOrdenComponent },
+   { path: 'nomima', component: NominaComponent },
+   { path: 'empleado', component: EmpleadoComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];

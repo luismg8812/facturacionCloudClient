@@ -331,7 +331,7 @@ export class ImpresionService {
     this.doc.line(138, 52, 138, 58) // vertical line    
     this.doc.line(157, 52, 157, 58) // vertical line    
     this.doc.line(181, 52, 181, 58) // vertical line    
-    this.doc.text(factura.documento.consecutivo_dian, 175, 18);
+    this.doc.text("N° "+factura.documento.consecutivo_dian, 175, 18);
     this.doc.text(this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19), 160, 35);
 
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 15), 183, 275);
@@ -376,6 +376,7 @@ export class ImpresionService {
     this.doc.text("NIT: ", 4, 286);
     this.doc.text("VENDEDOR: ADMINISTRADOR DEL SISTEMA ", 82, 288);
     this.doc.text("OBSERVACIÓN: " + factura.documento.descripcion_trabajador, 4, 275);
+    this.doc.text("Software y factura realizada por effectivesoftware.com.co - info@effectivesoftware.com.co - 3185222474", 5, 292);
   }
 
 
