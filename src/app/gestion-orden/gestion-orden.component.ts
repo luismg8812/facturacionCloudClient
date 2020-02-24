@@ -26,6 +26,8 @@ import { ConfiguracionModel } from '../model/configuracion.model';
 import { TipoPagoModel } from '../model/tipoPago.model';
 import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 import { EmpresaModel } from '../model/empresa.model';
+import { EmpleadoModel } from '../model/empleado.model';
+import { EmpleadoService } from '../services/empleado.service';
 
 
 declare var jquery: any;
@@ -40,6 +42,7 @@ export class GestionOrdenComponent implements OnInit {
 
   readonly PRODUCTOS_FIJOS: string = '21';
   readonly CLIENTE_OBLIGATORIO: string = '14';
+  readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_PAGO_EFECTIVO: number = 1;
@@ -72,6 +75,8 @@ export class GestionOrdenComponent implements OnInit {
   public productoIdSelect: ProductoModel = null;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public factura: FacturaModel;
+  public empleados: Array<EmpleadoModel>;
+  public empleadoOrdenActivo: boolean = false;
 
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
@@ -99,6 +104,7 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("pCompra") pCompra: ElementRef;
   @ViewChild("pVenta") pVenta: ElementRef;
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
+  @ViewChild("empleadoPV") empleadoPV: ElementRef;
 
   //campos de factura
   @ViewChild("clienteFactura") clienteFactura: ElementRef;
@@ -111,7 +117,14 @@ export class GestionOrdenComponent implements OnInit {
   constructor(public productoService: ProductoService,
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
-    public marcasService: MarcasService, public documentoDetalleService: DocumentoDetalleService, public afStorage: AngularFireStorage, public calculosService: CalculosService, public documentoService: DocumentoService, public usuarioService: UsuarioService, public clienteService: ClienteService) { }
+    public marcasService: MarcasService, 
+    public documentoDetalleService: DocumentoDetalleService, 
+    public afStorage: AngularFireStorage, 
+    public calculosService: CalculosService, 
+    public documentoService: DocumentoService, 
+    public usuarioService: UsuarioService, 
+    public clienteService: ClienteService,
+    public empleadoService:EmpleadoService) { }
 
   ngOnInit() {
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
@@ -124,6 +137,7 @@ export class GestionOrdenComponent implements OnInit {
     this.getImpresorasEmpresa(this.empresaId);
     this.getConfiguracion(this.empresaId);
     this.getTipoPago();
+    this.getEmpleados();
     this.factura = new FacturaModel();
   }
 
@@ -867,6 +881,7 @@ export class GestionOrdenComponent implements OnInit {
     this.clientePV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
+    this.empleadoPV.nativeElement.value = "";
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
     }
@@ -1056,6 +1071,11 @@ export class GestionOrdenComponent implements OnInit {
       if (cliente != undefined) {
         nombre = cliente.nombre;
       }
+      let empleado = this.empleados.find(empleado => empleado.empleado_id == this.documento.empleado_id);
+      let nombreEmpleado = "";
+      if (empleado != undefined) {
+        nombreEmpleado = empleado.nombre;
+      }
       let parametros: ParametrosModel = new ParametrosModel;
       if (parametros.ambiente == 'cloud') {
         this.downloadURL = (this.documento.mac == '' ? null : this.afStorage.ref(this.documento.mac).getDownloadURL());
@@ -1080,6 +1100,7 @@ export class GestionOrdenComponent implements OnInit {
         this.linea.nativeElement.value = "Seleccione Linea";
       }
       this.clientePV.nativeElement.value = nombre;
+      this.empleadoPV.nativeElement.value = nombreEmpleado;
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
       this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
       if (this.documento.modelo_marca_id != null) {
@@ -1149,6 +1170,28 @@ export class GestionOrdenComponent implements OnInit {
     return blob;
   }
 
+  empleadoSelectFun(element) {
+    console.log(this.empleados);
+    let empleado = this.empleados.find(empleado => empleado.nombre == element.value);
+    if (empleado == undefined) {
+      alert("El Empleado no existe");
+      return;
+    } else {
+      console.log(empleado);
+      this.documento.empleado_id = empleado.empleado_id;
+      if (this.documento.documento_id == "") {
+        alert("Debe pulsar el boton nuevo documento");
+        return;
+      }
+      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    }
+  }
+
   getActivaciones(user: number) {
     this.usuarioService.getActivacionByUsuario(user.toString()).subscribe(res => {
       this.activaciones = res;
@@ -1161,6 +1204,10 @@ export class GestionOrdenComponent implements OnInit {
           console.log("cliente obligatorio");
           this.clienteObligatorioActivo = true;
         }
+        if (this.activaciones[e].activacion_id == this.ACTIVAR_EMPLEADOS_ORDEN) {
+          console.log("empleados en orden activo");
+          this.empleadoOrdenActivo = true;
+        }  
       }
     });
   }
@@ -1195,6 +1242,12 @@ export class GestionOrdenComponent implements OnInit {
     this.clienteService.getTipoPago().subscribe(res => {
       this.tipoPagosAll = res;
       console.log("tipos de pago:" + this.tipoPagosAll.length);
+    });
+  }
+
+  getEmpleados(){
+    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+      this.empleados = res;
     });
   }
 
