@@ -39,6 +39,7 @@ declare var $: any;
 export class GestionOrdenComponent implements OnInit {
 
   readonly PRODUCTOS_FIJOS: string = '21';
+  readonly CLIENTE_OBLIGATORIO: string = '14';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_PAGO_EFECTIVO: number = 1;
@@ -66,6 +67,7 @@ export class GestionOrdenComponent implements OnInit {
   public productosAll: Array<ProductoModel>;
   public activaciones: Array<ActivacionModel> = [];
   public productoFijoActivo: boolean = false;
+  public clienteObligatorioActivo: boolean = false;
   public articuloPV: string = "";
   public productoIdSelect: ProductoModel = null;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
@@ -568,6 +570,10 @@ export class GestionOrdenComponent implements OnInit {
   enterContinuarImpresion(impresora1: string) {
     if (this.documentoFactura.documento_id == "") {
       alert("El documento esta corructo, por favor vuelva a crearlo");
+      return;
+    }
+    if(this.documentoFactura.cliente_id==null && this.clienteObligatorioActivo){
+      alert("El Cliente es obligatorio para generar la factura");
       return;
     }
     console.log(this.configuracion);
@@ -1150,6 +1156,10 @@ export class GestionOrdenComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.PRODUCTOS_FIJOS) {
           console.log("productos fijos activo");
           this.productoFijoActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.CLIENTE_OBLIGATORIO) {
+          console.log("cliente obligatorio");
+          this.clienteObligatorioActivo = true;
         }
       }
     });

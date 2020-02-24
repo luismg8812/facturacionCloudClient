@@ -27,7 +27,7 @@ export class MenuComponent implements OnInit {
   public opcionesSubmenu() {
     let usuario_id = sessionStorage.getItem('usuario_id');
     let menuFacturacionId='1';
-    let menuUsuariosId='3';
+    let menuUsuariosId='4';
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuFacturacionId).subscribe((res) => {
       this.facturacion=res;
       console.log(this.facturacion);
