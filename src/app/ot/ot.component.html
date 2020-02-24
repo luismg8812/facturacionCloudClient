@@ -88,13 +88,22 @@
   </div>
   <br />
   <div class="form-row">
-    <div class="form-group col-md-6 col-sm-1">
+    <div class="form-group col-md-5 col-sm-1">
       <textarea class="form-control " (blur)="agregarObservacion(observacion)" [disabled]="documento.impreso==1" id="observacion" #observacion
         placeholder="Observación" required></textarea>
     </div>
-    <div class="form-group col-md-6 col-sm-1">
+    <div class="form-group col-md-3 col-sm-1">
       <input type="file" class="form-control-file" capture="camera" #fotoOrden id="fotoOrden" [disabled]="documento.impreso==1"
         aria-describedby="fileHelp" (change)="cargarFotoOrden($event)">
+    </div>
+    <div class="form-group col-md-4 col-sm-2" *ngIf="empleadoOrdenActivo">
+      <input list="browsersEmpreados" name="empleadoPV" #empleadoPV [disabled]="documento.impreso==1" placeholder="Empleado" class="form-control" id="empleadoPV"
+        (change)="empleadoSelectFun(empleadoPV)">
+      <datalist id="browsersEmpreados">
+        <option *ngFor="let empleado of empleados" [value]="empleado.nombre">
+           {{empleado.apellido}} 
+        </option>
+      </datalist>
     </div>
   </div>
   <div class="form-row">
