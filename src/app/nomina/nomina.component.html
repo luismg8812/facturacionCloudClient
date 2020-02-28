@@ -56,16 +56,16 @@
     </div>
     <div class="form-group col-md-4">
       <div class="form-row">
-        <b>Sub-total: $</b> {{subtotal}}
+        <b>Sub-total: $</b> {{formatearNumber(subtotal)}}
       </div>
       <div class="form-row">
-        <b> Vales: $</b>{{vales}}
+        <b> Vales: $</b>{{formatearNumber(vales)}}
       </div>
       <div class="form-row">
-        <b> Productos: $</b>{{productos}}
+        <b> Productos: $</b>{{formatearNumber(productos)}}
       </div>
       <div class="form-row">
-        <b> Total: $</b>{{total}}
+        <b> Total: $</b>{{formatearNumber(total)}}
       </div>
     </div>
   </div>
@@ -97,12 +97,12 @@
           </button>
         </th>
         <td>{{ordenes.nombre}}</td>
-        <td>{{ordenes.subtotal}}</td>
-        <td>{{ordenes.vales}}</td>
-        <td>{{ordenes.productos}}</td>
-        <td>{{ordenes.ahorro}}</td>
-        <td>{{ordenes.admon}}</td>
-        <td>{{ordenes.total}}</td>
+        <td>{{formatearNumber(ordenes.subtotal)}}</td>
+        <td>{{formatearNumber(ordenes.vales)}}</td>
+        <td>{{formatearNumber(ordenes.productos)}}</td>
+        <td>{{formatearNumber(ordenes.ahorro)}}</td>
+        <td>{{formatearNumber(ordenes.admon)}}</td>
+        <td>{{formatearNumber(ordenes.total)}}</td>
       </tr>
     </tbody>
   </table>
