@@ -348,7 +348,7 @@
               Nombre: {{empleadoSelect.nombre}} {{empleadoSelect.apellido}}
             </div>
             <div class="form-group col-md-6 col-sm-1">
-              Nombre: Total: {{totalSelect}}
+             Total: {{formatearNumber(totalSelect)}}
             </div>
           </div>
           vehículos
@@ -366,7 +366,7 @@
               <tr *ngFor="let ordenes of ordenesSelect">           
                 <td>{{ordenes.detalle_entrada}}</td>
                 <td>{{ordenes.detalle_entrada}}</td>
-                <td>{{ordenes.total}}</td>
+                <td>{{formatearNumber(ordenes.total)}}</td>
                 <td>{{ordenes.fecha_registro| date: 'dd/MM/yyyy, h:mm a'}}</td>
               </tr>
             </tbody>
@@ -384,7 +384,7 @@
             <tbody>
               <tr *ngFor="let ordenes of valesSelect">           
                 <th>{{ordenes.descripcion_trabajador}}</th>
-                <td>{{ordenes.total}}</td>
+                <td>{{formatearNumber(ordenes.total)}}</td>
                 <td>{{ordenes.fecha_registro| date: 'dd/MM/yyyy, h:mm a'}}</td>
               </tr>
             </tbody>
@@ -402,7 +402,7 @@
             <tbody>
               <tr *ngFor="let ordenes of productosSelect">           
                 <th>{{ordenes.concepto_producto}}</th>
-                <td>{{ordenes.valor}}</td>
+                <td>{{formatearNumber(ordenes.valor)}}</td>
                 <td>{{ordenes.fecha_registro| date: 'dd/MM/yyyy, h:mm a'}}</td>
               </tr>
             </tbody>
