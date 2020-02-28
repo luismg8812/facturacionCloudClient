@@ -29,12 +29,28 @@ export class CalculosService {
 		return hoy;
 	}
 
+	public fechaInicial1(hoy:string) {
+		let hoy1:Date =  new Date(hoy)  ;
+		hoy1.setHours(0);
+		hoy1.setMinutes(0);
+		hoy1.setSeconds(0);
+		return hoy1;
+	}
+
 	public fechaFinal(hoy: Date) {
 		hoy = (hoy == null ? new Date() : hoy);
 		hoy.setHours(23);
 		hoy.setMinutes(59);
 		hoy.setSeconds(59);
 		return hoy;
+	}
+
+	public fechaFinal1(hoy:string) {
+		let hoy1 =  new Date(hoy) ;
+		hoy1.setHours(23);
+		hoy1.setMinutes(59);
+		hoy1.setSeconds(59);
+		return hoy1;
 	}
 
 

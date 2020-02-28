@@ -6,6 +6,7 @@ import { FacturaModel } from '../vo/factura.model';
 import { CalculosService } from './calculos.service';
 import * as jsPDF from 'jspdf';
 import { Observable, Observer } from 'rxjs';
+import { DetalleNominaModel } from '../model/detalleNomina.model';
 
 
 
@@ -67,6 +68,8 @@ export class ImpresionService {
     });
   }
 
+  
+
   imprimirOrdenTxt50(factura: FacturaModel) {
     //Genera un objeto Blob con los datos en un archivo TXT
     var texto = [];
@@ -109,6 +112,60 @@ export class ImpresionService {
     texto.push("El establecimiento no se hace responsable de la pérdida o robo de objetos de valor dejados en el vehículo" + '\n');
 
     texto.push(this.calculosService.centrarDescripcion("*GRACIAS POR SU COMPRA*", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("info@effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push('\n');
+    texto.push('\n');
+    texto.push('\n');
+
+    return new Blob(texto, {
+      type: 'text/plain'
+    });
+  }
+
+  imprimirNominaTxt50(factura: DetalleNominaModel) {
+    //Genera un objeto Blob con los datos en un archivo TXT
+    var texto = [];
+    let tamanoMax: number = 32;
+    texto.push('--------------------------------\n');
+    texto.push('\n');
+    texto.push("DESPRENDIBLE DE PAGO " + "\n");//consecutivo
+    texto.push("FECHA: " + this.calculosService.cortarDescripcion(new Date().toLocaleString(), 19) + "\n");//fecha
+    texto.push("NOMBRE: " + this.calculosService.cortarDescripcion(factura.empleado.nombre, 23) + "\n");//fecha
+    texto.push('--------------------------------\n');
+    texto.push('VEHICULOS                 TOTAL\n');
+    texto.push('--------------------------------\n');
+    for (var i = 0; i < factura.ordenes.length; i++) {
+      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.ordenes[i].detalle_entrada, 20);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.ordenes[i].total), 10);
+      texto.push(nombreProducto + "  " + totalProducto + "\n");
+    }
+    texto.push('--------------------------------\n');
+    texto.push('VALES                      TOTAL\n');
+    texto.push('--------------------------------\n');
+    for (var i = 0; i < factura.vales.length; i++) {
+      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.vales[i].detalle_entrada, 20);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.ordenes[i].total), 10);
+      texto.push(nombreProducto + "  " + totalProducto + "\n");
+    }
+    texto.push('--------------------------------\n');
+    texto.push('PRODUCTOS                  TOTAL\n');
+    texto.push('--------------------------------\n');
+    for (var i = 0; i < factura.productos.length; i++) {
+      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.productos[i].concepto_producto, 20);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.productos[i].valor), 10);
+      texto.push(nombreProducto + "  " + totalProducto + "\n");
+    }
+    texto.push('--------------------------------\n');
+    texto.push("SUB-TOTAL:        " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.nomina.subtotal), 14) + '\n');
+    texto.push("TOTAL VALES:      " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.nomina.vales), 14) + '\n');
+    texto.push("TOTAL PRODUCTOS:  " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.nomina.productos), 14) + '\n');
+    texto.push("PAGO AHORRO:      " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.nomina.ahorro), 14) + '\n');
+    texto.push("PAGO ADMIN:       " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.nomina.admon), 14) + '\n');
+    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.nomina.total), 14) + '\n');
+    texto.push('--------------------------------\n');
+    texto.push('\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("info@effectivesoftware.com.co", tamanoMax) + '\n');
