@@ -5,6 +5,7 @@ import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 import { CuadreCajaVoModel } from '../model/cuadreCajaVo.model';
 import { ParametrosModel } from '../model/parametros.model';
 import { DocumentoOrdenModel } from '../model/documentoOrden.model';
+import { NominaModel } from '../model/nomina.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,12 @@ export class DocumentoService {
     return this.http.post<any>(this.server_api + '/documento/updateDocumento', documentoId);
   }
 
+  cierreNomina() {
+    return this.http.post<any>(this.server_api + '/documento/cierreNomina',"body");
+  }
+
+  
+
   deleteDocumentoOrdenByOrden(documento_id: DocumentoModel) {
     return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByOrden', documento_id);
   }
@@ -49,6 +56,9 @@ export class DocumentoService {
   getOrdenesByDocumentoId(documentoId: string) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByDocumentoId?documentoId='+documentoId);
   }
+
+  
+  
   
 
   getCuadreCaja(tipoDocumentoId: number[], empresaId: string, usuarioId: string, cerrado: string) {
@@ -57,6 +67,14 @@ export class DocumentoService {
 
   getOrdenesTrabajo(empresaId:string, placa: string,  cliente: string, fechaInicial, fechaFinal,tipoDocumentoId:number) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesTrabajo?empresaId='+empresaId+'&placa='+placa+'&cliente=' + cliente + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);
+  }
+
+  getNominaByEmpleado(fechaInicial,fechaFinal) {
+    return this.http.get<NominaModel[]>(this.server_api + '/documento/getNominaByEmpleado?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal);
+  }
+  
+  getOrdenesByEmpleado(empleadoId: number,fechaInicial,fechaFinal,tipoDocumentoId:number) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByEmpleado?empleadoId='+empleadoId+ '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);
   }
 
 }
