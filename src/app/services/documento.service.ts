@@ -6,6 +6,7 @@ import { CuadreCajaVoModel } from '../model/cuadreCajaVo.model';
 import { ParametrosModel } from '../model/parametros.model';
 import { DocumentoOrdenModel } from '../model/documentoOrden.model';
 import { NominaModel } from '../model/nomina.model';
+import { TipoDocumentoModel } from '../model/tipoDocumento.model';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +59,9 @@ export class DocumentoService {
   }
 
   
-  
+  getTiposDocumento() {
+    return this.http.get<TipoDocumentoModel[]>(this.server_api + '/documento/getTiposDocumento');
+  }
   
 
   getCuadreCaja(tipoDocumentoId: number[], empresaId: string, usuarioId: string, cerrado: string) {
@@ -71,6 +74,10 @@ export class DocumentoService {
 
   getNominaByEmpleado(fechaInicial,fechaFinal,idEmpleados: number[]) {
     return this.http.get<NominaModel[]>(this.server_api + '/documento/getNominaByEmpleado?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+idEmpleados);
+  }
+
+  getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
+    return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
   }
   
   getOrdenesByEmpleado(empleadoId: number,fechaInicial,fechaFinal,tipoDocumentoId:number) {

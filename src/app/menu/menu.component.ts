@@ -10,6 +10,9 @@ import { UsuarioService } from '../services/usuario.service';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
+  readonly MENU_FACTURACION: string = '1';
+  readonly MENU_USUARIOS: string = '4';
+  readonly MENU_LISTADOS: string = '5';
   public nombreUsuario: string;
   public facturacion: Array<SubMenuModel>;
   public electronica: Array<SubMenuModel>;
@@ -26,14 +29,18 @@ export class MenuComponent implements OnInit {
 
   public opcionesSubmenu() {
     let usuario_id = sessionStorage.getItem('usuario_id');
-    let menuFacturacionId='1';
-    let menuUsuariosId='4';
+    let menuFacturacionId=this.MENU_FACTURACION;
+    let menuUsuariosId=this.MENU_USUARIOS;
+    let menuListadosId=this.MENU_LISTADOS;
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuFacturacionId).subscribe((res) => {
       this.facturacion=res;
       console.log(this.facturacion);
     });
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuUsuariosId).subscribe((res) => {
       this.usuarios=res;
+    });
+    this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuListadosId).subscribe((res) => {
+      this.listados=res;
     });
   }
 

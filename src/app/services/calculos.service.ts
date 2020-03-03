@@ -20,6 +20,7 @@ export class CalculosService {
 		}	
 		return fecha;
 	}
+	
 
 	public fechaInicial(hoy: Date) {
 		hoy = (hoy == null ? new Date() : hoy);

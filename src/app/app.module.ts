@@ -22,6 +22,7 @@ import { OtComponent } from './ot/ot.component';
 import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
 import { NominaComponent } from './nomina/nomina.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
+import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { EmpleadoComponent } from './empleado/empleado.component';
     OtComponent,
     GestionOrdenComponent,
     NominaComponent,
-    EmpleadoComponent
+    EmpleadoComponent,
+    InfoMovimientoComponent
   ],
   imports: [
     BrowserModule,

@@ -41,7 +41,6 @@ export class NominaComponent implements OnInit {
 
   public empresaId: number;
   public usuarioId: number;
-
   //vales
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
   @ViewChild("valorVale") valorVale: ElementRef;
