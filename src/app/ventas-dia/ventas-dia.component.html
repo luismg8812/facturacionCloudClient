@@ -8,8 +8,7 @@
         <div class="form-group col-md-2 col-sm-2">Fecha: {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}} </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
-                 (change)="enterTecla(clientePV)"
-                (keydown.esc)="scapeTecla(clientePV)">
+                (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)">
             <datalist id="browsers">
                 <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
                     Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
@@ -28,17 +27,18 @@
                 id="empleadoPV" (keydown.enter)="enterTecla(empleadoPV)" (change)="enterTecla(empleadoPV)"
                 (keydown.esc)="scapeTecla(clientePV)">
             <datalist id="empleados">
-                <option value="prueba">prueba</option>
-                <option value="prueba2">prueba2</option>
+                <option *ngFor="let empleado of empleados" [value]="empleado.nombre">
+                    {{empleado.apellido}}
+                </option>
             </datalist>
         </div>
     </div>
     <hr />
     <div class="form-row">
-            <div class="form-group col-md-1 col-sm-4 d-block d-sm-none" id="divEsc" #divEsc>
-                    <button type="button" class="btn btn-primary btn-sm" id="escPV" #escPV
-                    (click)="scapeTecla(escPV)">Escape</button>
-            </div>
+        <div class="form-group col-md-1 col-sm-4 d-block d-sm-none" id="divEsc" #divEsc>
+            <button type="button" class="btn btn-primary btn-sm" id="escPV" #escPV
+                (click)="scapeTecla(escPV)">Escape</button>
+        </div>
         <div class="form-group col-md-1 col-sm-4" id="divSiguiente" #divSiguiente>
             <button type="button" class="btn btn-primary btn-sm" id="siguientePV" autofocus #siguientePV
                 (keyup)="controlTeclas($event,siguientePV)" (keyup.enter)="enterTecla(siguientePV)">Siguiente</button>
@@ -68,19 +68,21 @@
                 (keyup)="controlTeclas($event,imprimirPV)" (keyup.enter)="enterTecla(imprimirPV)">Imprimir</button>
         </div>
         <div class="form-group col-md-2 col-sm-4" id="divOpciones" #divOpciones>
-        <div class="dropdown">
+            <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" id="opcionPV" #opcionPV type="button"
-                (keyup)="controlTeclas($event,opcionPV)"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Opciones
+                    (keyup)="controlTeclas($event,opcionPV)" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    Opciones
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                  <button class="dropdown-item" type="button" *ngFor="let opcion of opciones" #cuadreCajaPV id="{{opcion.url}}"
-                  (keyup.enter)="enterTecla(cuadreCajaPV)" (click)="enterTecla(cuadreCajaPV)">{{opcion.nombre}}</button>
-                
+                    <button class="dropdown-item" type="button" *ngFor="let opcion of opciones" #cuadreCajaPV
+                        id="{{opcion.url}}" (keyup.enter)="enterTecla(cuadreCajaPV)"
+                        (click)="enterTecla(cuadreCajaPV)">{{opcion.nombre}}</button>
+
                 </div>
-              </div>
-        
-          
+            </div>
+
+
         </div>
 
         <div class="form-group col-md-1 col-sm-4" id="divFin" #divFin>
@@ -88,15 +90,15 @@
                 routerLink="/menu" (keyup.enter)="enterTecla(finPV)">Fin</button>
         </div>
         <div class="form-row">
-            <div class="form-group col-md-6 col-sm-2">
-                <input name="CodigoBarrasPV" #CodigoBarrasPV placeholder="Codigo de Barras" class="form-control"
+            <div class="form-group col-md-8 col-sm-2">
+                <input name="CodigoBarrasPV" #CodigoBarrasPV placeholder="Cod. Barras" class="form-control"
                     id="CodigoBarrasPV" (keydown.enter)="enterTecla(CodigoBarrasPV)" (blur)="ocultarCodigoBarras()"
                     (keydown.esc)="scapeTecla(clientePV)">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-sm-2 d-none" id="divCodigo" #divCodigo>
-                <input name="codigoPV" #codigoPV placeholder="Código" class="form-control" id="codigoPV"
+                <input name="codigoPV" #codigoPV placeholder="Código Prod." class="form-control" id="codigoPV"
                     (keydown.enter)="enterTecla(codigoPV)" (keydown.esc)="scapeTecla(clientePV)">
             </div>
             <div class="form-group col-sm-4 d-none" id="divArticulo" #divArticulo>
@@ -183,8 +185,8 @@
             </div>
         </div>
         <div class="form-row col-md-12 ">
-            <div class=" col-md-6 col-sm-6 border border-primary ">
-                <table class="table table-hover">
+            <div class="form-group col-md-9 col-sm-6 border border-primary ">
+                <table class="table table-hover letra_tabla">
                     <thead>
                         <tr>
                             <th scope="col col-md-2 col-sm-2">Cod</th>
@@ -205,44 +207,66 @@
                     </tbody>
                 </table>
             </div>
-            <div class="form-row col-md-6 col-sm-6 border border-primary">
-                <div class="form-group col-md-4 col-sm-6">
-                    Peso kg:
-                    <h3>{{formatearNumber(document.peso_total)}}</h3>
+            <div class="form-group col-md-3 col-sm-6 border border-primary ">
+                <div class="form-row ">
+                    <div class="form-group col-md-4">
+                        Peso kg:
+                    </div>
+                    <div class="form-group col-md-8">
+                        <h3 style="text-align: right;"> {{formatearNumber(document.peso_total)}}</h3>
+                    </div>
                 </div>
-                <div class="form-group col-md-4 col-sm-6">
-                    Vr Exento:
-                    <h3>{{formatearNumber(document.excento)}}</h3>
+                <div class="form-row ">
+                    <div class="form-group col-md-4">
+                        Vr Exento:
+                    </div>
+                    <div class="form-group col-md-8">
+                        <h2 style="text-align: right;">{{formatearNumber(document.excento)}}</h2>
+                    </div>
                 </div>
-                <div class="form-group col-md-4 col-sm-6">
-                    Vr Gravado:
-                    <h3>{{formatearNumber(document.gravado)}}</h3>
+                <div class="form-row ">
+                    <div class="form-group col-md-4">
+                        Vr Gravado:
+                    </div>
+                    <div class="form-group col-md-8">
+                        <h2 style="text-align: right; ">{{formatearNumber(document.gravado)}}</h2>
+                    </div>
                 </div>
-                <div class="form-group col-md-6 col-sm-6">
-                    Vr Iva:
-                    <h3>{{formatearNumber(document.iva)}}</h3>
+                <div class="form-row ">
+                    <div class="form-group col-md-4">
+                        Vr Iva:
+                    </div>
+                    <div class="form-group col-md-8">
+                        <h2 style="text-align: right; ">{{formatearNumber(document.iva)}}</h2>
+                    </div>
                 </div>
-                <div class="form-group col-md-6 col-sm-6">
-                    Total:
-                    <h3 style="color:red">
-                        {{formatearNumber(document.total)
-                        }}
-                    </h3>
+                <div class="form-row ">
+                    <div class="form-group col-md-4">
+                        Total:
+                    </div>
+                    <div class="form-group col-md-8">
+                        <h2 style="color:red;text-align: right; ">
+                            {{formatearNumber(document.total)
+                                }}
+                        </h2>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col col-ms-1">
-            <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
-
-            </a>
-        </div>
-        <!-- Button trigger modal .d-none se repete esta parte para todos las pantallas de opciones de punto de venta dia -->
-        <button type="button" class="btn btn-primary d-none" id = "cuadreCajaModal" #cuadreCajaModal data-toggle="modal" data-target="#cuadreCajaModa">
-            Launch demo modal
-        </button>
-        <!-- Modal cuadre de caja -->
-        <div class="modal fade"  id="cuadreCajaModa" tabindex="-1" role="dialog" aria-labelledby="cuadreCajaModalLabel"
-            aria-hidden="true">
-            <app-cuadre-caja></app-cuadre-caja>
-        </div>
     </div>
+    <div class="col col-ms-1">
+        <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+        </a>
+    </div>
+    <!-- Button trigger modal .d-none se repete esta parte para todos las pantallas de opciones de punto de venta dia -->
+    <button type="button" class="btn btn-primary d-none" id="cuadreCajaModal" #cuadreCajaModal data-toggle="modal"
+        data-target="#cuadreCajaModa">
+        Launch demo modal
+    </button>
+    <!-- Modal cuadre de caja -->
+    <div class="modal fade" id="cuadreCajaModa" tabindex="-1" role="dialog" aria-labelledby="cuadreCajaModalLabel"
+        aria-hidden="true">
+        <app-cuadre-caja></app-cuadre-caja>
+    </div>
+</div>

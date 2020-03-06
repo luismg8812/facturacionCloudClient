@@ -399,7 +399,7 @@ export class ImpresionService {
     this.doc.text("CANT", 20, 57);
     this.doc.text("DESCRIPCIÓN", 35, 57);
     this.doc.text("VR. UNITARIO", 115, 57);
-    this.doc.text("DESC", 140, 57);
+    this.doc.text("% IVA", 140, 57);
     this.doc.text("VR. UNIT. FIN", 158, 57);
     this.doc.text("VR. TOTAL", 182, 57);
     this.doc.text("FORMA DE PAGO:", 159, 44);
@@ -454,6 +454,10 @@ export class ImpresionService {
         this.crearHeader(factura, configuracion, (i + 1), numPaginas);
         this.doc.setFontType('normal');
         this.doc.setFontSize(9);
+        this.doc.text("Total IVA: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.iva),20)+"   "
+                    + "Exento: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.excento),20)+"   "
+                    + "Gravado: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.iva),20)+"   "
+        , 4, 269);
         for (let e = 0; e < tope; e++) {
           if (contadorP < factura.detalle.length) {
             let codigo = factura.detalle[contadorP].documento_detalle_id;
@@ -461,12 +465,14 @@ export class ImpresionService {
             let descripcion = factura.detalle[contadorP].descripcion;
             let unitario = factura.detalle[contadorP].unitario;
             let parcial = factura.detalle[contadorP].parcial;
+            let iva = factura.detalle[contadorP].impuesto_producto;
             contadorP = contadorP + 1;
             this.doc.text(codigo, 4, posy);
             this.doc.text(cantidad, 20, posy);
             this.doc.text(descripcion, 35, posy);
+            this.doc.text(iva, 145, posy);
             this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(unitario), 20), 115, posy);
-            this.doc.text(parcial, 182, posy);
+            this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(parcial), 20), 182, posy);
             posy = posy + 5;
           } else {
             break;
@@ -477,7 +483,7 @@ export class ImpresionService {
           }
         }
       }
-      this.doc.save('prueba.pdf');
+      this.doc.save(factura.titulo+".pdf");
     });
     this.doc.setFontSize(9);
   }

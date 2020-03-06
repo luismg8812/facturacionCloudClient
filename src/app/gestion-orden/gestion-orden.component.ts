@@ -28,6 +28,7 @@ import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 import { EmpresaModel } from '../model/empresa.model';
 import { EmpleadoModel } from '../model/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
+import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 
 
 declare var jquery: any;
@@ -44,6 +45,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly CLIENTE_OBLIGATORIO: string = '14';
   readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
+  readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_PAGO_EFECTIVO: number = 1;
   readonly TIPO_IMPRESION_PDFCARTA: string = "PDFCARTA";
@@ -67,6 +69,7 @@ export class GestionOrdenComponent implements OnInit {
   public clienteNew: ClienteModel = new ClienteModel();
   public marcaList: Array<MarcaVehiculoModel> = [];
   public modeloList: Array<ModeloMarcaModel> = [];
+  public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
   public productosAll: Array<ProductoModel>;
   public activaciones: Array<ActivacionModel> = [];
   public productoFijoActivo: boolean = false;
@@ -89,7 +92,7 @@ export class GestionOrdenComponent implements OnInit {
   public configuracion: ConfiguracionModel;
   public documentoFactura: DocumentoModel = new DocumentoModel();
   public tipoPagosAll: Array<TipoPagoModel>;
-  public tituloFactura: string="";
+  public tituloFactura: string = "";
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -117,14 +120,14 @@ export class GestionOrdenComponent implements OnInit {
   constructor(public productoService: ProductoService,
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
-    public marcasService: MarcasService, 
-    public documentoDetalleService: DocumentoDetalleService, 
-    public afStorage: AngularFireStorage, 
-    public calculosService: CalculosService, 
-    public documentoService: DocumentoService, 
-    public usuarioService: UsuarioService, 
+    public marcasService: MarcasService,
+    public documentoDetalleService: DocumentoDetalleService,
+    public afStorage: AngularFireStorage,
+    public calculosService: CalculosService,
+    public documentoService: DocumentoService,
+    public usuarioService: UsuarioService,
     public clienteService: ClienteService,
-    public empleadoService:EmpleadoService) { }
+    public empleadoService: EmpleadoService) { }
 
   ngOnInit() {
     this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
@@ -138,6 +141,7 @@ export class GestionOrdenComponent implements OnInit {
     this.getConfiguracion(this.empresaId);
     this.getTipoPago();
     this.getEmpleados();
+    this.getTipoIdentificacion();
     this.factura = new FacturaModel();
   }
 
@@ -189,6 +193,25 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoService.saveDocumento(this.documento).subscribe(res => {
       if (res.code == 200) {
         this.documento.documento_id = res.documento_id;
+      } else {
+        alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+        return;
+      }
+    });
+  }
+
+  nuvaCotizacion() {
+    console.log("nueva factura");
+    this.limpiarFactura();
+    this.documentoFactura.tipo_documento_id = this.TIPO_DOCUMENTO_COTIZACION;// SE AGREGA tipo documento =4 CONTIZACION
+    this.documentoFactura.fecha_registro = this.calculosService.fechaActual();
+    this.documentoFactura.usuario_id = this.usuarioId;
+    this.documentoFactura.empresa_id = this.empresaId;
+    this.documentoFactura.invoice = 1; // invoice 1 sin enviar a la DIAN
+    this.clienteFactura.nativeElement.focus();
+    this.documentoService.saveDocumento(this.documentoFactura).subscribe(res => {
+      if (res.code == 200) {
+        this.documentoFactura.documento_id = res.documento_id;
       } else {
         alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
         return;
@@ -273,6 +296,10 @@ export class GestionOrdenComponent implements OnInit {
       mensageError += "documento\n";
       valido = false;
     }
+    if (this.clienteNew.tipo_identificacion_id == null) {
+      mensageError += "tipo documento\n";
+      valido = false;
+    }
     if (valido == false) {
       alert(mensageError);
       return;
@@ -281,6 +308,7 @@ export class GestionOrdenComponent implements OnInit {
     this.clienteService.saveCliente(this.clienteNew).subscribe(res => {
       if (res.code == 200) {
         this.getclientes(this.empresaId);
+        this.documento.cliente_id = res.cliente_id;
         this.clienteNew = new ClienteModel();
         $('#crearClienteModal').modal('hide');
       } else {
@@ -586,8 +614,8 @@ export class GestionOrdenComponent implements OnInit {
       alert("El documento esta corructo, por favor vuelva a crearlo");
       return;
     }
-    if(this.documentoFactura.cliente_id==null && this.clienteObligatorioActivo){
-      alert("El Cliente es obligatorio para generar la factura");
+    if (this.documentoFactura.cliente_id == null && this.clienteObligatorioActivo) {
+      alert("El Cliente es obligatorio para generar el documento");
       return;
     }
     console.log(this.configuracion);
@@ -596,14 +624,8 @@ export class GestionOrdenComponent implements OnInit {
     if (this.documentoFactura.tipo_documento_id == null) {
       this.documentoFactura.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
     }
-    if (this.documentoFactura.cliente_id == null) {
-      //si el cliente es nulo se asigna el varios por defecto
-      this.documentoFactura.cliente_id = 1;
-    }
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.documentoFactura.impreso = 1;
-
-    
     let impresora = this.impresora.nativeElement.value;
     if (impresora == "") {
       impresora = 1;
@@ -615,11 +637,12 @@ export class GestionOrdenComponent implements OnInit {
       }
     }
     this.documentoFactura.impresora = impresora;
-    
+   if( this.documentoFactura.tipo_documento_id==this.TIPO_DOCUMENTO_FACTURA){
     this.actualizarOrdenes();
     //this.calcularInfoDiario();
     this.asignarTipoPago();
-    this.asignarConsecutivo(numImpresiones,tipoImpresion);
+  }
+    this.asignarConsecutivo(numImpresiones, tipoImpresion);
     $('#imprimirModalFactura').modal('hide');
   }
 
@@ -642,10 +665,24 @@ export class GestionOrdenComponent implements OnInit {
         tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
       }
     }
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
-      this.imprimirFactura(1,res[0],tipoImpresion);
-    });
+    switch (this.documentoFactura.tipo_documento_id) {
+      case 9:
+        this.tituloFactura = "FACTURA DE VENTA.";
+        break;
+        case 10:
+        this.tituloFactura = "FACTURA DE VENTA";
+        break;
+        case 4:
+          this.tituloFactura = "No. DE COTIZACIÓN";
+          break;
+      default:
+        break;
+    }
     
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      this.imprimirFactura(1, res[0], tipoImpresion);
+    });
+
   }
 
   asignarTipoPago() {
@@ -665,7 +702,7 @@ export class GestionOrdenComponent implements OnInit {
     }
   }
 
-  asignarConsecutivo(numImpresiones: number,tipoImpresion:string) {
+  asignarConsecutivo(numImpresiones: number, tipoImpresion: string) {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr: EmpresaModel[] = res;
       let con: number;
@@ -683,6 +720,15 @@ export class GestionOrdenComponent implements OnInit {
           // consecutivo dian
           console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
           this.tituloFactura = "No. DE COTIZACIÓN";
+          this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+            if (res.code != 200) {
+              alert("error creando documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+            this.imprimirFactura(numImpresiones, empr[0], tipoImpresion);
+            this.limpiarFactura();
+
+          });
           break;
         default:
           // log
@@ -700,7 +746,7 @@ export class GestionOrdenComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-         
+
           consecutivo = res[0].letra_consecutivo + con.toString();
           console.log("consecutivo Dian: " + consecutivo);
           this.documentoFactura.consecutivo_dian = consecutivo;
@@ -709,13 +755,13 @@ export class GestionOrdenComponent implements OnInit {
           this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
             console.log("consecutivo actualizado");
             console.log(this.documentoFactura);
-            
+
             this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
               if (res.code != 200) {
                 alert("error creando documento, por favor inicie nuevamente la creación del documento");
                 return;
               }
-              this.imprimirFactura(numImpresiones, empr[0],tipoImpresion);
+              this.imprimirFactura(numImpresiones, empr[0], tipoImpresion);
               this.limpiarFactura();
 
             });
@@ -726,7 +772,7 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel,tipoImpresion:string) {
+  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel, tipoImpresion: string) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
 
@@ -848,9 +894,9 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  buscarFacturas(placa, clien, fechaInicial, fechaFinal) {
+  buscarFacturas(placa, clien, fechaInicial, fechaFinal,tipoDocu) {
     let idCliente = "";
-    let tipoDocumentoId = this.TIPO_DOCUMENTO_FACTURA; // se buscan facturas
+    let tipoDocumentoId = tipoDocu.value; // se buscan facturas
     if (clien.value != "") {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
@@ -927,14 +973,16 @@ export class GestionOrdenComponent implements OnInit {
       let ids: string[] = [];
       for (let d of this.ordenesBuscarListFacturaSelect) {
         ids.unshift(d.documento_id);
-        let documentoOrden: DocumentoOrdenModel = new DocumentoOrdenModel();
-        documentoOrden.documento_id = this.documentoFactura.documento_id;
-        documentoOrden.orden_id = d.documento_id;
-        this.documentoService.saveDocumentoOrden(documentoOrden).subscribe(res => {
-          if (res.code != 200) {
-            alert("error creando documentoOrden, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
-          }
-        });
+        if (this.documentoFactura.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA) {
+          let documentoOrden: DocumentoOrdenModel = new DocumentoOrdenModel();
+          documentoOrden.documento_id = this.documentoFactura.documento_id;
+          documentoOrden.orden_id = d.documento_id;
+          this.documentoService.saveDocumentoOrden(documentoOrden).subscribe(res => {
+            if (res.code != 200) {
+              alert("error creando documentoOrden, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+            }
+          });
+        }
       }
       this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
         this.itemsFactura = res;
@@ -958,7 +1006,6 @@ export class GestionOrdenComponent implements OnInit {
 
 
   calcularIva(detalle: DocumentoDetalleModel, impuesto) {
-
     const index = this.itemsFactura.indexOf(detalle, 0);
     if (index > -1) {
       detalle.impuesto_producto = impuesto.value;
@@ -1207,7 +1254,7 @@ export class GestionOrdenComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.ACTIVAR_EMPLEADOS_ORDEN) {
           console.log("empleados en orden activo");
           this.empleadoOrdenActivo = true;
-        }  
+        }
       }
     });
   }
@@ -1245,11 +1292,19 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  getEmpleados(){
+  getEmpleados() {
     this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
       this.empleados = res;
     });
   }
+
+  getTipoIdentificacion() {
+    this.clienteService.getTipoIdentificacionAll().subscribe(res => {
+      this.tipoIdentificacionList = res;
+    });
+  }
+
+
 
   formatearNumber(number: number) {
     let formato: string = "";
