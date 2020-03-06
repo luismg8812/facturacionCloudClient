@@ -404,32 +404,64 @@
             <div class="modal-body">
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
+                  Primer nombre
                   <input class="form-control" id="nombreCliente" placeholder="* Nombres cliente" name="nombreCliente"
                     #nombreCliente required [(ngModel)]="clienteNew.nombre">
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
+                  Segundo Nombre
+                  <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre" name="segundoNombreCliente"
+                    #segundoNombreCliente required [(ngModel)]="clienteNew.segundo_nombre">
+                   </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Primer Apellido
                   <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente"
-                    name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos">
+                  name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Segundo Apellido
+                  <input class="form-control" id="segundoApellidoCliente" placeholder=" Segundo Apellidos"
+                  name="segundoApellidoCliente" #segundoApellidoCliente required [(ngModel)]="clienteNew.segundo_apellido">
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
+                  Tipo Identificación
+                  <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion placeholder="" [(ngModel)]="clienteNew.tipo_identificacion_id"  class="form-control" >
+                  <option value="">Seleccione</option>
+                  <option *ngFor="let pago of tipoIdentificacionList" [value]="pago.tipo_identificacion_id">
+                    {{pago.nombre_corto}} {{pago.nombre}}
+                  </option>
+                </select>
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                 Identificación
                   <input class="form-control" id="documentoCliente" placeholder="* Documento cliente"
                     name="documentoCliente" #documentoCliente required [(ngModel)]="clienteNew.documento">
                 </div>
-                <div class="form-group col-md-6 col-sm-6">
-                  <input class="form-control" id="mailCliente" placeholder="* Correo cliente" name="mailCliente"
-                    #mailCliente required [(ngModel)]="clienteNew.mail">
-                </div>
+              
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
+                  Dirección Cliente
                   <input class="form-control" id="direccionCliente" placeholder="* Dirección cliente"
                     name="direccionCliente" #direccionCliente required [(ngModel)]="clienteNew.direccion">
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
+                  Fijo
                   <input class="form-control" id="fijoCliente" placeholder="* Fijo cliente" name="fijoCliente"
                     #fijoCliente required [(ngModel)]="clienteNew.fijo">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Mail
+                  <input class="form-control" id="mailCliente" placeholder="* Correo cliente" name="mailCliente"
+                    #mailCliente required [(ngModel)]="clienteNew.mail">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
                 </div>
               </div>
             </div>
@@ -466,8 +498,9 @@
             Imprimir
           </button>
         </div>
-        <div class="form-group col-md-4 col-sm-12 ">
+        <div class="form-group col-md-5 col-sm-12 ">
           <button type="button" class="btn btn-primary " id="Nueva" (click)="nuevaFactura()">Nueva Factura</button>
+          <button type="button" class="btn btn-primary ml-2"  (click)="nuvaCotizacion()" > Nueva Cotización </button>
           <button type="button" class="btn btn-primary ml-2"  (click)="imprimirCopia()" [disabled]="documentoFactura.impreso!=1 ">
             Imprimir Copia
           </button>
@@ -757,8 +790,16 @@
                     required>
                 </div>
               </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-2">
+                  <select id="tipoDocu" name="tipoDocu" #tipoDocu placeholder="" class="form-control">
+                <option value="10">Factura de Venta</option>
+                <option value="4">Cotización</option>
+              </select>
+                </div>
+              </div>
               <button type="button" class="btn btn-primary"
-                (click)="buscarFacturas(placaFactura,clienteBuscarFacturas,fechaInicial,fechaFinal)">Buscar</button>
+                (click)="buscarFacturas(placaFactura,clienteBuscarFacturas,fechaInicial,fechaFinal,tipoDocu)">Buscar</button>
               <br />
               <table class="table table-hover">
                 <thead>
@@ -778,6 +819,10 @@
                         (click)="cargarFactura(ordenes)">
                         Ver
                       </button>
+                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
+                      (click)="imprimirCopia(ordenes)">
+                      Imprimir Copia
+                    </button>
                     </th>
                     <td>{{ordenes.documento_id}}</td>
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>

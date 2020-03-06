@@ -20,6 +20,8 @@ import { ImpresionService } from '../services/impresion.service';
 import { FacturaModel } from '../vo/factura.model';
 import { EmpresaModel } from '../model/empresa.model';
 import { SubMenuModel } from '../model/submenu.model';
+import { EmpleadoModel } from '../model/empleado.model';
+import { EmpleadoService } from '../services/empleado.service';
 
 
 @Component({
@@ -49,7 +51,10 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("tipoDocumentoPV") tipoDocumentoPV: ElementRef;
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
 
-  constructor(public usuarioService: UsuarioService, public clienteService: ClienteService, public productoService: ProductoService,
+  constructor(public usuarioService: UsuarioService, 
+    public clienteService: ClienteService, 
+    public productoService: ProductoService,
+    public empleadoService:EmpleadoService,
     public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
     private router: Router, public empresaService: EmpresaService, public impresionService: ImpresionService) { }
 
@@ -79,6 +84,7 @@ export class VentasDiaComponent implements OnInit {
   public productos: Array<DocumentoDetalleModel>;
   public factura: FacturaModel;
   public opciones: Array<SubMenuModel>;
+   public empleados: Array<EmpleadoModel>;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -160,6 +166,7 @@ export class VentasDiaComponent implements OnInit {
     this.productos = [];
     this.tipoPagoPV.nativeElement.title = '1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale. Si ingresa varios tipos de pago hagalo separados por un espacio ej: 1,2,3';
     this.getclientes(this.empresaId);
+    this.getEmpleados(this.empresaId);
     this.getConfiguracion(this.empresaId);
     this.getActivaciones(this.usuarioId);
     this.getImpresorasEmpresa(this.empresaId);
@@ -1095,6 +1102,16 @@ export class VentasDiaComponent implements OnInit {
     });
 
   }
+
+  getEmpleados(empresaId: number) {
+    this.empleadoService.getEmpleadoAll(empresaId).subscribe(res => {
+      this.empleados = res;
+      console.log("lista de empleados cargados: " + this.empleados.length);
+    });
+
+  }
+
+  
 
   getConfiguracion(empresaId: number) {
     this.clienteService.getConfiguracionByEmpresa(empresaId.toString()).subscribe(res => {

@@ -23,6 +23,7 @@ import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
 import { NominaComponent } from './nomina/nomina.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
+import { ClienteComponent } from './cliente/cliente.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.compo
     GestionOrdenComponent,
     NominaComponent,
     EmpleadoComponent,
-    InfoMovimientoComponent
+    InfoMovimientoComponent,
+    ClienteComponent
   ],
   imports: [
     BrowserModule,

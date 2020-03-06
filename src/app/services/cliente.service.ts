@@ -5,6 +5,7 @@ import { ConfiguracionModel } from '../model/configuracion.model';
 import { TipoPagoModel } from '../model/tipoPago.model';
 import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { ParametrosModel } from '../model/parametros.model';
+import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,10 @@ export class ClienteService {
     return this.http.get<TipoPagoModel[]>(this.server_api+'/cliente/getTipoPago');
   }
 
+  public getTipoIdentificacionAll(){
+    return this.http.get<TipoIdentificacionModel[]>(this.server_api+'/cliente/getTipoIdentificacionAll');
+  }
+  
   saveCliente(clienteId: ClienteModel) {
     return this.http.post<any>(this.server_api + '/cliente/saveCliente', clienteId);
   }

@@ -1,8 +1,11 @@
 export class ClienteModel {
     public cliente_id:number;
     public empresa_id:number;
+    public tipo_identificacion_id:number;
     public nombre:string;
+    public segundo_nombre:string;
     public apellidos:string;
+    public segundo_apellido:string;
     public documento:string;
     public ciudad_id:string;
     public barrio:string;
@@ -16,8 +19,11 @@ export class ClienteModel {
     public mail:string;
 
     constructor(){
+       this.tipo_identificacion_id=null;
         this.nombre="";
+        this.segundo_nombre="";
         this.apellidos="";
+        this.segundo_apellido="";
         this.documento="";
         this.barrio="";
         this.direccion="";
