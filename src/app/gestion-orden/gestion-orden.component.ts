@@ -927,7 +927,10 @@ export class GestionOrdenComponent implements OnInit {
     this.clientePV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
-    this.empleadoPV.nativeElement.value = "";
+    if(this.empleadoOrdenActivo){
+      this.empleadoPV.nativeElement.value = "";
+    }
+    
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
     }

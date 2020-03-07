@@ -4,8 +4,20 @@
         <h4 class="mt-3">Punto de venta Día</h4>
     </div>
     <div class="form-row">
-        <div class="form-group col-md-2 col-sm-2">Documento: {{document.documento_id}}</div>
-        <div class="form-group col-md-2 col-sm-2">Fecha: {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}} </div>
+        <div class="form-group col-md-2 col-sm-2">
+            <div class="form-row">
+                <div class="form-group col-md-12 col-sm-2">
+                    <b>Documento:</b> {{document.documento_id}}
+                </div>
+              
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 col-sm-2">
+                <b> Tipo: </b> {{tipoDocumentoFac()}}
+                </div>           
+            </div>         
+        </div>
+        <div class="form-group col-md-2 col-sm-2"><b>Fecha:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}} </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
                 (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)">
@@ -15,7 +27,6 @@
                 </option>
             </datalist>
         </div>
-
         <div class="form-group col-md-2 col-sm-2">
             <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control"
                 id="tipoDocumentoPV" (keyup.F)="enterTecla(tipoDocumentoPV)" (keyup.C)="enterTecla(tipoDocumentoPV)"
@@ -254,6 +265,109 @@
             </div>
         </div>
     </div>
+
+    <!-- crear cliente Modal -->
+    <div class="modal fade" id="crearClienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Crear Cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-6">
+                            Primer nombre
+                            <input class="form-control" id="nombreCliente" placeholder="* Nombres cliente"
+                                name="nombreCliente" #nombreCliente required [(ngModel)]="clienteNew.nombre">
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6">
+                            Segundo Nombre
+                            <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre"
+                                name="segundoNombreCliente" #segundoNombreCliente required
+                                [(ngModel)]="clienteNew.segundo_nombre">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-6">
+                            Primer Apellido
+                            <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente"
+                                name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos">
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6">
+                            Segundo Apellido
+                            <input class="form-control" id="segundoApellidoCliente" placeholder=" Segundo Apellidos"
+                                name="segundoApellidoCliente" #segundoApellidoCliente required
+                                [(ngModel)]="clienteNew.segundo_apellido">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-6">
+                            Tipo Identificación
+                            <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion placeholder=""
+                                [(ngModel)]="clienteNew.tipo_identificacion_id" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option *ngFor="let pago of tipoIdentificacionList"
+                                    [value]="pago.tipo_identificacion_id">
+                                    {{pago.nombre_corto}} {{pago.nombre}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6">
+                            Identificación
+                            <input class="form-control" id="documentoCliente" placeholder="* Documento cliente"
+                                name="documentoCliente" #documentoCliente required [(ngModel)]="clienteNew.documento">
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-6">
+                            Dirección Cliente
+                            <input class="form-control" id="direccionCliente" placeholder="* Dirección cliente"
+                                name="direccionCliente" #direccionCliente required [(ngModel)]="clienteNew.direccion">
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6">
+                            Fijo
+                            <input class="form-control" id="fijoCliente" placeholder="Telefono fijo" name="fijoCliente"
+                                #fijoCliente required [(ngModel)]="clienteNew.fijo">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-6">
+                            Celular
+                            <input class="form-control" id="celular" placeholder="Telefono Celular" name="celular"
+                                #celular required [(ngModel)]="clienteNew.celular">
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6">
+                            Mail
+                            <input class="form-control" id="mailCliente" placeholder="* Correo cliente"
+                                name="mailCliente" #mailCliente required [(ngModel)]="clienteNew.mail">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-6">
+                            % de retención
+                            <input class="form-control" id="retencion" type="number" min="0" max="100"
+                                placeholder="% de retención" name="retencion" #retencion required
+                                [(ngModel)]="clienteNew.retencion">
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="crearClienteCancel()"
+                        data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="CrearCliente()">Crear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col col-ms-1">
         <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
 

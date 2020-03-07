@@ -22,7 +22,10 @@ import { EmpresaModel } from '../model/empresa.model';
 import { SubMenuModel } from '../model/submenu.model';
 import { EmpleadoModel } from '../model/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
-
+import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
+import { TipoDocumentoModel } from '../model/tipoDocumento.model';
+declare var jquery: any;
+declare var $: any;
 
 @Component({
   selector: 'app-ventas-dia',
@@ -51,14 +54,15 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("tipoDocumentoPV") tipoDocumentoPV: ElementRef;
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
 
-  constructor(public usuarioService: UsuarioService, 
-    public clienteService: ClienteService, 
+  constructor(public usuarioService: UsuarioService,
+    public clienteService: ClienteService,
     public productoService: ProductoService,
-    public empleadoService:EmpleadoService,
+    public empleadoService: EmpleadoService,
     public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
     private router: Router, public empresaService: EmpresaService, public impresionService: ImpresionService) { }
 
   public document: DocumentoModel;
+  public tiposDocumento: Array<TipoDocumentoModel>;
   public tituloFactura: string;
   public activaciones: Array<ActivacionModel>;
   public clientes: Array<ClienteModel>;
@@ -84,7 +88,10 @@ export class VentasDiaComponent implements OnInit {
   public productos: Array<DocumentoDetalleModel>;
   public factura: FacturaModel;
   public opciones: Array<SubMenuModel>;
-   public empleados: Array<EmpleadoModel>;
+  public empleados: Array<EmpleadoModel>;
+
+  public clienteNew: ClienteModel = new ClienteModel();
+  public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -142,6 +149,10 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("continuaImpresionPV") continuaImpresionPV: ElementRef;
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
 
+  //cliente
+  @ViewChild("nombreCliente") nombreCliente: ElementRef;
+
+
 
   ngOnInit() {
     this.empresaId = Number(sessionStorage.getItem("empresa_id"));
@@ -171,6 +182,13 @@ export class VentasDiaComponent implements OnInit {
     this.getActivaciones(this.usuarioId);
     this.getImpresorasEmpresa(this.empresaId);
     this.opcionesSubmenu();
+    this.getTipoIdentificacion();
+    this.getTiposDocumento();
+  }
+
+  crearClienteCancel() {
+
+    this.clientePV.nativeElement.focus();
   }
 
   clienteSelectFun(element) {
@@ -182,7 +200,12 @@ export class VentasDiaComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
 
       if (cliente == undefined) {
-        alert("se creará cliente");
+        this.clienteNew.nombre = element.value;
+
+
+        $('#crearClienteModal').modal('show');
+        this.nombreCliente.nativeElement.focus();
+        this.nombreCliente.nativeElement.select();
       } else {
         console.log(cliente);
         this.clienteSelect = cliente.cliente_id;
@@ -207,6 +230,42 @@ export class VentasDiaComponent implements OnInit {
       }
     }
 
+  }
+
+  CrearCliente() {
+    // console.log(this.clienteNew);
+    let valido: boolean = true;
+    let mensageError: string = "Son obligatorios:\n ";
+    if (this.clienteNew.nombre == "") {
+      mensageError += "nombre\n";
+      valido = false;
+    }
+    if (this.clienteNew.documento == "") {
+      mensageError += "documento\n";
+      valido = false;
+    }
+    if (this.clienteNew.tipo_identificacion_id == null) {
+      mensageError += "tipo documento\n";
+      valido = false;
+    }
+    if (valido == false) {
+      alert(mensageError);
+      return;
+    }
+
+    this.clienteNew.empresa_id = this.empresaId;
+    this.clienteService.saveCliente(this.clienteNew).subscribe(res => {
+      if (res.code == 200) {
+        this.clienteSelect = this.clienteNew.cliente_id;
+        this.document.cliente_id = this.clienteSelect;
+        this.factura.cliente = this.clienteNew;
+        this.clienteNew = new ClienteModel();
+        $('#crearClienteModal').modal('hide');
+      } else {
+        alert("error creando cliente, por favor inicie nuevamente la creación del cliente, si persiste consulte a su proveedor");
+        return;
+      }
+    });
   }
 
   tipoDocumentoSelect(element) {
@@ -258,6 +317,14 @@ export class VentasDiaComponent implements OnInit {
     }
   }
 
+  tipoDocumentoFac() {
+    if(this.tiposDocumento==undefined){
+      return "";
+    }
+    let tipoDocu:TipoDocumentoModel = this.tiposDocumento.find(tipoDocumento => tipoDocumento.tipo_documento_id === this.document.tipo_documento_id);
+    return tipoDocu == undefined ? "" : tipoDocu.nombre
+  }
+
   empleadoSelectFunt(element) {
     this.empleadoSelect = element.value;
     if (this.codigoBarrasActivo) {
@@ -273,7 +340,16 @@ export class VentasDiaComponent implements OnInit {
     if (element.value == '') {
       this.articuloPV.nativeElement.focus();
     } else {
-      console.log("TODO//busqueda de producto por codigo de barras:" + element.value);
+      console.log("articulo select:" + element.value);
+      let productoCBarras: string = element.value;
+      this.productoIdSelect = this.productosAll.find(product => product.codigo_barras === productoCBarras);
+      console.log(this.productoIdSelect);
+      if(this.productoIdSelect!=undefined){
+        this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
+        this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
+        this.findByProducto();
+      }
+      
     }
   }
 
@@ -284,6 +360,7 @@ export class VentasDiaComponent implements OnInit {
 
   productoEnter(element) {
     if (element.value == '') {
+       this.codigoPV.nativeElement.value="";
       this.codigoPV.nativeElement.focus();
     }
   }
@@ -293,37 +370,52 @@ export class VentasDiaComponent implements OnInit {
       if (this.codigoBarrasActivo) {
         this.CodigoBarrasPV.nativeElement.classList.remove("d-none");
         this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+        this.CodigoBarrasPV.nativeElement.value="";
         this.CodigoBarrasPV.nativeElement.focus();
       } else {
         this.articuloPV.nativeElement.focus();
       }
     } else {
-      console.log("TO DO// busqueda de código de producto")
+      console.log("articulo select:" + element.value);
+      let productoCodigo: string = element.value;
+      this.productoIdSelect = this.productosAll.find(product => product.producto_id.toString() === productoCodigo);
+      console.log(this.productoIdSelect);
+      if(this.productoIdSelect!=undefined){
+        this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
+        this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
+        this.findByProducto();
+      }
     }
   }
 
-
+ findByProducto(){
+  if (this.productoIdSelect.varios) {
+    this.precioPV.nativeElement.classList.add("d-block");
+    this.precioPV.nativeElement.classList.remove("d-none");
+    this.precioPV.nativeElement.focus();
+  } else {
+    if (this.productoIdSelect.balanza == '1') {
+      this.getGramera();// este metodo
+      this.grameraPV.nativeElement.classList.add("d-block");
+      this.grameraPV.nativeElement.classList.remove("d-none");
+      this.grameraPV.nativeElement.focus();
+    } else {
+      this.cantidadPV.nativeElement.value=1;
+      this.cantidadPV.nativeElement.focus();
+    }
+  }
+ }
 
   articuloSelect(element) {
     console.log("articulo select:" + element.value);
-
     let productoNombre: string = element.value;
     this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
     console.log(this.productoIdSelect);
-    if (this.productoIdSelect.varios) {
-      this.precioPV.nativeElement.classList.add("d-block");
-      this.precioPV.nativeElement.classList.remove("d-none");
-      this.precioPV.nativeElement.focus();
-    } else {
-      if (this.productoIdSelect.balanza == '1') {
-        this.getGramera();// este metodo
-        this.grameraPV.nativeElement.classList.add("d-block");
-        this.grameraPV.nativeElement.classList.remove("d-none");
-        this.grameraPV.nativeElement.focus();
-      } else {
-        this.cantidadPV.nativeElement.focus();
-      }
+    if(this.productoIdSelect!=undefined){
+      this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
+      this.findByProducto();
     }
+    
   }
 
   getGramera() {
@@ -1111,7 +1203,7 @@ export class VentasDiaComponent implements OnInit {
 
   }
 
-  
+
 
   getConfiguracion(empresaId: number) {
     this.clienteService.getConfiguracionByEmpresa(empresaId.toString()).subscribe(res => {
@@ -1128,6 +1220,18 @@ export class VentasDiaComponent implements OnInit {
   getTipoPago() {
     this.clienteService.getTipoPago().subscribe(res => {
       this.tipoPagosAll = res;
+    });
+  }
+
+  getTipoIdentificacion() {
+    this.clienteService.getTipoIdentificacionAll().subscribe(res => {
+      this.tipoIdentificacionList = res;
+    });
+  }
+
+  getTiposDocumento() {
+    this.documentoService.getTiposDocumento().subscribe(res => {
+      this.tiposDocumento = res;
     });
   }
 
