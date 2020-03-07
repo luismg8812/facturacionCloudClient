@@ -19,6 +19,7 @@ export class ClienteModel {
     public mail:string;
 
     constructor(){
+        this.cliente_id=null;
        this.tipo_identificacion_id=null;
         this.nombre="";
         this.segundo_nombre="";

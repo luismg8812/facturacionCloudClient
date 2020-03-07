@@ -40,5 +40,10 @@ export class ClienteService {
   saveCliente(clienteId: ClienteModel) {
     return this.http.post<any>(this.server_api + '/cliente/saveCliente', clienteId);
   }
+
+  updateCliente(clienteId: ClienteModel) {
+    return this.http.post<any>(this.server_api + '/cliente/updateCliente', clienteId);
+  }
+  
   
 }
