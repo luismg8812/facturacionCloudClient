@@ -7,6 +7,8 @@ import { CalculosService } from './calculos.service';
 import * as jsPDF from 'jspdf';
 import { Observable, Observer } from 'rxjs';
 import { DetalleNominaModel } from '../model/detalleNomina.model';
+import { CuadreCajaVoModel } from '../model/cuadreCajaVo.model';
+import { EmpresaModel } from '../model/empresa.model';
 
 
 
@@ -19,6 +21,81 @@ export class ImpresionService {
   public doc = new jsPDF();
 
   constructor(public calculosService: CalculosService) { }
+
+  imprimirCuadreTxt80(factura: CuadreCajaVoModel, empresa:EmpresaModel,nombreUsuario:string) {
+    //Genera un objeto Blob con los datos en un archivo TXT
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push('----------------------------------------\n');
+    texto.push(this.calculosService.centrarDescripcion(empresa.nombre, tamanoMax) + "\n");//nombre empresa
+    texto.push(this.calculosService.centrarDescripcion(empresa.slogan, tamanoMax) + "\n");//slogan
+    texto.push(this.calculosService.centrarDescripcion(empresa.represente, tamanoMax) + "\n");//representante
+    texto.push(this.calculosService.centrarDescripcion("NIT. " + empresa.nit + " " + empresa.regimen, tamanoMax) + "\n");//nit y regimen
+    texto.push(this.calculosService.centrarDescripcion(empresa.direccion, tamanoMax) + "\n");//direccion
+    texto.push(this.calculosService.centrarDescripcion(empresa.barrio, tamanoMax) + "\n");//barrio
+    texto.push(this.calculosService.centrarDescripcion("TEL: " + empresa.telefono_fijo + " " + empresa.cel, tamanoMax) + "\n");//telefonos
+    texto.push('\n');
+    texto.push("CUADRE DE CAJA " + "\n");//consecutivo
+    texto.push("FECHA: " + this.calculosService.cortarDescripcion(new Date().toLocaleString(), 19) + "\n");//fecha
+    texto.push("CAJERO: " +nombreUsuario + "\n");//fecha
+    texto.push("CAJA: " + '\n');
+    texto.push("ENTREGO:______________________________" + '\n');
+    texto.push("Factura inicial:.......: " + '\n');
+    texto.push("Factura final:.........: " + '\n');
+    texto.push('----------------------------------------\n');
+    texto.push('DESCRIPCIÓN                        TOTAL\n');
+    texto.push('----------------------------------------\n');
+      let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.total_facturas), 12);
+      let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base), 12);
+      let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques), 12);
+      let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros), 12);
+      let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0), 12);
+      let totalIngresos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.totalIngresos), 12);
+      let fajos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.fajos), 12);
+      let monedas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.moneda), 12);
+      let tarjetas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.tarjetas), 12);
+      let varios: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.varios), 12);
+      let vales: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.vales), 12);
+      let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.gastado), 12);
+      let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.propina), 12);
+      let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cartera), 12);
+      let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
+      
+    texto.push("Total Facturas:........:" + totalFacturas + "\n");
+    texto.push("Base:..................:" + base + "\n");
+    texto.push("Cheques Recogidos:.....: " + cheques + "\n");
+    texto.push("Otros:.................: " + otros + "\n");
+    texto.push("Recargas:..............: " + recargas + "\n");
+    texto.push("TOTAL MOV. DEL DIA:....: " + totalIngresos + "\n");
+    texto.push('----------------------------------------\n');
+    texto.push("VR. EN FAJOS:..........: " + fajos + "\n");
+    texto.push("MONEDA: ...............: " + monedas + "\n");
+    texto.push("EFECTIVO:..............: " + efectivo + "\n");
+    texto.push("CHEQUES:...............: " + cheques + "\n");
+    texto.push("DOC. ESPECIALES:.......: 0"+  "\n");
+    texto.push("TARJET DÉBIT Y CRÉDITO.: " + tarjetas + "\n");
+    texto.push("VARIOS:................: " + varios + "\n");
+    texto.push("VALES:.................: " + vales + "\n");
+    texto.push("NOMINA:................: " + totalFacturas + "\n");
+    texto.push("GASTOS:................: " + gastos + "\n");
+    texto.push("PROPIAS:...............: " + propina + "\n");
+    texto.push("VENTAS A CRÉDITO:......: " + credito + "\n");
+   
+    texto.push('----------------------------------------\n');
+    texto.push((Number(factura.diferencia)< 0.0 ? "SOBRANTE" : "FALTANTE") + "$...........: "+ factura.diferencia + "\n");
+    texto.push('----------------------------------------\n');
+    texto.push(this.calculosService.centrarDescripcion("\n", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("info@effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push('\n');
+    texto.push('\n');
+    texto.push('\n');
+    texto.push('\n');
+    return new Blob(texto, {
+      type: 'text/plain'
+    });
+  }
 
   imprimirOrdenTxt80(factura: FacturaModel) {
     //Genera un objeto Blob con los datos en un archivo TXT

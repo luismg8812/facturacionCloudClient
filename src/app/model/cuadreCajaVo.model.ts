@@ -1,6 +1,6 @@
 export class CuadreCajaVoModel {
-    public totalFacturas: number;
-    public documentosNoImpresos: number;
+    public total_facturas: number;
+    public documentos_no_impresos: number;
     public abonosDia: number;
     public avanceEfectivo: number;
     public chequesRecogidos: number;
@@ -24,8 +24,8 @@ export class CuadreCajaVoModel {
     public diferencia: number;
 
     constructor(){
-        this.totalFacturas=0;
-        this.documentosNoImpresos=0;
+        this.total_facturas=0;
+        this.documentos_no_impresos=0;
         this. abonosDia=0;
         this. avanceEfectivo=0;
         this. chequesRecogidos=0;

@@ -69,11 +69,11 @@ export class UsuarioService {
     return this.http.get<UsuarioModel[]>(this.server_api + '/usuario/getByUsuario?usuario=' + usuario + '&empresaId=' + empresaId + '&rolId=' + rolId);
   }
 
-  saveUsuario(usuario: UsuarioModel, rolId: Array<string>) {
+  saveUsuario(usuario: UsuarioModel, rolId: Array<number>) {
     return this.http.post<any>(this.server_api + '/usuario/createUsuario?rolId=' + rolId, usuario);
   }
 
-  updateUsuario(usuario: UsuarioModel, rolId: Array<string>) {
+  updateUsuario(usuario: UsuarioModel, rolId: Array<number>) {
     return this.http.put<any>(this.server_api + '/usuario/updateUsuario?rolId=' + rolId, usuario);
   }
 

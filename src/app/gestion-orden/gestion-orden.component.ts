@@ -383,7 +383,7 @@ export class GestionOrdenComponent implements OnInit {
   teclaAnteriorSiguiente(apcion: string) {
     if (this.ordenesList.length == 0) {
       let tipoDocumentoId: Array<number> = [this.TIPO_DOCUMENTO_ORDEN_TRABAJO];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '').subscribe(res => {
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '','').subscribe(res => {
         this.ordenesList = res;
         console.log("lista de docuemntos cargados: " + this.ordenesList.length);
         if (this.ordenesList.length == 0) {
@@ -414,7 +414,7 @@ export class GestionOrdenComponent implements OnInit {
   teclaAnteriorSiguienteFactura(apcion: string) {
     if (this.facturasList.length == 0) {
       let tipoDocumentoId: Array<number> = [this.TIPO_DOCUMENTO_FACTURA];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '').subscribe(res => {
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '','').subscribe(res => {
         this.facturasList = res;
         console.log("lista de facturas cargados: " + this.facturasList.length);
         if (this.facturasList.length == 0) {
@@ -512,7 +512,7 @@ export class GestionOrdenComponent implements OnInit {
       if (this.productoFijoActivo) {
         this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
       }
-      this.detalleSelect.parcial = this.detalleSelect.cantidad * this.detalleSelect.unitario;
+      this.detalleSelect.parcial = this.detalleSelect.cantidad * Number(this.detalleSelect.unitario);
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
       }

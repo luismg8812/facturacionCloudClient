@@ -1,11 +1,11 @@
 export class RolUsuarioModel {
     public rol_usuario_id:number;
-    public rol_id:string;
-    public usuario_id:string;
+    public rol_id:number;
+    public usuario_id:number;
     
     constructor(){
-        this.rol_id="";
-        this.usuario_id="";
+        this.rol_id=null;
+        this.usuario_id=null;
         this.rol_usuario_id=0;
        }
 }
