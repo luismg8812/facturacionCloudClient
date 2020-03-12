@@ -24,6 +24,9 @@ import { EmpleadoModel } from '../model/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
 import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 import { TipoDocumentoModel } from '../model/tipoDocumento.model';
+import { UsuarioModel } from '../model/usuario.model';
+import { RolModel } from '../model/rol.model';
+import { RolUsuarioModel } from '../model/rolUsuario.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -35,19 +38,17 @@ declare var $: any;
 export class VentasDiaComponent implements OnInit {
 
   readonly CLIENTE_FACTURACION: string = '19';
-  readonly GUIA_TRANSPORTE: string = '8';
-  readonly CLIENTE_OBLIGATORIO: string = '14';
-  readonly EMPLEADOS: string = '18';
-  readonly CODIGO_BARRAS: string = '7';
-  readonly DESCUENTOS: string = '10';
   readonly MULTIPLE_IMPRESORA: string = '4';
+  readonly CODIGO_BARRAS: string = '7';
+  readonly GUIA_TRANSPORTE: string = '8';
+  readonly CLAVE_BORRADO: string = '9';
+  readonly DESCUENTOS: string = '10';
+  readonly CLIENTE_OBLIGATORIO: string = '14';
+  readonly CAMBIO_PRECIO: string = '15';
+  readonly EMPLEADOS: string = '18';
   readonly TIPOS_PAGOS: string = '20';
-
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
-
-
-
-
+  readonly ROL_ADMIN: number = 1;
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -69,6 +70,7 @@ export class VentasDiaComponent implements OnInit {
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public configuracion: ConfiguracionModel;
   public productosAll: Array<ProductoModel>;
+  public usuarios: Array<UsuarioModel>;
   public tipoPagosAll: Array<TipoPagoModel>;
   public clienteActivo: boolean = false;
   public guiaTransporteActivo: boolean = false;
@@ -76,6 +78,8 @@ export class VentasDiaComponent implements OnInit {
   public empreadoActivo: boolean = false;
   public codigoBarrasActivo: boolean = false;
   public descuentosActivo: boolean = false;
+  public cambioPrecioActivo: boolean = false;
+  public claveBorradoActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
   public clienteSelect: number;
@@ -86,12 +90,18 @@ export class VentasDiaComponent implements OnInit {
   public productoIdSelect: ProductoModel;
   public imp: string;
   public productos: Array<DocumentoDetalleModel>;
+  public detalleBorrado: DocumentoDetalleModel;
   public factura: FacturaModel;
   public opciones: Array<SubMenuModel>;
   public empleados: Array<EmpleadoModel>;
-
+  public documentosList: Array<DocumentoModel> = [];
+  public indexSelect: number = 0;
+  public indexModificarSelect: number = 0;
   public clienteNew: ClienteModel = new ClienteModel();
   public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
+  public modificarFactura: boolean = false;
+  public claveBorrado: boolean = false;
+
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -99,6 +109,8 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("cantidadPV") cantidadPV: ElementRef;
   @ViewChild("precioPV") precioPV: ElementRef;
   @ViewChild("grameraPV") grameraPV: ElementRef;
+  @ViewChild("unitarioPV") unitarioPV: ElementRef;
+
 
   //botones de acciones
   @ViewChild("siguientePV") siguientePV: ElementRef;
@@ -106,10 +118,18 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("primeraPV") primeraPV: ElementRef;
   @ViewChild("ultimaPV") ultimaPV: ElementRef;
   @ViewChild("buscarPV") buscarPV: ElementRef;
+  @ViewChild("modificarPV") modificarPV: ElementRef;
+
   @ViewChild("nuevaPV") nuevaPV: ElementRef;
   @ViewChild("imprimirPV") imprimirPV: ElementRef;
   @ViewChild("opcionPV") opcionPV: ElementRef;
   @ViewChild("finPV") finPV: ElementRef;
+  @ViewChild("cambiarPrecioPV") cambiarPrecioPV: ElementRef;
+  @ViewChild("insertarPV") insertarPV: ElementRef;
+  @ViewChild("borrarPV") borrarPV: ElementRef;
+  @ViewChild("modificarUnitarioPV") modificarUnitarioPV: ElementRef;
+  @ViewChild("claveBorradoPV") claveBorradoPV: ElementRef;
+
 
 
   //div botones de acciones
@@ -118,6 +138,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("divPrimera") divPrimera: ElementRef;
   @ViewChild("divUltima") divUltima: ElementRef;
   @ViewChild("divBuscar") divBuscar: ElementRef;
+  @ViewChild("divModificar") divModificar: ElementRef;
   @ViewChild("divNueva") divNueva: ElementRef;
   @ViewChild("divImprimir") divImprimir: ElementRef;
   @ViewChild("divOpciones") divOpciones: ElementRef;
@@ -175,11 +196,13 @@ export class VentasDiaComponent implements OnInit {
     this.empleadoSelect = "";
     this.document = new DocumentoModel();
     this.productos = [];
+    this.getActivaciones(this.usuarioId);
     this.tipoPagoPV.nativeElement.title = '1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale. Si ingresa varios tipos de pago hagalo separados por un espacio ej: 1,2,3';
     this.getclientes(this.empresaId);
     this.getEmpleados(this.empresaId);
+    this.getUsuarios(this.empresaId);
     this.getConfiguracion(this.empresaId);
-    this.getActivaciones(this.usuarioId);
+
     this.getImpresorasEmpresa(this.empresaId);
     this.opcionesSubmenu();
     this.getTipoIdentificacion();
@@ -318,10 +341,10 @@ export class VentasDiaComponent implements OnInit {
   }
 
   tipoDocumentoFac() {
-    if(this.tiposDocumento==undefined){
+    if (this.tiposDocumento == undefined) {
       return "";
     }
-    let tipoDocu:TipoDocumentoModel = this.tiposDocumento.find(tipoDocumento => tipoDocumento.tipo_documento_id === this.document.tipo_documento_id);
+    let tipoDocu: TipoDocumentoModel = this.tiposDocumento.find(tipoDocumento => tipoDocumento.tipo_documento_id === this.document.tipo_documento_id);
     return tipoDocu == undefined ? "" : tipoDocu.nombre
   }
 
@@ -344,12 +367,12 @@ export class VentasDiaComponent implements OnInit {
       let productoCBarras: string = element.value;
       this.productoIdSelect = this.productosAll.find(product => product.codigo_barras === productoCBarras);
       console.log(this.productoIdSelect);
-      if(this.productoIdSelect!=undefined){
+      if (this.productoIdSelect != undefined) {
         this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
         this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
         this.findByProducto();
       }
-      
+
     }
   }
 
@@ -360,7 +383,7 @@ export class VentasDiaComponent implements OnInit {
 
   productoEnter(element) {
     if (element.value == '') {
-       this.codigoPV.nativeElement.value="";
+      this.codigoPV.nativeElement.value = "";
       this.codigoPV.nativeElement.focus();
     }
   }
@@ -370,7 +393,7 @@ export class VentasDiaComponent implements OnInit {
       if (this.codigoBarrasActivo) {
         this.CodigoBarrasPV.nativeElement.classList.remove("d-none");
         this.CodigoBarrasPV.nativeElement.classList.add("d-block");
-        this.CodigoBarrasPV.nativeElement.value="";
+        this.CodigoBarrasPV.nativeElement.value = "";
         this.CodigoBarrasPV.nativeElement.focus();
       } else {
         this.articuloPV.nativeElement.focus();
@@ -380,7 +403,7 @@ export class VentasDiaComponent implements OnInit {
       let productoCodigo: string = element.value;
       this.productoIdSelect = this.productosAll.find(product => product.producto_id.toString() === productoCodigo);
       console.log(this.productoIdSelect);
-      if(this.productoIdSelect!=undefined){
+      if (this.productoIdSelect != undefined) {
         this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
         this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
         this.findByProducto();
@@ -388,41 +411,43 @@ export class VentasDiaComponent implements OnInit {
     }
   }
 
- findByProducto(){
-  if (this.productoIdSelect.varios) {
-    this.precioPV.nativeElement.classList.add("d-block");
-    this.precioPV.nativeElement.classList.remove("d-none");
-    this.precioPV.nativeElement.focus();
-  } else {
-    if (this.productoIdSelect.balanza == '1') {
-      this.getGramera();// este metodo
-      this.grameraPV.nativeElement.classList.add("d-block");
-      this.grameraPV.nativeElement.classList.remove("d-none");
-      this.grameraPV.nativeElement.focus();
+  findByProducto() {
+    this.unitarioPV.nativeElement.value = this.productoIdSelect.costo_publico;
+    if (this.productoIdSelect.varios) {
+      this.precioPV.nativeElement.classList.add("d-block");
+      this.precioPV.nativeElement.classList.remove("d-none");
+      this.precioPV.nativeElement.focus();
     } else {
-      this.cantidadPV.nativeElement.value=1;
-      this.cantidadPV.nativeElement.focus();
+      if (this.productoIdSelect.balanza == '1') {
+        this.getGramera();// este metodo
+        this.grameraPV.nativeElement.classList.add("d-block");
+        this.grameraPV.nativeElement.classList.remove("d-none");
+        this.grameraPV.nativeElement.focus();
+      } else {
+        this.cantidadPV.nativeElement.value = 1;
+        this.cantidadPV.nativeElement.focus();
+      }
     }
   }
- }
 
   articuloSelect(element) {
     console.log("articulo select:" + element.value);
     let productoNombre: string = element.value;
     this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
     console.log(this.productoIdSelect);
-    if(this.productoIdSelect!=undefined){
+    if (this.productoIdSelect != undefined) {
       this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
       this.findByProducto();
     }
-    
+
   }
 
   getGramera() {
 
   }
 
-  enterTecla(element) {
+   enterTecla(element) {
+    //await this.delay(550);
     console.log(element.id);
     if (element.id == "nuevaPV") {
       this.nuevafactura();
@@ -477,17 +502,128 @@ export class VentasDiaComponent implements OnInit {
       this.enterContinuarImpresion(element);
 
     }
+    if (element.id == "unitarioPV") {
+      this.unitarioEnter(element);
+    }
+
+    if (element.id == "siguientePV") {
+      this.teclaAnteriorSiguiente('s');
+    }
+    if (element.id == "anteriorPV") {
+      this.teclaAnteriorSiguiente('a');
+    }
+    if (element.id == "primeraPV") {
+      this.teclaAnteriorSiguiente('p');
+    }
+    if (element.id == "ultimaPV") {
+      this.teclaAnteriorSiguiente('u');
+    }
+    if (element.id == "modificarPV") {
+      this.modificarEnter();
+    }
+    if (element.id == "cambiarPrecioPV") {
+      this.cambiarPrecio(element);
+    }
+    if (element.id == "modificarUnitarioPV") {
+      this.cambiarPrecio(element);
+    }
+    if (element.id == "claveBorradoPV") {
+      this.verificarClaveBorrado(element);
+    }
+
+
+
 
     if (element.id == "cuadreCajaPV") {
       // alert("cuadre de caja");
       this.cuadreCajaModal.nativeElement.click();
       //this.continuaImpresionPV.nativeElement.focus();
       //this.enterContinuarImpresion(element);
-
     }
+  }
 
+  verificarClaveBorrado(element) {
+    let usuario = this.usuarios.find(usua => usua.clave === element.value);
+    console.log(usuario);
+    if (usuario == undefined) {
+      alert("Clave incorrecta!!");
+      this.claveBorradoPV.nativeElement.focus();
+      return;
+    }
+    this.usuarioService.getRolByUsuario(usuario.usuario_id).subscribe(res => {
+      let rolusurio:RolUsuarioModel[]=res;
+      console.log(rolusurio[0]);
+      let admin = rolusurio.find(rol => rol.rol_id === this.ROL_ADMIN); //se compara con el id del rol admin
+      if (admin == undefined) {
+        alert("La clave no pertenece a un usuario administrador!!");
+        this.claveBorradoPV.nativeElement.focus();
+        return;
+      } else {
+        this.borradoPosClave(this.detalleBorrado);
+      }
+    });
+  }
+
+  cambiarPrecio(element: string) {
+    if (this.productos.length == 0) {
+      alert("Debe seleccionar un documento con productos para poder editarlo");
+      return;
+    }
+    let idModificarSelect;
+    if (element == "cambiarPrecioPV") {
+      idModificarSelect = "c_" + this.productos[0].documento_detalle_id;
+    }
+    if (element == "modificarUnitarioPV") {
+      idModificarSelect = "p_" + this.productos[0].documento_detalle_id;
+    }
+    this.indexModificarSelect = 0;
+    $("#" + idModificarSelect).focus();
+    $("#" + idModificarSelect).select();
+  }
+
+  asigarEliminar() {
+    if (this.productos.length == 0) {
+      alert("Debe seleccionar un documento con productos para poder editarlo");
+      return;
+    }
+    let idModificarSelect = "b_" + this.productos[0].documento_detalle_id;
+    this.indexModificarSelect = 0;
+    $("#" + idModificarSelect).focus();
+  }
+
+  modificarEnter() {
+    this.modificarFactura = true;
+  }
+
+  unitarioEnter(element) {
+    if (this.codigoBarrasActivo) {
+      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+      this.CodigoBarrasPV.nativeElement.focus();
+    } else {
+      this.articuloPV.nativeElement.focus();
+    }
+    if (isNaN(element.value)) {
+      console.log("no es numérico:" + element.value);
+      return;
+    }
+    if (element.value == null || element.value <= 0) {
+      return;
+    }
+    let anterior: DocumentoDetalleModel = this.productos[0];
+    if (anterior.unitario == element.value) {
+      return;
+    }
+    this.productos.splice(0, 1);
+    anterior.estado = 0;
+    this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
+      if (res.code == 200) {
+        this.asignarDocumentoDetalle(anterior.cantidad, element.value);
+        console.log("cambio de precio:" + element.value);
+      }
+    });
 
   }
+
 
   enterContinuarImpresion(element) {
     if (this.document.documento_id == "") {
@@ -812,12 +948,18 @@ export class VentasDiaComponent implements OnInit {
       alert("La cantidad no puede ser mayor a 1500");
       return;
     }
-    if (this.codigoBarrasActivo) {
-      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
-      this.CodigoBarrasPV.nativeElement.focus();
+    if (this.cambioPrecioActivo) {
+      this.unitarioPV.nativeElement.focus();
+      this.unitarioPV.nativeElement.select();
     } else {
-      this.articuloPV.nativeElement.focus();
+      if (this.codigoBarrasActivo) {
+        this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+        this.CodigoBarrasPV.nativeElement.focus();
+      } else {
+        this.articuloPV.nativeElement.focus();
+      }
     }
+
     this.articuloPV.nativeElement.value = "";
     this.CodigoBarrasPV.nativeElement.value = "";
     this.cantidadPV.nativeElement.value = "";
@@ -834,8 +976,103 @@ export class VentasDiaComponent implements OnInit {
     console.log("//TODO aqui hacer la validacion de que el producto se agotó");
 
     this.asignarDocumento(cantidad);
+  }
+
+  borradoPosClave(detalle: DocumentoDetalleModel) {
+    let anterior: DocumentoDetalleModel = detalle;
+    this.productoIdSelect = this.productosAll.find(product => product.producto_id === anterior.producto_id);
+    for (var i = 0; i < this.productos.length; i++) {
+      if (this.productos[i].documento_detalle_id == anterior.documento_detalle_id) {
+        this.productos.splice(i, 1);
+        anterior.estado = 0;
+        break;
+      }
+    }
+    this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
+      if (res.code == 200) {
+        this.document = this.calculosService.calcularExcento(this.document, this.productos);
+        this.documentoService.updateDocumento(this.document).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+
+        let newCantidad: number = this.productoIdSelect.cantidad;
+        this.productoIdSelect.cantidad = newCantidad + anterior.cantidad;
+        this.restarCantidadesSubProducto(anterior);
+        this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
+          if (res.code == 200) {
+            //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
+          } else {
+            alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
+            return;
+          }
+        });
 
 
+        this.siguientePV.nativeElement.focus();
+        this.modificarFactura = false;
+      }
+    });
+  }
+
+  async borrarLista(detalle: DocumentoDetalleModel, element) {
+    if (this.claveBorradoActivo) {
+      this.claveBorrado = true;
+      await this.delay(100);
+      this.claveBorradoPV.nativeElement.focus();
+      this.detalleBorrado = detalle;
+    } else {
+      this.borradoPosClave(detalle);
+    }
+
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  cambioPrecioLista(detalle: DocumentoDetalleModel, element) {
+    if (isNaN(element.value)) {
+      console.log("no es numérico:" + element.value);
+      return;
+    }
+    if (element.value == null || element.value <= 0) {
+      return;
+    }
+
+    let anterior: DocumentoDetalleModel = detalle;
+    this.productoIdSelect = this.productosAll.find(product => product.producto_id === anterior.producto_id);
+    for (var i = 0; i < this.productos.length; i++) {
+      if (this.productos[i].documento_detalle_id == anterior.documento_detalle_id) {
+        this.productos.splice(i, 1);
+        anterior.estado = 0;
+        break;
+      }
+    }
+    let cantidad: number;
+    let precio: number;
+    switch (element.id.substr(0, 2)) {
+      case "c_":
+        cantidad = element.value;
+        precio = anterior.unitario;
+        break;
+      case "p_":
+        cantidad = anterior.cantidad;
+        precio = element.value;
+        break;
+      default:
+        break;
+    }
+
+    this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
+      if (res.code == 200) {
+        this.asignarDocumentoDetalle(cantidad, precio);
+        this.siguientePV.nativeElement.focus();
+        this.modificarFactura = false;
+      }
+    });
   }
 
   private asignarDocumento(cantidad) {
@@ -847,14 +1084,14 @@ export class VentasDiaComponent implements OnInit {
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
-          this.asignarDocumentoDetalle(cantidad);
+          this.asignarDocumentoDetalle(cantidad, this.productoIdSelect.costo_publico);
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
           return;
         }
       });
     } else {
-      this.asignarDocumentoDetalle(cantidad);
+      this.asignarDocumentoDetalle(cantidad, this.productoIdSelect.costo_publico);
       console.log(this.document);
 
     }
@@ -863,14 +1100,14 @@ export class VentasDiaComponent implements OnInit {
 
 
 
-  private asignarDocumentoDetalle(cantidad: number) {
+  private asignarDocumentoDetalle(cantidad: number, costo_publico: number) {
     let docDetalle = new DocumentoDetalleModel();
     docDetalle.cantidad = cantidad;
     docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
     docDetalle.peso_producto = Number(this.productoIdSelect.peso);
     docDetalle.producto_id = this.productoIdSelect.producto_id;
     docDetalle.documento_id = this.document.documento_id;
-    docDetalle.nombre_producto = this.productoIdSelect.nombre;
+    docDetalle.descripcion = this.productoIdSelect.nombre;
     docDetalle.costo_producto = this.productoIdSelect.costo;
     docDetalle.fecha_registro = this.calculosService.fechaActual();
     docDetalle.estado = 1;
@@ -882,19 +1119,17 @@ export class VentasDiaComponent implements OnInit {
       docDetalle.parcial = cantidad * unitarioPromo;
       docDetalle.unitario = unitarioPromo;
     } else {
-      if (cantidad != null && this.productoIdSelect.costo_publico != null) {
+      if (cantidad != null && costo_publico != null) {
         if (this.productoIdSelect.varios) {
           let precio: number = this.precioPV.nativeElement.value;
-
           console.log("precio");
           console.log(precio);
           docDetalle.parcial = precio;
           docDetalle.unitario = precio;
           this.precioPV.nativeElement.value = "";
         } else {
-          docDetalle.parcial = cantidad * this.productoIdSelect.costo_publico;
-          docDetalle.unitario = this.productoIdSelect.costo_publico;
-
+          docDetalle.parcial = cantidad * costo_publico;
+          docDetalle.unitario = costo_publico;
         }
       } else {
         docDetalle.parcial = 0;
@@ -941,6 +1176,8 @@ export class VentasDiaComponent implements OnInit {
     this.divImprimirModal.nativeElement.classList.remove("d-block");
     this.divImprimirModal.nativeElement.classList.add("d-none");
     this.siguientePV.nativeElement.focus();
+    this.modificarFactura = false;
+    this.claveBorrado = false;
 
   }
 
@@ -963,9 +1200,14 @@ export class VentasDiaComponent implements OnInit {
         return;
       }
       if (element.id == 'buscarPV') {
+        this.modificarPV.nativeElement.focus();
+        return;
+      }
+      if (element.id == 'modificarPV') {
         this.nuevaPV.nativeElement.focus();
         return;
       }
+
       if (element.id == 'nuevaPV') {
         this.imprimirPV.nativeElement.focus();
         return;
@@ -996,8 +1238,12 @@ export class VentasDiaComponent implements OnInit {
         this.ultimaPV.nativeElement.focus();
         return;
       }
-      if (element.id == 'nuevaPV') {
+      if (element.id == 'modificarPV') {
         this.buscarPV.nativeElement.focus();
+        return;
+      }
+      if (element.id == 'nuevaPV') {
+        this.modificarPV.nativeElement.focus();
         return;
       }
       if (element.id == 'imprimirPV') {
@@ -1013,30 +1259,133 @@ export class VentasDiaComponent implements OnInit {
         return;
       }
     }
+    if (event.keyCode == 40) { //cuando se presiona la tacla abajo
+      if (element.id.substr(0, 2) == 'c_') {
+        if (this.productos.length > (this.indexModificarSelect + 1)) {
+          this.indexModificarSelect = this.indexModificarSelect + 1;
+          let idModificarSelect = "c_" + this.productos[this.indexModificarSelect].documento_detalle_id;
+          $("#" + idModificarSelect).focus();
+          $("#" + idModificarSelect).select();
+          return;
+        }
+      }
+      if (element.id.substr(0, 2) == 'p_') {
+        if (this.productos.length > (this.indexModificarSelect + 1)) {
+          this.indexModificarSelect = this.indexModificarSelect + 1;
+          let idModificarSelect = "p_" + this.productos[this.indexModificarSelect].documento_detalle_id;
+          $("#" + idModificarSelect).focus();
+          $("#" + idModificarSelect).select();
+          return;
+        }
+      }
+      if (element.id.substr(0, 2) == 'b_') {
+        if (this.productos.length > (this.indexModificarSelect + 1)) {
+          this.indexModificarSelect = this.indexModificarSelect + 1;
+          let idModificarSelect = "b_" + this.productos[this.indexModificarSelect].documento_detalle_id;
+          $("#" + idModificarSelect).focus();
+          $("#" + idModificarSelect).select();
+          return;
+        }
+      }
+    }
+    if (event.keyCode == 38) { //cuando se presiona la tacla derecha
+      if (element.id.substr(0, 2) == 'c_') {
+        if (0 < this.indexModificarSelect) {
+          this.indexModificarSelect = this.indexModificarSelect - 1;
+          let idModificarSelect = "c_" + this.productos[this.indexModificarSelect].documento_detalle_id;
+          $("#" + idModificarSelect).focus();
+          $("#" + idModificarSelect).select();
+          return;
+        }
+      }
+      if (element.id.substr(0, 2) == 'p_') {
+        if (0 < this.indexModificarSelect) {
+          this.indexModificarSelect = this.indexModificarSelect - 1;
+          let idModificarSelect = "p_" + this.productos[this.indexModificarSelect].documento_detalle_id;
+          $("#" + idModificarSelect).focus();
+          $("#" + idModificarSelect).select();
+          return;
+        }
+      }
+      if (element.id.substr(0, 2) == 'b_') {
+        if (0 < this.indexModificarSelect) {
+          this.indexModificarSelect = this.indexModificarSelect - 1;
+          let idModificarSelect = "b_" + this.productos[this.indexModificarSelect].documento_detalle_id;
+          $("#" + idModificarSelect).focus();
+          $("#" + idModificarSelect).select();
+          return;
+        }
+      }
+    }
     if (event.keyCode == 78) { //cuando se presiona la tacla N 		 
       this.nuevafactura();
     }
     if (event.keyCode == 70) { //cuando se presiona la tacla f
       this.router.navigate(['/login']);
     }
-    if (event.keyCode == 73) { //cuando se presiona la tacla i 		 
+    if (event.keyCode == 73 && !this.modificarFactura) { //cuando se presiona la tacla i 		 
       this.imprimirModal();
     }
+    if (event.keyCode == 73 && this.modificarFactura) { //cuando se presiona la tacla i 		 
+      this.insertarModificar();
+    }
+
     if (event.keyCode == 79) { //cuando se presiona la tacla f
       alert("presiona la tecla o");
     }
+    if (event.keyCode == 83) { //cuando se presiona la tacla s
+      this.teclaAnteriorSiguiente('s');
+    }
+    if (event.keyCode == 65) { //cuando se presiona la tacla a
+      this.teclaAnteriorSiguiente('a');
+    }
+    if (event.keyCode == 80) { //cuando se presiona la tacla p
+      this.teclaAnteriorSiguiente('p');
+    }
+    if (event.keyCode == 85 && !this.modificarFactura) { //cuando se presiona la tacla u
+      this.teclaAnteriorSiguiente('u');
+    }
+    if (event.keyCode == 77) { //cuando se presiona la tacla m
+      this.modificarEnter();
+    }
+    if (event.keyCode == 67) { //cuando se presiona la tacla c
+      this.cambiarPrecio("cambiarPrecioPV");
+    }
+    if (event.keyCode == 66) { //cuando se presiona la tacla b
+      this.asigarEliminar();
+    }
+    if (event.keyCode == 85 && this.cambioPrecioActivo && this.modificarFactura) { //cuando se presiona la tacla p
+      this.cambiarPrecio("modificarUnitarioPV");
+    }
+
   }
+
+  insertarModificar() {
+    if (this.productos.length == 0) {
+      alert("Debe seleccionar un documento con productos para poder editarlo");
+      return;
+    }
+    this.estadoDivBotones("d-none");
+    this.estadoDivProducto("d-block") // se muestra el div de producto
+
+    if (this.codigoBarrasActivo) {
+      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+      this.CodigoBarrasPV.nativeElement.focus();
+    } else {
+      this.articuloPV.nativeElement.focus();
+    }
+    this.modificarFactura = false;
+
+  }
+
+
 
   limpiar() {
     this.estadoDivBotones("d-block");
     this.siguientePV.nativeElement.focus();
     this.estadoDivProducto("d-none") // se muestra el div de producto
     this.CodigoBarrasPV.nativeElement.value = "";
-    this.CodigoBarrasPV.nativeElement.classList.add("d-none"); this.clienteActivo = false;
-    this.guiaTransporteActivo = false;
-    this.clienteObligatorioActivo = false;
-    this.empreadoActivo = false;
-    this.codigoBarrasActivo = false;
+    this.CodigoBarrasPV.nativeElement.classList.add("d-none");
     this.clienteSelect = null;
     this.productoIdSelect = null;
     this.tipoDocumentSelect = null;
@@ -1054,48 +1403,74 @@ export class VentasDiaComponent implements OnInit {
     this.efectovoPV.nativeElement.value = "";
     this.tituloFactura = "";
     this.factura = new FacturaModel();
-
+    this.indexSelect = 0;
+    this.documentosList = [];
+    this.modificarFactura = false;
   }
+
+  teclaAnteriorSiguiente(apcion: string) {
+    if (this.documentosList.length == 0) {
+      let tipoDocumentoId: Array<number> = [10, 9, 4];//se buscan facturas de venta
+      let impreso = '0';
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '', impreso).subscribe(res => {
+        this.documentosList = res;
+        console.log("lista de docuemntos cargados: " + this.documentosList.length);
+        if (this.documentosList.length == 0) {
+          alert("No existen documentos");
+          return;
+        }
+        console.log(apcion + ":" + this.documentosList.length);
+        this.document = this.documentosList[this.documentosList.length - 1];
+        this.indexSelect = this.documentosList.length - 1;
+        this.asignarValores(this.document.documento_id);
+        return;
+      });
+    } else {
+      if ('a' == apcion && this.indexSelect != 0) {
+        this.indexSelect = this.indexSelect - 1;
+        this.document = this.documentosList[this.indexSelect];
+      }
+      if ('s' == apcion && this.indexSelect != this.documentosList.length - 1) {
+        this.indexSelect = this.indexSelect + 1;
+        this.document = this.documentosList[this.indexSelect];
+      }
+      if ('p' == apcion) {
+        this.indexSelect = 0;
+        this.document = this.documentosList[this.indexSelect];
+      }
+      if ('u' == apcion) {
+        this.indexSelect = this.documentosList.length - 1;
+        this.document = this.documentosList[this.indexSelect];
+      }
+    }
+    console.log("actual:" + this.document.documento_id);
+    this.asignarValores(this.document.documento_id);
+  }
+
+  asignarValores(documento_id: string) {
+    if (documento_id != '') {
+
+      let cliente = this.clientes.find(cliente => cliente.cliente_id == this.document.cliente_id);
+      let nombre = "";
+      if (cliente != undefined) {
+        nombre = cliente.nombre;
+      }
+      this.clientePV.nativeElement.value = nombre;
+      let ids: string[] = [];
+      ids.unshift(this.document.documento_id);
+      this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+        this.productos = res;
+        console.log("detalles encontrados:" + res.length);
+      });
+    }
+  }
+
 
   nuevafactura() {
     console.log("nueva factura");
     this.limpiar();
     this.estadoDivBotones("d-none");
     this.estadoDivProducto("d-block") // se muestra el div de producto
-    for (var e = 0; e < this.activaciones.length; e++) {
-      if (this.activaciones[e].activacion_id == this.CLIENTE_FACTURACION) {
-        console.log("cliente activo");
-        this.clienteActivo = true;
-      }
-      if (this.activaciones[e].activacion_id == this.GUIA_TRANSPORTE) {
-        console.log("guia de trasporte activa");
-        this.guiaTransporteActivo = true;
-      }
-      if (this.activaciones[e].activacion_id == this.CLIENTE_OBLIGATORIO) {
-        console.log("cliente obligatorio");
-        this.clienteObligatorioActivo = true;
-      }
-      if (this.activaciones[e].activacion_id == this.EMPLEADOS) {
-        console.log("empleado activado");
-        this.empreadoActivo = true;
-      }
-      if (this.activaciones[e].activacion_id == this.CODIGO_BARRAS) {
-        console.log("codigo barras activado");
-        this.codigoBarrasActivo = true;
-      }
-      if (this.activaciones[e].activacion_id == this.DESCUENTOS) {
-        console.log("descuentos activos ");
-        this.descuentosActivo = true;
-      }
-      if (this.activaciones[e].activacion_id == this.MULTIPLE_IMPRESORA) {
-        console.log("multiple impresora activos ");
-        this.multipleImpresoraActivo = true;
-      }
-      if (this.activaciones[e].activacion_id == this.TIPOS_PAGOS) {
-        console.log("tipos pagos activos ");
-        this.TipoPagosActivo = true;
-      }
-    }
     if (this.clienteActivo) {
       this.clientePV.nativeElement.focus();
     } else {
@@ -1169,6 +1544,49 @@ export class VentasDiaComponent implements OnInit {
   getActivaciones(user: number) {
     this.usuarioService.getActivacionByUsuario(user.toString()).subscribe(res => {
       this.activaciones = res;
+      for (var e = 0; e < this.activaciones.length; e++) {
+        if (this.activaciones[e].activacion_id == this.CLIENTE_FACTURACION) {
+          console.log("cliente activo");
+          this.clienteActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.GUIA_TRANSPORTE) {
+          console.log("guia de trasporte activa");
+          this.guiaTransporteActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.CLIENTE_OBLIGATORIO) {
+          console.log("cliente obligatorio");
+          this.clienteObligatorioActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.EMPLEADOS) {
+          console.log("empleado activado");
+          this.empreadoActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.CODIGO_BARRAS) {
+          console.log("codigo barras activado");
+          this.codigoBarrasActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.DESCUENTOS) {
+          console.log("descuentos activos ");
+          this.descuentosActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.MULTIPLE_IMPRESORA) {
+          console.log("multiple impresora activos ");
+          this.multipleImpresoraActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.TIPOS_PAGOS) {
+          console.log("tipos pagos activos ");
+          this.TipoPagosActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.CAMBIO_PRECIO) {
+          console.log("cambio de precio activos ");
+          this.cambioPrecioActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.CLAVE_BORRADO) {
+          console.log("clave borrado activos ");
+          this.claveBorradoActivo = true;
+        }
+
+      }
     });
   }
 
@@ -1211,6 +1629,12 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
+  getUsuarios(empresaId: number) {
+    this.usuarioService.getByUsuario(null, empresaId.toString(), null).subscribe(res => {
+      this.usuarios = res;
+    });
+  }
+
   getProductosByEmpresa(empresaId: number) {
     this.productoService.getProductosByEmpresa(empresaId.toString()).subscribe(res => {
       this.productosAll = res;
@@ -1222,6 +1646,10 @@ export class VentasDiaComponent implements OnInit {
       this.tipoPagosAll = res;
     });
   }
+
+
+
+
 
   getTipoIdentificacion() {
     this.clienteService.getTipoIdentificacionAll().subscribe(res => {
@@ -1242,6 +1670,7 @@ export class VentasDiaComponent implements OnInit {
       this.divPrimera.nativeElement.classList.add("d-block");
       this.divUltima.nativeElement.classList.add("d-block");
       this.divBuscar.nativeElement.classList.add("d-block");
+      this.divModificar.nativeElement.classList.add("d-block");
       this.divNueva.nativeElement.classList.add("d-block");
       this.divImprimir.nativeElement.classList.add("d-block");
       this.divOpciones.nativeElement.classList.add("d-block");
@@ -1252,6 +1681,7 @@ export class VentasDiaComponent implements OnInit {
       this.divPrimera.nativeElement.classList.add("d-none");
       this.divUltima.nativeElement.classList.add("d-none");
       this.divBuscar.nativeElement.classList.add("d-none");
+      this.divModificar.nativeElement.classList.add("d-none");
       this.divNueva.nativeElement.classList.add("d-none");
       this.divImprimir.nativeElement.classList.add("d-none");
       this.divOpciones.nativeElement.classList.add("d-none");
@@ -1262,6 +1692,7 @@ export class VentasDiaComponent implements OnInit {
       this.divPrimera.nativeElement.classList.remove("d-block");
       this.divUltima.nativeElement.classList.remove("d-block");
       this.divBuscar.nativeElement.classList.remove("d-block");
+      this.divModificar.nativeElement.classList.remove("d-block");
       this.divNueva.nativeElement.classList.remove("d-block");
       this.divImprimir.nativeElement.classList.remove("d-block");
       this.divOpciones.nativeElement.classList.remove("d-block");

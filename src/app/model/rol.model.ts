@@ -1,9 +1,9 @@
 export class RolModel {
-    public rol_id:string;
+    public rol_id:number;
     public nombre:string;
     
     constructor(){
-        this.rol_id="";
+        this.rol_id=null;
         this.nombre="";
        }
 }

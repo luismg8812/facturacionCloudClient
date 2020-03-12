@@ -190,6 +190,7 @@
             <div class="modal-body">
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2" *ngIf="productoFijoActivo">
+                  Artículo
                   <input list="articulos" name="articuloC" [value]="articuloPV" #articuloC placeholder="Articulo"
                     class="form-control" id="articuloC" (change)="articuloSelect(articuloC)">
                   <datalist id="articulos">
@@ -199,19 +200,23 @@
                   </datalist>
                 </div>
                 <div class="form-group col-md-6 col-sm-2" *ngIf="!productoFijoActivo">
+                  Artículo
                   <textarea class="form-control " id="item" #item placeholder="Nombre repuesto" required></textarea>
                 </div>
                 <div class="form-group col-md-6 col-sm-2">
+                  Cantidad
                   <input class="form-control" id="cantidad" type="number" placeholder="* Cantidad" name="cantidad"
                     #cantidad required>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2">
+                  Precio compra
                   <input class="form-control" id="pCompra" type="number" placeholder="* Precio de compra" name="pCompra"
                     #pCompra required>
                 </div>
                 <div class="form-group col-md-6 col-sm-2">
+                  Precio venta
                   <input class="form-control" id="pVenta" type="number" placeholder="* Precio de venta" name="pVenta"
                     #pVenta required>
                 </div>

@@ -24,6 +24,7 @@ import { NominaComponent } from './nomina/nomina.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
 import { ClienteComponent } from './cliente/cliente.component';
+import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ClienteComponent } from './cliente/cliente.component';
     NominaComponent,
     EmpleadoComponent,
     InfoMovimientoComponent,
-    ClienteComponent
+    ClienteComponent,
+    InventarioFisicoComponent
   ],
   imports: [
     BrowserModule,

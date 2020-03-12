@@ -493,7 +493,7 @@ export class OtComponent implements OnInit {
   teclaAnteriorSiguiente(apcion: string) {
     if (this.ordenesList.length == 0) {
       let tipoDocumentoId: Array<number> = [11];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '').subscribe(res => {
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '','').subscribe(res => {
         this.ordenesList = res;
         console.log("lista de docuemntos cargados: " + this.ordenesList.length);
         if (this.ordenesList.length == 0) {

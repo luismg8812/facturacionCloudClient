@@ -84,7 +84,7 @@ export class UsuarioComponent implements OnInit {
     }
     let empresaId = sessionStorage.getItem("empresa_id");
     this.usuarioCrear.empresa_id = Number(empresaId);
-    let rolId: string[] = [];
+    let rolId: number[] = [];
 
     for (var i = 0; i < this.rolListSelect.length; i++) {
       rolId.push(this.rolListSelect[i].rol_id);

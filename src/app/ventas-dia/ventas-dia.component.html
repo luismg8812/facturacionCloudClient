@@ -8,8 +8,7 @@
             <div class="form-row">
                 <div class="form-group col-md-12 col-sm-2">
                     <b>Documento:</b> {{document.documento_id}}
-                </div>
-              
+                </div>      
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12 col-sm-2">
@@ -45,6 +44,35 @@
         </div>
     </div>
     <hr />
+    <div class="form-row" *ngIf="modificarFactura">
+        <div class="form-group col-md-1 col-sm-2">
+            
+        </div>
+        <div class="form-group col-md-4 ">
+            <button type="button" class="btn btn-secondary" id="cambiarPrecioPV" #cambiarPrecioPV
+            (keydown.esc)="enterTecla(cambiarPrecioPV)" (keyup)="controlTeclas($event,cambiarPrecioPV)" 
+            (click)="cambiarPrecio(cambiarPrecioPV.id)">Cambiar Cantidad</button>
+            <button type="button" class="btn btn-secondary ml-1" id="insertarPV" #insertarPV
+            (keydown.esc)="enterTecla(insertarPV)" (keyup)="controlTeclas($event,insertarPV)" 
+            (click)="insertarModificar()">Insertar</button>
+            <button type="button" class="btn btn-secondary ml-1" id="borrarPV" #borrarPV
+            (keydown.esc)="enterTecla(borrarPV)" (keyup)="controlTeclas($event,borrarPV)" 
+            (click)="asigarEliminar()">Borrar</button>
+            <button type="button" class="btn btn-secondary ml-1" id="modificarUnitarioPV" #modificarUnitarioPV
+            (keydown.esc)="enterTecla(modificarUnitarioPV)" (keyup)="controlTeclas($event,modificarUnitarioPV)" [disabled]="!cambioPrecioActivo" 
+            (click)="cambiarPrecio(modificarUnitarioPV.id)">Unitario</button>
+        </div>
+        <div class="form-group col-md-3 col-sm-2" *ngIf="claveBorrado" >
+            Ingrese La contraseña de alguien con perfil de administrador:
+
+        </div>
+        <div class="form-group col-md-2 col-sm-2"  *ngIf="claveBorrado" > 
+            <input type="password" name="claveBorradoPV" #claveBorradoPV placeholder="clave administrador" class="form-control"
+                    id="claveBorradoPV" (keydown.enter)="enterTecla(claveBorradoPV)"
+                    (keydown.esc)="scapeTecla(claveBorradoPV)">
+        </div>
+    </div>
+   
     <div class="form-row">
         <div class="form-group col-md-1 col-sm-4 d-block d-sm-none" id="divEsc" #divEsc>
             <button type="button" class="btn btn-primary btn-sm" id="escPV" #escPV
@@ -52,23 +80,27 @@
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divSiguiente" #divSiguiente>
             <button type="button" class="btn btn-primary btn-sm" id="siguientePV" autofocus #siguientePV
-                (keyup)="controlTeclas($event,siguientePV)" (keyup.enter)="enterTecla(siguientePV)">Siguiente</button>
+                (keyup)="controlTeclas($event,siguientePV)"  (click)="teclaAnteriorSiguiente('s')">Siguiente</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divAnterior" #divAnterior>
             <button type="button" class="btn btn-primary btn-sm" id="anteriorPV" #anteriorPV
-                (keyup)="controlTeclas($event,anteriorPV)" (keyup.enter)="enterTecla(anteriorPV)">Anterior</button>
+                (keyup)="controlTeclas($event,anteriorPV)"  (click)="teclaAnteriorSiguiente('a')">Anterior</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divPrimera" #divPrimera>
             <button type="button" class="btn btn-primary btn-sm" id="primeraPV" #primeraPV
-                (keyup)="controlTeclas($event,primeraPV)" (keyup.enter)="enterTecla(primeraPV)">Primera</button>
+                (keyup)="controlTeclas($event,primeraPV)" (keyup.enter)="enterTecla(primeraPV)" (click)="teclaAnteriorSiguiente('p')">Primera</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divUltima" #divUltima>
             <button type="button" class="btn btn-primary btn-sm" id="ultimaPV" #ultimaPV
-                (keyup)="controlTeclas($event,ultimaPV)" (keyup.enter)="enterTecla(ultimaPV)">Ultima</button>
+                (keyup)="controlTeclas($event,ultimaPV)" (keyup.enter)="enterTecla(ultimaPV)" (click)="teclaAnteriorSiguiente('u')">Ultima</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divBuscar" #divBuscar>
             <button type="button" class="btn btn-primary btn-sm" id="buscarPV" #buscarPV
                 (keyup)="controlTeclas($event,buscarPV)" (keyup.enter)="enterTecla(buscarPV)">Buscar</button>
+        </div>
+        <div class="form-group col-md-1 col-sm-4" id="divModificar" #divModificar>
+            <button type="button" class="btn btn-primary btn-sm" id="modificarPV" #modificarPV (click)="modificarEnter(modificarPV)"
+                (keyup)="controlTeclas($event,modificarPV)" (keyup.enter)="enterTecla(modificarPV)">Modificar</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divNueva" #divNueva>
             <button type="button" class="btn btn-primary btn-sm" id="nuevaPV" (click)="nuevafactura()" #nuevaPV
@@ -87,7 +119,7 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                     <button class="dropdown-item" type="button" *ngFor="let opcion of opciones" #cuadreCajaPV
-                        id="{{opcion.url}}" (keyup.enter)="enterTecla(cuadreCajaPV)"
+                        id="{{opcion.url}}" 
                         (click)="enterTecla(cuadreCajaPV)">{{opcion.nombre}}</button>
 
                 </div>
@@ -133,7 +165,8 @@
                     (blur)="ocultarGramera()">
             </div>
             <div class="form-group col-sm-2 d-none" id="divUnitario" #divUnitario>
-                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Unitario">
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="$ Unitario" id="unitarioPV" name="unitarioPV" #unitarioPV  [disabled]="!cambioPrecioActivo"
+                (keydown.enter)="enterTecla(unitarioPV)" (keydown.esc)="scapeTecla(unitarioPV)">
             </div>
             <div class="form-group col-sm-2 d-none" id="divParcial" #divParcial>
                 <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Parcial">
@@ -200,7 +233,8 @@
                 <table class="table table-hover letra_tabla">
                     <thead>
                         <tr>
-                            <th scope="col col-md-2 col-sm-2">Cod</th>
+                            <th scope="col col-md-2 col-sm-1">op</th>
+                            <th scope="col col-md-2 col-sm-1">Cod</th>
                             <th scope="col col-md-4 col-sm-4">Artículo</th>
                             <th scope="col col-md-2 col-sm-2">Cantidad</th>
                             <th scope="col col-md-2 col-sm-2">Unitario</th>
@@ -209,10 +243,24 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let producto of productos">
-                            <td>{{producto.producto_id}}</td>
-                            <td>{{producto.nombre_producto}}</td>
-                            <td>{{formatearNumber(producto.cantidad)}}</td>
-                            <td>{{formatearNumber(producto.unitario)}}</td>
+                            <td  >
+                                <button type="button" class="btn btn-secondary"  #borrar id="b_{{producto.documento_detalle_id}}"
+                                (keydown.esc)="enterTecla(borrar)" (keyup)="controlTeclas($event,borrar)" 
+                                (click)="borrarLista(producto,borrar)">Borrar</button>
+                            </td>
+                            <td  >{{producto.producto_id}}</td>
+                            <td>{{producto.descripcion}}</td>
+                            <td>
+                                <input  class="form-control " #canti id="c_{{producto.documento_detalle_id}}"
+                                 value="{{producto.cantidad}}"  (keydown.enter)="cambioPrecioLista(producto,canti)"
+                                  (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,canti)" >
+                            </td>
+                            <td>
+                                <input  class="form-control " #box id="p_{{producto.documento_detalle_id}}" 
+                                value="{{formatearNumber(producto.unitario)}}"   [disabled]="!cambioPrecioActivo"
+                                (keydown.enter)="cambioPrecioLista(producto,box)" (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,box)" >
+                                
+                            </td>
                             <td>{{formatearNumber(producto.parcial)}}</td>
                         </tr>
                     </tbody>
