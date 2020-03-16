@@ -14,6 +14,8 @@ export class InventarioFisicoComponent implements OnInit {
   public empresaId: number;
   public productosAll: Array<ProductoModel>;
   public grupoList: Array<any>;
+  public proveedorList: Array<any>;
+  public marcaList: Array<any>;
   public indexModificarSelect: number = 0;
   public productoEliminar: ProductoModel;
   public productoNew: ProductoModel = new ProductoModel();
