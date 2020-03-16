@@ -73,7 +73,7 @@ export class InventarioFisicoComponent implements OnInit {
       this.mensaje = this.mensaje.replace("valor", "nombre");
       this.mensaje = this.mensaje + " nombre anterior: " + producto.nombre;
       console.log(producto.nombre);
-      producto.nombre = element.value;
+      producto.nombre = element.value; 
     }
     if (element.id.substr(0, 9) == 'cantidad_') {
       this.mensaje = this.mensaje.replace("valor", "cantidad");
