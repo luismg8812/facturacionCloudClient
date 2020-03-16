@@ -21,21 +21,21 @@
     </div>
   </div>
   <br />
-  <table class="table table-hover">
+  <table class="table table-hover ">
     <thead>
       <tr>
-        <th scope="col">Opciones</th>
-        <th scope="col">Producto</th>
-        <th scope="col">Cantidad</th>
+        <th scope="col" >Ops</th>
+        <th scope="col" class="w-25">Producto</th>
+        <th scope="col">Cant.</th>
         <th scope="col">Costo</th>
         <th scope="col">Publico</th>
-        <th scope="col">Impuesto %</th>
-        <th scope="col">Balanza</th>
+        <th scope="col">IVA</th>
+        <th scope="col" class="w-1">Pesado</th>
         <th scope="col">Cod. Barras</th>
-        <th scope="col">Promo</th>
-        <th scope="col">Publico Promo</th>
+        <th scope="col">Prom</th>
+        <th scope="col">Pub. Promo</th>
         <th scope="col">Kg. promo</th>
-        <th scope="col">Utilidad Real</th>
+        <th scope="col">Utilidad</th>
         <th scope="col">Diferencia</th>
 
       </tr>
@@ -47,7 +47,7 @@
           <button type="button" #borrar (click)="seleccionarEliminarItem(ordenes)" id="borrar_{{ordenes.producto_id}}"
             class="btn btn-secondary btn-sm" data-toggle="modal" (keyup)="controlTeclas($event,borrar)"
             (focus)="indexFocus(ordenes)">
-            Eliminar
+            <i class="fa fa-trash" aria-hidden="true"></i>
           </button>
         </th>
         <td>
