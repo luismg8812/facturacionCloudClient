@@ -10,6 +10,7 @@ import { NominaComponent } from './nomina/nomina.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
 import { ClienteComponent } from './cliente/cliente.component';
+import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -22,6 +23,7 @@ const routes: Routes = [
    { path: 'empleado', component: EmpleadoComponent },
    { path: 'cliente', component: ClienteComponent },
    { path: 'infoMovimiento', component: InfoMovimientoComponent },
+   { path: 'inventarioFisico', component: InventarioFisicoComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];

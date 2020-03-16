@@ -24,4 +24,20 @@ export class ProductoService {
   public updateCantidad(productoId:ProductoModel){
     return this.http.put<any>(this.server_api+'/producto/updateCantidad',productoId);
   }
+
+  public inactivar(productoId:ProductoModel){
+    return this.http.put<any>(this.server_api+'/producto/inactivar',productoId);
+  }
+
+  public updateProducto(productoId:ProductoModel){
+    return this.http.put<any>(this.server_api+'/producto/updateProducto',productoId);
+  }
+
+  public saveProducto(productoId:ProductoModel){
+    return this.http.put<any>(this.server_api+'/producto/saveProducto',productoId);
+  }
+  
+
+  
+  
 }

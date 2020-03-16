@@ -1,27 +1,52 @@
 export class ProductoModel {
     public producto_id:number;
+    public empresa_id:number;
     public grupo_id:string;
     public proveedor_id:string;
     public marca_id:string;
     public fecha_registro:Date;
     public costo:number;
     public costo_publico:number;
-    public codigo_interno:string;
-    public impuesto:string;
-    public hipoconsumo:string;
-    public stock_min:string;
-    public stock_max:string;
+    public impuesto:number;
+    public stock_min:number;
+    public stock_max:number;
     public codigo_barras:string;
-    public peso:string;
-    public balanza:string;
+    public peso:number;
+    public balanza:number;
     public nombre:string;
     public cantidad:number;
     public promo:number;
     public pub_promo:number;
-    public estado:string;
+    public estado:number;
     public kg_promo:number;
-    public varios:string;
+    public varios:number;
     public activo:string;
-    public utilidad_sugerida:string;
-    public subProducto:string;
+    public utilidad_sugerida:number;
+    public sub_producto:number;
+
+    constructor(){
+        this.producto_id=null;
+        this.empresa_id=null;
+        this. grupo_id=null;
+        this. proveedor_id=null;
+        this. marca_id=null;
+        this. fecha_registro=new Date();
+        this. costo=0;
+        this. costo_publico=0;
+        this. impuesto=0;
+        this. stock_min=0;
+        this. stock_max=0;
+        this. codigo_barras="";
+        this. peso=0;
+        this. balanza=0;
+        this. nombre="";
+        this. cantidad=0;
+        this. promo=0;
+        this. pub_promo=0;
+        this. estado=1;
+        this. kg_promo=0;
+        this. varios=0;
+        this. utilidad_sugerida=0;
+        this. sub_producto=0;
+    }
 }
