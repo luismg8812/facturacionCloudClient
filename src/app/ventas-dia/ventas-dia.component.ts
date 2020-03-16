@@ -418,7 +418,7 @@ export class VentasDiaComponent implements OnInit {
       this.precioPV.nativeElement.classList.remove("d-none");
       this.precioPV.nativeElement.focus();
     } else {
-      if (this.productoIdSelect.balanza == '1') {
+      if (this.productoIdSelect.balanza == 1) {
         this.getGramera();// este metodo
         this.grameraPV.nativeElement.classList.add("d-block");
         this.grameraPV.nativeElement.classList.remove("d-none");
