@@ -1288,7 +1288,7 @@ export class VentasDiaComponent implements OnInit {
         }
       }
     }
-    if (event.keyCode == 38) { //cuando se presiona la tacla derecha
+    if (event.keyCode == 38) { //cuando se presiona la tacla arriba
       if (element.id.substr(0, 2) == 'c_') {
         if (0 < this.indexModificarSelect) {
           this.indexModificarSelect = this.indexModificarSelect - 1;
