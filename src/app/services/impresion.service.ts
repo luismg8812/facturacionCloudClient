@@ -170,12 +170,12 @@ export class ImpresionService {
       texto.push("NIT/CC: " + factura.cliente.documento + '\n');
       texto.push("TELEFONO: " + factura.cliente.fijo + '\n');
     }
-    texto.push("VEHÍCULO: " + factura.documento.detalle_entrada + '\n');
+    texto.push("VEHICULO: " + factura.documento.detalle_entrada + '\n');
     texto.push("LINEA: " + factura.documento.linea_vehiculo + '\n');
-    texto.push("DESCRIPCIÓN CLIENTE: " + factura.documento.descripcion_cliente + '\n');
+    texto.push("DESCRIPCION CLIENTE: " + factura.documento.descripcion_cliente + '\n');
     texto.push("DIAGNOSTICO: " + factura.documento.descripcion_trabajador + '\n');
     texto.push('--------------------------------\n');
-    texto.push('DESCRIPCIÓN                TOTAL\n');
+    texto.push('DESCRIPCION                TOTAL\n');
     texto.push('--------------------------------\n');
     for (var i = 0; i < factura.detalle.length; i++) {
       let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 20);
@@ -186,7 +186,7 @@ export class ImpresionService {
     texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
     texto.push('--------------------------------\n');
     texto.push('\n');
-    texto.push("El establecimiento no se hace responsable de la pérdida o robo de objetos de valor dejados en el vehículo" + '\n');
+    texto.push("El establecimiento no se hace responsable de la perdida o robo de objetos de valor dejados en el vehiculo" + '\n');
 
     texto.push(this.calculosService.centrarDescripcion("*GRACIAS POR SU COMPRA*", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
@@ -533,7 +533,7 @@ export class ImpresionService {
         this.doc.setFontSize(9);
         this.doc.text("Total IVA: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.iva),20)+"   "
                     + "Exento: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.excento),20)+"   "
-                    + "Gravado: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.iva),20)+"   "
+                    + "Gravado: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.gravado),20)+"   "
         , 4, 269);
         for (let e = 0; e < tope; e++) {
           if (contadorP < factura.detalle.length) {
