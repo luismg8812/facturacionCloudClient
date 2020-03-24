@@ -130,8 +130,8 @@ export class GestionOrdenComponent implements OnInit {
     public empleadoService: EmpleadoService) { }
 
   ngOnInit() {
-    this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.buscarUsuarios();
     this.getclientes(this.empresaId);
     this.marcas();
@@ -589,7 +589,7 @@ export class GestionOrdenComponent implements OnInit {
       this.factura.titulo = tituloDocumento;
       this.factura.empresa = empr[0];
       this.factura.nombreTipoDocumento = tituloDocumento;
-      this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
+      this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
         case "TXT80MM":
@@ -786,7 +786,7 @@ export class GestionOrdenComponent implements OnInit {
     this.factura.detalle = this.itemsFactura
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
-    this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
+    this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoFactura.cliente_id);
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
@@ -1150,7 +1150,9 @@ export class GestionOrdenComponent implements OnInit {
         this.linea.nativeElement.value = "Seleccione Linea";
       }
       this.clientePV.nativeElement.value = nombre;
-      this.empleadoPV.nativeElement.value = nombreEmpleado;
+      if(this.empleadoOrdenActivo){
+        this.empleadoPV.nativeElement.value = nombreEmpleado;
+      }
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
       this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
       if (this.documento.modelo_marca_id != null) {
@@ -1269,7 +1271,7 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   buscarUsuarios() {
-    let empresaId: string = sessionStorage.getItem('empresa_id');
+    let empresaId: string = localStorage.getItem('empresa_id');
     this.usuarioService.getByUsuario(null, empresaId, null).subscribe(res => {
       this.usuarioList = res;
     });

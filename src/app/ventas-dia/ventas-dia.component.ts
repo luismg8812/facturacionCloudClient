@@ -27,6 +27,7 @@ import { TipoDocumentoModel } from '../model/tipoDocumento.model';
 import { UsuarioModel } from '../model/usuario.model';
 import { RolModel } from '../model/rol.model';
 import { RolUsuarioModel } from '../model/rolUsuario.model';
+import { SocketService } from '../services/socket.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -59,6 +60,7 @@ export class VentasDiaComponent implements OnInit {
     public clienteService: ClienteService,
     public productoService: ProductoService,
     public empleadoService: EmpleadoService,
+    public socketService:SocketService,
     public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
     private router: Router, public empresaService: EmpresaService, public impresionService: ImpresionService) { }
 
@@ -101,7 +103,8 @@ export class VentasDiaComponent implements OnInit {
   public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
   public modificarFactura: boolean = false;
   public claveBorrado: boolean = false;
-
+  public divGramera: boolean = false;
+  public pesoGramera:number=0.0;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -176,15 +179,15 @@ export class VentasDiaComponent implements OnInit {
 
 
   ngOnInit() {
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.estadoDivBotones("d-block");
     this.siguientePV.nativeElement.focus();
     this.estadoDivProducto("d-none") // se muestra el div de producto
     this.CodigoBarrasPV.nativeElement.classList.add("d-none");
-    this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.factura = new FacturaModel();
-    sessionStorage.removeItem("documentoIdSelect");
-    sessionStorage.removeItem("productoIdSelect");
+    localStorage.removeItem("documentoIdSelect");
+    localStorage.removeItem("productoIdSelect");
     this.getProductosByEmpresa(this.empresaId);
     this.clienteActivo = false;
     this.guiaTransporteActivo = false;
@@ -207,6 +210,7 @@ export class VentasDiaComponent implements OnInit {
     this.opcionesSubmenu();
     this.getTipoIdentificacion();
     this.getTiposDocumento();
+    
   }
 
   crearClienteCancel() {
@@ -411,7 +415,7 @@ export class VentasDiaComponent implements OnInit {
     }
   }
 
-  findByProducto() {
+  async findByProducto() {
     this.unitarioPV.nativeElement.value = this.productoIdSelect.costo_publico;
     if (this.productoIdSelect.varios) {
       this.precioPV.nativeElement.classList.add("d-block");
@@ -420,9 +424,12 @@ export class VentasDiaComponent implements OnInit {
     } else {
       if (this.productoIdSelect.balanza == 1) {
         this.getGramera();// este metodo
-        this.grameraPV.nativeElement.classList.add("d-block");
-        this.grameraPV.nativeElement.classList.remove("d-none");
+        
+        this.divGramera=true;
+        await this.delay(100);
+        this.grameraPV.nativeElement.value="S";
         this.grameraPV.nativeElement.focus();
+        this.grameraPV.nativeElement.select();
       } else {
         this.cantidadPV.nativeElement.value = 1;
         this.cantidadPV.nativeElement.focus();
@@ -443,7 +450,20 @@ export class VentasDiaComponent implements OnInit {
   }
 
   getGramera() {
-
+    console.log(this.configuracion);
+    this.socketService.getPesoGramera(this.configuracion).subscribe(res => {
+      if (res == undefined) {
+        alert("Error tratando de conectar con la gramera");
+        return;
+      }else{
+        console.log(res.peso);
+        if (isNaN(res.peso)) {
+          alert("Error obteniendo peso, por favor vuelva a intentarlo: " + res.peso);
+          return;
+        }
+        this.pesoGramera=res.peso;
+      }
+    });
   }
 
    enterTecla(element) {
@@ -478,6 +498,12 @@ export class VentasDiaComponent implements OnInit {
     if (element.id == "precioPV") {
       this.precioEnter(element);
     }
+
+    if (element.id == "grameraPV") {
+      this.precioGrameraEnter(element);
+    }
+
+    
     if (element.id == "descuentoPV") {
       this.descuentoEnter();
     }
@@ -787,7 +813,7 @@ export class VentasDiaComponent implements OnInit {
     this.factura.detalle = this.productos
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
-    this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
+    this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
         case "TXT80MM":
@@ -918,6 +944,7 @@ export class VentasDiaComponent implements OnInit {
   }
 
 
+
   precioEnter(element) {
     if (this.codigoBarrasActivo) {
       this.CodigoBarrasPV.nativeElement.classList.add("d-block");
@@ -940,7 +967,26 @@ export class VentasDiaComponent implements OnInit {
     this.asignarDocumento(1); //se asigna cantidad 1 en x01
   }
 
-
+  precioGrameraEnter(element){
+    
+      if (this.codigoBarrasActivo) {
+        this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+        this.CodigoBarrasPV.nativeElement.focus();
+      } else {
+        this.articuloPV.nativeElement.focus();
+      }
+    
+    let facturar=element.value;
+    this.articuloPV.nativeElement.value = "";
+    this.CodigoBarrasPV.nativeElement.value = "";
+    
+    console.log("precio enter:" + facturar);
+    if(facturar!="S" ){
+      return;
+    }
+    this.asignarDocumento(this.pesoGramera);
+    this.pesoGramera = 0.0;
+  }
 
   cantidadEnter(element) {
     let cantidad: number = this.cantidadPV.nativeElement.value;
@@ -1591,7 +1637,7 @@ export class VentasDiaComponent implements OnInit {
   }
 
   public opcionesSubmenu() {
-    let usuario_id = sessionStorage.getItem('usuario_id');
+    let usuario_id = localStorage.getItem('usuario_id');
     this.usuarioService.opcionPuntoVentaByUsuario(usuario_id).subscribe((res) => {
       this.opciones = res;
       console.log(this.opciones);
@@ -1625,7 +1671,7 @@ export class VentasDiaComponent implements OnInit {
 
   getConfiguracion(empresaId: number) {
     this.clienteService.getConfiguracionByEmpresa(empresaId.toString()).subscribe(res => {
-      this.configuracion = res;
+      this.configuracion = res[0];
     });
   }
 
@@ -1732,8 +1778,7 @@ export class VentasDiaComponent implements OnInit {
     this.precioPV.nativeElement.classList.add("d-none");
   }
   ocultarGramera() {
-    this.grameraPV.nativeElement.classList.remove("d-block");
-    this.grameraPV.nativeElement.classList.add("d-none");
+   this.divGramera=false;
   }
 
   formatearNumber(number: number) {

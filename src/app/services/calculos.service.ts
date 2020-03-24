@@ -10,17 +10,17 @@ import { ParametrosModel } from '../model/parametros.model';
 export class CalculosService {
 
 	constructor() { }
-
+	
 	public fechaActual() {
 		let fecha = new Date;
 		let parametros: ParametrosModel = new ParametrosModel;
 		if (parametros.ambiente == 'cloud') {
 			fecha.setDate(fecha.getDate() - 0.2083);
 			fecha.setDate(fecha.getDate() + 1);
-		}	
+		}
 		return fecha;
 	}
-	
+
 
 	public fechaInicial(hoy: Date) {
 		hoy = (hoy == null ? new Date() : hoy);
@@ -30,8 +30,8 @@ export class CalculosService {
 		return hoy;
 	}
 
-	public fechaInicial1(hoy:string) {
-		let hoy1:Date =  new Date(hoy)  ;
+	public fechaInicial1(hoy: string) {
+		let hoy1: Date = new Date(hoy);
 		hoy1.setHours(0);
 		hoy1.setMinutes(0);
 		hoy1.setSeconds(0);
@@ -46,8 +46,8 @@ export class CalculosService {
 		return hoy;
 	}
 
-	public fechaFinal1(hoy:string) {
-		let hoy1 =  new Date(hoy) ;
+	public fechaFinal1(hoy: string) {
+		let hoy1 = new Date(hoy);
 		hoy1.setHours(23);
 		hoy1.setMinutes(59);
 		hoy1.setSeconds(59);
@@ -59,7 +59,7 @@ export class CalculosService {
 	public validarPromo(ps: ProductoModel, cantidad: number) {
 		console.log("valida promocion");
 		let valido: boolean = true;
-		if (ps.promo == null) {
+		if (ps.promo == null) { 
 			valido = false;
 			return valido;
 		}
@@ -154,27 +154,27 @@ export class CalculosService {
 	}
 
 	public cortarDescripcion(nombre: string, maxTamanoNombre: number) {
-		let unit:string = "";
-		nombre=(nombre==undefined?"":nombre);
-		let tamañoCantidad:number = (nombre==undefined?0:nombre.length);
-		if(tamañoCantidad>maxTamanoNombre){
+		let unit: string = "";
+		nombre = (nombre == undefined ? "" : nombre);
+		let tamañoCantidad: number = (nombre == undefined ? 0 : nombre.length);
+		if (tamañoCantidad > maxTamanoNombre) {
 			unit = nombre.trim().substring(0, maxTamanoNombre);
-		}else{
-			unit=nombre.trim();
+		} else {
+			unit = nombre.trim();
 			for (var j = tamañoCantidad; j < maxTamanoNombre; j++) {
-				unit =  unit+" ";
+				unit = unit + " ";
 			}
 		}
 		return unit;
 	}
 
-	public  cortarCantidades( cantidad:string,  maxTamanoUnit:number) {
-		let unit:string = "";
-		let tamañoCantidad:number = cantidad.length;
-		if(tamañoCantidad>maxTamanoUnit){
+	public cortarCantidades(cantidad: string, maxTamanoUnit: number) {
+		let unit: string = "";
+		let tamañoCantidad: number = cantidad.length;
+		if (tamañoCantidad > maxTamanoUnit) {
 			unit = unit.substring(0, maxTamanoUnit);
-		}else{
-			unit=cantidad;
+		} else {
+			unit = cantidad;
 			for (var j = tamañoCantidad; j < maxTamanoUnit; j++) {
 				unit = " " + unit;
 			}

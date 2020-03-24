@@ -26,7 +26,7 @@ export class ClienteService {
   
 
   public getConfiguracionByEmpresa(empresaId:string){
-    return this.http.get<ConfiguracionModel>(this.server_api+'/cliente/getConfiguracionByEmpresa?empresaId='+empresaId);
+    return this.http.get<any>(this.server_api+'/cliente/getConfiguracionByEmpresa?empresaId='+empresaId);
   }
 
   public getTipoPago(){

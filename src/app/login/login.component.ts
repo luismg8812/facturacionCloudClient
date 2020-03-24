@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
     if (parametros.ambiente == 'cloud') {
 
       this.usuarioService.loginUsuario(usuario, clave).then(res => {
-        sessionStorage.setItem("userLogin", usuario);
+        localStorage.setItem("userLogin", usuario);
         this.usuarioService.usuarioByMail(usuario).subscribe((res) => {
           console.log(res);
           this.nombreUsuario = res[0];
@@ -45,9 +45,9 @@ export class LoginComponent implements OnInit {
               alert("Existe un inconveniente con su Pago, por favor contacte a su proveedor");
               this.router.navigate(['/login']);
             } else {
-              sessionStorage.setItem("nombreUsuario", this.nombreUsuario.nombre);
-              sessionStorage.setItem("usuario_id", "" + this.nombreUsuario.usuario_id);
-              sessionStorage.setItem("empresa_id", empresa_id);
+              localStorage.setItem("nombreUsuario", this.nombreUsuario.nombre);
+              localStorage.setItem("usuario_id", "" + this.nombreUsuario.usuario_id);
+              localStorage.setItem("empresa_id", empresa_id);
               this.router.navigate(['/menu']);
             }
           });
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
       console.log(usuario);
     } else {
       console.log("conexion local");
-      sessionStorage.setItem("userLogin", usuario);
+      localStorage.setItem("userLogin", usuario);
       this.usuarioService.usuarioByMail(usuario).subscribe((res1) => {
         //console.log(res1);
         if(res1.length==0){
@@ -85,9 +85,9 @@ export class LoginComponent implements OnInit {
         
         this.nombreUsuario = res1[0];
         let empresa_id = "" + this.nombreUsuario.empresa_id;
-        sessionStorage.setItem("nombreUsuario", this.nombreUsuario.nombre);
-        sessionStorage.setItem("usuario_id", "" + this.nombreUsuario.usuario_id);
-        sessionStorage.setItem("empresa_id", empresa_id);
+        localStorage.setItem("nombreUsuario", this.nombreUsuario.nombre);
+        localStorage.setItem("usuario_id", "" + this.nombreUsuario.usuario_id);
+        localStorage.setItem("empresa_id", empresa_id);
         this.router.navigate(['/menu']);
       }, (err) => {
         console.error("Error buscando usuario by mail");
@@ -103,7 +103,7 @@ export class LoginComponent implements OnInit {
   }
 
   public observador() {
-    var user = sessionStorage.getItem('userLogin');
+    var user = localStorage.getItem('userLogin');
     if (user) {
       this.router.navigate(['/menu']);
     } else {

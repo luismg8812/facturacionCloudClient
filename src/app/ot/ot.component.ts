@@ -94,10 +94,10 @@ export class OtComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getclientes(this.empresaId);
     this.buscarUsuarios();
-    this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.getActivaciones(this.usuarioId);
     this.getProductosByEmpresa(this.empresaId);
     this.marcas();
@@ -150,7 +150,7 @@ export class OtComponent implements OnInit {
   }
 
   /* getDetalles() {
-     let empresaId: string = sessionStorage.getItem('empresa_id');
+     let empresaId: string = localStorage.getItem('empresa_id');
      this.usuarioService.getByUsuario(this.usuarioBuscar, empresaId, this.rolSelectBuscar).subscribe(res => {    
        this.usuarioList = res;
      });
@@ -255,7 +255,7 @@ export class OtComponent implements OnInit {
       this.factura.titulo = tituloDocumento;
       this.factura.empresa = empr[0];
       this.factura.nombreTipoDocumento = tituloDocumento;
-      this.factura.nombreUsuario = sessionStorage.getItem("nombreUsuario");
+      this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
         case "TXT80MM":
@@ -671,7 +671,7 @@ export class OtComponent implements OnInit {
   }
 
   buscarUsuarios() {
-    let empresaId: string = sessionStorage.getItem('empresa_id');
+    let empresaId: string = localStorage.getItem('empresa_id');
     this.usuarioService.getByUsuario(null, empresaId, null).subscribe(res => {
       this.usuarioList = res;
     });

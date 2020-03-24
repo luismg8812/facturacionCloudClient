@@ -23,12 +23,12 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.observador();
-    this.nombreUsuario = sessionStorage.getItem('nombreUsuario');
+    this.nombreUsuario = localStorage.getItem('nombreUsuario');
     this.opcionesSubmenu();
   }
 
   public opcionesSubmenu() {
-    let usuario_id = sessionStorage.getItem('usuario_id');
+    let usuario_id = localStorage.getItem('usuario_id');
     let menuFacturacionId=this.MENU_FACTURACION;
     let menuUsuariosId=this.MENU_USUARIOS;
     let menuListadosId=this.MENU_LISTADOS;
@@ -50,12 +50,12 @@ export class MenuComponent implements OnInit {
     }).catch(function (error) {
       console.log("error cerrando sesssion");
     });
-    sessionStorage.clear();
+    localStorage.clear();
 
   }
 
   public observador() {
-    var user = sessionStorage.getItem('userLogin');
+    var user = localStorage.getItem('userLogin');
     if (user) {
       // this.router.navigate(['/menu']);
     } else {

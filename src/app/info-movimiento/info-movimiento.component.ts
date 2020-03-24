@@ -41,7 +41,7 @@ export class InfoMovimientoComponent implements OnInit {
               public calculosService:CalculosService) { }
 
   ngOnInit() {
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.asignarFechas();
     this.getTiposDocumento();
     this.getUsuarios(this.empresaId);
