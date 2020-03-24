@@ -72,7 +72,27 @@
                     (keydown.esc)="scapeTecla(claveBorradoPV)">
         </div>
     </div>
-   
+    <div class="form-row" *ngIf="divGramera">
+        <div class="form-group col-md-5 col-sm-2">
+            Producto:
+           <b> <h1 style="color:darkblue">
+                {{productoIdSelect.nombre}}
+            </h1></b>
+        </div>
+        <div class="form-group col-md-5 col-sm-2">
+            Peso:
+            <h1 style="color:red">
+                {{formatearNumber(pesoGramera)}}
+            </h1>
+        </div>
+        <div class="form-group col-md-2 col-sm-2">
+            Facturar?:
+            <input name="grameraPV" #grameraPV placeholder="S o N" class="form-control" id="grameraPV"
+        (keydown.enter)="enterTecla(grameraPV)" (keydown.esc)="scapeTecla(grameraPV)"
+        (blur)="ocultarGramera()">
+        </div>
+        
+    </div>   
     <div class="form-row">
         <div class="form-group col-md-1 col-sm-4 d-block d-sm-none" id="divEsc" #divEsc>
             <button type="button" class="btn btn-primary btn-sm" id="escPV" #escPV
@@ -160,9 +180,7 @@
                 <input name="precioPV" #precioPV placeholder="$ Precio" class="form-control d-none" id="precioPV"
                     (keydown.enter)="enterTecla(precioPV)" (keydown.esc)="scapeTecla(precioPV)"
                     (blur)="ocultarPrecio()">
-                <input name="grameraPV" #grameraPV placeholder="$ Precio" class="form-control d-none" id="grameraPV"
-                    (keydown.enter)="enterTecla(grameraPV)" (keydown.esc)="scapeTecla(grameraPV)"
-                    (blur)="ocultarGramera()">
+               
             </div>
             <div class="form-group col-sm-2 d-none" id="divUnitario" #divUnitario>
                 <input type="text" class="form-control mb-2 mr-sm-2" placeholder="$ Unitario" id="unitarioPV" name="unitarioPV" #unitarioPV  [disabled]="!cambioPrecioActivo"

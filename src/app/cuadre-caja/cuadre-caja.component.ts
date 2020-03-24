@@ -65,7 +65,7 @@ export class CuadreCajaComponent implements OnInit {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
      
-      let nombreUsuario = sessionStorage.getItem("nombreUsuario");
+      let nombreUsuario = localStorage.getItem("nombreUsuario");
       switch (tipoImpresion) {
         case "TXT80MM":
           this.descargarArchivo(this.impresionService.imprimirCuadreTxt80(this.cuadreCajaVo, empr[0],nombreUsuario), tituloDocumento + '.txt');
@@ -95,8 +95,8 @@ export class CuadreCajaComponent implements OnInit {
   inicio() {
     console.log("calculando cuadre de caja");
     this.cuadreCajaVo = new CuadreCajaVoModel;
-    this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     //this.getActivaciones(this.usuarioId);
     this.calcularCuadreCaja(this.usuarioId, this.empresaId);
   }

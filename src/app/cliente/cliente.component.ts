@@ -20,7 +20,7 @@ export class ClienteComponent implements OnInit {
   constructor(public clienteService:ClienteService) { }
 
   ngOnInit() {
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getTipoIdentificacion();
   }
 

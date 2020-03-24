@@ -71,8 +71,8 @@ export class NominaComponent implements OnInit {
     public impresionService: ImpresionService) { }
 
   ngOnInit() {
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
-    this.usuarioId = Number(sessionStorage.getItem("usuario_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.getEmpleados();
     this.getPagos();
     this.getImpresorasEmpresa(this.empresaId);

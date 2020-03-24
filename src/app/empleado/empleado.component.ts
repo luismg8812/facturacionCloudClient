@@ -18,7 +18,7 @@ export class EmpleadoComponent implements OnInit {
   public empleadoCrear: EmpleadoModel = new EmpleadoModel();
 
   ngOnInit() {
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
   }
 
   buscar() {

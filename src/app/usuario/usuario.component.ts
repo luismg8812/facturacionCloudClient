@@ -82,7 +82,7 @@ export class UsuarioComponent implements OnInit {
     } else {
       this.usuarioCrear.estado = '0';
     }
-    let empresaId = sessionStorage.getItem("empresa_id");
+    let empresaId = localStorage.getItem("empresa_id");
     this.usuarioCrear.empresa_id = Number(empresaId);
     let rolId: number[] = [];
 
@@ -145,7 +145,7 @@ export class UsuarioComponent implements OnInit {
 
 
   buscarUsuarios() {
-    let empresaId: string = sessionStorage.getItem('empresa_id');
+    let empresaId: string = localStorage.getItem('empresa_id');
     this.usuarioService.getByUsuario(this.usuarioBuscar, empresaId, this.rolSelectBuscar).subscribe(res => {
       //TODO hacer el rool en la busqueda para mandarlo por parametro
 

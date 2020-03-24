@@ -25,7 +25,7 @@ export class InventarioFisicoComponent implements OnInit {
   constructor(public productoService: ProductoService) { }
 
   ngOnInit() {
-    this.empresaId = Number(sessionStorage.getItem("empresa_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getProductosByEmpresa(this.empresaId);
 
   }

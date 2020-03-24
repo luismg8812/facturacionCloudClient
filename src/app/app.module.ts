@@ -25,6 +25,7 @@ import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
 import { ClienteComponent } from './cliente/cliente.component';
 import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
+import { SocketService } from './services/socket.service';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico
   ],
   providers: [AngularFireAuth,
     LoginComponent,
-    AngularFireStorage
+    AngularFireStorage,
+    SocketService
   ],
   bootstrap: [AppComponent]
 })

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <title>Facturación Effective</title>
   <base href="/">
-
+ 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="assets/images/logo.ico">
   <!-- Bootstrap CSS -->
@@ -19,6 +19,7 @@
       background-size: cover;
     }
   </style>
+
 </head>
 
 <body>
@@ -33,12 +34,24 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
-    <script>
-        $(document).ready(function(){
-          $('[data-toggle="tooltip"]').tooltip(); 
-        });
-        </script>
+  <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+ <!-- manejo de la ip para el socket de la gramera -->
+ <script type="text/javascript">
+  console.log("ip configurada localmente: " );
+  var db = openDatabase('info', '1.0', 'Test DB', 2 * 1024 * 1024);
+  db.transaction(function (tx) {
+    tx.executeSql('SELECT * FROM pc', [], function (tx, results) {
+      var ip = results.rows[0];
+      console.log("ip configurada localmente: " + ip.ip);
+      localStorage.setItem("ip", "" + ip.ip);
+    }, null);
+  }); 
+</script>
   <app-root></app-root>
 </body>
 
