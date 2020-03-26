@@ -26,6 +26,7 @@ import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.compo
 import { ClienteComponent } from './cliente/cliente.component';
 import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { SocketService } from './services/socket.service';
+import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { SocketService } from './services/socket.service';
     EmpleadoComponent,
     InfoMovimientoComponent,
     ClienteComponent,
-    InventarioFisicoComponent
+    InventarioFisicoComponent,
+    BuscarDocumentosComponent
   ],
   imports: [
     BrowserModule,

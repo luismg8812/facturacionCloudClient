@@ -317,6 +317,7 @@
                     <th scope="col">Nombre Cliente</th>
                     <th scope="col">Placa</th>
                     <th scope="col">Encargado</th>
+                    <th scope="col" class="d-none d-sm-block">Fecha</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -331,6 +332,7 @@
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
                     <td>{{ordenes.detalle_entrada}}</td>
                     <td>{{nombreUsuarioFiltro(ordenes.usuario_id)}}</td>
+                    <td class="d-none d-sm-block">{{ordenes.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
                   </tr>
                 </tbody>
               </table>

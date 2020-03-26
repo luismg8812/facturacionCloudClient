@@ -289,7 +289,7 @@ export class ImpresionService {
     texto.push('DESCRIPCIÓN       CANT   UNIDAD    TOTAL\n');
     texto.push('----------------------------------------\n');
     for (var i = 0; i < factura.detalle.length; i++) {
-      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].nombre_producto, 17);
+      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 17);
       let cantidadProducto: string = this.calculosService.cortarCantidades(factura.detalle[i].cantidad.toString(), 4);
       let unidadProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].unitario), 8);
       let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 8);
