@@ -1,0 +1,229 @@
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Buscar documentos por fecha</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Cajero
+          <select id="cajeroBuscar" name="cajeroBuscar" #cajeroBuscar class="form-control">
+            <option value="">Seleccione</option>
+            <option *ngFor="let cajero of usuarios" [value]="cajero.usuario_id">
+              {{cajero.nombre}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Empleado
+          <select id="empleadoBuscar" name="empleadoBuscar" #empleadoBuscar class="form-control">
+            <option value="">Seleccione</option>
+            <option *ngFor="let empleado of empleados" [value]="empleado.empleado_id">
+              {{empleado.nombre}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-1">
+          Fecha Inicial
+          <input class="form-control" type="date" id="fechaIniBuscar" #fechaIniBuscar>
+        </div>
+        <div class="form-group col-md-6 col-sm-1">
+          Fecha Final
+          <input class="form-control" type="date" id="fechaFinBuscar" #fechaFinBuscar>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Consecutivo DIAN
+          <input class="form-control" id="consecutivoDianBuscar" placeholder="Consecutivo DIAN"
+            name="consecutivoDianBuscar" #consecutivoDianBuscar>
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Número documento interno
+          <input class="form-control" id="internoBuscar" placeholder="Número de documento interno" name="internoBuscar"
+            #internoBuscar>
+        </div>
+
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Cliente
+          <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV">
+          <datalist id="browsers">
+            <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
+              Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
+            </option>
+          </datalist>
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Proveedor
+          <input class="form-control" id="proveedorBuscar" placeholder="Proveedor" name="proveedorBuscar"
+            #proveedorBuscar>
+        </div>
+
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-1">
+          Tipo Documento
+          <select id="tipoDocumento" name="tipoDocumento" #tipoDocumento placeholder="" class="form-control">
+            <option value="">Seleccione</option>
+            <option *ngFor="let tipo of tiposDocumento" [value]="tipo.tipo_documento_id">
+              {{tipo.nombre}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-md-6 col-sm-1">
+          <button type="button" class="btn btn-primary" (click)="buscarDocumentos()">Buscar</button>
+          <button type="button" class="btn btn-secondary ml-1" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Opciones</th>
+            <th scope="col"># interno</th>
+            <th scope="col">DIAN</th>
+            <th scope="col">Valor Total</th>
+            <th scope="col">Saldo</th>
+            <th scope="col">Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let documento of documentos">
+            <th scope="row">
+              <button type="button" class="btn btn-primary btn-sm" title="Detalle" data-toggle="modal"
+                data-target="#detalleDocumentoModal" (click)="detalleDocumento(documento)">
+                <i class="fas fa-search"></i>
+              </button>
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-primary btn-sm" [disabled]="!copiaFacturaActivo" (click)="imprimirCopia(documento)"
+                title="Imprimir Copia"  >
+                <i class="fas fa-print"></i>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" [disabled]="!anularFacturaActivo" title="Anular"
+                data-toggle="modal" data-target="#buscarFacturaModal">
+                <i class="far fa-trash-alt"></i>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" [disabled]="!cambioFechaActivo" title="Cambiar fecha"
+                data-toggle="modal" data-target="#buscarFacturaModal">
+                <i class="fas fa-calendar-alt"></i>
+              </button>
+            </th>
+            <td>{{documento.documento_id}}</td>
+            <td>{{documento.consecutivo_dian}}</td>
+            <td>{{formatearNumber(documento.total)}}</td>
+            <td>{{formatearNumber(documento.saldo)}}</td>
+            <td>{{documento.fecha_registro| date: 'dd/MM/yyyy'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal buscar -->
+  <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="detalleDocumentoModal"
+    aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Detalle factura</h5>
+          <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Consecutivo Dian: </b>
+            </div>
+            <div class="form-group col-md-4 col-sm-1">
+              {{documentoSelect.consecutivo_dian}}
+            </div>  
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Número interno: </b>
+            </div>
+            <div class="form-group col-md-4 col-sm-1">
+              {{documentoSelect.documento_id}}
+            </div>  
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Fecha: </b>
+            </div>
+            <div class="form-group col-md-4 col-sm-1">
+              {{documentoSelect.fecha_registro| date: 'dd/MM/yyyy'}}
+            </div>  
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Total: </b>
+            </div>
+            <div class="form-group col-md-4 col-sm-1">
+              {{formatearNumber(documentoSelect.total)}}
+            </div>  
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Saldo: </b>
+            </div>
+            <div class="form-group col-md-4 col-sm-1">
+              {{formatearNumber(documentoSelect.saldo)}}
+            </div>  
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Cliente: </b>
+            </div>
+            <div class="form-group col-md-4 col-sm-1">
+              {{nombreClienteFun(documentoSelect.cliente_id)}}
+            </div>  
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Proveedor: </b>
+            </div>
+            <div class="form-group col-md-4 col-sm-1">
+             
+            </div>  
+          </div>
+          Detalle Factura
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Nombre Producto</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of itemsFactura">         
+                <td>{{item.descripcion}}</td>
+                <td>{{item.cantidad}}</td>
+                <td>{{formatearNumber(item.parcial)}}</td>
+               
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()" >Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col col-ms-1">
+    <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+    </a>
+  </div>
+</div>

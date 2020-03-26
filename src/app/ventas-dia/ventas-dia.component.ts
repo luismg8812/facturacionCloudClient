@@ -172,7 +172,8 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("efectovoPV") efectovoPV: ElementRef;
   @ViewChild("continuaImpresionPV") continuaImpresionPV: ElementRef;
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
-
+  @ViewChild("buscarDocumentoXFecha") buscarDocumentoXFecha: ElementRef;
+  
   //cliente
   @ViewChild("nombreCliente") nombreCliente: ElementRef;
 
@@ -558,13 +559,13 @@ export class VentasDiaComponent implements OnInit {
     }
 
 
+    if (element.id == "cuadreCajaPV") { 
+      this.cuadreCajaModal.nativeElement.click();   
+    }
 
-
-    if (element.id == "cuadreCajaPV") {
-      // alert("cuadre de caja");
-      this.cuadreCajaModal.nativeElement.click();
-      //this.continuaImpresionPV.nativeElement.focus();
-      //this.enterContinuarImpresion(element);
+    if (element.id == "documentosXFechaPV") { 
+      console.log("aquientra");
+      this.buscarDocumentoXFecha.nativeElement.click();   
     }
   }
 
@@ -658,7 +659,11 @@ export class VentasDiaComponent implements OnInit {
     }
     console.log(this.configuracion);
     let numImpresiones = this.configuracion.numero_impresion;
-    let impresora = this.impresoraPV.nativeElement.value;
+    let impresora:string = this.impresoraPV.nativeElement.value;
+    if (impresora == "") {
+      impresora = '1';
+    }
+    this.document.impresora=Number(impresora);
     if (this.document.tipo_documento_id == null) {
       this.document.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
     }
@@ -787,10 +792,7 @@ export class VentasDiaComponent implements OnInit {
   imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
-    let impresora = this.impresoraPV.nativeElement.value;
-    if (impresora == "") {
-      impresora = 1;
-    }
+   
     let pantalla = this.enPantallaPV.nativeElement.value;
     if (pantalla == "") {
       pantalla = "false";
@@ -800,6 +802,7 @@ export class VentasDiaComponent implements OnInit {
     }
     let tipoImpresion = "";
 
+    let impresora = this.document.impresora;
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       console.log(numeroImpresiones);
       if (impresora == this.impresoraEmpresa[i].numero_impresora) {
@@ -1377,7 +1380,8 @@ export class VentasDiaComponent implements OnInit {
     }
 
     if (event.keyCode == 79) { //cuando se presiona la tacla f
-      alert("presiona la tecla o");
+      //alert("presiona la tecla o");
+      this.opcionPV.nativeElement.click();
     }
     if (event.keyCode == 83) { //cuando se presiona la tacla s
       this.teclaAnteriorSiguiente('s');

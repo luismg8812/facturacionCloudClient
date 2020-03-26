@@ -47,7 +47,7 @@ export class SocketService {
           observer.next(message);
         });
       } catch (error) {
-        alert("Existe un error con el socket, verifique que se encuentre abierto. Si el probleca persiste consute a soporte");
+        alert("Existe un error con el socket, verifique que se encuentre abierto. Si el problema persiste consulte a soporte");
       } 
      
     });
