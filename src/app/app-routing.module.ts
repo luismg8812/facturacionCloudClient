@@ -12,6 +12,7 @@ import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.compo
 import { ClienteComponent } from './cliente/cliente.component';
 import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
+import { ProveedorComponent } from './proveedor/proveedor.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -26,6 +27,7 @@ const routes: Routes = [
    { path: 'infoMovimiento', component: InfoMovimientoComponent },
    { path: 'inventarioFisico', component: InventarioFisicoComponent },
    { path: 'entradasAlmacen', component: MovimientoMesComponent },
+   { path: 'proveedor', component: ProveedorComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];
