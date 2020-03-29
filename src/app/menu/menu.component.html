@@ -9,63 +9,65 @@
   </button>
   <div class="collapse navbar-collapse justify-content-end menu-style" id="navbarNav">
     <ul class="navbar-nav ">
-        <span class="navbar-text">
-            <b> {{nombreUsuario}} </b>
-          </span>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
+      <span class="navbar-text mr-2">
+        <b> {{nombreUsuario}} </b>
+      </span>
+
+
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle"  id="facturacionPV" #facturacionPV type="button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,facturacionPV)">
           Facturación
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" *ngFor="let opfacturacion of facturacion" 
-            routerLink="{{opfacturacion.url}}">{{opfacturacion.nombre}}</a>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <button class="dropdown-item" type="button" *ngFor="let opfacturacion of facturacion" #cuadreCajaPV
+            routerLink="{{opfacturacion.url}}">{{opfacturacion.nombre}}</button>
         </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" id="electronicaPV" #electronicaPV type="button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,electronicaPV)">
           Facturación Electrónica
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" *ngFor="let opElectronica of electronica" 
-            routerLink="{{opElectronica.url}}">{{opElectronica.nombre}}</a>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <button class="dropdown-item" type="button" *ngFor="let opElectronica of electronica"
+            routerLink="{{opElectronica.url}}">{{opElectronica.nombre}}</button>
         </div>
-      </li>
-      <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            Funciones
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" *ngFor="let opFunciones of funciones" 
-              routerLink="{{opFunciones.url}}">{{opFunciones.nombre}}</a>
-          </div>
-        </li>
-      <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            Terceros
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" *ngFor="let opUsuario of usuarios" 
-               routerLink="{{opUsuario.url}}">{{opUsuario.nombre}}</a>
-         </div>
-        </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" id="funcionesPV" #funcionesPV type="button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,funcionesPV)">
+          Funciones
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <button class="dropdown-item" type="button" *ngFor="let opFunciones of funciones"
+            routerLink="{{opFunciones.url}}">{{opFunciones.nombre}}</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" id="terceroPV" #terceroPV type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,terceroPV)">
+          Terceros
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <button class="dropdown-item" type="button" *ngFor="let opUsuario of usuarios"
+            routerLink="{{opUsuario.url}}">{{opUsuario.nombre}}</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" id="listadosPV" #listadosPV type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,listadosPV)">
           Listados
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" *ngFor="let opListados of listados" 
-            routerLink="{{opListados.url}}">{{opListados.nombre}}</a>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <button class="dropdown-item" type="button" *ngFor="let opListados of listados" 
+            routerLink="{{opListados.url}}">{{opListados.nombre}}</button>
         </div>
-      </li>
-      
-      <li class="nav-item" title="Cerrar Sesión">
-          <a class="nav-link" routerLink="/login" (click)="cerrarSesision()">Cerrar Sesión<i class="fas fa-sign-out-alt"></i></a>
-        </li>
+      </div>
+      <button class="btn btn-primary " type="button" routerLink="/login" (click)="cerrarSesision()" id="cerrar" #cerrar
+        aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,cerrar)">
+        Cerrar Sesión<i class="fas fa-sign-out-alt"></i>
+      </button>
     </ul>
   </div>
 </nav>
