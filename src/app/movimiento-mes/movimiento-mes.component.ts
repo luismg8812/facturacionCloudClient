@@ -40,6 +40,9 @@ export class MovimientoMesComponent implements OnInit {
   public productosAll: Array<ProductoModel>;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public opciones: Array<SubMenuModel>;
+  public grupoList: Array<any>;
+  public marcaList: Array<any>;
+  
   public document: DocumentoModel;
   public clienteNew: ProveedorModel = new ProveedorModel();
   public empresaId: number;
@@ -175,6 +178,18 @@ export class MovimientoMesComponent implements OnInit {
     this.modificarFactura = false;
     this.siguientePV.nativeElement.focus();
     
+  }
+
+  ocultarPrecio() {
+    this.precioPV.nativeElement.classList.remove("d-block");
+    this.precioPV.nativeElement.classList.add("d-none");
+  }
+
+  cancelarImpresion() {
+    console.log("presiona cancelar impresion");
+    this.divImprimirModal.nativeElement.classList.remove("d-block");
+    this.divImprimirModal.nativeElement.classList.add("d-none");
+    this.scapeTecla(null);
   }
   
 

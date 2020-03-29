@@ -20,7 +20,7 @@
         </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="proveedorPV" #proveedorPV placeholder="Proveedor" class="form-control"
-                id="proveedorPV" (change)="enterTecla(proveedorPV)" (keydown.esc)="scapeTecla(clientePV)">
+                id="proveedorPV" (change)="enterTecla(proveedorPV)" (keydown.esc)="scapeTecla(proveedorPV)">
             <datalist id="browsers">
                 <option *ngFor="let proveedor of proveedores" [value]="proveedor.nombre">
                     Identificación: {{proveedor.documento}} id:{{proveedor.proveedor_id}}
@@ -31,7 +31,7 @@
             <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control"
                 id="tipoDocumentoPV" (keyup.E)="enterTecla(tipoDocumentoPV)" (keyup.S)="enterTecla(tipoDocumentoPV)"
                 (keyup.G)="enterTecla(tipoDocumentoPV)" (keydown.enter)="enterTecla(tipoDocumentoPV)"
-                (keydown.esc)="scapeTecla(clientePV)">
+                (keydown.esc)="scapeTecla(tipoDocumentoPV)">
         </div>
         <div class="form-group col-md-2 col-sm-2">
             <input name="detalleEntrada" #detalleEntrada placeholder="Detalle Entrada" class="form-control" id="detalleEntrada"
@@ -163,18 +163,18 @@
         <div class="form-group col-md-8 col-sm-2">
             <input name="CodigoBarrasPV" #CodigoBarrasPV placeholder="Cod. Barras" class="form-control"
                 id="CodigoBarrasPV" (keydown.enter)="enterTecla(CodigoBarrasPV)" (blur)="ocultarCodigoBarras()"
-                (keydown.esc)="scapeTecla(clientePV)">
+                (keydown.esc)="scapeTecla(CodigoBarrasPV)">
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-sm-2 d-none" id="divCodigo" #divCodigo>
             <input name="codigoPV" #codigoPV placeholder="Código Prod." class="form-control" id="codigoPV"
-                (keydown.enter)="enterTecla(codigoPV)" (keydown.esc)="scapeTecla(clientePV)">
+                (keydown.enter)="enterTecla(codigoPV)" (keydown.esc)="scapeTecla(codigoPV)">
         </div>
         <div class="form-group col-sm-4 d-none" id="divArticulo" #divArticulo>
             <input list="articulos" name="articuloPV" #articuloPV placeholder="Articulo" class="form-control"
                 id="articuloPV" (keydown.enter)="enterTecla(articuloPV)" (change)="articuloSelect(articuloPV)"
-                (keydown.esc)="scapeTecla(clientePV)">
+                (keydown.esc)="scapeTecla(articuloPV)">
             <datalist id="articulos">
                 <option *ngFor="let producto of productosAll" [value]="producto.nombre">
                     Costo:{{producto.costo}} Cantidad:{{producto.cantidad}} id:{{producto.producto_id}}
@@ -376,7 +376,7 @@
               <select id="proveedorCrear" name="proveedorCrear" #proveedorCrear placeholder=""
                 [(ngModel)]="productoNew.proveedor_id" class="form-control">
                 <option value="">Seleccione</option>
-                <option *ngFor="let proveedor of proveedorList" [value]="proveedor.proveedor_id">
+                <option *ngFor="let proveedor of proveedores" [value]="proveedor.proveedor_id">
                   {{proveedor.nombre}}
                </option>
               </select>
