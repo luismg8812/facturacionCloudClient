@@ -139,7 +139,7 @@
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Proveedor
-              <select id="proveedor" name="proveedorPV" #proveedorPV placeholder=""
+              <select id="proveedorPV" name="proveedorPV" #proveedorPV placeholder=""
                 [(ngModel)]="productoNew.proveedor_id" class="form-control">
                 <option value="">Seleccione</option>
                 <option *ngFor="let proveedor of proveedorList" [value]="proveedor.proveedor_id">

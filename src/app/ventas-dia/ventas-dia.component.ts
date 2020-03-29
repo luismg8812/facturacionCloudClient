@@ -434,6 +434,7 @@ export class VentasDiaComponent implements OnInit {
       } else {
         this.cantidadPV.nativeElement.value = 1;
         this.cantidadPV.nativeElement.focus();
+        this.cantidadPV.nativeElement.select();
       }
     }
   }
@@ -906,7 +907,7 @@ export class VentasDiaComponent implements OnInit {
 
 
   calcularProporcion() {
-    //TODO hay que calcular la proporcion, crear las tablas
+    console.log("TODO hay que calcular la proporcion, crear las tablas");
     //hacer los metodos de busqueda aqui
   }
 
@@ -1660,7 +1661,6 @@ export class VentasDiaComponent implements OnInit {
       this.clientes = res;
       console.log("lista de clientes cargados: " + this.clientes.length);
     });
-
   }
 
   getEmpleados(empresaId: number) {

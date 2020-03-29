@@ -53,7 +53,7 @@
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-6">
           Cliente
-          <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV">
+          <input list="browsers" name="clientePV1" #clientePV placeholder="Cliente" class="form-control" id="clientePV1">
           <datalist id="browsers">
             <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
               Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}

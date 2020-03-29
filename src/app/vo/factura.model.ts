@@ -2,12 +2,14 @@ import { DocumentoModel } from '../model/documento.model';
 import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
 import { EmpresaModel } from '../model/empresa.model';
 import { ClienteModel } from '../model/cliente.model';
+import { ProveedorModel } from '../model/proveedor.model';
 
 export class FacturaModel {
     public documento:DocumentoModel;
     public detalle:DocumentoDetalleModel[];
     public empresa:EmpresaModel
     public cliente:ClienteModel;
+    public proveedor:ProveedorModel;
     public titulo:string;
     public nombreTipoDocumento:string;
     public nombreUsuario:string;
@@ -21,6 +23,7 @@ export class FacturaModel {
         this.nombreTipoDocumento="";
         this.nombreUsuario="";
         this.cliente=null;
+        this.proveedor=null;
     }
 }
 

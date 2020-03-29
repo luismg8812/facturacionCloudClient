@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClienteModel } from '../model/cliente.model';
 import {HttpClient} from '@angular/common/http';
-import { ConfiguracionModel } from '../model/configuracion.model';
 import { TipoPagoModel } from '../model/tipoPago.model';
 import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { ParametrosModel } from '../model/parametros.model';

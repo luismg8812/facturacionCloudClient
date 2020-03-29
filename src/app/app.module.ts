@@ -27,6 +27,8 @@ import { ClienteComponent } from './cliente/cliente.component';
 import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { SocketService } from './services/socket.service';
 import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos.component';
+import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
+import { ProveedorComponent } from './proveedor/proveedor.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos
     InfoMovimientoComponent,
     ClienteComponent,
     InventarioFisicoComponent,
-    BuscarDocumentosComponent
+    BuscarDocumentosComponent,
+    MovimientoMesComponent,
+    ProveedorComponent
   ],
   imports: [
     BrowserModule,
