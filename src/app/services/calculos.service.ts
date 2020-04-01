@@ -3,6 +3,7 @@ import { ProductoModel } from '../model/producto.model';
 import { DocumentoModel } from '../model/documento.model';
 import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
 import { ParametrosModel } from '../model/parametros.model';
+import { InformeDiarioModel } from '../model/informeDiario.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -10,6 +11,62 @@ import { ParametrosModel } from '../model/parametros.model';
 export class CalculosService {
 
 	constructor() { }
+
+
+	public calcularInfoDiario(documento:DocumentoModel,infoDiario:InformeDiarioModel,anulado:boolean){
+		switch (documento.tipo_documento_id) {
+			case 10:
+				infoDiario=this.asignarValorInfoDiario(documento,infoDiario,anulado);
+				break;
+			case 9:
+			if(anulado) {
+				 infoDiario.total_remisiones=Number(infoDiario.total_remisiones)-Number(documento.total);
+				 infoDiario.iva_remisiones=Number(infoDiario.iva_remisiones)-Number(documento.iva);
+				 infoDiario.costo_remisiones=Number(infoDiario.costo_remisiones)-Number(documento.total_costo);
+			}else {
+				infoDiario.total_remisiones=Number(infoDiario.total_remisiones)+Number(documento.total);
+				 infoDiario.iva_remisiones=Number(infoDiario.iva_remisiones)+Number(documento.iva);
+				 infoDiario.costo_remisiones=Number(infoDiario.costo_remisiones)+Number(documento.total_costo);
+			}
+				break;
+			default:
+				break;
+		}
+		return infoDiario;
+	}
+
+	private asignarValorInfoDiario(documento:DocumentoModel, info:InformeDiarioModel, anulado:boolean) {
+		//facturas
+		info.cantidad_documentos=info.cantidad_documentos+1;
+		if(anulado) {
+			 info.base_19=Number(info.base_19)-Number(documento.base_19);
+			 info.base_5 = Number(info.base_5)-Number(documento.base_5);
+			 info.iva_5 =Number(info.iva_5)-Number(documento.iva_5);
+			 info.iva_19 =Number(info.iva_19)-Number(documento.iva_19);
+			 info.total_ventas =Number(info.total_ventas)-Number(documento.total);
+			 info.iva_ventas =Number(info.iva_ventas)-Number(documento.iva);
+			 info.excento = Number(info.excento)-Number(documento.excento);
+			 info.costo_ventas=Number(info.costo_ventas)-Number(documento.total_costo);
+		}else {
+			info.base_19=Number(info.base_19)+Number(documento.base_19);
+			info.base_5 = Number(info.base_5)+Number(documento.base_5);
+			info.iva_5 =Number(info.iva_5)+Number(documento.iva_5);
+			info.iva_19 =Number(info.iva_19)+Number(documento.iva_19);
+			info.total_ventas =Number(info.total_ventas)+Number(documento.total);
+			info.iva_ventas =Number(info.iva_ventas)+Number(documento.iva);
+			info.excento = Number(info.excento)+Number(documento.excento);
+			info.costo_ventas=Number(info.costo_ventas)+Number(documento.total_costo);		
+		}
+		if(!anulado) {
+			if(info.informe_diario_id==null){
+				info.documento_inicio=documento.consecutivo_dian;
+				info.documento_fin=documento.consecutivo_dian;
+			}else{
+				info.documento_fin=documento.consecutivo_dian;
+			}
+		}
+		return info;
+	}
 	
 	public fechaActual() {
 		let fecha = new Date;
@@ -19,6 +76,20 @@ export class CalculosService {
 			fecha.setDate(fecha.getDate() + 1);
 		}
 		return fecha;
+	}
+
+	 formatDate(date) {
+		var d = new Date(date),
+			month = '' + (d.getMonth() + 1),
+			day = '' + d.getDate(),
+			year = d.getFullYear();
+	
+		if (month.length < 2) 
+			month = '0' + month;
+		if (day.length < 2) 
+			day = '0' + day;
+	
+		return [year, month, day].join('-');
 	}
 
 

@@ -28,6 +28,8 @@ import { UsuarioModel } from '../model/usuario.model';
 import { RolModel } from '../model/rol.model';
 import { RolUsuarioModel } from '../model/rolUsuario.model';
 import { SocketService } from '../services/socket.service';
+import { CierreService } from '../services/cierre.service';
+import { InformeDiarioModel } from '../model/informeDiario.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -61,6 +63,7 @@ export class VentasDiaComponent implements OnInit {
     public productoService: ProductoService,
     public empleadoService: EmpleadoService,
     public socketService:SocketService,
+    public cierreService:CierreService,
     public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
     private router: Router, public empresaService: EmpresaService, public impresionService: ImpresionService) { }
 
@@ -105,6 +108,7 @@ export class VentasDiaComponent implements OnInit {
   public claveBorrado: boolean = false;
   public divGramera: boolean = false;
   public pesoGramera:number=0.0;
+  public informeDiario:InformeDiarioModel;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -674,9 +678,10 @@ export class VentasDiaComponent implements OnInit {
     }
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.document.impreso = 1;
+    let cancelado:boolean=false; //se sabe si el documento es para cancelacion o no 
     this.verificarDescuento();
     this.calcularProporcion();
-    this.calcularInfoDiario();
+    this.calcularInfoDiario(cancelado);
     this.asignarTipoPago();
     this.asignarConsecutivo(numImpresiones);
 
@@ -684,24 +689,35 @@ export class VentasDiaComponent implements OnInit {
 
   }
 
-  calcularInfoDiario() {
-    let fechaDocumento: Date = this.document.fecha_registro;
-    //let fechaInicio = this.calculosService.fechaInicial(fechaDocumento);
-    //let fechaFinal = this.calculosService.fechaFinal(fechaDocumento);
-		/*let  infoList = documentoService.buscarInfodiarioByFecha(fechaInicio, fechaFinal);
-		boolean anulado = false;
-		try {
-			InfoDiario infoDiario = Calculos.calcularInfoDiario(getDocumento(), infoList, e, anulado);
-
-			if (infoDiario.getInfoDiarioId() == null) {
-				documentoService.save(infoDiario);
-			} else {
-				documentoService.update(infoDiario);
-			}
-
-		} catch (FactException e1) {
-			log.error("Error calculando registro de informe diario" + e1.getMessage());
-		}*/
+  calcularInfoDiario(anulado:boolean) {
+    console.log("entra a calcular info diario");
+    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date().toLocaleString()),this.calculosService.formatDate(new Date().toLocaleString())).subscribe(res => {
+     
+      if(res.length==0){
+        this.informeDiario=new InformeDiarioModel();
+      }else{
+        this.informeDiario = res[0];
+        console.log(this.informeDiario);
+      }
+      this.informeDiario=this.calculosService.calcularInfoDiario(this.document,this.informeDiario,anulado);
+      if(this.informeDiario.informe_diario_id==null){
+        this.informeDiario.empresa_id=this.empresaId;
+        this.informeDiario.fecha_informe= new Date(this.calculosService.formatDate(new Date().toLocaleString()));
+        this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando informe diario");
+            return;
+          } 
+        });
+      }else{
+        this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando informe diario");
+            return;
+          } 
+        });
+      }
+    });
   }
 
   asignarTipoPago() {

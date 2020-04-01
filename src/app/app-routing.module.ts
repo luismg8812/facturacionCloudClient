@@ -13,6 +13,7 @@ import { ClienteComponent } from './cliente/cliente.component';
 import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
+import { CierresComponent } from './cierres/cierres.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
    { path: 'inventarioFisico', component: InventarioFisicoComponent },
    { path: 'entradasAlmacen', component: MovimientoMesComponent },
    { path: 'proveedor', component: ProveedorComponent },
+   { path: 'Cierre', component: CierresComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];
