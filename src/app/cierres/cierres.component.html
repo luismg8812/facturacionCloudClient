@@ -1,0 +1,295 @@
+<app-menu></app-menu>
+<div class="container-fluid main">
+  <div class="form-row">
+    <h4 class="mt-3">Cierre</h4>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col col-md-4 border border-primary">
+      <div class="row">
+        <div class="col col-md-12">
+          <h5>Cierre Diario</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Ventas:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.total_ventas)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Costo Ventas:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.costo_ventas)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Ganancias:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.ganancias)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Total IVA:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.iva_ventas)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          IVA 5%:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.iva_5)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          IVA 19%:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.iva_19)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Base 5%:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.base_5)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Base 19%:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.base_19)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Exento:
+        </div>
+        <div class="col col-md-6">
+          {{formatearNumber(infoDiario.excento)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmarCierreDiarioModal">
+            Cierre diario
+          </button>
+        </div>
+        <div class="col col-md-6">
+
+        </div>
+      </div>
+    </div>
+    <div class="col col-md-4 border border-primary">
+      <div class="row">
+        <div class="col col-md-12">
+          <h5>Cierre Mensual</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Ventas:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Costo ventas:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Ganancias:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Total IVA:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          IVA 5%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          IVA 19%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Base 5%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Base 19%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Exento:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          <button type="submit" class="btn btn-primary mr-1" (click)="cierreMensual()">Cierre Mensual</button>
+        </div>
+        <div class="col col-md-6">
+
+        </div>
+      </div>
+    </div>
+    <div class="col col-md-4 border border-primary">
+      <div class="row">
+        <div class="col col-md-12">
+          <h5>Cierre Anual</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Ventas:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Costo ventas:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Ganancias:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Total IVA:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          IVA 5%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          IVA 19%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Base 5%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Base 19%:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          Exento:
+        </div>
+        <div class="col col-md-6">
+          0
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          <button type="submit" class="btn btn-primary mr-1" (click)="cierreDiario1()">Cierre Anual</button>
+        </div>
+        <div class="col col-md-6">
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal confirmar cierre diario -->
+<div class="modal fade" id="confirmarCierreDiarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirmar Cierre Diario</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Al realizar el cierre diario todos los contadores se pondran en cero (0), esta seguro de realizar cierre diario?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)= "cierreDiario()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

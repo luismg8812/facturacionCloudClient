@@ -22,7 +22,7 @@ export class ImpresionService {
 
   constructor(public calculosService: CalculosService) { }
 
-  imprimirCuadreTxt80(factura: CuadreCajaVoModel, empresa:EmpresaModel,nombreUsuario:string) {
+  imprimirCuadreTxt80(factura: CuadreCajaVoModel, empresa: EmpresaModel, nombreUsuario: string) {
     //Genera un objeto Blob con los datos en un archivo TXT
     var texto = [];
     let tamanoMax: number = 40;
@@ -37,7 +37,7 @@ export class ImpresionService {
     texto.push('\n');
     texto.push("CUADRE DE CAJA " + "\n");//consecutivo
     texto.push("FECHA: " + this.calculosService.cortarDescripcion(new Date().toLocaleString(), 19) + "\n");//fecha
-    texto.push("CAJERO: " +nombreUsuario + "\n");//fecha
+    texto.push("CAJERO: " + nombreUsuario + "\n");//fecha
     texto.push("CAJA: " + '\n');
     texto.push("ENTREGO:______________________________" + '\n');
     texto.push("Factura inicial:.......: " + '\n');
@@ -45,22 +45,22 @@ export class ImpresionService {
     texto.push('----------------------------------------\n');
     texto.push('DESCRIPCIÓN                        TOTAL\n');
     texto.push('----------------------------------------\n');
-      let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.total_facturas), 12);
-      let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base), 12);
-      let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques), 12);
-      let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros), 12);
-      let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0), 12);
-      let totalIngresos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.totalIngresos), 12);
-      let fajos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.fajos), 12);
-      let monedas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.moneda), 12);
-      let tarjetas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.tarjetas), 12);
-      let varios: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.varios), 12);
-      let vales: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.vales), 12);
-      let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.gastado), 12);
-      let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.propina), 12);
-      let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cartera), 12);
-      let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
-      
+    let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.total_facturas), 12);
+    let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base), 12);
+    let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques), 12);
+    let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros), 12);
+    let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0), 12);
+    let totalIngresos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.totalIngresos), 12);
+    let fajos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.fajos), 12);
+    let monedas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.moneda), 12);
+    let tarjetas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.tarjetas), 12);
+    let varios: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.varios), 12);
+    let vales: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.vales), 12);
+    let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.gastado), 12);
+    let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.propina), 12);
+    let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cartera), 12);
+    let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
+
     texto.push("Total Facturas:........:" + totalFacturas + "\n");
     texto.push("Base:..................:" + base + "\n");
     texto.push("Cheques Recogidos:.....: " + cheques + "\n");
@@ -72,7 +72,7 @@ export class ImpresionService {
     texto.push("MONEDA: ...............: " + monedas + "\n");
     texto.push("EFECTIVO:..............: " + efectivo + "\n");
     texto.push("CHEQUES:...............: " + cheques + "\n");
-    texto.push("DOC. ESPECIALES:.......: 0"+  "\n");
+    texto.push("DOC. ESPECIALES:.......: 0" + "\n");
     texto.push("TARJET DÉBIT Y CRÉDITO.: " + tarjetas + "\n");
     texto.push("VARIOS:................: " + varios + "\n");
     texto.push("VALES:.................: " + vales + "\n");
@@ -80,9 +80,9 @@ export class ImpresionService {
     texto.push("GASTOS:................: " + gastos + "\n");
     texto.push("PROPIAS:...............: " + propina + "\n");
     texto.push("VENTAS A CRÉDITO:......: " + credito + "\n");
-   
+
     texto.push('----------------------------------------\n');
-    texto.push((Number(factura.diferencia)< 0.0 ? "SOBRANTE" : "FALTANTE") + "$...........: "+ factura.diferencia + "\n");
+    texto.push((Number(factura.diferencia) < 0.0 ? "SOBRANTE" : "FALTANTE") + "$...........: " + factura.diferencia + "\n");
     texto.push('----------------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("\n", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
@@ -145,7 +145,7 @@ export class ImpresionService {
     });
   }
 
-  
+
 
   imprimirOrdenTxt50(factura: FacturaModel) {
     //Genera un objeto Blob con los datos en un archivo TXT
@@ -465,7 +465,7 @@ export class ImpresionService {
     this.doc.line(138, 52, 138, 58) // vertical line    
     this.doc.line(157, 52, 157, 58) // vertical line    
     this.doc.line(181, 52, 181, 58) // vertical line    
-    this.doc.text("N° "+factura.documento.consecutivo_dian, 175, 18);
+    this.doc.text("N° " + factura.documento.consecutivo_dian, 175, 18);
     this.doc.text(this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19), 160, 35);
 
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 15), 183, 275);
@@ -531,10 +531,10 @@ export class ImpresionService {
         this.crearHeader(factura, configuracion, (i + 1), numPaginas);
         this.doc.setFontType('normal');
         this.doc.setFontSize(9);
-        this.doc.text("Total IVA: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.iva),20)+"   "
-                    + "Exento: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.excento),20)+"   "
-                    + "Gravado: $" +this.calculosService.cortarDescripcion(new Intl.NumberFormat().format( factura.documento.gravado),20)+"   "
-        , 4, 269);
+        this.doc.text("Total IVA: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat().format(factura.documento.iva), 20) + "   "
+          + "Exento: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat().format(factura.documento.excento), 20) + "   "
+          + "Gravado: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat().format(factura.documento.gravado), 20) + "   "
+          , 4, 269);
         for (let e = 0; e < tope; e++) {
           if (contadorP < factura.detalle.length) {
             let codigo = factura.detalle[contadorP].documento_detalle_id;
@@ -546,11 +546,23 @@ export class ImpresionService {
             contadorP = contadorP + 1;
             this.doc.text(codigo, 4, posy);
             this.doc.text(cantidad, 20, posy);
-            this.doc.text(descripcion, 35, posy);
+
             this.doc.text(iva, 145, posy);
             this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(unitario), 20), 115, posy);
             this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(parcial), 20), 182, posy);
-            posy = posy + 5;
+            let topeLinea = 54.0;
+            let linea: number = descripcion.length / topeLinea;
+            let numlineas = Math.ceil(linea);
+            let ini = 0;
+            let fin = topeLinea;
+            for (let i = 0; i <= numlineas; i++) {
+              let parcial = descripcion.substring(ini, fin);
+              this.doc.text(parcial, 33, posy);
+              posy = posy + 5;
+              ini = ini + topeLinea;
+              fin = fin + topeLinea;
+            }
+            //posy = posy + 5;
           } else {
             break;
           }
@@ -560,7 +572,7 @@ export class ImpresionService {
           }
         }
       }
-      this.doc.save(factura.titulo+".pdf");
+      this.doc.save(factura.titulo + ".pdf");
     });
     this.doc.setFontSize(9);
   }

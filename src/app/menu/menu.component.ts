@@ -19,6 +19,7 @@ export class MenuComponent implements OnInit {
   @ViewChild("cerrar") cerrar: ElementRef;
   
   readonly MENU_FACTURACION: string = '1';
+  readonly MENU_FUNCIONES: string = '3';
   readonly MENU_USUARIOS: string = '4';
   readonly MENU_LISTADOS: string = '5';
   public nombreUsuario: string;
@@ -27,6 +28,7 @@ export class MenuComponent implements OnInit {
   public funciones: Array<SubMenuModel>;
   public usuarios: Array<SubMenuModel>;
   public listados: Array<SubMenuModel>;
+ 
   constructor(public afauth: AngularFireAuth, private router: Router,private usuarioService:UsuarioService) { }
 
   ngOnInit() {
@@ -93,6 +95,7 @@ export class MenuComponent implements OnInit {
     let usuario_id = localStorage.getItem('usuario_id');
     let menuFacturacionId=this.MENU_FACTURACION;
     let menuUsuariosId=this.MENU_USUARIOS;
+    let menuFuncionesId=this.MENU_FUNCIONES;
     let menuListadosId=this.MENU_LISTADOS;
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuFacturacionId).subscribe((res) => {
       this.facturacion=res;
@@ -100,6 +103,9 @@ export class MenuComponent implements OnInit {
     });
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuUsuariosId).subscribe((res) => {
       this.usuarios=res;
+    });
+    this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuFuncionesId).subscribe((res) => {
+      this.funciones=res;
     });
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuListadosId).subscribe((res) => {
       this.listados=res;
