@@ -561,7 +561,7 @@ export class ImpresionService {
               posy = posy + 5;
               ini = ini + topeLinea;
               fin = fin + topeLinea;
-            }
+            } 
             //posy = posy + 5;
           } else {
             break;

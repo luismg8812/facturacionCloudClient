@@ -32,6 +32,14 @@ export class CierresComponent implements OnInit {
     return formato;
   }
 
+  cierreDiario1(){
+
+  }
+
+  cierreMensual(){
+    
+  }
+
   cierreDiario(){
     this.cierreService.hacerCierreDiario(this.empresaId).subscribe(res => {
       if (res.code != 200) {
