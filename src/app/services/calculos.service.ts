@@ -15,6 +15,13 @@ export class CalculosService {
 
 	public calcularInfoDiario(documento:DocumentoModel,infoDiario:InformeDiarioModel,anulado:boolean){
 		switch (documento.tipo_documento_id) {
+			case 2:
+				infoDiario.iva_5_compras=Number(infoDiario.iva_5_compras)+Number(documento.iva_5);
+				infoDiario.excento_compras=Number(infoDiario.excento_compras)+Number(documento.excento);
+				infoDiario.Iva_19_compras=Number(infoDiario.Iva_19_compras)+Number(documento.iva_19);
+				infoDiario.base_19_compras=Number(infoDiario.base_19_compras)+Number(documento.base_19);
+				infoDiario.base_5_compras=Number(infoDiario.base_5_compras)+Number(documento.base_5);
+				break;
 			case 10:
 				infoDiario=this.asignarValorInfoDiario(documento,infoDiario,anulado);
 				break;
@@ -69,7 +76,7 @@ export class CalculosService {
 	}
 	
 	public fechaActual() {
-		let fecha = new Date;
+		let fecha = new Date();
 		let parametros: ParametrosModel = new ParametrosModel;
 		if (parametros.ambiente == 'cloud') {
 			fecha.setDate(fecha.getDate() - 0.2083);
@@ -81,7 +88,7 @@ export class CalculosService {
 	 formatDate(date) {
 		var d = new Date(date),
 			month = '' + (d.getMonth() + 1),
-			day = '' + d.getDate(),
+			day = '' + (d.getDate()),
 			year = d.getFullYear();
 	
 		if (month.length < 2) 
@@ -102,6 +109,7 @@ export class CalculosService {
 	}
 
 	public fechaInicial1(hoy: string) {
+		console.log(hoy)
 		let hoy1: Date = new Date(hoy);
 		hoy1.setHours(0);
 		hoy1.setMinutes(0);

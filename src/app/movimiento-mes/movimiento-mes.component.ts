@@ -23,6 +23,8 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { EmpresaModel } from '../model/empresa.model';
 import { ImpresionService } from '../services/impresion.service';
 import { SubMenuModel } from '../model/submenu.model';
+import { CierreService } from '../services/cierre.service';
+import { InformeDiarioModel } from '../model/informeDiario.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -66,6 +68,7 @@ export class MovimientoMesComponent implements OnInit {
   public divGramera: boolean = false;
   public pesoGramera: number = 0.0;
   public indexModificarSelect: number = 0;
+  public informeDiario:InformeDiarioModel;
 
 
   @ViewChild("tipoDocumentoPV") tipoDocumentoPV: ElementRef;
@@ -159,6 +162,7 @@ export class MovimientoMesComponent implements OnInit {
     public clienteService: ClienteService,
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
+    public cierreService:CierreService,
     public proveedorService: ProveedorService) { }
 
   ngOnInit() {
@@ -810,13 +814,47 @@ export class MovimientoMesComponent implements OnInit {
       //si el cliente es nulo se asigna el varios por defecto
       this.document.cliente_id = 1;
     }
+    let cancelado:boolean=false; //se sabe si el documento es para cancelacion o no 
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.document.impreso = 1;
     this.verificarDescuento();
 
-    //this.calcularInfoDiario(); queda en duda el informe diario
+    this.calcularInfoDiario(cancelado); 
     this.asignarTipoPago();
     this.asignarConsecutivo(numImpresiones);
+  }
+
+  calcularInfoDiario(anulado:boolean) {
+    console.log("entra a calcular info diario");
+    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date()),this.calculosService.formatDate(new Date())).subscribe(res => {
+     
+      if(res.length==0){
+        this.informeDiario=new InformeDiarioModel();
+      }else{
+        this.informeDiario = res[0];
+        console.log(this.informeDiario);
+      }
+      this.informeDiario=this.calculosService.calcularInfoDiario(this.document,this.informeDiario,anulado);
+      this.informeDiario.fecha_ingreso=new Date();
+      this.informeDiario.fecha_informe= this.calculosService.formatDate(new Date());
+      if(this.informeDiario.informe_diario_id==null){
+        this.informeDiario.empresa_id=this.empresaId;
+        console.log(this.informeDiario.fecha_ingreso);
+        this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando informe diario");
+            return;
+          } 
+        });
+      }else{
+        this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando informe diario");
+            return;
+          } 
+        });
+      }
+    });
   }
 
   asignarTipoPago() {

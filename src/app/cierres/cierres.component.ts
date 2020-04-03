@@ -11,6 +11,7 @@ declare var $: any;
 export class CierresComponent implements OnInit {
 
   public infoDiario: any;
+  public infoMensual: any;
   public empresaId: number;
 
   constructor(public cierreService:CierreService) { }
@@ -18,12 +19,19 @@ export class CierresComponent implements OnInit {
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getCierreDiario(this.empresaId);
+    this.getCierreMensual(this.empresaId);
   }
 
   getCierreDiario(empresaId:number){
     this.cierreService.getCierreDiario(empresaId).subscribe((res) => { 
       this.infoDiario=res[0];
     });
+  }
+
+  getCierreMensual(empresaId:number){
+    //this.cierreService.getCierreDiario(empresaId).subscribe((res) => { 
+     // this.infoDiario=res[0];
+    //});
   }
 
   formatearNumber(number: number) {

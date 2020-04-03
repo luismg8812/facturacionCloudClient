@@ -681,17 +681,16 @@ export class VentasDiaComponent implements OnInit {
     let cancelado:boolean=false; //se sabe si el documento es para cancelacion o no 
     this.verificarDescuento();
     this.calcularProporcion();
-    this.calcularInfoDiario(cancelado);
     this.asignarTipoPago();
-    this.asignarConsecutivo(numImpresiones);
-
+    this.asignarConsecutivo(numImpresiones,cancelado);
+    
 
 
   }
 
   calcularInfoDiario(anulado:boolean) {
     console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date().toLocaleString()),this.calculosService.formatDate(new Date().toLocaleString())).subscribe(res => {
+    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date()),this.calculosService.formatDate(new Date())).subscribe(res => {
      
       if(res.length==0){
         this.informeDiario=new InformeDiarioModel();
@@ -700,9 +699,11 @@ export class VentasDiaComponent implements OnInit {
         console.log(this.informeDiario);
       }
       this.informeDiario=this.calculosService.calcularInfoDiario(this.document,this.informeDiario,anulado);
+      this.informeDiario.fecha_ingreso=new Date();
+      this.informeDiario.fecha_informe= this.calculosService.formatDate(new Date());
       if(this.informeDiario.informe_diario_id==null){
         this.informeDiario.empresa_id=this.empresaId;
-        this.informeDiario.fecha_informe= new Date(this.calculosService.formatDate(new Date().toLocaleString()));
+        console.log(this.informeDiario.fecha_ingreso);
         this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
           if (res.code != 200) {
             alert("error creando informe diario");
@@ -860,7 +861,7 @@ export class VentasDiaComponent implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  asignarConsecutivo(numImpresiones: number) {
+  asignarConsecutivo(numImpresiones: number,cancelado:boolean) {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
       console.log(empr);
@@ -902,6 +903,7 @@ export class VentasDiaComponent implements OnInit {
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
           res[0].consecutivo = con;
+          this.calcularInfoDiario(cancelado);
           this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
             console.log("consecutivo actualizado");
             console.log(this.document);

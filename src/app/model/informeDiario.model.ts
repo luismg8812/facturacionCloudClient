@@ -6,7 +6,7 @@ export class InformeDiarioModel {
     public iva_ventas:number;
     public iva_remisiones:number;
     public fecha_ingreso:Date;
-    public fecha_informe:Date;
+    public fecha_informe:string;
     public costo_ventas:number;
     public costo_remisiones:number;
     public cantidad_documentos:number;
@@ -33,7 +33,7 @@ export class InformeDiarioModel {
         this.iva_ventas=0;
         this.iva_remisiones=0;
         this.fecha_ingreso=new Date();
-        this.fecha_informe=new Date();
+        this.fecha_informe=null;
         this.costo_ventas=0;
         this.costo_remisiones=0;
         this.cantidad_documentos=0;

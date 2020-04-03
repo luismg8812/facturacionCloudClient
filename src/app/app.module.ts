@@ -30,6 +30,7 @@ import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
+import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { CierresComponent } from './cierres/cierres.component';
     BuscarDocumentosComponent,
     MovimientoMesComponent,
     ProveedorComponent,
-    CierresComponent
+    CierresComponent,
+    InformeDiarioComponent
   ],
   imports: [
     BrowserModule,
