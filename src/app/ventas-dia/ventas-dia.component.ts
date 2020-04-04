@@ -690,7 +690,7 @@ export class VentasDiaComponent implements OnInit {
 
   calcularInfoDiario(anulado:boolean) {
     console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date()),this.calculosService.formatDate(new Date())).subscribe(res => {
+    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date(),false),this.calculosService.formatDate(new Date(),false)).subscribe(res => {
      
       if(res.length==0){
         this.informeDiario=new InformeDiarioModel();
@@ -700,7 +700,7 @@ export class VentasDiaComponent implements OnInit {
       }
       this.informeDiario=this.calculosService.calcularInfoDiario(this.document,this.informeDiario,anulado);
       this.informeDiario.fecha_ingreso=new Date();
-      this.informeDiario.fecha_informe= this.calculosService.formatDate(new Date());
+      this.informeDiario.fecha_informe= this.calculosService.formatDate(new Date(),false);
       if(this.informeDiario.informe_diario_id==null){
         this.informeDiario.empresa_id=this.empresaId;
         console.log(this.informeDiario.fecha_ingreso);

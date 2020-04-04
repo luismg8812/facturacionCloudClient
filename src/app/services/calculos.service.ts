@@ -85,19 +85,33 @@ export class CalculosService {
 		return fecha;
 	}
 
-	 formatDate(date) {
+	 formatDate(date, conHora) {
 		var d = new Date(date),
 			month = '' + (d.getMonth() + 1),
 			day = '' + (d.getDate()),
 			year = d.getFullYear();
-	
+
+		var hora=this.addZero(d.getHours());
+		var minulos=this.addZero(d.getMinutes());
+		var seg=this.addZero(d.getSeconds());
 		if (month.length < 2) 
 			month = '0' + month;
 		if (day.length < 2) 
 			day = '0' + day;
-	
-		return [year, month, day].join('-');
+			if(conHora){
+				return day+"-"+month+"-"+year+" "+hora+":"+minulos+":"+seg;
+			}else{
+				return [year, month, day].join('-');
+			}
+		
 	}
+
+	addZero(i) {
+		if (i < 10) {
+		  i = "0" + i;
+		}
+		return i;
+	  }
 
 
 	public fechaInicial(hoy: Date) {

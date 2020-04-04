@@ -2,6 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { InformeDiarioModel } from '../model/informeDiario.model';
 import { CierreService } from '../services/cierre.service';
 import { CalculosService } from '../services/calculos.service';
+import { InformeDiarioVOModel } from '../model/informeDiarioVO.model';
+import { ImpresionService } from '../services/impresion.service';
+import { EmpresaService } from '../services/empresa.service';
 
 @Component({
   selector: 'app-informe-diario',
@@ -12,6 +15,7 @@ export class InformeDiarioComponent implements OnInit {
 
   @ViewChild("fechaIni") fechaIni: ElementRef;
   @ViewChild("fechaFin") fechaFin: ElementRef;
+  @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
   public informesDiarios:Array<InformeDiarioModel>=[];
   public empresaId: number;
   public total:number=0;
@@ -20,14 +24,28 @@ export class InformeDiarioComponent implements OnInit {
   public iva_5:number=0;
   public iva_19:number=0;
   public exento:number=0;
+  
 
   constructor(public cierreService:CierreService,
+    public impresionService: ImpresionService,
+    public empresaService: EmpresaService,
     public calculosService: CalculosService
     ) { }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getInformeDiario();
+  }
+
+  imprimirInforme(informe:InformeDiarioModel) {
+    let informeDiario:InformeDiarioVOModel= new InformeDiarioVOModel();
+    informeDiario.informe_diario=informe;
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      informeDiario.empresa=res[0];
+      let tituloDocumento="informe_diario_"+this.calculosService.formatDate(informeDiario.informe_diario.fecha_informe,false)+"_"+informeDiario.empresa.nombre
+      informeDiario.tituloArchivo=tituloDocumento;
+      this.descargarArchivo(this.impresionService.imprimirInformeDiarioPDFCarta(informeDiario), tituloDocumento + '.pdf');
+    });
   }
 
   formatearNumber(number: number) {
@@ -47,8 +65,8 @@ export class InformeDiarioComponent implements OnInit {
     let ini: string = this.fechaIni.nativeElement.value;
     let fin: string = this.fechaFin.nativeElement.value;
     if (ini == '' || fin == '') {
-      ini=this.calculosService.formatDate(new Date());
-      fin=this.calculosService.formatDate(new Date());
+      ini=this.calculosService.formatDate(new Date(),false);
+      fin=this.calculosService.formatDate(new Date(),false);
     }
     this.cierreService.getInfoDiarioByDate(this.empresaId,ini,fin).subscribe(res => {
     this.informesDiarios=res;
@@ -61,6 +79,15 @@ export class InformeDiarioComponent implements OnInit {
       this.exento = Number(this.exento) + Number(dia.excento);
     }
     });
+  }
+
+  descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    const url = window.URL.createObjectURL(contenidoEnBlob);
+    const link = this.downloadZipLink.nativeElement;
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
 }
