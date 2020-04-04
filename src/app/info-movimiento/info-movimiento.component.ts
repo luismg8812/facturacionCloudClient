@@ -6,6 +6,8 @@ import { UsuarioModel } from '../model/usuario.model';
 import { EmpleadoModel } from '../model/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
 import { CalculosService } from '../services/calculos.service';
+import { ImpresionService } from '../services/impresion.service';
+import { EmpresaService } from '../services/empresa.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -16,18 +18,18 @@ declare var $: any;
 })
 export class InfoMovimientoComponent implements OnInit {
 
-  
-  public tiposDocumento:Array<TipoDocumentoModel>;
-  public usuarios:Array<UsuarioModel>;
-  public empleados:Array<EmpleadoModel>;
+
+  public tiposDocumento: Array<TipoDocumentoModel>;
+  public usuarios: Array<UsuarioModel>;
+  public empleados: Array<EmpleadoModel>;
   public empresaId: number;
-  public dias:Array<any>;
-  public total:number=0;
-  public gravable_5:number=0;
-  public gravable_19:number=0;
-  public iva_5:number=0;
-  public iva_19:number=0;
-  public exento:number=0;
+  public dias: Array<any>;
+  public total: number = 0;
+  public gravable_5: number = 0;
+  public gravable_19: number = 0;
+  public iva_5: number = 0;
+  public iva_19: number = 0;
+  public exento: number = 0;
 
   @ViewChild("fechaIni") fechaIni: ElementRef;
   @ViewChild("fechaFin") fechaFin: ElementRef;
@@ -35,10 +37,13 @@ export class InfoMovimientoComponent implements OnInit {
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
   @ViewChild("usuariosPV") usuariosPV: ElementRef;
   
-  constructor(public documentoService:DocumentoService,
-              public usuarioService:UsuarioService,
-              public empleadoService:EmpleadoService,
-              public calculosService:CalculosService) { }
+
+  constructor(public documentoService: DocumentoService,
+    public usuarioService: UsuarioService,
+    public empleadoService: EmpleadoService,
+    public impresionService: ImpresionService,
+    public empresaService: EmpresaService,
+    public calculosService: CalculosService) { }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
@@ -48,11 +53,13 @@ export class InfoMovimientoComponent implements OnInit {
     this.getEmpleados(this.empresaId);
   }
 
-  asignarFechas(){
- 
+  asignarFechas() {
+
   }
 
-  calcular(){
+  
+
+  calcular() {
     this.total = 0;
     this.gravable_5 = 0;
     this.gravable_19 = 0;
@@ -65,16 +72,16 @@ export class InfoMovimientoComponent implements OnInit {
       ini = this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString();
       fin = this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString();
     } else {
-      let date:Date= new Date();
-      date.setDate(1); 
+      let date: Date = new Date();
+      date.setDate(1);
       ini = date.toLocaleString();
-      date.setDate(30); 
+      date.setDate(30);
       fin = date.toLocaleString();
     }
-    this.documentoService.getDocumentosByFechaAndTipo(ini ,fin ,
-      this.empleadoPV.nativeElement.value,this.tipoDocumento.nativeElement.value,
-      this.usuariosPV.nativeElement.value,this.empresaId
-      ).subscribe(res => {
+    this.documentoService.getDocumentosByFechaAndTipo(ini, fin,
+      this.empleadoPV.nativeElement.value, this.tipoDocumento.nativeElement.value,
+      this.usuariosPV.nativeElement.value, this.empresaId
+    ).subscribe(res => {
       this.dias = res;
       for (let dia of this.dias) {
         this.total = Number(this.total) + Number(dia.total);
@@ -93,18 +100,18 @@ export class InfoMovimientoComponent implements OnInit {
     return formato;
   }
 
-  getTiposDocumento(){
+  getTiposDocumento() {
     this.documentoService.getTiposDocumento().subscribe(res => {
       this.tiposDocumento = res;
     });
   }
 
-  getUsuarios(empresaId:number){
-    this.usuarioService.getByUsuario(null,empresaId.toString(),null).subscribe(res => {
+  getUsuarios(empresaId: number) {
+    this.usuarioService.getByUsuario(null, empresaId.toString(), null).subscribe(res => {
       this.usuarios = res;
     });
   }
-  getEmpleados(empresaId:number){
+  getEmpleados(empresaId: number) {
     this.empleadoService.getEmpleadoAll(empresaId).subscribe(res => {
       this.empleados = res;
     });

@@ -39,6 +39,10 @@ export class UsuarioService {
     return this.http.get<UsuarioModel[]>(this.server_api + '/usuario/usuarioByMail?mail=' + mail);
   }
 
+  public usuarioByRol(rolId:string,empresaId:number,tipoDocumentoId:string,fechaInicial,fechaFinal) {
+    return this.http.get<any>(this.server_api + '/usuario/usuarioByRol?rolId=' + rolId+ '&empresaId=' + empresaId+ '&tipoDocumentoId=' + tipoDocumentoId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
+  }
+
   public opcionUsuarioByUsuario(usuarioId: string, menuId: string) {
     return this.http.get<SubMenuModel[]>(this.server_api + '/usuario/opcionUsuarioByUsuario?usuarioId=' + usuarioId + '&menuId=' + menuId);
   }

@@ -9,6 +9,9 @@ import { Observable, Observer } from 'rxjs';
 import { DetalleNominaModel } from '../model/detalleNomina.model';
 import { CuadreCajaVoModel } from '../model/cuadreCajaVo.model';
 import { EmpresaModel } from '../model/empresa.model';
+import { InformeDiarioVOModel } from '../model/informeDiarioVO.model';
+import { UsuarioService } from './usuario.service';
+import { DocumentoService } from './documento.service';
 
 
 
@@ -19,8 +22,12 @@ import { EmpresaModel } from '../model/empresa.model';
 
 export class ImpresionService {
   public doc = new jsPDF();
+  readonly ROL_CAJERO: string = '2';
+  readonly TIPO_DOCUMENTO_FACTURA: string = '10';
 
-  constructor(public calculosService: CalculosService) { }
+  constructor(public calculosService: CalculosService,
+    public documentoService: DocumentoService,
+    public usuarioService: UsuarioService) { }
 
   imprimirCuadreTxt80(factura: CuadreCajaVoModel, empresa: EmpresaModel, nombreUsuario: string) {
     //Genera un objeto Blob con los datos en un archivo TXT
@@ -561,7 +568,7 @@ export class ImpresionService {
               posy = posy + 5;
               ini = ini + topeLinea;
               fin = fin + topeLinea;
-            } 
+            }
             //posy = posy + 5;
           } else {
             break;
@@ -575,6 +582,97 @@ export class ImpresionService {
       this.doc.save(factura.titulo + ".pdf");
     });
     this.doc.setFontSize(9);
+  }
+
+  imprimirInformeDiarioPDFCarta(factura: InformeDiarioVOModel) {
+    let imgData = factura.empresa.url_logo;
+    this.doc = new jsPDF();
+    let ini = this.calculosService.formatDate(this.calculosService.fechaInicial(new Date(factura.informe_diario.fecha_informe)), true);
+    let fin = this.calculosService.formatDate(this.calculosService.fechaFinal(new Date(factura.informe_diario.fecha_informe)), true);
+    this.getBase64ImageFromURL(imgData).subscribe(base64data => {
+      this.usuarioService.usuarioByRol(this.ROL_CAJERO, factura.empresa.empresa_id, this.TIPO_DOCUMENTO_FACTURA, ini, fin).subscribe(res => {
+        this.documentoService.getDocumentosByTipoPago(factura.empresa.empresa_id, this.TIPO_DOCUMENTO_FACTURA, ini, fin).subscribe(pagos => {
+        let cajeros = res;
+        let tipos=pagos
+        let base64Image = 'data:image/jpg;base64,' + base64data;
+        this.doc.addImage(base64Image, 'JPEG', 10, 4)
+        this.doc.setFontType('bold')
+        this.doc.setFontSize(9);
+        this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);
+        this.doc.text(this.calculosService.centrarDescripcion("NIT: " + factura.empresa.nit, 77), 80, 10);
+        this.doc.setFontSize(6);
+        this.doc.text(this.calculosService.centrarDescripcion("SOMOS " + factura.empresa.regimen, 77), 90, 13);
+        this.doc.text(this.calculosService.centrarDescripcion("Representante Legal: " + factura.empresa.represente, 77), 90, 16);
+        this.doc.text(this.calculosService.centrarDescripcion("Dirección: " + factura.empresa.direccion, 77), 90, 19);
+        this.doc.text(this.calculosService.centrarDescripcion("Telefono: " + factura.empresa.telefono_fijo, 77), 90, 22);
+
+        this.doc.setFontSize(9);
+        this.doc.text("Comprobante de Informe Diario ", 10, 35);
+        this.doc.text("Fecha informe: " + this.calculosService.formatDate(factura.informe_diario.fecha_informe, false), 10, 40);
+        this.doc.text("__________________________________________________________________________________________________________", 10, 45);
+        this.doc.text("# Fact. Inicial             # Fact. Final              Cant. Facturas             Valor Total Facturado ", 10, 50);
+        this.doc.text("__________________________________________________________________________________________________________", 10, 51);
+        this.doc.setFontType('normal')
+        this.doc.text(factura.empresa.letra_consecutivo + factura.informe_diario.documento_inicio, 10, 55);
+        this.doc.text(factura.empresa.letra_consecutivo + factura.informe_diario.documento_fin, 50, 55);
+        this.doc.text("" + factura.informe_diario.cantidad_documentos, 80, 55);
+        this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.informe_diario.total_ventas), 20), 100, 55);
+        this.doc.setFontType('bold');
+
+        this.doc.text("Descriminación de ventas atendidas por Cajero", 10, 65);
+        this.doc.text("______________________________________________________________________________", 10, 70);
+        this.doc.text("Cajero", 10, 75);
+        this.doc.text("Canti. Fact      Vr. Total Facturado", 70, 75);
+        this.doc.text("______________________________________________________________________________", 10, 76);
+        let espacio = 80;
+        let totalDocumentos = 0;
+        let totalCajeros = 0;
+        this.doc.setFontType('normal')
+        for (let cajero of cajeros) {
+          console.log(cajero);
+          this.doc.text(cajero.nombre, 10, espacio);
+          this.doc.text(cajero.num, 80, espacio);
+          this.doc.text(new Intl.NumberFormat().format(cajero.total), 110, espacio);
+          espacio = espacio + 5;
+          totalDocumentos = Number(totalDocumentos) + Number(cajero.num);
+          totalCajeros = Number(totalCajeros) + Number(cajero.total);
+        }
+        this.doc.text("" + totalDocumentos, 80, espacio);
+        this.doc.text(new Intl.NumberFormat().format(totalCajeros), 110, espacio);
+        this.doc.setFontType('bold');
+        this.doc.text("______________________________________________________________________________", 10, espacio - 5);
+        this.doc.text("Discriminación de Ventas por forma de Pago" , 10, espacio+10);
+        this.doc.text("__________________________________________________________________________________________________________", 10, espacio+16);
+        this.doc.text("Forma de Pago " , 10, espacio+20);
+        this.doc.text("Cantidad Facturas" , 110, espacio+20);
+        this.doc.text(" Valor Facturado" , 150, espacio+20);
+        this.doc.text("__________________________________________________________________________________________________________", 10, espacio+21);
+        this.doc.setFontType('normal')
+        espacio=espacio+25;
+        for(let tipo of tipos){
+          this.doc.text(tipo.nombre , 10, espacio);
+          this.doc.text( tipo.num, 125, espacio);
+          this.doc.text(tipo.total , 160, espacio);
+          espacio=espacio+5;
+        }
+        this.doc.setFontType('bold');
+        this.doc.text("Resumen Informe Diario" , 10, espacio+5);
+        this.doc.text("__________________________________________________________________________________________________________", 10, espacio-5);
+        espacio=espacio+10;
+        this.doc.text("Total Ventas: "+new Intl.NumberFormat().format(factura.informe_diario.total_ventas ), 10, espacio);
+        this.doc.text("IVA Total: "+new Intl.NumberFormat().format(factura.informe_diario.iva_ventas) , 10, espacio+5);
+        this.doc.text("IVA 19%: "+new Intl.NumberFormat().format(factura.informe_diario.iva_19) , 10, espacio+10);
+        this.doc.text("IVA 5%: "+new Intl.NumberFormat().format(factura.informe_diario.iva_5) , 10, espacio+15);
+        this.doc.text("Base 19%: "+new Intl.NumberFormat().format(factura.informe_diario.base_19) , 10, espacio+20);
+        this.doc.text("Base 5%: "+new Intl.NumberFormat().format(factura.informe_diario.base_5) , 10, espacio+25);
+        this.doc.text("Excluido: "+new Intl.NumberFormat().format(factura.informe_diario.excento) , 10, espacio+30);
+        this.doc.text("Costos en Ventas: "+new Intl.NumberFormat().format(factura.informe_diario.costo_ventas) , 10, espacio+35);
+        this.doc.text("Ganancias: "+ new Intl.NumberFormat().format((Number(factura.informe_diario.total_ventas)-Number(factura.informe_diario.costo_ventas)) ), 10, espacio+40);
+        
+        this.doc.save(factura.tituloArchivo + ".pdf");
+      });
+    });
+  });
   }
 
 }
