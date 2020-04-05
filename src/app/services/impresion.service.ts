@@ -587,7 +587,6 @@ export class ImpresionService {
   imprimirInformeDiarioPDFCarta(factura: InformeDiarioVOModel) {
     let imgData = factura.empresa.url_logo;
     this.doc = new jsPDF();
-    this.doc.save(factura.tituloArchivo + ".pdf");
     let ini = this.calculosService.formatDate(this.calculosService.fechaInicial(new Date(factura.informe_diario.fecha_informe)), true);
     let fin = this.calculosService.formatDate(this.calculosService.fechaFinal(new Date(factura.informe_diario.fecha_informe)), true);
     this.getBase64ImageFromURL(imgData).subscribe(base64data => {
@@ -670,7 +669,7 @@ export class ImpresionService {
         this.doc.text("Costos en Ventas: "+new Intl.NumberFormat().format(factura.informe_diario.costo_ventas) , 10, espacio+35);
         this.doc.text("Ganancias: "+ new Intl.NumberFormat().format((Number(factura.informe_diario.total_ventas)-Number(factura.informe_diario.costo_ventas)) ), 10, espacio+40);
         
-        //this.doc.save(factura.tituloArchivo + ".pdf");
+        this.doc.save(factura.tituloArchivo + ".pdf");
       });
     });
   });
