@@ -44,11 +44,11 @@ export class InformeDiarioComponent implements OnInit {
       informeDiario.empresa=res[0];
       let tituloDocumento="informe_diario_"+this.calculosService.formatDate(informeDiario.informe_diario.fecha_informe,false)+"_"+informeDiario.empresa.nombre
       informeDiario.tituloArchivo=tituloDocumento;
-      this.descargarArchivo(this.impresionService.imprimirInformeDiarioPDFCarta(informeDiario), tituloDocumento + '.pdf');
+      this.impresionService.imprimirInformeDiarioPDFCarta(informeDiario);
     });
   }
 
-  formatearNumber(number: number) {
+  formatearNumber(number: number) { 
     let formato: string = "";
     formato = new Intl.NumberFormat().format(number);
     return formato;
