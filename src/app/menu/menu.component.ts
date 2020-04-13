@@ -19,6 +19,7 @@ export class MenuComponent implements OnInit {
   @ViewChild("cerrar") cerrar: ElementRef;
   
   readonly MENU_FACTURACION: string = '1';
+  readonly MENU_ELECTRONICA: string = '2';
   readonly MENU_FUNCIONES: string = '3';
   readonly MENU_USUARIOS: string = '4';
   readonly MENU_LISTADOS: string = '5';
@@ -97,9 +98,9 @@ export class MenuComponent implements OnInit {
     let menuUsuariosId=this.MENU_USUARIOS;
     let menuFuncionesId=this.MENU_FUNCIONES;
     let menuListadosId=this.MENU_LISTADOS;
+    let menuElectronicaId=this.MENU_ELECTRONICA;
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuFacturacionId).subscribe((res) => {
       this.facturacion=res;
-      console.log(this.facturacion);
     });
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuUsuariosId).subscribe((res) => {
       this.usuarios=res;
@@ -109,6 +110,9 @@ export class MenuComponent implements OnInit {
     });
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuListadosId).subscribe((res) => {
       this.listados=res;
+    });
+    this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuElectronicaId).subscribe((res) => {
+      this.electronica=res;
     });
   }
 

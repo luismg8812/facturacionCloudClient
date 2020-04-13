@@ -48,7 +48,10 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_PAGO_EFECTIVO: number = 1;
-  readonly TIPO_IMPRESION_PDFCARTA: string = "PDFCARTA";
+  readonly TIPO_IMPRESION_TXT80MM: number = 1;
+  readonly TIPO_IMPRESION_TXT50MM: number = 2;
+  readonly TIPO_IMPRESION_PDFCARTA: number = 3;
+  
 
   public documento: DocumentoModel = new DocumentoModel();
   public usuarioId: number;
@@ -558,6 +561,10 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
+    if(this.impresoraEmpresa.length==0){
+      alert("No existen impresoras configuradas para la empresa");
+      return;
+    }
     if (impresora.value == "") {
       impresora.value = 1;
     }
@@ -565,18 +572,18 @@ export class GestionOrdenComponent implements OnInit {
       //si el cliente es nulo se asigna el varios por defecto
       this.documento.cliente_id = 1;
     }
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
 
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
-      console.log(this.impresoraEmpresa[i].numero_impresora + ":" + impresora.value);
+      console.log(this.impresoraEmpresa[i].tipo_impresion_id + ":" + impresora.value);
       if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
         console.log(this.impresoraEmpresa[i]);
         break;
       }
     }
-    if (tipoImpresion == "") {
-      alert("No existen impresoras configuradas para la empresa");
+    if (tipoImpresion == 0) {
+      alert("La impresora seleccionada no esta configurada para la empresa");
       return;
     }
     console.log(tipoImpresion);
@@ -592,14 +599,15 @@ export class GestionOrdenComponent implements OnInit {
       this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
-        case "TXT80MM":
+        case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt80(this.factura), tituloDocumento + '.txt');
           break;
-        case "TXT50MM":
+        case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
           break;
         default:
-          alert("no tiene un tipo impresion");
+          alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");
+          return;
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
           //    enPantalla, e);
           break;
@@ -630,10 +638,10 @@ export class GestionOrdenComponent implements OnInit {
     if (impresora == "") {
       impresora = 1;
     }
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       if (impresora == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
     this.documentoFactura.impresora = impresora;
@@ -659,10 +667,10 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   imprimirCopia() {
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
-      if (this.documentoFactura.impresora == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+      if (this.documentoFactura.impresora == Number(this.impresoraEmpresa[i].numero_impresora)) {
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
     switch (this.documentoFactura.tipo_documento_id) {
@@ -685,6 +693,7 @@ export class GestionOrdenComponent implements OnInit {
 
   }
 
+
   asignarTipoPago() {
     let tiposPagosList: TipoPagoModel[] = [];
     //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
@@ -702,7 +711,7 @@ export class GestionOrdenComponent implements OnInit {
     }
   }
 
-  asignarConsecutivo(numImpresiones: number, tipoImpresion: string) {
+  asignarConsecutivo(numImpresiones: number, tipoImpresion: number) {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr: EmpresaModel[] = res;
       let con: number;
@@ -772,7 +781,7 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel, tipoImpresion: string) {
+  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel, tipoImpresion: number) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
 
@@ -790,15 +799,15 @@ export class GestionOrdenComponent implements OnInit {
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoFactura.cliente_id);
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
-        case "TXT80MM":
+        case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt80(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
-        case "TXT50MM":
+        case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
-        case "TXTCARTA":
-          this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
-          break;
+        //case "TXTCARTA":
+        //  this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
+        //  break;
         case this.TIPO_IMPRESION_PDFCARTA:
           this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion);
           break;

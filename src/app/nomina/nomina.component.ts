@@ -22,6 +22,9 @@ declare var $: any;
 export class NominaComponent implements OnInit {
 
   readonly TIPO_DOCUMENTO_VALE: number = 8;
+  readonly TIPO_IMPRESION_PDFCARTA: number = 3;
+  readonly TIPO_IMPRESION_TXT80MM: number = 1;
+  readonly TIPO_IMPRESION_TXT50MM: number = 2;
 
   public empleados: Array<EmpleadoModel>;
   public pagosEmpleados: Array<PagosEmpleadoModel>;
@@ -90,13 +93,13 @@ export class NominaComponent implements OnInit {
     if (impresora.value == "") {
       impresora.value = 1;
     }
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
-    if (tipoImpresion == "") {
+    if (tipoImpresion == 0) {
       alert("No existen impresoras configuradas para la empresa");
       return;
     }
@@ -111,7 +114,7 @@ export class NominaComponent implements OnInit {
     let tituloDocumento = "detalle_nomina" + "_" + impresora.value + "_" + tipoImpresion;
     switch (tipoImpresion) {
 
-      case "TXT50MM":
+      case this.TIPO_IMPRESION_TXT50MM:
         this.descargarArchivo(this.impresionService.imprimirNominaTxt50(detalleNomina), tituloDocumento + '.txt');
         break;
 

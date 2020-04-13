@@ -652,7 +652,7 @@ export class ImpresionService {
         for(let tipo of tipos){
           this.doc.text(tipo.nombre , 10, espacio);
           this.doc.text( tipo.num, 125, espacio);
-          this.doc.text(tipo.total , 160, espacio);
+          this.doc.text(new Intl.NumberFormat().format(tipo.total) , 160, espacio);
           espacio=espacio+5;
         }
         this.doc.setFontType('bold');
