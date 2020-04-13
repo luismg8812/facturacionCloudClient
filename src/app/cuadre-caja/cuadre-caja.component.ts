@@ -18,6 +18,10 @@ export class CuadreCajaComponent implements OnInit {
   readonly BLOQ_CUADRE_CAJA: string = '17';
   readonly VER_REMISIONES: string = '5';
 
+  readonly TIPO_IMPRESION_PDFCARTA: number = 3;
+  readonly TIPO_IMPRESION_TXT80MM: number = 1;
+  readonly TIPO_IMPRESION_TXT50MM: number = 2;
+
   public cuadreCajaActivo: boolean = false;
   public verRemisionesActivo: boolean = false;
 
@@ -49,13 +53,13 @@ export class CuadreCajaComponent implements OnInit {
     if (impresora.value == "") {
       impresora.value = 1;
     }
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
-    if (tipoImpresion == "") {
+    if (tipoImpresion == 0) {
       alert("No existen impresoras configuradas para la empresa");
       return;
     }
@@ -67,7 +71,7 @@ export class CuadreCajaComponent implements OnInit {
      
       let nombreUsuario = localStorage.getItem("nombreUsuario");
       switch (tipoImpresion) {
-        case "TXT80MM":
+        case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirCuadreTxt80(this.cuadreCajaVo, empr[0],nombreUsuario), tituloDocumento + '.txt');
           break;
        // case "TXT50MM":

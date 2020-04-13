@@ -32,6 +32,10 @@ export class SocketService {
     return this.http.get<any>(this.url+'/socket');
   }
 
+  public getJSON(): Observable<any> {
+    return this.http.get("./assets/config/config.json");
+}
+
   iniciarsocket(){
     this.socket = io(this.url);
     console.log("socket io");

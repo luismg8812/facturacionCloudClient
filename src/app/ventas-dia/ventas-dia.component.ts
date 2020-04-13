@@ -53,6 +53,9 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly ROL_ADMIN: number = 1;
 
+  readonly TIPO_IMPRESION_TXT80MM: number = 1;
+  readonly TIPO_IMPRESION_TXT50MM: number = 2;
+
 
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("tipoDocumentoPV") tipoDocumentoPV: ElementRef;
@@ -818,13 +821,13 @@ export class VentasDiaComponent implements OnInit {
     if (numeroImpresiones == undefined) {
       numeroImpresiones = 1;
     }
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
 
     let impresora = this.document.impresora;
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       console.log(numeroImpresiones);
-      if (impresora == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+      if (impresora == Number(this.impresoraEmpresa[i].numero_impresora)) {
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
     console.log(tipoImpresion);
@@ -837,10 +840,10 @@ export class VentasDiaComponent implements OnInit {
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
-        case "TXT80MM":
+        case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt80(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
-        case "TXT50MM":
+        case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
         default:

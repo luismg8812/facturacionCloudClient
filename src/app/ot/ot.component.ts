@@ -35,6 +35,8 @@ export class OtComponent implements OnInit {
 
   readonly PRODUCTOS_FIJOS: string = '21';
   readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
+  readonly TIPO_IMPRESION_TXT80MM: number = 1;
+  readonly TIPO_IMPRESION_TXT50MM: number = 2;
 
   public ref: AngularFireStorageReference;
   public task: AngularFireUploadTask;
@@ -234,14 +236,14 @@ export class OtComponent implements OnInit {
       //si el cliente es nulo se asigna el varios por defecto
       this.documento.cliente_id = 1;
     }
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
 
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
       if (impresora.value == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
-    if (tipoImpresion == "") {
+    if (tipoImpresion == 0) {
       alert("No existen impresoras configuradas para la empresa");
       return;
     }
@@ -258,10 +260,10 @@ export class OtComponent implements OnInit {
       this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
-        case "TXT80MM":
+        case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt80(this.factura), tituloDocumento + '.txt');
           break;
-        case "TXT50MM":
+        case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
           break;
 
@@ -271,6 +273,7 @@ export class OtComponent implements OnInit {
           //    enPantalla, e);
           break;
       }
+      $('#imprimirModal').modal('hide');
     });
 
   }

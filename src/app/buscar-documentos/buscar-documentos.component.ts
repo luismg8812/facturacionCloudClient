@@ -48,7 +48,9 @@ export class BuscarDocumentosComponent implements OnInit {
   readonly ANULAR_FACTURA: string = '6';
   readonly COPIA_FACTURA: string = '11';
   readonly CAMBIO_FECHA: string = '22';
-  readonly TIPO_IMPRESION_PDFCARTA: string = "PDFCARTA";
+  readonly TIPO_IMPRESION_PDFCARTA: number = 3;
+  readonly TIPO_IMPRESION_TXT80MM: number = 1;
+  readonly TIPO_IMPRESION_TXT50MM: number = 2;
   
 
   @ViewChild("tipoDocumento") tipoDocumento: ElementRef;
@@ -86,10 +88,10 @@ export class BuscarDocumentosComponent implements OnInit {
 
   imprimirCopia(documentoCopi:DocumentoModel) {
     this.documentoSelect=documentoCopi;
-    let tipoImpresion = "";
+    let tipoImpresion = 0;
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
-      if (this.documentoSelect.impresora == this.impresoraEmpresa[i].numero_impresora) {
-        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion;
+      if (this.documentoSelect.impresora == Number(this.impresoraEmpresa[i].numero_impresora)) {
+        tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
     switch (this.documentoSelect.tipo_documento_id) {
@@ -116,7 +118,7 @@ export class BuscarDocumentosComponent implements OnInit {
 
   }
 
-  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel, tipoImpresion: string) {
+  imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel, tipoImpresion: number) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
 
@@ -134,15 +136,15 @@ export class BuscarDocumentosComponent implements OnInit {
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoSelect.cliente_id);
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
-        case "TXT80MM":
+        case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt80(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
-        case "TXT50MM":
+        case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
-        case "TXTCARTA":
-          this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
-          break;
+      //  case "TXTCARTA":
+      //    this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
+      //    break;
         case this.TIPO_IMPRESION_PDFCARTA:
           this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion);
           break;
@@ -182,21 +184,21 @@ export class BuscarDocumentosComponent implements OnInit {
 
   buscarDocumentos(){
     let tipoDocumento:string=this.tipoDocumento.nativeElement.value; 
-    let cajeroBuscar:number=this.cajeroBuscar.nativeElement.value; 
-    let empleadoBuscar:number=this.empleadoBuscar.nativeElement.value; 
+    let cajeroBuscar:string=this.cajeroBuscar.nativeElement.value; 
+    let empleadoBuscar:string=this.empleadoBuscar.nativeElement.value; 
     let fechaIniBuscar:string=this.fechaIniBuscar.nativeElement.value; 
     let fechaFinBuscar:string=this.fechaFinBuscar.nativeElement.value; 
-    let consecutivoDianBuscar:number=this.consecutivoDianBuscar.nativeElement.value; 
-    let internoBuscar:number=this.internoBuscar.nativeElement.value; 
+    let consecutivoDianBuscar:string=this.consecutivoDianBuscar.nativeElement.value; 
+    let internoBuscar:string=this.internoBuscar.nativeElement.value; 
     let clientePV:string=this.clientePV.nativeElement.value; 
-    let proveedorBuscar:number=this.proveedorBuscar.nativeElement.value; 
+    let proveedorBuscar:string=this.proveedorBuscar.nativeElement.value; 
     if(tipoDocumento==""){
       tipoDocumento="10";
     }
     let cliente1 = this.clientes.find(cliente => cliente.nombre == clientePV);
-    let cliente_id=0;
+    let cliente_id="";
     if(cliente1!=undefined){
-      cliente_id=cliente1.cliente_id;
+      cliente_id=cliente1.cliente_id.toString();
     }
     console.log(tipoDocumento);
       this.documentoService.getDocumentoByTipoAndFecha(tipoDocumento,cajeroBuscar,empleadoBuscar,fechaIniBuscar,fechaFinBuscar,

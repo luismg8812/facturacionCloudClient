@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -31,6 +32,12 @@ import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.componen
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
+import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
+import { AppConfigService } from './services/app-config.service';
+
+export function initializeApp(appConfigService: AppConfigService) {
+  return () => appConfigService.load();
+}
 
 @NgModule({
   declarations: [
@@ -52,7 +59,8 @@ import { InformeDiarioComponent } from './informe-diario/informe-diario.componen
     MovimientoMesComponent,
     ProveedorComponent,
     CierresComponent,
-    InformeDiarioComponent
+    InformeDiarioComponent,
+    EnvioDocumentosComponent
   ],
   imports: [
     BrowserModule,
@@ -63,10 +71,14 @@ import { InformeDiarioComponent } from './informe-diario/informe-diario.componen
     HttpClientModule,
     FormsModule
   ],
-  providers: [AngularFireAuth,
+  providers: [AngularFireAuth, 
     LoginComponent,
     AngularFireStorage,
-    SocketService
+    SocketService,
+    AppConfigService,
+    { provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfigService], multi: true }
   ],
   bootstrap: [AppComponent]
 })

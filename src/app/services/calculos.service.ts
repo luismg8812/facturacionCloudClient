@@ -85,6 +85,14 @@ export class CalculosService {
 		return fecha;
 	}
 
+	formatTime(date){
+		var d = new Date(date);
+		var hora=this.addZero(d.getHours());
+		var minulos=this.addZero(d.getMinutes());
+		var seg=this.addZero(d.getSeconds());
+		return [hora, minulos, seg].join(':');
+	}
+
 	 formatDate(date, conHora) {
 		var d = new Date(date),
 			month = '' + (d.getMonth() + 1),

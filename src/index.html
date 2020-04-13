@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <title>Facturación Effective</title>
+  
   <base href="/">
- 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="assets/images/logo.ico">
   <!-- Bootstrap CSS -->
@@ -14,10 +14,10 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
     integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
   <style>
-    body {
-      background: url(../assets/images/fondo.jpg) no-repeat center center fixed;
-      background-size: cover;
-    }
+   body {
+    background: url(assets/images/fondo.jpg) no-repeat center center fixed;
+    background-size: cover;
+  }
   </style>
 
 </head>
@@ -40,18 +40,7 @@
       $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
- <!-- manejo de la ip para el socket de la gramera -->
- <script type="text/javascript">
-  console.log("ip configurada localmente: " );
-  var db = openDatabase('info', '1.0', 'Test DB', 2 * 1024 * 1024);
-  db.transaction(function (tx) {
-    tx.executeSql('SELECT * FROM pc', [], function (tx, results) {
-      var ip = results.rows[0];
-      console.log("ip configurada localmente: " + ip.ip);
-      localStorage.setItem("ip", "" + ip.ip);
-    }, null);
-  }); 
-</script>
+ 
   <app-root></app-root>
 </body>
 

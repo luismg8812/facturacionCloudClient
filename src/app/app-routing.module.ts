@@ -15,6 +15,7 @@ import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.componen
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
+import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -31,6 +32,7 @@ const routes: Routes = [
    { path: 'entradasAlmacen', component: MovimientoMesComponent },
    { path: 'proveedor', component: ProveedorComponent },
    { path: 'Cierre', component: CierresComponent },
+   { path: 'envioDocumentos', component: EnvioDocumentosComponent },
    { path: 'informeDiario', component: InformeDiarioComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
