@@ -21,7 +21,7 @@ export class CuadreCajaComponent implements OnInit {
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
-
+ 
   public cuadreCajaActivo: boolean = false;
   public verRemisionesActivo: boolean = false;
 
@@ -30,7 +30,7 @@ export class CuadreCajaComponent implements OnInit {
 
   constructor(public usuarioService: UsuarioService, 
     public empresaService:EmpresaService,
-    public documentoService: DocumentoService,
+    public documentoService: DocumentoService, 
     public impresionService:ImpresionService,
     public clienteService:ClienteService) {
     console.log("cuadre cargado");
