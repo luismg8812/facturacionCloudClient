@@ -128,6 +128,7 @@ export class MovimientoMesComponent implements OnInit {
   @ViewChild("enPantallaPV") enPantallaPV: ElementRef; // div de donde se busca el articulo
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
+  @ViewChild("crearProductoPV") crearProductoPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
   @ViewChild("codigoPV") codigoPV: ElementRef;
   @ViewChild("cantidadPV") cantidadPV: ElementRef;
@@ -172,6 +173,7 @@ export class MovimientoMesComponent implements OnInit {
     this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.document = new DocumentoModel();
     this.CodigoBarrasPV.nativeElement.classList.add("d-none");
+    this.crearProductoPV.nativeElement.classList.add("d-none");
     this.getTiposDocumento();
     this.getProveedores(this.empresaId);
     this.getActivaciones(this.usuarioId);
@@ -207,6 +209,10 @@ export class MovimientoMesComponent implements OnInit {
     if (this.productoIdSelect != undefined) {
       this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
       this.findByProducto();
+    }else{
+      this.crearProductoPV.nativeElement.classList.add("d-block");
+      this.crearProductoPV.nativeElement.focus();
+      this.crearProductoPV.nativeElement.select();
     }
 
   }
@@ -265,6 +271,8 @@ export class MovimientoMesComponent implements OnInit {
     this.estadoDivProducto("d-none") // se muestra el div de producto
     this.CodigoBarrasPV.nativeElement.value = "";
     this.CodigoBarrasPV.nativeElement.classList.add("d-none");
+    this.crearProductoPV.nativeElement.value = "";
+    this.crearProductoPV.nativeElement.classList.add("d-none");
     this.proveedorSelect = null;
     this.productoIdSelect = null;
     this.document = new DocumentoModel();
@@ -729,6 +737,10 @@ export class MovimientoMesComponent implements OnInit {
     if (element.id == "CodigoBarrasPV") {
       this.codigoBarrasSelect(element);
     }
+    if (element.id == "crearProductoPV") {
+      
+      this.crearProductoSelect(element);
+    } 
     if (element.id == "articuloPV") {
       this.productoEnter(element);
     }
@@ -1089,8 +1101,7 @@ export class MovimientoMesComponent implements OnInit {
   }
 
   unitarioEnter(element) {
-    this.unitarioVentaPV.nativeElement.focus();
-    this.unitarioVentaPV.nativeElement.select();
+    
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;
@@ -1098,6 +1109,8 @@ export class MovimientoMesComponent implements OnInit {
     if (element.value == null || element.value <= 0) {
       return;
     }
+    this.unitarioVentaPV.nativeElement.focus();
+    this.unitarioVentaPV.nativeElement.select();
     let anterior: DocumentoDetalleModel = this.productos[0];
     if (anterior.unitario == element.value) {
       return;
@@ -1109,6 +1122,15 @@ export class MovimientoMesComponent implements OnInit {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(anterior.cantidad, element.value);
         console.log("cambio de precio:" + element.value);
+      }
+    });
+    this.productoIdSelect.costo = element.value;
+    this.productoService.updateProducto(this.productoIdSelect).subscribe(res => {
+      if (res.code == 200) {
+        //alert("Se actualiza el precio de venta a: "+element.value);
+      } else {
+        alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
+        return;
       }
     });
 
@@ -1279,22 +1301,22 @@ export class MovimientoMesComponent implements OnInit {
         this.articuloPV.nativeElement.focus();
       }
     } else {
-      if(element.value ==99999){
-
-         $('#crearProductoModal').modal('show');
-         this.delay(150);
-         this.nombreproductoNew.nativeElement.focus();
-         
+      if(element.value    ==99999){ 
+        this.crearProductoPV.nativeElement.classList.add("d-block");
+        this.crearProductoPV.nativeElement.focus();
+        this.crearProductoPV.nativeElement.select();
+      }else{
+        console.log("articulo select:" + element.value);
+        let productoCodigo: string = element.value;
+        this.productoIdSelect = this.productosAll.find(product => product.producto_id.toString() === productoCodigo);
+        console.log(this.productoIdSelect);
+        if (this.productoIdSelect != undefined) {
+          this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
+          this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
+          this.findByProducto();
+        }
       }
-      console.log("articulo select:" + element.value);
-      let productoCodigo: string = element.value;
-      this.productoIdSelect = this.productosAll.find(product => product.producto_id.toString() === productoCodigo);
-      console.log(this.productoIdSelect);
-      if (this.productoIdSelect != undefined) {
-        this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
-        this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
-        this.findByProducto();
-      }
+    
     }
   }
 
@@ -1340,6 +1362,19 @@ export class MovimientoMesComponent implements OnInit {
     }
   }
 
+   async crearProductoSelect(element) {
+    if (element.value == 's' || element.value == 'S' ) {
+      $('#crearProductoModal').modal('show');
+      await this.delay(160);
+      this.nombreproductoNew.nativeElement.value=this.articuloPV.nativeElement.value;
+      //this.CodigoBarrasPV.nativeElement.value
+      this.nombreproductoNew.nativeElement.focus();
+
+    } else {
+      this.articuloPV.nativeElement.focus();
+      } 
+  }
+
   codigoBarrasSelect(element) {
     if (element.value == '') {
       this.articuloPV.nativeElement.focus();
@@ -1349,9 +1384,14 @@ export class MovimientoMesComponent implements OnInit {
       this.productoIdSelect = this.productosAll.find(product => product.codigo_barras === productoCBarras);
       console.log(this.productoIdSelect);
       if (this.productoIdSelect != undefined) {
+        
         this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
         this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
         this.findByProducto();
+      }else{
+        this.crearProductoPV.nativeElement.classList.add("d-block");
+        this.crearProductoPV.nativeElement.focus();
+        this.crearProductoPV.nativeElement.select();
       }
 
     }
@@ -1405,6 +1445,11 @@ export class MovimientoMesComponent implements OnInit {
   ocultarCodigoBarras() {
     this.CodigoBarrasPV.nativeElement.classList.remove("d-block");
     this.CodigoBarrasPV.nativeElement.classList.add("d-none");
+  }
+
+  ocultarCrearProducto() {
+    this.crearProductoPV.nativeElement.classList.remove("d-block");
+    this.crearProductoPV.nativeElement.classList.add("d-none");
   }
 
   detalleEntradaEnter(element) {

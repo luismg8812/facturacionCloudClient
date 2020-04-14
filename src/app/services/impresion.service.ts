@@ -473,7 +473,7 @@ export class ImpresionService {
     this.doc.line(157, 52, 157, 58) // vertical line    
     this.doc.line(181, 52, 181, 58) // vertical line    
     this.doc.text("N° " + factura.documento.consecutivo_dian, 175, 18);
-    this.doc.text(this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19), 160, 35);
+    this.doc.text(this.calculosService.cortarDescripcion(this.calculosService.formatDate(factura.documento.fecha_registro,true), 19), 160, 35);
 
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 15), 183, 275);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.descuento), 15), 183, 280);
