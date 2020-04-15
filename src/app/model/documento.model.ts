@@ -30,7 +30,6 @@ export class DocumentoModel {
     public interes:number;
     public total_costo:number;
     public letra_consecutivo:string;
-    public invoice:number;
     public anulado:number;
     public descripcion_cliente:string;
     public descripcion_trabajador:string;
@@ -70,7 +69,6 @@ export class DocumentoModel {
         this. interes=0;
         this. total_costo=0;
         this. letra_consecutivo="";
-        this. invoice=0;
         this. anulado=0;
         this.descripcion_cliente="";
         this.descripcion_trabajador="";

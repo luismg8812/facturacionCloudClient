@@ -1177,7 +1177,6 @@ export class MovimientoMesComponent implements OnInit {
       this.document.fecha_registro = this.calculosService.fechaActual();
       this.document.usuario_id = this.usuarioId;
       this.document.empresa_id = this.empresaId;
-      this.document.invoice = 1; // se envia invoice por enviar
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;

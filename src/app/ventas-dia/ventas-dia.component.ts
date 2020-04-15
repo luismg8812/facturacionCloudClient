@@ -30,6 +30,7 @@ import { RolUsuarioModel } from '../model/rolUsuario.model';
 import { SocketService } from '../services/socket.service';
 import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
+import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -56,6 +57,10 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
 
+  readonly INVOICE_SIN_ENVIAR: number = 2;
+
+
+
 
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("tipoDocumentoPV") tipoDocumentoPV: ElementRef;
@@ -65,8 +70,8 @@ export class VentasDiaComponent implements OnInit {
     public clienteService: ClienteService,
     public productoService: ProductoService,
     public empleadoService: EmpleadoService,
-    public socketService:SocketService,
-    public cierreService:CierreService,
+    public socketService: SocketService,
+    public cierreService: CierreService,
     public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
     private router: Router, public empresaService: EmpresaService, public impresionService: ImpresionService) { }
 
@@ -110,8 +115,8 @@ export class VentasDiaComponent implements OnInit {
   public modificarFactura: boolean = false;
   public claveBorrado: boolean = false;
   public divGramera: boolean = false;
-  public pesoGramera:number=0.0;
-  public informeDiario:InformeDiarioModel;
+  public pesoGramera: number = 0.0;
+  public informeDiario: InformeDiarioModel;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -180,7 +185,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("continuaImpresionPV") continuaImpresionPV: ElementRef;
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
   @ViewChild("buscarDocumentoXFecha") buscarDocumentoXFecha: ElementRef;
-  
+
   //cliente
   @ViewChild("nombreCliente") nombreCliente: ElementRef;
 
@@ -218,7 +223,7 @@ export class VentasDiaComponent implements OnInit {
     this.opcionesSubmenu();
     this.getTipoIdentificacion();
     this.getTiposDocumento();
-    
+
   }
 
   crearClienteCancel() {
@@ -432,10 +437,10 @@ export class VentasDiaComponent implements OnInit {
     } else {
       if (this.productoIdSelect.balanza == 1) {
         this.getGramera();// este metodo
-        
-        this.divGramera=true;
+
+        this.divGramera = true;
         await this.delay(100);
-        this.grameraPV.nativeElement.value="S";
+        this.grameraPV.nativeElement.value = "S";
         this.grameraPV.nativeElement.focus();
         this.grameraPV.nativeElement.select();
       } else {
@@ -464,18 +469,18 @@ export class VentasDiaComponent implements OnInit {
       if (res == undefined) {
         alert("Error tratando de conectar con la gramera");
         return;
-      }else{
+      } else {
         console.log(res.peso);
         if (isNaN(res.peso)) {
           alert("Error obteniendo peso, por favor vuelva a intentarlo: " + res.peso);
           return;
         }
-        this.pesoGramera=res.peso;
+        this.pesoGramera = res.peso;
       }
     });
   }
 
-   enterTecla(element) {
+  enterTecla(element) {
     //await this.delay(550);
     console.log(element.id);
     if (element.id == "nuevaPV") {
@@ -512,7 +517,7 @@ export class VentasDiaComponent implements OnInit {
       this.precioGrameraEnter(element);
     }
 
-    
+
     if (element.id == "descuentoPV") {
       this.descuentoEnter();
     }
@@ -567,13 +572,13 @@ export class VentasDiaComponent implements OnInit {
     }
 
 
-    if (element.id == "cuadreCajaPV") { 
-      this.cuadreCajaModal.nativeElement.click();   
+    if (element.id == "cuadreCajaPV") {
+      this.cuadreCajaModal.nativeElement.click();
     }
 
-    if (element.id == "documentosXFechaPV") { 
+    if (element.id == "documentosXFechaPV") {
       console.log("aquientra");
-      this.buscarDocumentoXFecha.nativeElement.click();   
+      this.buscarDocumentoXFecha.nativeElement.click();
     }
   }
 
@@ -586,7 +591,7 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
     this.usuarioService.getRolByUsuario(usuario.usuario_id).subscribe(res => {
-      let rolusurio:RolUsuarioModel[]=res;
+      let rolusurio: RolUsuarioModel[] = res;
       console.log(rolusurio[0]);
       let admin = rolusurio.find(rol => rol.rol_id === this.ROL_ADMIN); //se compara con el id del rol admin
       if (admin == undefined) {
@@ -667,11 +672,11 @@ export class VentasDiaComponent implements OnInit {
     }
     console.log(this.configuracion);
     let numImpresiones = this.configuracion.numero_impresion;
-    let impresora:string = this.impresoraPV.nativeElement.value;
+    let impresora: string = this.impresoraPV.nativeElement.value;
     if (impresora == "") {
       impresora = '1';
     }
-    this.document.impresora=Number(impresora);
+    this.document.impresora = Number(impresora);
     if (this.document.tipo_documento_id == null) {
       this.document.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
     }
@@ -681,44 +686,44 @@ export class VentasDiaComponent implements OnInit {
     }
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.document.impreso = 1;
-    let cancelado:boolean=false; //se sabe si el documento es para cancelacion o no 
+    let cancelado: boolean = false; //se sabe si el documento es para cancelacion o no 
     this.verificarDescuento();
     this.calcularProporcion();
     this.asignarTipoPago();
-    this.asignarConsecutivo(numImpresiones,cancelado);
-    
+    this.asignarConsecutivo(numImpresiones, cancelado);
+
 
 
   }
 
-  calcularInfoDiario(anulado:boolean) {
+  calcularInfoDiario(anulado: boolean) {
     console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date(),false),this.calculosService.formatDate(new Date(),false)).subscribe(res => {
-     
-      if(res.length==0){
-        this.informeDiario=new InformeDiarioModel();
-      }else{
+    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(new Date(), false), this.calculosService.formatDate(new Date(), false)).subscribe(res => {
+
+      if (res.length == 0) {
+        this.informeDiario = new InformeDiarioModel();
+      } else {
         this.informeDiario = res[0];
         console.log(this.informeDiario);
       }
-      this.informeDiario=this.calculosService.calcularInfoDiario(this.document,this.informeDiario,anulado);
-      this.informeDiario.fecha_ingreso=new Date();
-      this.informeDiario.fecha_informe= this.calculosService.formatDate(new Date(),false);
-      if(this.informeDiario.informe_diario_id==null){
-        this.informeDiario.empresa_id=this.empresaId;
+      this.informeDiario = this.calculosService.calcularInfoDiario(this.document, this.informeDiario, anulado);
+      this.informeDiario.fecha_ingreso = new Date();
+      this.informeDiario.fecha_informe = this.calculosService.formatDate(new Date(), false);
+      if (this.informeDiario.informe_diario_id == null) {
+        this.informeDiario.empresa_id = this.empresaId;
         console.log(this.informeDiario.fecha_ingreso);
         this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
           if (res.code != 200) {
             alert("error creando informe diario");
             return;
-          } 
+          }
         });
-      }else{
+      } else {
         this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
           if (res.code != 200) {
             alert("error actualizando informe diario");
             return;
-          } 
+          }
         });
       }
     });
@@ -813,7 +818,7 @@ export class VentasDiaComponent implements OnInit {
   imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
-   
+
     let pantalla = this.enPantallaPV.nativeElement.value;
     if (pantalla == "") {
       pantalla = "false";
@@ -864,7 +869,7 @@ export class VentasDiaComponent implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  asignarConsecutivo(numImpresiones: number,cancelado:boolean) {
+  asignarConsecutivo(numImpresiones: number, cancelado: boolean) {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
       console.log(empr);
@@ -992,21 +997,21 @@ export class VentasDiaComponent implements OnInit {
     this.asignarDocumento(1); //se asigna cantidad 1 en x01
   }
 
-  precioGrameraEnter(element){
-    
-      if (this.codigoBarrasActivo) {
-        this.CodigoBarrasPV.nativeElement.classList.add("d-block");
-        this.CodigoBarrasPV.nativeElement.focus();
-      } else {
-        this.articuloPV.nativeElement.focus();
-      }
-    
-    let facturar=element.value;
+  precioGrameraEnter(element) {
+
+    if (this.codigoBarrasActivo) {
+      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+      this.CodigoBarrasPV.nativeElement.focus();
+    } else {
+      this.articuloPV.nativeElement.focus();
+    }
+
+    let facturar = element.value;
     this.articuloPV.nativeElement.value = "";
     this.CodigoBarrasPV.nativeElement.value = "";
-    
+
     console.log("precio enter:" + facturar);
-    if(facturar!="S" ){
+    if (facturar != "S") {
       return;
     }
     this.asignarDocumento(this.pesoGramera);
@@ -1151,10 +1156,21 @@ export class VentasDiaComponent implements OnInit {
       this.document.fecha_registro = this.calculosService.fechaActual();
       this.document.usuario_id = this.usuarioId;
       this.document.empresa_id = this.empresaId;
-      this.document.invoice = 1; // se envia invoice por enviar
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
+          let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
+          documentoInvoice.documento_id = res.documento_id;
+          documentoInvoice.fecha_registro = new Date();
+          documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+          this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+            if (res.code == 200) {
+              console.log("Se agrega estado para facturación electrónica");
+            } else {
+              alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+              return;
+            }
+          });
           this.asignarDocumentoDetalle(cantidad, this.productoIdSelect.costo_publico);
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
@@ -1803,7 +1819,7 @@ export class VentasDiaComponent implements OnInit {
     this.precioPV.nativeElement.classList.add("d-none");
   }
   ocultarGramera() {
-   this.divGramera=false;
+    this.divGramera = false;
   }
 
   formatearNumber(number: number) {
