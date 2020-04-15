@@ -341,7 +341,6 @@ export class NominaComponent implements OnInit {
     vale.descripcion_trabajador = this.conceptoVale.nativeElement.value;
     vale.empresa_id = this.empresaId;
     vale.usuario_id = this.usuarioId;
-    vale.invoice = 1;
     this.documentoService.saveDocumento(vale).subscribe(res => {
       if (res.code == 200) {
         $('#valeModal').modal('hide');

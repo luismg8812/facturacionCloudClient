@@ -29,6 +29,7 @@ import { EmpresaModel } from '../model/empresa.model';
 import { EmpleadoModel } from '../model/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
 import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
+import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 
 
 declare var jquery: any;
@@ -51,7 +52,8 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
-  
+
+  readonly INVOICE_SIN_ENVIAR: number = 1;
 
   public documento: DocumentoModel = new DocumentoModel();
   public usuarioId: number;
@@ -191,7 +193,6 @@ export class GestionOrdenComponent implements OnInit {
     this.documento.fecha_entrega = null;
     this.documento.usuario_id = this.usuarioId;
     this.documento.empresa_id = this.empresaId;
-    this.documento.invoice = null;
     this.clientePV.nativeElement.focus();
     this.documentoService.saveDocumento(this.documento).subscribe(res => {
       if (res.code == 200) {
@@ -210,7 +211,6 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoFactura.fecha_registro = this.calculosService.fechaActual();
     this.documentoFactura.usuario_id = this.usuarioId;
     this.documentoFactura.empresa_id = this.empresaId;
-    this.documentoFactura.invoice = 1; // invoice 1 sin enviar a la DIAN
     this.clienteFactura.nativeElement.focus();
     this.documentoService.saveDocumento(this.documentoFactura).subscribe(res => {
       if (res.code == 200) {
@@ -229,11 +229,22 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoFactura.fecha_registro = this.calculosService.fechaActual();
     this.documentoFactura.usuario_id = this.usuarioId;
     this.documentoFactura.empresa_id = this.empresaId;
-    this.documentoFactura.invoice = 1; // invoice 1 sin enviar a la DIAN
     this.clienteFactura.nativeElement.focus();
     this.documentoService.saveDocumento(this.documentoFactura).subscribe(res => {
       if (res.code == 200) {
         this.documentoFactura.documento_id = res.documento_id;
+        let documentoInvoice:DocumentoInvoiceModel= new DocumentoInvoiceModel()
+        documentoInvoice.documento_id=res.documento_id;
+        documentoInvoice.fecha_registro=new Date();
+        documentoInvoice.invoice_id=this.INVOICE_SIN_ENVIAR;
+        this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+          if (res.code == 200) {
+            this.documentoFactura.documento_id = res.documento_id;
+          } else {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+            return;
+          }
+        });
       } else {
         alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
         return;

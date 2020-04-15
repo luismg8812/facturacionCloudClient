@@ -211,7 +211,6 @@ export class OtComponent implements OnInit {
     this.documento.fecha_entrega = null;
     this.documento.usuario_id = this.usuarioId;
     this.documento.empresa_id = this.empresaId;
-    this.documento.invoice = null;
     this.placa.nativeElement.focus();
     this.documentoService.saveDocumento(this.documento).subscribe(res => {
       if (res.code == 200) {

@@ -143,11 +143,11 @@ export class EnvioDocumentosComponent implements OnInit {
     let iva5:DataImpuestosModel=new DataImpuestosModel();
     let iva19:DataImpuestosModel=new DataImpuestosModel();
     let exento:DataImpuestosModel=new DataImpuestosModel();
-    //iva5.codigoImpuesto="01";
-    //iva5.nombreImpuesto="IVA";
-    //iva5.porcentajeImpuesto="5.00";
-    //iva5.valorImpuestoCalculado=""+docu.documento.iva_5;
-    //dataImpuestos.unshift(iva5);
+    iva5.codigoImpuesto="01";
+    iva5.nombreImpuesto="IVA";
+    iva5.porcentajeImpuesto="5.00";
+    iva5.valorImpuestoCalculado=""+docu.documento.iva_5;
+    dataImpuestos.unshift(iva5);
 
     iva19.codigoImpuesto="01";
     iva19.nombreImpuesto="IVA";
@@ -155,11 +155,11 @@ export class EnvioDocumentosComponent implements OnInit {
     iva19.valorImpuestoCalculado=""+docu.documento.iva_19;
     dataImpuestos.unshift(iva19);
 
-    //exento.codigoImpuesto="01";
-    //exento.nombreImpuesto="IVA";
-    //exento.porcentajeImpuesto="0.00";
-    //exento.valorImpuestoCalculado=""+docu.documento.excento;
-    //dataImpuestos.unshift(exento);
+    exento.codigoImpuesto="01";
+    exento.nombreImpuesto="IVA";
+    exento.porcentajeImpuesto="0.00";
+    exento.valorImpuestoCalculado=""+docu.documento.excento;
+    dataImpuestos.unshift(exento);
     return dataImpuestos;
   }
 

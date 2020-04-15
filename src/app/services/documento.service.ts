@@ -7,6 +7,7 @@ import { ParametrosModel } from '../model/parametros.model';
 import { DocumentoOrdenModel } from '../model/documentoOrden.model';
 import { NominaModel } from '../model/nomina.model';
 import { TipoDocumentoModel } from '../model/tipoDocumento.model';
+import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,10 @@ export class DocumentoService {
   public server_api =this.parametros.serverUrl;
   saveDocumento(documentoId: DocumentoModel) {
     return this.http.post<any>(this.server_api + '/documento/createDocumento', documentoId);
+  }
+
+  saveInvoice(documentoId: DocumentoInvoiceModel) {
+    return this.http.post<any>(this.server_api + '/documento/saveInvoice', documentoId);
   }
 
   saveDocumentoOrden(documentoOrdenId: DocumentoOrdenModel) {
