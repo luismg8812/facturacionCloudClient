@@ -5,12 +5,33 @@
   </div>
   <br />
   <div class="form-row">
-    <div class="form-group col-md-6 col-sm-6">
-      <button type="button" class="btn btn-primary">Buscar</button>
-      <button type="button" class="btn btn-primary" (click)="validarEnviar()">Enviar</button>
+    <div class="form-group col-md-4 col-sm-1">
+      Fecha Inicial
+      <input class="form-control" type="date" id="fechaIni" #fechaIni>
+    </div>
+    <div class="form-group col-md-4 col-sm-1">
+      Fecha Final
+      <input class="form-control" type="date" id="fechaFin" #fechaFin>
     </div>
   </div>
   <div class="form-row">
+    <div class="form-group col-md-4 col-sm-6">
+      Consecutivo DIAN
+      <input class="form-control" id="consecutivoDianBuscar" placeholder="Consecutivo DIAN"
+        name="consecutivoDianBuscar" #consecutivoDianBuscar>
+    </div>
+    <div class="form-group col-md-4 col-sm-6">
+      Número documento interno
+      <input class="form-control" id="internoBuscar" placeholder="Número de documento interno" name="internoBuscar"
+        #internoBuscar>
+    </div>
+
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-2 col-sm-6">
+      <button type="button" class="btn btn-primary mr-1">Buscar</button>
+      <button type="button" class="btn btn-primary" (click)="validarEnviar()">Enviar</button>
+    </div>
     <div class="form-group col-md-6 col-sm-6">
       <div class="custom-control custom-switch">
         <input type="checkbox" class="custom-control-input" id="checkAll" #checkAll (change)="selectAll($event)">
@@ -28,7 +49,6 @@
         <th scope="col">Cliente</th>
         <th scope="col">Tipo documento</th>
         <th scope="col">Fecha</th>
-
       </tr>
     </thead>
     <tbody>
@@ -37,10 +57,6 @@
           <button type="button" (click)="editarItem(ordenes)" title="Detalle" class="btn btn-secondary btn-sm mr-1"
             data-toggle="modal" data-target="#exampleModal">
             <i class="fas fa-search"></i>
-          </button>
-          <button type="button" (click)="editarItem(ordenes)" title="Detalle" class="btn btn-secondary btn-sm"
-            data-toggle="modal" data-target="#exampleModal">
-            <i class="far fa-envelope"></i>
           </button>
           <input type="checkbox" class="form-check-input ml-3 allti" id="{{ordenes.documento_id}}"
             (change)="selectOrdenOne(ordenes,$event)">
@@ -55,8 +71,8 @@
     </tbody>
   </table>
 
-    <!-- cierre Modal -->
-    <div class="modal fade" id="envioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  <!-- confirmacion Modal -->
+  <div class="modal fade" id="envioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -67,11 +83,37 @@
           </button>
         </div>
         <div class="modal-body">
-          Los documentos seleccionados serán enviados a la DIAN mediante facturación electrónica, está seguro de enviarlos?
+          Los documentos seleccionados serán enviados a la DIAN mediante facturación electrónica, está seguro de
+          enviarlos?
+          <br/>
+         <h6>Documentos a enviar: {{documentoMap.length}}</h6>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" (click)="enviarDocumentos()">Entregar</button>
+          <button type="button" class="btn btn-primary" (click)="enviarDocumentos()">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- enviardo Modal -->
+  <div class="modal fade bd-example-modal-sm" id="enviardoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Enviando documentos seleccionados a la DIAN</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Documentos a enviar: {{documentoMap.length}}</p> 
+          <p>Documentos enviados: {{enviados}}</p> 
+          <p>Documentos exitosos: {{exitosos}}<p>
+            <p>Documentos erroneos: {{erroneos}}<p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="ok" data-dismiss="modal"  disabled>Ok</button>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ export class DocumentoInvoiceModel {
     public invoice_id:number;
     public fecha_registro:Date;
     public mensaje:string;
+    public status:string;
 
     constructor(){
         this.documento_invoice_id=null;
@@ -11,5 +12,6 @@ export class DocumentoInvoiceModel {
         this.invoice_id=null;
         this.fecha_registro=new Date();
         this.mensaje="";
+        this.status="";
     }
 }

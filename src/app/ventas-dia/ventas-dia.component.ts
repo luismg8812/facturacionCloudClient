@@ -57,7 +57,7 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
 
-  readonly INVOICE_SIN_ENVIAR: number = 2;
+  readonly INVOICE_SIN_ENVIAR: number = 1;
 
 
 

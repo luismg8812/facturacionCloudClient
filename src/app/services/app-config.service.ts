@@ -8,6 +8,7 @@ export class AppConfigService {
 
   static ip;
   static port:string;
+  static ws_envios_dian:string;
 
   constructor(private http: HttpClient) { }
 
@@ -17,6 +18,7 @@ export class AppConfigService {
         this.http.get(jsonFile).toPromise().then((response:any ) => {
           AppConfigService.ip = response.ip;
           AppConfigService.port = response.port;
+          AppConfigService.ws_envios_dian = response.ws_envios_dian;
            resolve();
         }).catch((response: any) => {
            reject(`Could not load file '${jsonFile}': ${JSON.stringify(response)}`);
