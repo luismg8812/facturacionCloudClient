@@ -84,6 +84,11 @@ export class DocumentoService {
   getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
     return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
   }
+
+  getDocumentoForFacturacionElectronica(fechaInicial,fechaFinal,tipoDocumentoId:string,consecutivoDian:string,documentoId:string,invoiceId:number,empresaId:number) {
+    return this.http.get<any[]>(this.server_api + '/documento/getDocumentoForFacturacionElectronica?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&tipoDocumentoId="+tipoDocumentoId+"&consecutivoDian="+consecutivoDian+"&documentoId="+documentoId+"&invoiceId="+invoiceId+"&empresaId="+empresaId);
+  }
+  
   
   getOrdenesByEmpleado(empleadoId: number,fechaInicial,fechaFinal,tipoDocumentoId:number) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByEmpleado?empleadoId='+empleadoId+ '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);

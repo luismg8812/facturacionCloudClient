@@ -19,6 +19,7 @@ import { DataFacturaTotalesModel } from '../facturacion.cloud.model/dataFacturaT
 import { DataImpuestosModel } from '../facturacion.cloud.model/dataImpuestos.model';
 import { DataDetalleFacturaModel } from '../facturacion.cloud.model/dataDetalleFactura.model';
 import { DataDescuentosModel } from '../facturacion.cloud.model/dataDescuentos.model';
+import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -35,6 +36,11 @@ export class EnvioDocumentosComponent implements OnInit {
   public enviado: EnvioFacturacionElectronicaModel;
   public empresaId: number;
   public clientes: Array<ClienteModel>;
+  public enviados:number;
+  public exitosos:number;
+  public erroneos:number;
+  readonly INVOICE_SIN_ENVIAR: number = 1;
+  readonly INVOICE_ENVIAR: number = 2;
 
   constructor(public documentoService: DocumentoService,
     public calculosService: CalculosService,
@@ -52,12 +58,50 @@ export class EnvioDocumentosComponent implements OnInit {
 
   enviarDocumentos() {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
-      this.crearOjb(empr[0]);
-      this.facturacionElectronicaService.enviarFactura(this.enviado).subscribe(res1 => {
-        console.log(res1);
-        alert('Todos los documentos seleccionados fueron enviados, por favor ir a "Consultar estado de documentos" para ver el estado de los documentos.');
-        $('#envioModal').modal('hide');
-      });
+      this.enviados=0;
+      this.exitosos=0;
+      this.erroneos=0;
+      $('#envioModal').modal('hide');   
+      $('#enviardoModal').modal('show');       
+      for (let docu of this.documentoMap) {
+        this.enviados++;
+        this.facturacionElectronicaService.enviarFactura(this.crearOjb(empr[0],docu)).subscribe(res1 => {
+          console.log(res1);   
+          if(res1.status=='Error'){
+            this.erroneos++;
+          } else{
+            this.exitosos++;
+          }
+          let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel();
+          documentoInvoice.fecha_registro = new Date();
+          documentoInvoice.invoice_id = this.INVOICE_ENVIAR;
+          documentoInvoice.documento_id = Number(docu.documento.documento_id);
+          documentoInvoice.mensaje=res1.mensaje;
+          documentoInvoice.status=res1.status;
+          this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+            if (res.code == 200) {
+              console.log("Se agrega estado para facturación electrónica");
+              if(this.enviados==this.documentoMap.length){
+               // alert("El proceso de envio ha terminado")
+                $( "#ok" ).prop( "disabled", false );  
+                this.getDocumentos();
+              }
+            } else {
+              console.error("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+              return;
+            }
+          });
+       
+        },error=>{
+          console.error(error);
+          alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n"+
+          "mail: info@effectivesoftware.com.co\n"+
+          "Error: "+error.error
+          )
+        });
+       
+      }
+
     },error=>{
       console.error(error);
       alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n"+
@@ -68,31 +112,30 @@ export class EnvioDocumentosComponent implements OnInit {
     });
   }
 
-  private crearOjb(empresa: EmpresaModel) {
-    this.enviado = new EnvioFacturacionElectronicaModel();
-    this.enviado.key = "$argon2i$v=19$m=65536,t=4,p=1$T3NhZ21ET0RmUkc1dUtpcQ$IH1TserbS5U0CmivYKJWjEaBue86G3CpLWEKroxnxtY";
-    this.enviado.datajson = this.asignarDataJson(empresa);
+  private crearOjb(empresa: EmpresaModel,docu: DocumentoMapModel) {
+    let enviado = new EnvioFacturacionElectronicaModel();
+    enviado.key = "$argon2i$v=19$m=65536,t=4,p=1$T3NhZ21ET0RmUkc1dUtpcQ$IH1TserbS5U0CmivYKJWjEaBue86G3CpLWEKroxnxtY";
+    enviado.datajson = this.asignarDataJson(empresa,docu);
+    return enviado;
   }
 
-  private asignarDataJson(empresa: EmpresaModel) {
+  private asignarDataJson(empresa: EmpresaModel,docu: DocumentoMapModel) {
     let dataJson: DataJSONModel = new DataJSONModel();
     dataJson.nitEmpresa = empresa.nit;
-    dataJson.facturas = this.asignarFacturas();
+    dataJson.facturas = this.asignarFacturas(docu);
     return dataJson;
   }
 
-  private asignarFacturas() {
+  private asignarFacturas(docu: DocumentoMapModel) {
     let facturas: Array<FacturasModel> = [];
-    for (let docu of this.documentoMap) {
       let factura: FacturasModel = new FacturasModel();
       factura.dataCliente = this.asignarDataCliente(docu);
       factura.dataFactura = this.asignarDataFactura(docu);
       factura.dataFacturaTotales=this.dataFacturaTotales(docu);
       factura.dataImpuestos= this.asignarDataImpuestosFactura(docu);
       factura.dataDetalleFactura=this.asignarDetalles(docu);
-      facturas.unshift(factura);
-    }
-    return facturas;
+      facturas.unshift(factura); 
+    return facturas; 
   }
 
   asignarDetalles(docu: DocumentoMapModel){
@@ -209,7 +252,16 @@ return dataFacturaTotales;
   selectAll(event) {
     if (event.target.checked) {
       this.documentosSelectEnviar = this.documentos;
+      for(let or of this.documentosSelectEnviar){
+        let docu: DocumentoMapModel = new DocumentoMapModel();
+        docu.documento = or;
+        this.documentoDetalleService.getDocumentoDetalleByDocumento(or.documento_id).subscribe(detalle => {
+          docu.documentoDetalle = detalle;
+          this.documentoMap.unshift(docu);
+        });
+      }
     } else {
+      this.documentoMap=[];
       this.documentosSelectEnviar = [];
     }
     console.log(event.target.checked);
@@ -243,7 +295,7 @@ return dataFacturaTotales;
 
   getDocumentos() {
     let tipoDocumento = '10';
-    this.documentoService.getDocumentoByTipoAndFecha(tipoDocumento, "", "", "", "", "", "", "", "", this.empresaId).subscribe(res => {
+    this.documentoService.getDocumentoForFacturacionElectronica("", "", tipoDocumento, "", "", this.INVOICE_SIN_ENVIAR,  this.empresaId).subscribe(res => {
       this.documentos = res;
     });
   }
