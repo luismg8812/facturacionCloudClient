@@ -35,6 +35,10 @@ export class DocumentoModel {
     public descripcion_trabajador:string;
     public linea_vehiculo:string;
     public impresora:number;
+    public invoice_id:number;
+    public cufe:string;
+    public qrcode:string;
+
     
 
     constructor(){
@@ -74,6 +78,9 @@ export class DocumentoModel {
         this.descripcion_trabajador="";
         this.linea_vehiculo="";
         this.impresora=0;
+        this.invoice_id=null;
+        this.cufe="";
+        this.qrcode="";  
     };
 }
 

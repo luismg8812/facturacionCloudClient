@@ -1,4 +1,4 @@
-export class DataImpuestosModel {
+export class DataImpuestosDetalleModel {
     public codigoImpuesto: string;
     public nombreImpuesto: string;
     public porcentajeImpuesto: string;
@@ -10,7 +10,6 @@ export class DataImpuestosModel {
         this.nombreImpuesto = "";
         this.porcentajeImpuesto = ""; 
         this.valorImpuestoCalculado = "";
-        this.subtotalBase="";
     }
 }
 

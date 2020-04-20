@@ -2,20 +2,39 @@ import { Injectable } from '@angular/core';
 import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/envioFacturacionElectronica.model';
 import {HttpClient} from '@angular/common/http';
 import { AppConfigService } from './app-config.service';
+import { DocumentoModel } from '../model/documento.model';
+import { GetFileModel } from '../facturacion.cloud.model/getFile.model';
+import { ParametrosModel } from '../model/parametros.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FacturacionElectronicaService {
 
-   url:string= AppConfigService.ws_envios_dian;
+   url_send_invoice:string= AppConfigService.ws_envios_dian;
+   url_get_xml:string= AppConfigService.invoice_status;
+   parametros: ParametrosModel = new ParametrosModel;
+  public server_api =this.parametros.serverUrl;
 
   constructor(public http:HttpClient) { }
 
   enviarFactura(envioFacturacionElectronicaModel:EnvioFacturacionElectronicaModel){
     let json:string = JSON.stringify(envioFacturacionElectronicaModel) 
-    //json=json.substring(1,json.length-1);
     console.log(json);
-    return this.http.post<any>(this.url,json);
+    return this.http.post<any>(this.url_send_invoice,json);
   }
+
+  getXML(documento:GetFileModel){
+    let json:string = JSON.stringify(documento) ;
+    console.log(json);
+    return this.http.post<any>(this.url_get_xml,json);
+  }
+
+  sendMail(mail){
+    return this.http.post<any>(this.server_api+ '/api/sendMail',mail);
+  }
+
+  
+
+  
 }

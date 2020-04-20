@@ -1,5 +1,6 @@
 import { DataImpuestosModel } from './dataImpuestos.model';
 import { DataDescuentosModel } from './dataDescuentos.model';
+import { DataImpuestosDetalleModel } from './dataImpuestosDetalle.model';
 
 export class DataDetalleFacturaModel {
     public codigoProducto:string;
@@ -9,7 +10,7 @@ export class DataDetalleFacturaModel {
     public totalImpuestos:string;
     public totalDescuentos:string;
     public subtotal:string;
-    public impuestos:DataImpuestosModel[];
+    public impuestos:DataImpuestosDetalleModel[];
     public descuentos:DataDescuentosModel[];
     
     constructor(){

@@ -17,8 +17,8 @@
   <div class="form-row">
     <div class="form-group col-md-4 col-sm-6">
       Consecutivo DIAN
-      <input class="form-control" id="consecutivoDianBuscar" placeholder="Consecutivo DIAN"
-        name="consecutivoDianBuscar" #consecutivoDianBuscar>
+      <input class="form-control" id="consecutivoDianBuscar" placeholder="Consecutivo DIAN" name="consecutivoDianBuscar"
+        #consecutivoDianBuscar>
     </div>
     <div class="form-group col-md-4 col-sm-6">
       Número documento interno
@@ -28,9 +28,10 @@
 
   </div>
   <div class="form-row">
-    <div class="form-group col-md-2 col-sm-6">
+    <div class="form-group col-md-3 col-sm-6">
       <button type="button" class="btn btn-primary mr-1">Buscar</button>
-      <button type="button" class="btn btn-primary" (click)="validarEnviar()">Enviar</button>
+      <button type="button" class="btn btn-primary mr-1" (click)="validarEnviar()">Enviar</button>
+      <button type="button" class="btn btn-primary" (click)="exportar() ">Exportar</button>
     </div>
     <div class="form-group col-md-6 col-sm-6">
       <div class="custom-control custom-switch">
@@ -65,7 +66,7 @@
         <td>{{ordenes.consecutivo_dian}}</td>
         <td>${{formatearNumber(ordenes.total)}}</td>
         <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
-        <td>{{(ordenes.tipo_documento_id)}}</td>
+        <td>{{nombreTipoDocumentoFun(ordenes.tipo_documento_id)}}</td>
         <td>{{ordenes.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
       </tr>
     </tbody>
@@ -85,8 +86,8 @@
         <div class="modal-body">
           Los documentos seleccionados serán enviados a la DIAN mediante facturación electrónica, está seguro de
           enviarlos?
-          <br/>
-         <h6>Documentos a enviar: {{documentoMap.length}}</h6>
+          <br />
+          <h6>Documentos a enviar: {{documentoMap.length}}</h6>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -96,26 +97,36 @@
     </div>
   </div>
   <!-- enviardo Modal -->
-  <div class="modal fade bd-example-modal-sm" id="enviardoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+  <div class="modal fade bd-example-modal-sm" id="enviardoModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-sm" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Enviando documentos seleccionados a la DIAN</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
         </div>
         <div class="modal-body">
-          <p>Documentos a enviar: {{documentoMap.length}}</p> 
-          <p>Documentos enviados: {{enviados}}</p> 
-          <p>Documentos exitosos: {{exitosos}}<p>
-            <p>Documentos erroneos: {{erroneos}}<p></p>
+          <p>Documentos a enviar: {{documentoMap.length}}</p>
+          <p>Documentos enviados: {{enviados}}</p>
+          <p>Documentos exitosos: {{exitosos}}</p>
+          <p>Documentos erroneos: {{erroneos}}</p>
+
+          <div class="spinner-border" role="status" *ngIf="enviando">
+            <span class="sr-only">Loading...</span>
+          </div>
+
+
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" id="ok" data-dismiss="modal"  disabled>Ok</button>
+          <button type="button" class="btn btn-primary" id="ok" data-dismiss="modal" disabled>Ok</button>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="col col-ms-1">
+    <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+    </a>
   </div>
 </div>

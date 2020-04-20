@@ -8,6 +8,7 @@ import { DocumentoOrdenModel } from '../model/documentoOrden.model';
 import { NominaModel } from '../model/nomina.model';
 import { TipoDocumentoModel } from '../model/tipoDocumento.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
+import { InvoiceModel } from '../model/invoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -63,11 +64,19 @@ export class DocumentoService {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByDocumentoId?documentoId='+documentoId);
   }
 
+
+  getByDocumentoId(documentoId: string) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getByDocumentoId?documentoId='+documentoId);
+  }
   
+
   getTiposDocumento() {
     return this.http.get<TipoDocumentoModel[]>(this.server_api + '/documento/getTiposDocumento');
   }
-  
+
+  getInvoice() {
+    return this.http.get<InvoiceModel[]>(this.server_api + '/documento/getInvoice');
+  }
 
   getCuadreCaja(tipoDocumentoId: number[], empresaId: string, usuarioId: string, cerrado: string) {
     return this.http.get<CuadreCajaVoModel>(this.server_api + '/documento/getCuadreCaja?tipoDocumentoId='+tipoDocumentoId+'&empresaId=' + empresaId + '&usuarioId=' + usuarioId + '&cerrado=' + cerrado);
@@ -85,7 +94,7 @@ export class DocumentoService {
     return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
   }
 
-  getDocumentoForFacturacionElectronica(fechaInicial,fechaFinal,tipoDocumentoId:string,consecutivoDian:string,documentoId:string,invoiceId:number,empresaId:number) {
+  getDocumentoForFacturacionElectronica(fechaInicial,fechaFinal,tipoDocumentoId:Array<string>,consecutivoDian:string,documentoId:string,invoiceId:number,empresaId:number) {
     return this.http.get<any[]>(this.server_api + '/documento/getDocumentoForFacturacionElectronica?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&tipoDocumentoId="+tipoDocumentoId+"&consecutivoDian="+consecutivoDian+"&documentoId="+documentoId+"&invoiceId="+invoiceId+"&empresaId="+empresaId);
   }
   

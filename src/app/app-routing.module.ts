@@ -16,6 +16,7 @@ import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
+import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -33,6 +34,8 @@ const routes: Routes = [
    { path: 'proveedor', component: ProveedorComponent },
    { path: 'Cierre', component: CierresComponent },
    { path: 'envioDocumentos', component: EnvioDocumentosComponent },
+   { path: 'estadoDocumentos', component: EstadoDocumentosComponent },
+   
    { path: 'informeDiario', component: InformeDiarioComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
