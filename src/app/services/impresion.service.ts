@@ -12,6 +12,7 @@ import { EmpresaModel } from '../model/empresa.model';
 import { InformeDiarioVOModel } from '../model/informeDiarioVO.model';
 import { UsuarioService } from './usuario.service';
 import { DocumentoService } from './documento.service';
+import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/envioFacturacionElectronica.model';
 
 
 
@@ -99,6 +100,16 @@ export class ImpresionService {
     texto.push('\n');
     texto.push('\n');
     texto.push('\n');
+    return new Blob(texto, {
+      type: 'text/plain'
+    });
+  }
+
+  imprimirFacturaElectronicas(envi:Array<EnvioFacturacionElectronicaModel>) {
+    //Genera un objeto Blob con los datos en un archivo TXT
+    var texto = [];
+    let json:string = JSON.stringify(envi) ;
+    texto.push(json);
     return new Blob(texto, {
       type: 'text/plain'
     });
@@ -668,7 +679,11 @@ export class ImpresionService {
         this.doc.text("Excluido: "+new Intl.NumberFormat().format(factura.informe_diario.excento) , 10, espacio+30);
         this.doc.text("Costos en Ventas: "+new Intl.NumberFormat().format(factura.informe_diario.costo_ventas) , 10, espacio+35);
         this.doc.text("Ganancias: "+ new Intl.NumberFormat().format((Number(factura.informe_diario.total_ventas)-Number(factura.informe_diario.costo_ventas)) ), 10, espacio+40);
-        
+        //if(){
+
+        //}else{
+        //  this.doc.output('datauri')
+        //}
         this.doc.save(factura.tituloArchivo + ".pdf");
       });
     });

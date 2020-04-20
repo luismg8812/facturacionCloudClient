@@ -34,6 +34,7 @@ import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 import { AppConfigService } from './services/app-config.service';
+import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -60,7 +61,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     ProveedorComponent,
     CierresComponent,
     InformeDiarioComponent,
-    EnvioDocumentosComponent
+    EnvioDocumentosComponent,
+    EstadoDocumentosComponent
   ],
   imports: [
     BrowserModule,

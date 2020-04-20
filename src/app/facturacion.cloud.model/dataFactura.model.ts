@@ -1,4 +1,7 @@
 export class DataFacturaModel {
+    public codigoNota:string;
+    public tipoCorreccion:string;
+    public descripcionCorrecion:string;
     public codigoFactura:string;
     public sssueDate:string;
     public issueTime:string;
@@ -8,6 +11,9 @@ export class DataFacturaModel {
     public paymentDueDate:string;
     
     constructor(){
+        this.tipoCorreccion="";
+        this.codigoNota="";
+        this.descripcionCorrecion="";
         this.codigoFactura="";
         this.sssueDate="";
         this.issueTime="";

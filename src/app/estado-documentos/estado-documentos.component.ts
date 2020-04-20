@@ -1,52 +1,39 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { DocumentoModel } from '../model/documento.model';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { InvoiceModel } from '../model/invoice.model';
 import { DocumentoService } from '../services/documento.service';
-import { ClienteModel } from '../model/cliente.model';
-import { ClienteService } from '../services/cliente.service';
-import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/envioFacturacionElectronica.model';
+import { DocumentoModel } from '../model/documento.model';
+import { DocumentoMapModel } from '../facturacion.cloud.model/documentoMap.model';
+import { DocumentoDetalleService } from '../services/documento-detalle.service';
 import { EmpresaService } from '../services/empresa.service';
-import { EmpresaModel } from '../model/empresa.model';
 import { FacturacionElectronicaService } from '../services/facturacion-electronica.service';
 import { CalculosService } from '../services/calculos.service';
-import { DocumentoDetalleService } from '../services/documento-detalle.service';
-import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
-import { DocumentoMapModel } from '../facturacion.cloud.model/documentoMap.model';
-import { DataJSONModel } from '../facturacion.cloud.model/datajson.model';
-import { FacturasModel } from '../facturacion.cloud.model/facturas.model';
-import { DataClienteModel } from '../facturacion.cloud.model/dataCliente.model';
-import { DataFacturaModel } from '../facturacion.cloud.model/dataFactura.model';
-import { DataFacturaTotalesModel } from '../facturacion.cloud.model/dataFacturaTotales.model';
-import { DataImpuestosModel } from '../facturacion.cloud.model/dataImpuestos.model';
-import { DataDetalleFacturaModel } from '../facturacion.cloud.model/dataDetalleFactura.model';
-import { DataDescuentosModel } from '../facturacion.cloud.model/dataDescuentos.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
-import { DataImpuestosDetalleModel } from '../facturacion.cloud.model/dataImpuestosDetalle.model';
-import { AppConfigService } from '../services/app-config.service';
-import { ImpresionService } from '../services/impresion.service';
-import { TipoDocumentoModel } from '../model/tipoDocumento.model';
-import { MailModel } from '../facturacion.cloud.model/mail.model';
+import { ClienteModel } from '../model/cliente.model';
+import { ClienteService } from '../services/cliente.service';
 import { GetFileModel } from '../facturacion.cloud.model/getFile.model';
+import { AppConfigService } from '../services/app-config.service';
+import { MailModel } from '../facturacion.cloud.model/mail.model';
 declare var jquery: any;
 declare var $: any;
 
 @Component({
-  selector: 'app-envio-documentos',
-  templateUrl: './envio-documentos.component.html',
-  styleUrls: ['./envio-documentos.component.css']
+  selector: 'app-estado-documentos',
+  templateUrl: './estado-documentos.component.html',
+  styleUrls: ['./estado-documentos.component.css']
 })
-export class EnvioDocumentosComponent implements OnInit {
+export class EstadoDocumentosComponent implements OnInit {
 
-  public documentos: Array<DocumentoModel>;
-  public documentoMap: Array<DocumentoMapModel> = [];
   public documentosSelectEnviar: Array<DocumentoModel> = [];
-  public enviado: EnvioFacturacionElectronicaModel;
-  public tiposDocumento: Array<TipoDocumentoModel>;
-  public empresaId: number;
+  public documentoMap: Array<DocumentoMapModel> = [];
+  public estadosDocumento:Array<InvoiceModel>;
   public clientes: Array<ClienteModel>;
+  public documentos: Array<DocumentoModel>;
+  public empresaId: number;
   public enviados: number;
   public exitosos: number;
   public erroneos: number;
   public enviando:boolean=false;
+
   readonly INVOICE_SIN_ENVIAR: number = 1;
   readonly INVOICE_ENVIAR: number = 2;
   readonly INVOICE_ERROR: number = 4;
@@ -54,46 +41,26 @@ export class EnvioDocumentosComponent implements OnInit {
 
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
-
-  constructor(public documentoService: DocumentoService,
-    public calculosService: CalculosService,
-    public empresaService: EmpresaService,
-    public impresionService: ImpresionService,
+  constructor(public documentoService:DocumentoService,
     public documentoDetalleService: DocumentoDetalleService,
-    public facturacionElectronicaService: FacturacionElectronicaService,
-    public clienteService: ClienteService) { }
+    public calculosService: CalculosService,
+    public clienteService: ClienteService,
+    public facturacionElectronicaService:FacturacionElectronicaService,
+    public empresaService:EmpresaService) { }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
-    this.getTiposDocumento();
+    this.invoiceList();
     this.getclientes(this.empresaId);
-    this.getDocumentos();
-   
-
+    this.getDocumentos(this.INVOICE_ERROR);
   }
 
-  exportar() {
-    if (this.documentosSelectEnviar.length == 0) {
-      alert("Debe seleccionar almenos 1 documento para ser exportado");
-      return;
-    }
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
-      let envi: Array<EnvioFacturacionElectronicaModel> = [];
-      for (let docu of this.documentoMap) {
-        envi.unshift(this.calculosService.crearOjb(empr[0], docu, this.clientes));
-      }
-      this.descargarArchivo(this.impresionService.imprimirFacturaElectronicas(envi), "exportar_facturas_manualmente" + '.json');
-    });
+  buscar(esdaDocu){
+    this.getDocumentos(esdaDocu.value);
   }
 
-  descargarArchivo(contenidoEnBlob, nombreArchivo) {
-    const url = window.URL.createObjectURL(contenidoEnBlob);
-    const link = this.downloadZipLink.nativeElement;
-    link.href = url;
-    link.download = nombreArchivo;
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
+  
+
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -121,10 +88,11 @@ export class EnvioDocumentosComponent implements OnInit {
           if (this.enviados == this.documentoMap.length) {
             // alert("El proceso de envio ha terminado")
             $("#ok").prop("disabled", false);
-            this.getDocumentos();
+            this.getDocumentos(this.INVOICE_ERROR);
             this.enviando=false;
           }
           this.insertarEstado(res1, docu.documento);
+         
         }, error => {
           console.error(error);
           alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
@@ -218,14 +186,81 @@ export class EnvioDocumentosComponent implements OnInit {
     });
   }
 
+   b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+  
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+  
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+  
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+  
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+  }
 
+  DescargarXML(documento:DocumentoModel){
+    let getFile:GetFileModel=new GetFileModel();
+    getFile.cufe=documento.cufe;
+    getFile.key=AppConfigService.key_invoice;
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
+      getFile.nitEmpresa=empr[0].nit;
+      this.facturacionElectronicaService.getXML(getFile).subscribe(async res1 => {
+      
+          this.descargarArchivo(this.b64toBlob(res1.mensaje, 'text/xml'), "f_"+documento.consecutivo_dian + '.xml');
+        
+      });
+    });  
+  }
+
+  descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    const url = window.URL.createObjectURL(contenidoEnBlob);
+    const link = this.downloadZipLink.nativeElement;
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  dataURItoBlob(dataURI) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'text/xml' });
+    return blob;
+  }
+
+  limpiar(){
+    this.documentoMap=[];
+  }
+
+  enviarUno(or:DocumentoModel){
+    let docu: DocumentoMapModel = new DocumentoMapModel();
+    docu.documento = or;
+    this.documentoDetalleService.getDocumentoDetalleByDocumento(or.documento_id).subscribe(detalle => {
+      docu.documentoDetalle = detalle;
+      this.documentoMap.unshift(docu);
+    });
+    $('#envioModal').modal('show');
+    
+  }
 
   validarEnviar() {
     if (this.documentosSelectEnviar.length == 0) {
       alert("Debe seleccionar almenos 1 documento para ser enviado");
       return;
     }
-    $('#envioModal').modal('show');
+    
   }
 
   selectAll(event) {
@@ -245,6 +280,35 @@ export class EnvioDocumentosComponent implements OnInit {
     }
     console.log(event.target.checked);
     $('.allti').attr("checked", event.target.checked);
+  }
+
+  invoiceList(){ 
+      this.documentoService.getInvoice().subscribe(res => {
+        console.log(res);
+        this.estadosDocumento = res;
+      });
+  }
+  getDocumentos(invoice:number){
+    this.documentoMap=[];
+    this.documentoService.getDocumentoForFacturacionElectronica("", "", ['10','12','13'], "", "", invoice,  this.empresaId).subscribe(res => {
+      console.log(res);
+      this.documentos = res;
+    });
+  }
+
+  formatearNumber(number: number) {
+    let formato: string = "";
+    formato = new Intl.NumberFormat().format(number);
+    return formato;
+  }
+
+  nombreEstado(id) {
+    let invoice = this.estadosDocumento.find(estados => estados.invoice_id == id);
+    if (invoice == undefined) {
+      return "";
+    } else {
+      return invoice.nombre;
+    }
   }
 
   selectOrdenOne(or: DocumentoModel, event) {
@@ -271,49 +335,12 @@ export class EnvioDocumentosComponent implements OnInit {
     console.log(this.documentoMap);
   }
 
-
-  getDocumentos() {
-    let tipoDocumento:Array<string> = ['10','12','13'];
-    this.documentoMap=[];
-    this.documentoService.getDocumentoForFacturacionElectronica("", "", tipoDocumento, "", "", this.INVOICE_SIN_ENVIAR, this.empresaId).subscribe(res => {
-      this.documentos = res;
-    });
-  }
-
-  formatearNumber(number: number) {
-    let formato: string = "";
-    formato = new Intl.NumberFormat().format(number);
-    return formato;
-  }
-
-  nombreClienteFun(id) {
-    let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
-    if (cliente == undefined) {
-      return "";
-    } else {
-      return cliente.nombre+ " "+cliente.apellidos;
-    }
-  }
-
-  nombreTipoDocumentoFun(id) {
-    let tipoDo = this.tiposDocumento.find(cliente => cliente.tipo_documento_id == id);
-    if (tipoDo == undefined) {
-      return "";
-    } else {
-      return tipoDo.nombre;
-    }
-  }
-
   getclientes(empresaId: number) {
     this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
       this.clientes = res;
       console.log("lista de clientes cargados: " + this.clientes.length);
     });
   }
+  
 
-  getTiposDocumento() {
-    this.documentoService.getTiposDocumento().subscribe(res => {
-      this.tiposDocumento = res;
-    });
-  }
 }

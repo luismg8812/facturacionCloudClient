@@ -31,6 +31,7 @@ import { SocketService } from '../services/socket.service';
 import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
+import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -112,6 +113,8 @@ export class VentasDiaComponent implements OnInit {
   public indexModificarSelect: number = 0;
   public clienteNew: ClienteModel = new ClienteModel();
   public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
+  public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
+  
   public modificarFactura: boolean = false;
   public claveBorrado: boolean = false;
   public divGramera: boolean = false;
@@ -223,7 +226,7 @@ export class VentasDiaComponent implements OnInit {
     this.opcionesSubmenu();
     this.getTipoIdentificacion();
     this.getTiposDocumento();
-
+    this.getTipoEmpresa();  
   }
 
   crearClienteCancel() {
@@ -281,16 +284,35 @@ export class VentasDiaComponent implements OnInit {
       valido = false;
     }
     if (this.clienteNew.documento == "") {
-      mensageError += "documento\n";
+      mensageError += "Identificación\n";
       valido = false;
     }
     if (this.clienteNew.tipo_identificacion_id == null) {
       mensageError += "tipo documento\n";
       valido = false;
     }
+    if (this.clienteNew.fact_tipo_empresa_id == null) {
+      mensageError += "tipo empresa\n";
+      valido = false;
+    }
+    if (this.clienteNew.fijo == "" && this.clienteNew.celular == "") {
+      mensageError += "telefono fijo o Celular\n";
+      valido = false;
+    }
+    if (this.clienteNew.direccion == "") {
+      mensageError += "Dirección\n";
+      valido = false;
+    }
+    if (this.clienteNew.mail == "") {
+      mensageError += "Mail\n";
+      valido = false;
+    }
+
     if (valido == false) {
       alert(mensageError);
       return;
+    }else{
+
     }
 
     this.clienteNew.empresa_id = this.empresaId;
@@ -301,6 +323,8 @@ export class VentasDiaComponent implements OnInit {
         this.factura.cliente = this.clienteNew;
         this.clienteNew = new ClienteModel();
         $('#crearClienteModal').modal('hide');
+        this.clientePV.nativeElement.focus();
+        this.clientes.unshift(this.clienteNew);
       } else {
         alert("error creando cliente, por favor inicie nuevamente la creación del cliente, si persiste consulte a su proveedor");
         return;
@@ -1156,6 +1180,7 @@ export class VentasDiaComponent implements OnInit {
       this.document.fecha_registro = this.calculosService.fechaActual();
       this.document.usuario_id = this.usuarioId;
       this.document.empresa_id = this.empresaId;
+      this.document.invoice_id=this.INVOICE_SIN_ENVIAR;
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
@@ -1743,6 +1768,14 @@ export class VentasDiaComponent implements OnInit {
       this.tipoIdentificacionList = res;
     });
   }
+
+  getTipoEmpresa() {
+    this.clienteService.getTipoEmpresa().subscribe(res => {
+      this.tipoEmpresaList = res;
+    });
+  }
+
+  
 
   getTiposDocumento() {
     this.documentoService.getTiposDocumento().subscribe(res => {
