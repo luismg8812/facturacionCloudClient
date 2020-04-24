@@ -27,6 +27,12 @@ export class DocumentoService {
     return this.http.post<any>(this.server_api + '/documento/saveInvoice', documentoId);
   }
 
+  
+
+  getDocumentoInvoiceByDocumento(documentoId) {
+    return this.http.get<DocumentoInvoiceModel[]>(this.server_api + '/documento/getDocumentoInvoiceByDocumento?documentoId='+documentoId);
+  }
+
   saveDocumentoOrden(documentoOrdenId: DocumentoOrdenModel) {
     return this.http.post<any>(this.server_api + '/documento/createDocumentoOrden', documentoOrdenId);
   }

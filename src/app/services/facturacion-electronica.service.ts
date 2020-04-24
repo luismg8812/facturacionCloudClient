@@ -12,7 +12,7 @@ import { ParametrosModel } from '../model/parametros.model';
 export class FacturacionElectronicaService {
 
    url_send_invoice:string= AppConfigService.ws_envios_dian;
-   url_get_xml:string= AppConfigService.invoice_status;
+   url_get_xml:string= AppConfigService.get_xml;
    parametros: ParametrosModel = new ParametrosModel;
   public server_api =this.parametros.serverUrl;
 

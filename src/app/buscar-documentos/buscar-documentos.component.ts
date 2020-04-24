@@ -323,7 +323,7 @@ export class BuscarDocumentosComponent implements OnInit {
         //    this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
         //    break;
         case this.TIPO_IMPRESION_PDFCARTA:
-          this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion);
+          this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion,false);
           break;
 
         default:

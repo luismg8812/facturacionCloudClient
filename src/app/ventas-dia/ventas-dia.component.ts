@@ -32,6 +32,7 @@ import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
+import { ProporcionModel } from '../model/proporcion.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -44,6 +45,7 @@ export class VentasDiaComponent implements OnInit {
 
   readonly CLIENTE_FACTURACION: string = '19';
   readonly MULTIPLE_IMPRESORA: string = '4';
+  readonly PROPORCION: string = '3';
   readonly CODIGO_BARRAS: string = '7';
   readonly GUIA_TRANSPORTE: string = '8';
   readonly CLAVE_BORRADO: string = '9';
@@ -53,10 +55,12 @@ export class VentasDiaComponent implements OnInit {
   readonly EMPLEADOS: string = '18';
   readonly TIPOS_PAGOS: string = '20';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
+  readonly TIPO_DOCUMENTO_REMISION: number = 9;
   readonly ROL_ADMIN: number = 1;
 
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
+  readonly TIPO_IMPRESION_PDF80MM: number = 4;
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
 
@@ -87,6 +91,7 @@ export class VentasDiaComponent implements OnInit {
   public usuarios: Array<UsuarioModel>;
   public tipoPagosAll: Array<TipoPagoModel>;
   public clienteActivo: boolean = false;
+  public crearClienteVisible: boolean = false;
   public guiaTransporteActivo: boolean = false;
   public clienteObligatorioActivo: boolean = false;
   public empreadoActivo: boolean = false;
@@ -94,6 +99,7 @@ export class VentasDiaComponent implements OnInit {
   public descuentosActivo: boolean = false;
   public cambioPrecioActivo: boolean = false;
   public claveBorradoActivo: boolean = false;
+  public proporcionActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
   public clienteSelect: number;
@@ -114,7 +120,9 @@ export class VentasDiaComponent implements OnInit {
   public clienteNew: ClienteModel = new ClienteModel();
   public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
   public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
-  
+  public proporcion: ProporcionModel;
+
+
   public modificarFactura: boolean = false;
   public claveBorrado: boolean = false;
   public divGramera: boolean = false;
@@ -226,13 +234,9 @@ export class VentasDiaComponent implements OnInit {
     this.opcionesSubmenu();
     this.getTipoIdentificacion();
     this.getTiposDocumento();
-    this.getTipoEmpresa();  
+    this.getTipoEmpresa();
   }
 
-  crearClienteCancel() {
-
-    this.clientePV.nativeElement.focus();
-  }
 
   clienteSelectFun(element) {
     console.log(this.clientes);
@@ -240,20 +244,17 @@ export class VentasDiaComponent implements OnInit {
       alert("El cliente es obligatorio");
       return;
     } else {
-      let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
 
       if (cliente == undefined) {
-        this.clienteNew.nombre = element.value;
-
-
-        $('#crearClienteModal').modal('show');
-        this.nombreCliente.nativeElement.focus();
-        this.nombreCliente.nativeElement.select();
+        return;
       } else {
         console.log(cliente);
         this.clienteSelect = cliente.cliente_id;
         this.document.cliente_id = this.clienteSelect;
         this.factura.cliente = cliente;
+        //this.clientePV.nativeElement.value=cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento ; 
+        //console.log(cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento );
       }
 
     }
@@ -275,8 +276,17 @@ export class VentasDiaComponent implements OnInit {
 
   }
 
-  CrearCliente() {
+  async CrearCliente(element) {
     // console.log(this.clienteNew);
+
+    if (element.value != 'S') {
+      $('#crearClienteModal').modal('hide');
+      await this.delay(100);
+      this.clientePV.nativeElement.focus();
+      this.crearClienteVisible = false;
+      return;
+    }
+    this.crearClienteVisible = false;
     let valido: boolean = true;
     let mensageError: string = "Son obligatorios:\n ";
     if (this.clienteNew.nombre == "") {
@@ -311,20 +321,44 @@ export class VentasDiaComponent implements OnInit {
     if (valido == false) {
       alert(mensageError);
       return;
-    }else{
+    } else {
 
+    }
+    let cliente = this.clientes.find(cliente => (cliente.documento) == this.clienteNew.documento);
+    if (cliente != undefined) {
+      alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + " " + cliente.apellidos + "\n" + "NIT: " + cliente.documento);
+      return;
     }
 
     this.clienteNew.empresa_id = this.empresaId;
-    this.clienteService.saveCliente(this.clienteNew).subscribe(res => {
+    this.clienteService.saveCliente(this.clienteNew).subscribe(async res => {
       if (res.code == 200) {
         this.clienteSelect = this.clienteNew.cliente_id;
         this.document.cliente_id = this.clienteSelect;
         this.factura.cliente = this.clienteNew;
-        this.clienteNew = new ClienteModel();
+        //this.clienteNew = new ClienteModel();
         $('#crearClienteModal').modal('hide');
-        this.clientePV.nativeElement.focus();
+        await this.delay(100);
+
+        if (this.guiaTransporteActivo) {
+          this.tipoDocumentoPV.nativeElement.focus();
+        } else {
+          if (this.empreadoActivo) {
+            this.empleadoPV.nativeElement.focus();
+          } else {
+            if (this.codigoBarrasActivo) {
+              this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+              this.CodigoBarrasPV.nativeElement.focus();
+            } else {
+              this.articuloPV.nativeElement.focus();
+            }
+          }
+        }
+        this.clientePV.nativeElement.value = this.clienteNew.nombre + " " + this.clienteNew.apellidos + " - " + this.clienteNew.documento;
+
+
         this.clientes.unshift(this.clienteNew);
+        this.clienteNew = new ClienteModel();
       } else {
         alert("error creando cliente, por favor inicie nuevamente la creación del cliente, si persiste consulte a su proveedor");
         return;
@@ -503,6 +537,8 @@ export class VentasDiaComponent implements OnInit {
       }
     });
   }
+
+
 
   enterTecla(element) {
     //await this.delay(550);
@@ -694,6 +730,7 @@ export class VentasDiaComponent implements OnInit {
       alert("El documento esta corructo, por favor vuelva a crearlo");
       return;
     }
+    this.calcularProporcion();
     console.log(this.configuracion);
     let numImpresiones = this.configuracion.numero_impresion;
     let impresora: string = this.impresoraPV.nativeElement.value;
@@ -701,9 +738,6 @@ export class VentasDiaComponent implements OnInit {
       impresora = '1';
     }
     this.document.impresora = Number(impresora);
-    if (this.document.tipo_documento_id == null) {
-      this.document.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
-    }
     if (this.document.cliente_id == null) {
       //si el cliente es nulo se asigna el varios por defecto
       this.document.cliente_id = 1;
@@ -712,7 +746,6 @@ export class VentasDiaComponent implements OnInit {
     this.document.impreso = 1;
     let cancelado: boolean = false; //se sabe si el documento es para cancelacion o no 
     this.verificarDescuento();
-    this.calcularProporcion();
     this.asignarTipoPago();
     this.asignarConsecutivo(numImpresiones, cancelado);
 
@@ -875,8 +908,12 @@ export class VentasDiaComponent implements OnInit {
         case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + '.txt');
           break;
+        case this.TIPO_IMPRESION_PDF80MM:
+          this.impresionService.imprimirFacturaPdf80(this.factura, this.configuracion,false);
+          break;
         default:
           alert("no tiene un tipo impresion");
+          //return;
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
           //    enPantalla, e);
           break;
@@ -914,11 +951,8 @@ export class VentasDiaComponent implements OnInit {
           this.tituloFactura = "No. DE COTIZACIÓN";
           break;
         default:
-          // log
           console.log(empr[0].consecutivo);
           con = empr[0].consecutivo + 1;
-          // dentro de try se valida si faltan 500 facturas para
-          // llegar hasta el tope
 
           let topeConsecutivo = res[0].autorizacion_hasta;
           let consegutivo = con;
@@ -929,36 +963,79 @@ export class VentasDiaComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-
           consecutivo = res[0].letra_consecutivo + con.toString();
           console.log("consecutivo Dian: " + consecutivo);
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
           res[0].consecutivo = con;
-          this.calcularInfoDiario(cancelado);
-          this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
-            console.log("consecutivo actualizado");
-            console.log(this.document);
-            this.documentoService.updateDocumento(this.document).subscribe(res => {
-              if (res.code != 200) {
-                alert("error creando documento, por favor inicie nuevamente la creación del documento");
-                return;
-              }
-              this.imprimirFactura(numImpresiones, empr[0]);
-              this.limpiar();
-              this.scapeTecla(null);
-            });
-          });
-
           break;
       }
+      this.calcularInfoDiario(cancelado);
+      this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
+        console.log("consecutivo actualizado");
+        console.log(this.document);
+        this.documentoService.updateDocumento(this.document).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+          this.imprimirFactura(numImpresiones, empr[0]);
+          this.limpiar();
+          this.scapeTecla(null);
+        });
+      });
+
+
+
     });
   }
 
 
   calcularProporcion() {
-    console.log("TODO hay que calcular la proporcion, crear las tablas");
-    //hacer los metodos de busqueda aqui
+    // console.log(this.proporcionActivo);
+    // console.log(this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA);
+    if (this.proporcionActivo && (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA
+      || this.document.tipo_documento_id == this.TIPO_DOCUMENTO_REMISION)) {
+
+      console.log("Entra al calculo de proporción");
+      if (this.proporcion == undefined) {
+        console.error("proporcion no hallada para la empresa");
+        return;
+      }
+      let numero: number = this.proporcion.variable / this.proporcion.base;
+      console.log("numero para proporcion : " + numero);
+      let contaRemision = this.proporcion.contador_remision;
+      let contaFactura = this.proporcion.contador_factura;
+      let numeroProporcion = contaRemision / contaFactura;
+      console.log("numero proporcion: " + numeroProporcion);
+      let fecha = new Date();
+      let dia = fecha.getDate();
+      let rangoA: number;
+      let rangoB: number;
+      if (dia % 2 == 0) {
+        rangoA = this.proporcion.rango_par_a;
+        rangoB = this.proporcion.rango_par_b;
+      } else {
+        rangoA = this.proporcion.rango_inpar_a;
+        rangoB = this.proporcion.rango_inpar_b;
+      }
+      let totaldocu = this.document.total;
+      if (this.document.cliente_id != 1) {
+        if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA) {
+          this.proporcion.contador_factura = (Number(contaFactura) + 1);
+        }
+      } else {
+        if ((totaldocu >= rangoA && totaldocu <= rangoB) || numero > numeroProporcion) {
+          this.proporcion.contador_remision = (Number(contaRemision) + 1);
+          this.document.tipo_documento_id = this.TIPO_DOCUMENTO_REMISION;
+        } else {
+          this.document.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
+          this.proporcion.contador_factura = (Number(contaFactura) + 1);
+        }
+      }
+      this.usuarioService.updateProporcion(this.proporcion).subscribe(up => { });
+
+    }
   }
 
   cancelarImpresion() {
@@ -1180,7 +1257,7 @@ export class VentasDiaComponent implements OnInit {
       this.document.fecha_registro = this.calculosService.fechaActual();
       this.document.usuario_id = this.usuarioId;
       this.document.empresa_id = this.empresaId;
-      this.document.invoice_id=this.INVOICE_SIN_ENVIAR;
+      this.document.invoice_id = this.INVOICE_SIN_ENVIAR;
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
@@ -1249,6 +1326,7 @@ export class VentasDiaComponent implements OnInit {
       }
     }
     console.log(docDetalle);
+
     this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
       if (res.code == 200) {
         docDetalle.documento_detalle_id = res.documento_detalle_id;
@@ -1282,7 +1360,15 @@ export class VentasDiaComponent implements OnInit {
     console.log("TODO hacer (copiar)la logica de restar cantidades subproducto");
   }
 
-  scapeTecla(element) {
+  async scapeTecla(element) {
+    if (element != null && element.id == 'nombreCliente') {
+      this.crearClienteVisible = true;
+      await this.delay(100);
+      $('#confirmarCliente').val("S");
+      $('#confirmarCliente').focus();
+      $('#confirmarCliente').select();
+      return;
+    }
     this.estadoDivBotones("d-block");
     this.estadoDivProducto("d-none") // se muestra el div de producto
     this.divImprimirModal.nativeElement.classList.remove("d-block");
@@ -1293,8 +1379,151 @@ export class VentasDiaComponent implements OnInit {
 
   }
 
+  async controlTeclasCliente(event, element) {
+    if (event.keyCode == 39) { //cuando se presiona la tacla derecha 			     	
+      if (element.id == 'clientePV') {
+        this.clienteNew.nombre = element.value;
+        $('#crearClienteModal').modal('show');
+        $("#crearClienteModal").on('shown.bs.modal', () => {
+          this.nombreCliente.nativeElement.focus();
+          this.nombreCliente.nativeElement.select();
+        });
+      }
+    }
+    if (event.keyCode == 40 || event.keyCode == 13) { //cuando se presiona la tacla abajo
+      if (element.id == 'nombreCliente') {
+        $('#segundoNombreCliente').focus();
+        $('#segundoNombreCliente').select();
+        return;
+      }
+      if (element.id == 'segundoNombreCliente') {
+        $('#apellidoCliente').focus();
+        $('#apellidoCliente').select();
+        return;
+      }
+      if (element.id == 'apellidoCliente') {
+        $('#segundoApellidoCliente').focus();
+        $('#segundoApellidoCliente').select();
+        return;
+      }
+      if (element.id == 'segundoApellidoCliente') {
+        $('#tipoIdentificacion').focus();
+        $('#tipoIdentificacion').select();
+        return;
+      }
+      if (element.id == 'tipoIdentificacion') {
+        $('#documentoCliente').focus();
+        $('#documentoCliente').select();
+        return;
+      }
+      if (element.id == 'documentoCliente') {
+        let cliente = this.clientes.find(cliente => cliente.documento == element.value);
+
+        if (cliente == undefined) {
+          $('#direccionCliente').focus();
+          $('#direccionCliente').select();
+        } else {
+          alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + " " + cliente.apellidos + "\n" + "NIT: " + cliente.documento);
+          $('#documentoCliente').focus();
+          $('#documentoCliente').select();
+        }
+
+        return;
+      }
+      if (element.id == 'direccionCliente') {
+        $('#fijoCliente').focus();
+        $('#fijoCliente').select();
+        return;
+      }
+      if (element.id == 'fijoCliente') {
+        $('#celular').focus();
+        $('#celular').select();
+        return;
+      }
+      if (element.id == 'celular') {
+        $('#mailCliente').focus();
+        $('#mailCliente').select();
+        return;
+      }
+      if (element.id == 'mailCliente') {
+        $('#tipoEmpresa').focus();
+        $('#tipoEmpresa').select();
+        return;
+      }
+      if (element.id == 'tipoEmpresa') {
+        $('#retencion').focus();
+        $('#retencion').select();
+        return;
+      }
+    }
+    if (event.keyCode == 38) { //cuando se presiona la tacla arriba
+      if (element.id == 'segundoNombreCliente') {
+        $('#nombreCliente').focus();
+        $('#nombreCliente').select();
+        return;
+      }
+      if (element.id == 'apellidoCliente') {
+        $('#segundoNombreCliente').focus();
+        $('#segundoNombreCliente').select();
+        return;
+      }
+      if (element.id == 'segundoApellidoCliente') {
+        $('#apellidoCliente').focus();
+        $('#apellidoCliente').select();
+        return;
+      }
+      if (element.id == 'tipoIdentificacion') {
+        $('#segundoApellidoCliente').focus();
+        $('#segundoApellidoCliente').select();
+        return;
+      }
+      if (element.id == 'documentoCliente') {
+        $('#tipoIdentificacion').focus();
+        $('#tipoIdentificacion').select();
+        return;
+      }
+      if (element.id == 'direccionCliente') {
+        $('#documentoCliente').focus();
+        $('#documentoCliente').select();
+        return;
+      }
+      if (element.id == 'fijoCliente') {
+        $('#direccionCliente').focus();
+        $('#direccionCliente').select();
+        return;
+      }
+      if (element.id == 'celular') {
+        $('#fijoCliente').focus();
+        $('#fijoCliente').select();
+        return;
+      }
+      if (element.id == 'mailCliente') {
+        $('#celular').focus();
+        $('#celular').select();
+        return;
+      }
+      if (element.id == 'tipoEmpresa') {
+        $('#mailCliente').focus();
+        $('#mailCliente').select();
+        return;
+      }
+      if (element.id == 'retencion') {
+        $('#tipoEmpresa').focus();
+        $('#tipoEmpresa').select();
+        return;
+      }
+    }
+
+  }
+
   controlTeclas(event, element) {
-    if (event.keyCode == 39) { //cuando se presiona la tacla derecha 				
+    if (event.keyCode == 39) { //cuando se presiona la tacla derecha 			     	
+      if (element.id == 'clientePV') {
+        this.clienteNew.nombre = element.value;
+        $('#crearClienteModal').modal('show');
+        this.nombreCliente.nativeElement.focus();
+        this.nombreCliente.nativeElement.select();
+      }
       if (element.id == 'siguientePV') {
         this.anteriorPV.nativeElement.focus();
         return;
@@ -1584,6 +1813,7 @@ export class VentasDiaComponent implements OnInit {
     this.limpiar();
     this.estadoDivBotones("d-none");
     this.estadoDivProducto("d-block") // se muestra el div de producto
+    this.getproporcion();
     if (this.clienteActivo) {
       this.clientePV.nativeElement.focus();
     } else {
@@ -1698,7 +1928,10 @@ export class VentasDiaComponent implements OnInit {
           console.log("clave borrado activos ");
           this.claveBorradoActivo = true;
         }
-
+        if (this.activaciones[e].activacion_id == this.PROPORCION) {
+          console.log("proporcion activo ");
+          this.proporcionActivo = true;
+        }
       }
     });
   }
@@ -1775,7 +2008,12 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
-  
+  getproporcion() {
+    this.usuarioService.getProporcion(this.empresaId).subscribe(res => {
+      this.proporcion = res[0];
+    });
+  }
+
 
   getTiposDocumento() {
     this.documentoService.getTiposDocumento().subscribe(res => {
