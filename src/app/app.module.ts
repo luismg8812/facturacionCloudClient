@@ -35,6 +35,7 @@ import { InformeDiarioComponent } from './informe-diario/informe-diario.componen
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 import { AppConfigService } from './services/app-config.service';
 import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
+import { NgxQRCodeModule } from 'ngx-qrcode2';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -71,7 +72,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     AngularFireDatabaseModule,
     AngularFirestoreModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    NgxQRCodeModule
   ],
   providers: [AngularFireAuth, 
     LoginComponent,

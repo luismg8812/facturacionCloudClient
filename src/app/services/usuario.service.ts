@@ -9,6 +9,7 @@ import { ActivacionModel } from '../model/activacion';
 import { ParametrosModel } from '../model/parametros.model';
 import { Observable } from 'rxjs';
 import { FotoOrdenVoModel } from '../model/fotoOrdenVo.model';
+import { ProporcionModel } from '../model/proporcion.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,12 @@ export class UsuarioService {
   public usuarioByMail(mail: string) {
     return this.http.get<UsuarioModel[]>(this.server_api + '/usuario/usuarioByMail?mail=' + mail);
   }
+
+  public getProporcion(empresaId: number) {
+    return this.http.get<ProporcionModel[]>(this.server_api + '/usuario/getProporcion?empresaId=' + empresaId);
+  }
+
+  
 
   public usuarioByRol(rolId:string,empresaId:number,tipoDocumentoId:string,fechaInicial,fechaFinal) {
     return this.http.get<any>(this.server_api + '/usuario/usuarioByRol?rolId=' + rolId+ '&empresaId=' + empresaId+ '&tipoDocumentoId=' + tipoDocumentoId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
@@ -79,6 +86,10 @@ export class UsuarioService {
 
   updateUsuario(usuario: UsuarioModel, rolId: Array<number>) {
     return this.http.put<any>(this.server_api + '/usuario/updateUsuario?rolId=' + rolId, usuario);
+  }
+
+  updateProporcion(proporcion: ProporcionModel) {
+    return this.http.put<any>(this.server_api + '/usuario/updateProporcion', proporcion);
   }
 
   public getRolByUsuario(usuarioId: number) {

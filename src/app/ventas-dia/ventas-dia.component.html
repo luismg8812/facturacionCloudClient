@@ -20,10 +20,11 @@
         </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
-                (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)">
+                (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)"
+                (keyup)="controlTeclasCliente($event,clientePV)">
             <datalist id="browsers">
-                <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
-                    Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
+                <option *ngFor="let cliente of clientes" [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
+                    Cod. interno: {{cliente.cliente_id}}
                 </option>
             </datalist>
         </div>
@@ -174,7 +175,7 @@
                     (keydown.esc)="scapeTecla(clientePV)">
                 <datalist id="articulos">
                     <option *ngFor="let producto of productosAll" [value]="producto.nombre">
-                        Costo:{{producto.costo_publico}} Cantidad:{{producto.cantidad}} id:{{producto.producto_id}}
+                        Venta: {{producto.costo_publico}} Costo: {{producto.costo}} Cantidad:{{producto.cantidad}} id:{{producto.producto_id}}
                     </option>
                 </datalist>
             </div>
@@ -341,7 +342,7 @@
 
     <!-- crear cliente Modal -->
     <div class="modal fade" id="crearClienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+        data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -354,33 +355,33 @@
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             * Primer nombre
-                            <input class="form-control" id="nombreCliente" placeholder="* Primer nombre"
-                                name="nombreCliente" #nombreCliente required [(ngModel)]="clienteNew.nombre">
+                            <input class="form-control" id="nombreCliente" (keydown.esc)="scapeTecla(nombreCliente)" placeholder="* Primer nombre"
+                                name="nombreCliente" #nombreCliente required [(ngModel)]="clienteNew.nombre" (keyup)="controlTeclasCliente($event,nombreCliente)">
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             Segundo Nombre
-                            <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre"
-                                name="segundoNombreCliente" #segundoNombreCliente required
+                            <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre" (keyup)="controlTeclasCliente($event,segundoNombreCliente)"
+                                name="segundoNombreCliente" #segundoNombreCliente required (keydown.esc)="scapeTecla(nombreCliente)"
                                 [(ngModel)]="clienteNew.segundo_nombre">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             Primer Apellido
-                            <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente"
-                                name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos">
+                            <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente" (keydown.esc)="scapeTecla(nombreCliente)"
+                                name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos" (keyup)="controlTeclasCliente($event,apellidoCliente)"> 
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             Segundo Apellido
-                            <input class="form-control" id="segundoApellidoCliente" placeholder=" Segundo Apellidos"
-                                name="segundoApellidoCliente" #segundoApellidoCliente required
+                            <input class="form-control" id="segundoApellidoCliente" placeholder=" Segundo Apellidos" (keyup)="controlTeclasCliente($event,segundoApellidoCliente)"
+                                name="segundoApellidoCliente" #segundoApellidoCliente required (keydown.esc)="scapeTecla(nombreCliente)"
                                 [(ngModel)]="clienteNew.segundo_apellido">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             * Tipo Identificación
-                            <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion
+                            <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion (keyup)="controlTeclasCliente($event,tipoIdentificacion)"
                                 [(ngModel)]="clienteNew.tipo_identificacion_id" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option *ngFor="let pago of tipoIdentificacionList"
@@ -391,58 +392,57 @@
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             * Identificación
-                            <input class="form-control" id="documentoCliente" placeholder="* Documento cliente"
-                                name="documentoCliente" #documentoCliente required [(ngModel)]="clienteNew.documento">
+                            <input class="form-control" id="documentoCliente" placeholder="* Documento cliente" (keydown.esc)="scapeTecla(nombreCliente)"
+                                name="documentoCliente" #documentoCliente required [(ngModel)]="clienteNew.documento" (keyup)="controlTeclasCliente($event,documentoCliente)">
                         </div>
 
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             Dirección Cliente
-                            <input class="form-control" id="direccionCliente" placeholder="* Dirección cliente"
-                                name="direccionCliente" #direccionCliente required [(ngModel)]="clienteNew.direccion">
+                            <input class="form-control" id="direccionCliente" placeholder="* Dirección cliente" (keydown.esc)="scapeTecla(nombreCliente)"
+                                name="direccionCliente" #direccionCliente required [(ngModel)]="clienteNew.direccion" (keyup)="controlTeclasCliente($event,direccionCliente)">
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             Fijo
-                            <input class="form-control" id="fijoCliente" placeholder="Telefono fijo" name="fijoCliente"
-                                #fijoCliente required [(ngModel)]="clienteNew.fijo">
+                            <input class="form-control" id="fijoCliente" placeholder="Telefono fijo" name="fijoCliente" (keyup)="controlTeclasCliente($event,fijoCliente)"
+                                #fijoCliente required [(ngModel)]="clienteNew.fijo" (keydown.esc)="scapeTecla(nombreCliente)">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             Celular
-                            <input class="form-control" id="celular" placeholder="Telefono Celular" name="celular"
-                                #celular required [(ngModel)]="clienteNew.celular">
+                            <input class="form-control" id="celular" placeholder="Telefono Celular" name="celular" (keyup)="controlTeclasCliente($event,celular)"
+                                #celular required [(ngModel)]="clienteNew.celular" (keydown.esc)="scapeTecla(nombreCliente)">
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             * Mail
-                            <input class="form-control" id="mailCliente" placeholder="* Correo cliente"
-                                name="mailCliente" #mailCliente required [(ngModel)]="clienteNew.mail">
+                            <input class="form-control" id="mailCliente" placeholder="* Correo cliente" (keydown.esc)="scapeTecla(nombreCliente)"
+                                name="mailCliente" #mailCliente required [(ngModel)]="clienteNew.mail" (keyup)="controlTeclasCliente($event,mailCliente)">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             * Tipo Empresa
-                            <select id="tipoEmpresa" name="tipoEmpresa" #tipoEmpresa
-                                [(ngModel)]="clienteNew.fact_tipo_empresa_id" class="form-control">                 
-                                <option *ngFor="let pago of tipoEmpresaList"
-                                    [value]="pago.fact_tipo_empresa_id">
+                            <select id="tipoEmpresa" name="tipoEmpresa" #tipoEmpresa (keyup)="controlTeclasCliente($event,tipoEmpresa)"
+                                [(ngModel)]="clienteNew.fact_tipo_empresa_id" class="form-control">
+                                <option *ngFor="let pago of tipoEmpresaList" [value]="pago.fact_tipo_empresa_id">
                                     {{pago.nombre}}
                                 </option>
                             </select>
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             % de retención
-                            <input class="form-control" id="retencion" type="number" min="0" max="100"
-                                placeholder="% de retención" name="retencion" #retencion required
+                            <input class="form-control" id="retencion" type="number" min="0" max="100" (keyup)="controlTeclasCliente($event,retencion)"
+                                placeholder="% de retención" name="retencion" #retencion required (keydown.esc)="scapeTecla(nombreCliente)"
                                 [(ngModel)]="clienteNew.retencion">
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="crearClienteCancel()"
-                        data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" (click)="CrearCliente()">Crear</button>
+                <div class="modal-footer" *ngIf="crearClienteVisible">
+                    Desea Crear El cliente S/N?
+                    <input class="form-control" id="confirmarCliente"  placeholder="* Primer nombre" 
+                    name="confirmarCliente" #confirmarCliente required (keyup)="CrearCliente(confirmarCliente)" >              
                 </div>
             </div>
         </div>

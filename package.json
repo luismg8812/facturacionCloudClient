@@ -25,6 +25,7 @@
     "express": "^4.16.4",
     "firebase": "^5.9.2",
     "jspdf": "^1.5.3",
+    "ngx-qrcode2": "0.0.9",
     "pdfmake": "^0.1.64",
     "pdfmake-wrapper": "^2.0.0",
     "rxjs": "~6.3.3",

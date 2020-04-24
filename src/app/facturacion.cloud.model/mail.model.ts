@@ -1,6 +1,6 @@
 export class MailModel {
     public xml_64: string;
-    public pdf_64: string;
+    public pdf_64: any;
     public pdf_name: string;
     public xml_name: string;
     public html: string;
