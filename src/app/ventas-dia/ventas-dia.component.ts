@@ -1023,14 +1023,17 @@ export class VentasDiaComponent implements OnInit {
       if (this.document.cliente_id != 1) {
         if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA) {
           this.proporcion.contador_factura = (Number(contaFactura) + 1);
+          this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
         }
       } else {
         if ((totaldocu >= rangoA && totaldocu <= rangoB) || numero > numeroProporcion) {
           this.proporcion.contador_remision = (Number(contaRemision) + 1);
           this.document.tipo_documento_id = this.TIPO_DOCUMENTO_REMISION;
+          this.factura.nombreTipoDocumento = "FACTURA DE VENTA.";
         } else {
           this.document.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
           this.proporcion.contador_factura = (Number(contaFactura) + 1);
+          this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
         }
       }
       this.usuarioService.updateProporcion(this.proporcion).subscribe(up => { });
