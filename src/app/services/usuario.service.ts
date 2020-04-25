@@ -125,5 +125,9 @@ export class UsuarioService {
     return this.http.get<any>(this.server_api + '/usuario/getFile?nombre=' + nombre );
   }
 
+  getPrincipalImage(nombre:string){
+    return this.http.get<any>('assets/images/logoempresa.jpg');
+  }
+
 
 }

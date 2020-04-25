@@ -13,6 +13,7 @@ import { InformeDiarioVOModel } from '../model/informeDiarioVO.model';
 import { UsuarioService } from './usuario.service';
 import { DocumentoService } from './documento.service';
 import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/envioFacturacionElectronica.model';
+import { AppConfigService } from './app-config.service';
 
 
 
@@ -532,6 +533,8 @@ export class ImpresionService {
     this.doc.text("Software y factura realizada por effectivesoftware.com.co - info@effectivesoftware.com.co - 3185222474", 5, 292);
   }
 
+ 
+
   imprimirFacturaPDFExportar(factura: FacturaModel, configuracion: ConfiguracionModel) {
     let imgData = factura.empresa.url_logo;
     let tope: number = 39.0;// esta variable controla el nuero de productos por pagina en la factura
@@ -592,24 +595,133 @@ export class ImpresionService {
   }
 
   
+  
 
   imprimirFacturaPdf80(factura: FacturaModel, configuracion: ConfiguracionModel, exportar: boolean) {
+    //console.log(new Buffer(AppConfigService.image).toString('base64'));
+    this.getBase64ImageFromURL("assets/images/logoempresa.jpg").subscribe(base64data => {
+      let base64Image = 'data:image/jpg;base64,' + base64data;
+     
+    
     this.doc = new jsPDF();
-    this.doc.setFontType('normal');
-    //this.doc.setFontSize(9);
+    this.doc.setFontSize(12);
     let x=1;
-    let inicio=5;
+    let inicio=4;
     let y=2;
-    let tamaño=40;
-    let ini = this.calculosService.formatDate(this.calculosService.fechaInicial(new Date(factura.documento.fecha_registro)), true);
+    this.doc.addImage(base64Image, 'JPEG', x, y,x+68,y+32)
     this.doc.text("-------------------------------------------------", x, y);
-    y=+inicio;
-    this.doc.setFontSize(13);
-    this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre,tamaño), x, y);
+    y=y+inicio+35;
+    this.doc.setFontType('bold');
+    this.doc.text(factura.empresa.nombre, x, y);
     this.doc.setFontSize(9);
-    y=+inicio;
-    this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.slogan,tamaño), x, y);
+    y=y+inicio;
+    this.doc.setFontType('normal');
+    this.doc.text(factura.empresa.slogan, x, y);
+    y=y+inicio;
+    this.doc.text(factura.empresa.represente, x, y);
+    y=y+inicio;
+    this.doc.text("NIT. " + factura.empresa.nit, x, y);
+    y=y+inicio;
+    this.doc.text(factura.empresa.regimen, x, y);
+    y=y+inicio;
+    this.doc.text(factura.empresa.direccion+" - "+factura.empresa.barrio, x, y);
+    y=y+inicio;
+    this.doc.text(factura.empresa.cudad+ " - "+factura.empresa.departamento, x, y);
+    y=y+inicio;
+    this.doc.text("TEL: " + factura.empresa.cel + " - " + factura.empresa.telefono_fijo, x, y);
+    y=y+inicio;
+    let titulo;
+    if(factura.documento.tipo_documento_id==10){
+      titulo="FACTURA VENTA";
+    }else{
+      if(factura.documento.tipo_documento_id==9){
+        titulo="FACTURA VENTA.";
+      }else{
+        titulo="CONTIZACIÓN";
+      }
+    }
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(11);
+    this.doc.text( titulo + ": " + factura.documento.consecutivo_dian, x, y);
+    y=y+inicio;
+    this.doc.setFontType('normal');
+    this.doc.setFontSize(9);
+    this.doc.text("FECHA: "+this.calculosService.formatDate(factura.documento.fecha_registro,true), x, y);
+    y=y+inicio;
+    this.doc.text("CAJERO: "+factura.nombreUsuario, x, y);
+    y=y+inicio;
+    this.doc.text("CAJA: "+factura.documento.mac, x, y);
+    y=y+inicio;
+    this.doc.text("CLIENTE: "+factura.cliente.nombre+" "+factura.cliente.apellidos, x, y);
+    y=y+inicio;
+    this.doc.text("CC/NIT: "+factura.cliente.documento, x, y);
+    y=y+inicio;
+    this.doc.setFontSize(12);
+    this.doc.text("-------------------------------------------------", x, y);
+    y=y+inicio;
+    this.doc.setFontSize(9);
+    this.doc.text("CANT DESCRIPCION         UNI     TOTAL     IVA", x, y);
+    y=y+inicio;
+    this.doc.setFontSize(12);
+    this.doc.text("-------------------------------------------------", x, y);
+    for(let i of factura.detalle){
+      y=y+inicio;
+      this.doc.setFontSize(9);
+      this.doc.text(this.calculosService.cortarCantidades(""+i.cantidad,4), x+4, y);
+      this.doc.text(this.calculosService.cortarDescripcion(i.descripcion,32), x+11, y);
+      y=y+inicio;
+      this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(i.unitario),9), x+20, y);
+      this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(i.parcial),9), x+40, y);
+      this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat().format(i.impuesto_producto),2), x+65, y);
+    }
+    y=y+inicio;
+    this.doc.setFontSize(12);
+    this.doc.text("-------------------------------------------------", x, y);
+    this.doc.setFontSize(9);
+    y=y+inicio;
+    this.doc.text("Valor Exento: "+this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.excento),10), x, y);
+    y=y+inicio;
+    this.doc.text("Valor Gravado: "+this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.gravado),10), x, y);
+    y=y+inicio;
+    this.doc.text("Valor IVA: "+this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.iva),10), x, y);
+    y=y+inicio;
+    this.doc.setFontSize(12);
+    this.doc.text("-------------------------------------------------", x, y);
+    y=y+inicio;
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(12);
+    this.doc.text("TOTAL PAGAR: " +new Intl.NumberFormat().format(factura.documento.total), x, y);
+    y=y+inicio;
+    this.doc.setFontType('normal');
+    this.doc.text("-------------------------------------------------", x, y);
+    y=y+inicio;
+    this.doc.setFontSize(9);
+    this.doc.text("         **** FORMA DE PAGO****        ", x, y);
+    y=y+inicio;
+    //hacer un metodo para ir a traer los tipos de pago de este dococumento
+    this.doc.text("Vr. Pago con Efectivo:  "+new Intl.NumberFormat().format(factura.documento.total), x, y);
+    y=y+inicio;
+    this.doc.text("Cambio:  "+new Intl.NumberFormat().format(factura.documento.cambio), x, y);
+    y=y+inicio;
+    this.doc.setFontSize(12);
+    this.doc.text("-------------------------------------------------", x, y);
+    y=y+inicio;
+    this.doc.setFontSize(9);
+    this.doc.text("Res. "+factura.empresa.resolucion_dian+ " de Fecha: "+this.calculosService.formatDate(factura.empresa.fecha_resolucion,false), x, y);
+    y=y+inicio;
+    this.doc.text("Rango autorizado: " +factura.empresa.autorizacion_desde+ " a "+factura.empresa.autorizacion_hasta  , x, y);
+    y=y+inicio;
+    this.doc.text("Factura: " +factura.empresa.t_factura, x, y);
+    y=y+inicio;
+    this.doc.text("       *****GRACIAS POR SU COMPRA*****      ", x, y);
+    y=y+inicio;
+    this.doc.text("            Software desarrollado por:", x, y);
+    y=y+inicio;
+    this.doc.text("             effectivesoftware.com.co", x, y);
+    y=y+inicio;
+    this.doc.text("           info@effectivesoftware.com.co", x, y);
     this.doc.save(factura.titulo + ".pdf");
+  });
   }
     
 
