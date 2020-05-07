@@ -538,6 +538,16 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
+  getImprimirFisico(fileName:string){ 
+    if(localStorage.getItem("socket")=='true'){
+      this.socketService.getImprimirFisico(fileName).subscribe(res => {
+      });
+    }else{
+      console.error("no se detecta socket instalado para impresion automatica");
+    }
+    
+  }
+
 
 
   enterTecla(element) {
@@ -741,6 +751,8 @@ export class VentasDiaComponent implements OnInit {
     if (this.document.cliente_id == null) {
       //si el cliente es nulo se asigna el varios por defecto
       this.document.cliente_id = 1;
+      let cliente = this.clientes.find(cliente => cliente.cliente_id == this.document.cliente_id);
+      this.factura.cliente = cliente;
     }
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.document.impreso = 1;
@@ -894,7 +906,7 @@ export class VentasDiaComponent implements OnInit {
     }
     console.log(tipoImpresion);
     tituloDocumento = this.tituloFactura + "_" + this.document.consecutivo_dian + "_" + impresora + "_" + pantalla + "_" + numeroImpresiones + "_" + tipoImpresion;
-
+    let formato="";
     this.factura.documento = this.document;
     this.factura.detalle = this.productos
     this.factura.titulo = tituloDocumento;
@@ -903,12 +915,15 @@ export class VentasDiaComponent implements OnInit {
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
         case this.TIPO_IMPRESION_TXT80MM:
-          this.descargarArchivo(this.impresionService.imprimirFacturaTxt80(this.factura, this.configuracion), tituloDocumento + '.txt');
+          formato=".txt";
+          this.descargarArchivo(this.impresionService.imprimirFacturaTxt80(this.factura, this.configuracion), tituloDocumento + formato);
           break;
         case this.TIPO_IMPRESION_TXT50MM:
-          this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + '.txt');
+          formato=".txt";
+          this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + formato);
           break;
         case this.TIPO_IMPRESION_PDF80MM:
+          formato=".pdf";
           this.impresionService.imprimirFacturaPdf80(this.factura, this.configuracion,false);
           break;
         default:
@@ -918,6 +933,7 @@ export class VentasDiaComponent implements OnInit {
           //    enPantalla, e);
           break;
       }
+      this.getImprimirFisico(tituloDocumento+formato);
     }
   }
 

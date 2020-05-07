@@ -237,9 +237,9 @@ export class GestionOrdenComponent implements OnInit {
         documentoInvoice.documento_id=res.documento_id;
         documentoInvoice.fecha_registro=new Date();
         documentoInvoice.invoice_id=this.INVOICE_SIN_ENVIAR;
-        this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
-          if (res.code == 200) {
-            this.documentoFactura.documento_id = res.documento_id;
+        this.documentoService.saveInvoice(documentoInvoice).subscribe(res2 => {
+          if (res2.code == 200) {
+            this.documentoFactura.documento_id = res2.documento_id;
           } else {
             alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
             return;
