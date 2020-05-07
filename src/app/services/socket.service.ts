@@ -17,10 +17,15 @@ export class SocketService {
       console.log(res);
       if(res==true){
         this.iniciarsocket();
+        localStorage.setItem("socket", "true");
+      }else{
+        localStorage.setItem("socket", "false");
       }
       
     }, error=>{
-      console.log("no se detecta socket instalado");
+      localStorage.setItem("socket", "false");
+      console.error("no se detecta socket instalado");
+      
     });
         
     
@@ -32,13 +37,20 @@ export class SocketService {
     return this.http.get<any>(this.url+'/socket');
   }
 
-  public getJSON(): Observable<any> {
-    return this.http.get("./assets/config/config.json");
-}
-
   iniciarsocket(){
     this.socket = io(this.url);
     console.log("socket io");
+  }
+
+  
+  public getImprimirFisico(filename: string) {
+    return Observable.create((observer) => {
+      this.socket.emit('printer', filename);
+      try {
+      } catch (error) {
+        alert("Existe un problema con la impresion: "+error.error);
+      } 
+    });
   }
 
   public getPesoGramera(configuracion: ConfiguracionModel) {
