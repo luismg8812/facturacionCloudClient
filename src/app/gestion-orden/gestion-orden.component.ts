@@ -30,6 +30,8 @@ import { EmpleadoModel } from '../model/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
 import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
+import { CierreService } from '../services/cierre.service';
+import { InformeDiarioModel } from '../model/informeDiario.model';
 
 
 declare var jquery: any;
@@ -98,6 +100,7 @@ export class GestionOrdenComponent implements OnInit {
   public documentoFactura: DocumentoModel = new DocumentoModel();
   public tipoPagosAll: Array<TipoPagoModel>;
   public tituloFactura: string = "";
+  public informeDiario: InformeDiarioModel;
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -126,6 +129,7 @@ export class GestionOrdenComponent implements OnInit {
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
     public marcasService: MarcasService,
+    public cierreService: CierreService,
     public documentoDetalleService: DocumentoDetalleService,
     public afStorage: AngularFireStorage,
     public calculosService: CalculosService,
@@ -658,11 +662,44 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoFactura.impresora = impresora;
    if( this.documentoFactura.tipo_documento_id==this.TIPO_DOCUMENTO_FACTURA){
     this.actualizarOrdenes();
-    //this.calcularInfoDiario();
+    this.calcularInfoDiario(false);
     this.asignarTipoPago();
   }
     this.asignarConsecutivo(numImpresiones, tipoImpresion);
     $('#imprimirModalFactura').modal('hide');
+  }
+
+  calcularInfoDiario(anulado: boolean) {
+    console.log("entra a calcular info diario");
+    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(new Date(), false), this.calculosService.formatDate(new Date(), false)).subscribe(res => {
+
+      if (res.length == 0) {
+        this.informeDiario = new InformeDiarioModel();
+      } else {
+        this.informeDiario = res[0];
+        console.log(this.informeDiario);
+      }
+      this.informeDiario = this.calculosService.calcularInfoDiario(this.documentoFactura, this.informeDiario, anulado);
+      this.informeDiario.fecha_ingreso = new Date();
+      this.informeDiario.fecha_informe = this.calculosService.formatDate(new Date(), false);
+      if (this.informeDiario.informe_diario_id == null) {
+        this.informeDiario.empresa_id = this.empresaId;
+        console.log(this.informeDiario.fecha_ingreso);
+        this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando informe diario");
+            return;
+          }
+        });
+      } else {
+        this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando informe diario");
+            return;
+          }
+        });
+      }
+    });
   }
 
   actualizarOrdenes() {

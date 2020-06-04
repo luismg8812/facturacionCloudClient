@@ -424,13 +424,23 @@ export class VentasDiaComponent implements OnInit {
   }
 
   empleadoSelectFunt(element) {
-    this.empleadoSelect = element.value;
+   
     if (this.codigoBarrasActivo) {
       this.CodigoBarrasPV.nativeElement.classList.add("d-block");
       this.CodigoBarrasPV.nativeElement.focus();
     } else {
       this.articuloPV.nativeElement.focus();
     }
+    let empleado = this.empleados.find(empleado => empleado.nombre  == element.value);
+
+      if (empleado == undefined) {
+       // return;
+      } else {
+        console.log(empleado);
+        this.empleadoSelect = element.value;
+        this.document.empleado_id = empleado.empleado_id;
+        console.log(empleado.nombre+" "+empleado.apellido );
+      }
   }
 
   codigoBarrasSelect(element) {
