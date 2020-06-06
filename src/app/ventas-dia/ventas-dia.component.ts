@@ -750,6 +750,10 @@ export class VentasDiaComponent implements OnInit {
       alert("El documento esta corructo, por favor vuelva a crearlo");
       return;
     }
+    $('#imprimirModal').modal('hide');
+    //$("#imprimirModal").on('shown.bs.modal', () => {
+    
+    //});
     this.calcularProporcion();
     console.log(this.configuracion);
     let numImpresiones = this.configuracion.numero_impresion;
@@ -1398,6 +1402,18 @@ export class VentasDiaComponent implements OnInit {
       $('#confirmarCliente').select();
       return;
     }
+    if (element != null && (element.id == 'descuentoPV'||
+    element.id == 'impresoraPV' ||
+    element.id == 'tipoPagoPV' ||
+    element.id == 'efectovoPV' ||
+    element.id == 'enPantallaPV' ||
+    element.id == 'continuaImpresionPV'
+    )) {
+      $('#imprimirModal').modal('hide');
+      this.siguientePV.nativeElement.focus();
+      return;
+    }
+    
     this.estadoDivBotones("d-block");
     this.estadoDivProducto("d-none") // se muestra el div de producto
     this.divImprimirModal.nativeElement.classList.remove("d-block");
@@ -1868,6 +1884,9 @@ export class VentasDiaComponent implements OnInit {
       alert("debe crear primero una factura");
       return;
     }
+
+    $('#imprimirModal').modal('show');
+  
     this.divImprimirModal.nativeElement.classList.remove("d-none");
     this.divImprimirModal.nativeElement.classList.add("d-block");
     let contador = 0;
@@ -1897,20 +1916,23 @@ export class VentasDiaComponent implements OnInit {
       this.valorTipoPagoPV.nativeElement.classList.remove("d-none");
       this.valorTipoPagoPV.nativeElement.classList.add("d-block");
     }
-
-    if (this.descuentosActivo) {
-      this.descuentoPV.nativeElement.focus();
-    } else {
-      if (this.multipleImpresoraActivo) {
-        this.impresoraPV.nativeElement.focus();
+    $("#imprimirModal").on('shown.bs.modal', () => {
+      //alert("entra");
+      if (this.descuentosActivo) {
+        this.descuentoPV.nativeElement.focus();
       } else {
-        if (this.TipoPagosActivo) {
-          this.tipoPagoPV.nativeElement.focus();
+        if (this.multipleImpresoraActivo) {
+          this.impresoraPV.nativeElement.focus();
         } else {
-          this.efectovoPV.nativeElement.focus();
+          if (this.TipoPagosActivo) {
+            this.tipoPagoPV.nativeElement.focus();
+          } else {
+            this.efectovoPV.nativeElement.focus();
+          }
         }
       }
-    }
+    });
+   
   }
 
   getActivaciones(user: number) {

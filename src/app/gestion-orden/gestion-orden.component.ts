@@ -237,10 +237,10 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoService.saveDocumento(this.documentoFactura).subscribe(res => {
       if (res.code == 200) {
         this.documentoFactura.documento_id = res.documento_id;
-        let documentoInvoice:DocumentoInvoiceModel= new DocumentoInvoiceModel()
-        documentoInvoice.documento_id=res.documento_id;
-        documentoInvoice.fecha_registro=new Date();
-        documentoInvoice.invoice_id=this.INVOICE_SIN_ENVIAR;
+        let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
+        documentoInvoice.documento_id = res.documento_id;
+        documentoInvoice.fecha_registro = new Date();
+        documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
         this.documentoService.saveInvoice(documentoInvoice).subscribe(res2 => {
           if (res2.code == 200) {
             //this.documentoFactura.documento_id = res2.documento_id;
@@ -401,7 +401,7 @@ export class GestionOrdenComponent implements OnInit {
   teclaAnteriorSiguiente(apcion: string) {
     if (this.ordenesList.length == 0) {
       let tipoDocumentoId: Array<number> = [this.TIPO_DOCUMENTO_ORDEN_TRABAJO];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '','').subscribe(res => {
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '', '').subscribe(res => {
         this.ordenesList = res;
         console.log("lista de docuemntos cargados: " + this.ordenesList.length);
         if (this.ordenesList.length == 0) {
@@ -432,7 +432,7 @@ export class GestionOrdenComponent implements OnInit {
   teclaAnteriorSiguienteFactura(apcion: string) {
     if (this.facturasList.length == 0) {
       let tipoDocumentoId: Array<number> = [this.TIPO_DOCUMENTO_FACTURA];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '','').subscribe(res => {
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), "", '', '').subscribe(res => {
         this.facturasList = res;
         console.log("lista de facturas cargados: " + this.facturasList.length);
         if (this.facturasList.length == 0) {
@@ -576,7 +576,7 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
-    if(this.impresoraEmpresa.length==0){
+    if (this.impresoraEmpresa.length == 0) {
       alert("No existen impresoras configuradas para la empresa");
       return;
     }
@@ -660,11 +660,11 @@ export class GestionOrdenComponent implements OnInit {
       }
     }
     this.documentoFactura.impresora = impresora;
-   if( this.documentoFactura.tipo_documento_id==this.TIPO_DOCUMENTO_FACTURA){
-    this.actualizarOrdenes();
-    this.calcularInfoDiario(false);
-    this.asignarTipoPago();
-  }
+    if (this.documentoFactura.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA) {
+      this.actualizarOrdenes();
+      this.calcularInfoDiario(false);
+      this.asignarTipoPago();
+    }
     this.asignarConsecutivo(numImpresiones, tipoImpresion);
     $('#imprimirModalFactura').modal('hide');
   }
@@ -725,16 +725,16 @@ export class GestionOrdenComponent implements OnInit {
       case 9:
         this.tituloFactura = "FACTURA DE VENTA.";
         break;
-        case 10:
+      case 10:
         this.tituloFactura = "FACTURA DE VENTA";
         break;
-        case 4:
-          this.tituloFactura = "No. DE COTIZACIÓN";
-          break;
+      case 4:
+        this.tituloFactura = "No. DE COTIZACIÓN";
+        break;
       default:
         break;
     }
-    
+
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       this.imprimirFactura(1, res[0], tipoImpresion);
     });
@@ -857,7 +857,7 @@ export class GestionOrdenComponent implements OnInit {
         //  this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
         //  break;
         case this.TIPO_IMPRESION_PDFCARTA:
-          this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion,false);
+          this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
           break;
 
         default:
@@ -951,7 +951,7 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  buscarFacturas(placa, clien, fechaInicial, fechaFinal,tipoDocu) {
+  buscarFacturas(placa, clien, fechaInicial, fechaFinal, tipoDocu) {
     let idCliente = "";
     let tipoDocumentoId = tipoDocu.value; // se buscan facturas
     if (clien.value != "") {
@@ -984,10 +984,10 @@ export class GestionOrdenComponent implements OnInit {
     this.clientePV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
     this.observacion.nativeElement.value = "";
-    if(this.empleadoOrdenActivo){
+    if (this.empleadoOrdenActivo) {
       this.empleadoPV.nativeElement.value = "";
     }
-    
+
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
     }
@@ -1064,6 +1064,29 @@ export class GestionOrdenComponent implements OnInit {
 
 
 
+
+  calcularIvaAll(impuesto) {
+    for (let detalle of this.itemsFactura) {
+      const index = this.itemsFactura.indexOf(detalle, 0);
+      if (index > -1) {
+        detalle.impuesto_producto = impuesto.value;
+        this.itemsFactura.splice(index, 1, detalle);
+      }
+      this.documentoDetalleService.updateDocumentoDetalle(detalle).subscribe(res => {
+        if (res.code != 200) {
+          alert("Error agregando repuesto: " + res.error);
+        } else {
+          this.documentoFactura = this.calculosService.calcularExcento(this.documentoFactura, this.itemsFactura);
+          this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+            if (res.code != 200) {
+              alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+          });
+        }
+      });
+    }
+  }
 
   calcularIva(detalle: DocumentoDetalleModel, impuesto) {
     const index = this.itemsFactura.indexOf(detalle, 0);
@@ -1207,7 +1230,7 @@ export class GestionOrdenComponent implements OnInit {
         this.linea.nativeElement.value = "Seleccione Linea";
       }
       this.clientePV.nativeElement.value = nombre;
-      if(this.empleadoOrdenActivo){
+      if (this.empleadoOrdenActivo) {
         this.empleadoPV.nativeElement.value = nombreEmpleado;
       }
       this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
