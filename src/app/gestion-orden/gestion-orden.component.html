@@ -59,8 +59,8 @@
           <b>Fecha entrega:</b> {{documento.fecha_entrega | date: 'dd/MM/yyyy, h:mm a'}}
         </div>
         <div class="form-group col-md-4 col-sm-2">
-          <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1" class="form-control" id="clientePV"
-            (change)="clienteSelectFun(clientePV)">
+          <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1"
+            class="form-control" id="clientePV" (change)="clienteSelectFun(clientePV)">
           <datalist id="browsers">
             <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
               Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
@@ -68,8 +68,8 @@
           </datalist>
         </div>
         <div class="form-group col-md-4 col-sm-2 upper">
-          <input class="form-control upper" id="placa" placeholder="* Placa" [disabled]="documento.impreso==1" name="placa" #placa required
-            (blur)="agregarPlaca(placa)">
+          <input class="form-control upper" id="placa" placeholder="* Placa" [disabled]="documento.impreso==1"
+            name="placa" #placa required (blur)="agregarPlaca(placa)">
         </div>
       </div>
 
@@ -83,15 +83,16 @@
           </datalist>
         </div>
         <div class="form-group col-md-4 col-sm-2">
-          <input list="modelos" name="modelo" #modelo placeholder="modelo"  [disabled]="documento.impreso==1" class="form-control" id="modelo"
-            (change)="guardarModelo(modelo)">
+          <input list="modelos" name="modelo" #modelo placeholder="modelo" [disabled]="documento.impreso==1"
+            class="form-control" id="modelo" (change)="guardarModelo(modelo)">
           <datalist id="modelos">
             <option *ngFor="let model of modeloList" [value]="model.nombre">
             </option>
           </datalist>
         </div>
         <div class="form-group col-md-4 col-sm-2">
-          <select class="form-control" id="linea" placeholder="Marca" [disabled]="documento.impreso==1" #linea (change)="asignarLinea(linea)">
+          <select class="form-control" id="linea" placeholder="Marca" [disabled]="documento.impreso==1" #linea
+            (change)="asignarLinea(linea)">
             <option>Seleccione Linea</option>
             <option>Automovil</option>
             <option>Camioneta - Campero</option>
@@ -102,11 +103,11 @@
 
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-1">
-          <textarea class="form-control mb-2" id="descripcionCliente" [disabled]="documento.impreso==1" #descripcionCliente
-            placeholder="Descripción cliente" required
+          <textarea class="form-control mb-2" id="descripcionCliente" [disabled]="documento.impreso==1"
+            #descripcionCliente placeholder="Descripción cliente" required
             (blur)="agregarDescripcionCliente(descripcionCliente)"></textarea>
-          <textarea class="form-control " (blur)="agregarObservacion(observacion)" [disabled]="documento.impreso==1" id="observacion" #observacion
-            placeholder="Observación" required></textarea>
+          <textarea class="form-control " (blur)="agregarObservacion(observacion)" [disabled]="documento.impreso==1"
+            id="observacion" #observacion placeholder="Observación" required></textarea>
         </div>
         <div class="form-group col-md-6 col-sm-1">
           <div class="container" *ngIf="downloadURL | async; let url">
@@ -119,19 +120,20 @@
       </div>
       <div class="form-row">
         <div class="form-group col-md-4 col-sm-2" *ngIf="empleadoOrdenActivo">
-          <input list="browsersEmpreados" name="empleadoPV" #empleadoPV [disabled]="documento.impreso==1" placeholder="Empleado" class="form-control" id="empleadoPV"
-            (change)="empleadoSelectFun(empleadoPV)">
+          <input list="browsersEmpreados" name="empleadoPV" #empleadoPV [disabled]="documento.impreso==1"
+            placeholder="Empleado" class="form-control" id="empleadoPV" (change)="empleadoSelectFun(empleadoPV)">
           <datalist id="browsersEmpreados">
             <option *ngFor="let empleado of empleados" [value]="empleado.nombre">
-               {{empleado.apellido}} 
+              {{empleado.apellido}}
             </option>
           </datalist>
         </div>
-      </div>         
+      </div>
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-1">
           <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary" data-toggle="modal" [disabled]="documento.impreso==1" data-target="#exampleModal">
+          <button type="button" class="btn btn-primary" data-toggle="modal" [disabled]="documento.impreso==1"
+            data-target="#exampleModal">
             Agregar repuesto
           </button>
         </div>
@@ -156,13 +158,13 @@
         <tbody>
           <tr *ngFor="let ordenes of detallesList">
             <th scope="row">
-              <button type="button" (click)="editarItem(ordenes)" [disabled]="documento.impreso==1" class="btn btn-secondary btn-sm" data-toggle="modal"
-                data-target="#exampleModal">
+              <button type="button" (click)="editarItem(ordenes)" [disabled]="documento.impreso==1"
+                class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal">
                 Editar
               </button>
               <!-- Button trigger modal -->
-              <button type="button" (click)="eliminarItem(ordenes)" [disabled]="documento.impreso==1" class="btn btn-secondary btn-sm" data-toggle="modal"
-                data-target="#eliminarModal">
+              <button type="button" (click)="eliminarItem(ordenes)" [disabled]="documento.impreso==1"
+                class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#eliminarModal">
                 Eliminar
               </button>
             </th>
@@ -306,7 +308,7 @@
               </div>
               <button type="button" class="btn btn-primary"
                 (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar</button>
-                <button type="button" class="btn btn-primary ml-2"
+              <button type="button" class="btn btn-primary ml-2"
                 (click)="buscarOrdenesHoy(placaBuscar,clienteBuscarPV)">Buscar de Hoy</button>
               <br />
               <table class="table table-hover">
@@ -374,18 +376,15 @@
               </button>
             </div>
             <div class="modal-body">
+            
               <div class="form-row">
-                <div class="form-group col-md-12 col-sm-10" *ngFor="let imp of impresoraEmpresa">
-                  {{imp.numero_impresora}}. {{imp.nombre_impresora}}
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 col-sm-10">
+                <div class="form-group col-md-12 col-sm-12">
                   Digite el número de impresora:
                 </div>
-                <div class="form-group col-md-6 col-sm-2">
-                  <input class="form-control" id="impresoraOrden" type="number"
-                    placeholder="Digite el número de impresora:" name="impresoraOrden" #impresoraOrden required>
+                <div class="form-group col-md-12 col-sm-12">
+                  <select class="form-control" #impresoraOrden id="impresoraOrden">
+                    <option *ngFor="let imp of impresoraEmpresa" value="{{imp.numero_impresora}}">{{imp.nombre_impresora}}</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -417,38 +416,40 @@
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
                   Segundo Nombre
-                  <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre" name="segundoNombreCliente"
-                    #segundoNombreCliente required [(ngModel)]="clienteNew.segundo_nombre">
-                   </div>
+                  <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre"
+                    name="segundoNombreCliente" #segundoNombreCliente required [(ngModel)]="clienteNew.segundo_nombre">
+                </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
                   Primer Apellido
                   <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente"
-                  name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos">
+                    name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos">
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
                   Segundo Apellido
                   <input class="form-control" id="segundoApellidoCliente" placeholder=" Segundo Apellidos"
-                  name="segundoApellidoCliente" #segundoApellidoCliente required [(ngModel)]="clienteNew.segundo_apellido">
+                    name="segundoApellidoCliente" #segundoApellidoCliente required
+                    [(ngModel)]="clienteNew.segundo_apellido">
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
                   Tipo Identificación
-                  <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion placeholder="" [(ngModel)]="clienteNew.tipo_identificacion_id"  class="form-control" >
-                  <option value="">Seleccione</option>
-                  <option *ngFor="let pago of tipoIdentificacionList" [value]="pago.tipo_identificacion_id">
-                    {{pago.nombre_corto}} {{pago.nombre}}
-                  </option>
-                </select>
+                  <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion placeholder=""
+                    [(ngModel)]="clienteNew.tipo_identificacion_id" class="form-control">
+                    <option value="">Seleccione</option>
+                    <option *ngFor="let pago of tipoIdentificacionList" [value]="pago.tipo_identificacion_id">
+                      {{pago.nombre_corto}} {{pago.nombre}}
+                    </option>
+                  </select>
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
-                 Identificación
+                  Identificación
                   <input class="form-control" id="documentoCliente" placeholder="* Documento cliente"
                     name="documentoCliente" #documentoCliente required [(ngModel)]="clienteNew.documento">
                 </div>
-              
+
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
@@ -501,14 +502,16 @@
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#buscarFacturaModal">
             Buscar
           </button>
-          <button type="button" class="btn btn-primary ml-2" data-toggle="modal" [disabled]="documentoFactura.impreso==1" data-target="#imprimirModalFactura">
+          <button type="button" class="btn btn-primary ml-2" data-toggle="modal"
+            [disabled]="documentoFactura.impreso==1" data-target="#imprimirModalFactura">
             Imprimir
           </button>
         </div>
         <div class="form-group col-md-5 col-sm-12 ">
           <button type="button" class="btn btn-primary " id="Nueva" (click)="nuevaFactura()">Nueva Factura</button>
-          <button type="button" class="btn btn-primary ml-2"  (click)="nuvaCotizacion()" > Nueva Cotización </button>
-          <button type="button" class="btn btn-primary ml-2"  (click)="imprimirCopia()" [disabled]="documentoFactura.impreso!=1 ">
+          <button type="button" class="btn btn-primary ml-2" (click)="nuvaCotizacion()"> Nueva Cotización </button>
+          <button type="button" class="btn btn-primary ml-2" (click)="imprimirCopia()"
+            [disabled]="documentoFactura.impreso!=1 ">
             Imprimir Copia
           </button>
         </div>
@@ -517,8 +520,9 @@
         <div class="form-group col-md-9 col-sm-12 ">
           <div class="form-row">
             <div class="form-group col-md-4 col-sm-2">
-              <input list="browsers" name="clienteFactura" [disabled]="documentoFactura.impreso==1" #clienteFactura placeholder="Cliente" class="form-control"
-                id="clienteFactura" (change)="clienteSelectFactura(clienteFactura)">
+              <input list="browsers" name="clienteFactura" [disabled]="documentoFactura.impreso==1" #clienteFactura
+                placeholder="Cliente" class="form-control" id="clienteFactura"
+                (change)="clienteSelectFactura(clienteFactura)">
             </div>
             <div class="form-group col-md-4 col-sm-2">
               <b>Fecha Documento:</b> {{documentoFactura.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
@@ -534,14 +538,15 @@
           </div>
           <div class="form-row">
             <div class="form-group col-md-4 col-sm-2">
-              <button type="button" class="btn btn-primary mb-2" [disabled]="documentoFactura.impreso==1" data-toggle="modal" data-target="#agregarOrdenModal">
+              <button type="button" class="btn btn-primary mb-2" [disabled]="documentoFactura.impreso==1"
+                data-toggle="modal" data-target="#agregarOrdenModal">
                 Agregar Ordenes de trabajo
               </button>
             </div>
             <div class="form-group col-md-4 col-sm-2" *ngIf="documentoFactura.impreso==1">
               <h4 class="factImpresa">FACTURA IMPRESA</h4>
             </div>
-           
+
 
           </div>
           Ordenes de trabajo
@@ -559,7 +564,8 @@
               <tr *ngFor="let ordenes of ordenesBuscarListFacturaSelect">
                 <th scope="row">
                   <!-- Button trigger modal -->
-                  <button type="button" (click)="eliminarOrden(ordenes)" [disabled]="documentoFactura.impreso==1" class="btn btn-secondary btn-sm">
+                  <button type="button" (click)="eliminarOrden(ordenes)" [disabled]="documentoFactura.impreso==1"
+                    class="btn btn-secondary btn-sm">
                     Eliminar
                   </button>
                 </th>
@@ -580,7 +586,16 @@
                 <th scope="col">Orden</th>
                 <th scope="col">Cantidad</th>
                 <th scope="col">Unitario</th>
-                <th scope="col">IVA %</th>
+                <th scope="col"> % Impuesto  <select class="form-control" value="0"
+                    [disabled]="documentoFactura.impreso==1" (change)="calcularIvaAll(impuestoAll) " #impuestoAll>
+                    <option>0</option>
+                    <option>0.4</option> 
+                    <option>4</option>
+                    <option>5</option>
+                    <option>8</option>
+                    <option>16</option>
+                    <option>19</option>
+                  </select></th>
                 <th scope="col">Parcial</th>
               </tr>
             </thead>
@@ -591,8 +606,8 @@
                 <td>{{ordenes.documento_id}}</td>
                 <td>{{ordenes.cantidad}}</td>
                 <td>${{formatearNumber(ordenes.unitario)}}</td>
-                <td> <select class="form-control" value="{{ordenes.impuesto_producto}}" [disabled]="documentoFactura.impreso==1"
-                    (change)="calcularIva(ordenes, impuesto) " #impuesto>
+                <td> <select class="form-control" value="{{ordenes.impuesto_producto}}"
+                    [disabled]="documentoFactura.impreso==1" (change)="calcularIva(ordenes, impuesto) " #impuesto>
                     <option>0</option>
                     <option>0.4</option>
                     <option>4</option>
@@ -606,8 +621,8 @@
             </tbody>
           </table>
           <div class="form-row">
-            <textarea class="form-control mb-2" id="observacionFac" [disabled]="documentoFactura.impreso==1" #observacionFact placeholder="Observación" required
-              (blur)="observacionFactura()"></textarea>
+            <textarea class="form-control mb-2" id="observacionFac" [disabled]="documentoFactura.impreso==1"
+              #observacionFact placeholder="Observación" required (blur)="observacionFactura()"></textarea>
           </div>
         </div>
         <div class="form-group col-md-3 col-sm-12 ">
@@ -728,12 +743,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <div class="form-row">
-                <div class="form-group col-md-12 col-sm-10" *ngFor="let imp of impresoraEmpresa">
-                  {{imp.numero_impresora}}. {{imp.nombre_impresora}}
-                </div>
-              </div>
-
+           
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
                   Tipo de pago:
@@ -747,12 +757,13 @@
               </div>
 
               <div class="form-row">
-                <div class="form-group col-md-6 col-sm-10">
-                  Digite el número de impresora:
+                <div class="form-group col-md-12 col-sm-12">
+                  seleccione el tipo de impresión:
                 </div>
-                <div class="form-group col-md-6 col-sm-2">
-                  <input class="form-control" id="impresora" type="number" placeholder="Digite el número de impresora:"
-                    name="impresora" #impresora required>
+                <div class="form-group col-md-12 col-sm-12">
+                  <select class="form-control" #impresora id="impresora">
+                    <option *ngFor="let imp of impresoraEmpresa" value="{{imp.numero_impresora}}">{{imp.nombre_impresora}}</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -800,9 +811,9 @@
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2">
                   <select id="tipoDocu" name="tipoDocu" #tipoDocu placeholder="" class="form-control">
-                <option value="10">Factura de Venta</option>
-                <option value="4">Cotización</option>
-              </select>
+                    <option value="10">Factura de Venta</option>
+                    <option value="4">Cotización</option>
+                  </select>
                 </div>
               </div>
               <button type="button" class="btn btn-primary"
@@ -827,9 +838,9 @@
                         Ver
                       </button>
                       <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
-                      (click)="imprimirCopia(ordenes)">
-                      Imprimir Copia
-                    </button>
+                        (click)="imprimirCopia(ordenes)">
+                        Imprimir Copia
+                      </button>
                     </th>
                     <td>{{ordenes.documento_id}}</td>
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>

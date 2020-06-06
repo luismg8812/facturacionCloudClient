@@ -23,7 +23,8 @@
                 (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)"
                 (keyup)="controlTeclasCliente($event,clientePV)">
             <datalist id="browsers">
-                <option *ngFor="let cliente of clientes" [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
+                <option *ngFor="let cliente of clientes"
+                    [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
                     Cod. interno: {{cliente.cliente_id}}
                 </option>
             </datalist>
@@ -175,7 +176,8 @@
                     (keydown.esc)="scapeTecla(clientePV)">
                 <datalist id="articulos">
                     <option *ngFor="let producto of productosAll" [value]="producto.nombre">
-                        Venta: {{producto.costo_publico}} Costo: {{producto.costo}} Cantidad:{{producto.cantidad}} id:{{producto.producto_id}}
+                        Venta: {{producto.costo_publico}} Costo: {{producto.costo}} Cantidad:{{producto.cantidad}}
+                        id:{{producto.producto_id}}
                     </option>
                 </datalist>
             </div>
@@ -198,58 +200,7 @@
         </div>
         <div class="form-row">
             <div class="form-group col-sm-6 col-md-12 d-none" id="divImprimirModal" #divImprimirModal>
-                <div class="row ">
-
-                    <div class="col col-ms-2 ">
-                        <h6 #descuentoLavel name="descuentoLavel" id="descuentoLavel" class="d-none">Descuento: </h6>
-                        <input name="descuentoPV" #descuentoPV placeholder="Descuento" class="form-control d-none"
-                            id="descuentoPV" (keydown.enter)="enterTecla(descuentoPV)"
-                            (keydown.esc)="scapeTecla(descuentoPV)">
-                    </div>
-                    <div class="col col-ms-1 ">
-                        <h6 class="d-none" #impresoraLavel name="impresoraLavel" id="impresoraLavel">Impresora: </h6>
-                        <input name="impresoraPV" #impresoraPV placeholder="Impresora" class="form-control d-none"
-                            id="impresoraPV" (keydown.enter)="enterTecla(impresoraPV)"
-                            (keydown.esc)="scapeTecla(impresoraPV)">
-                    </div>
-
-                    <div class="col col-ms-1">
-                        <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago: </h6>
-                        <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV" data-toggle="tooltip"
-                            title="" (keydown.enter)="enterTecla(tipoPagoPV)" (keydown.esc)="scapeTecla(tipoPagoPV)">
-                    </div>
-                    <div class="col col-ms-1">
-                        <h6 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">Valor
-                            pago: </h6>
-                        <input name="valorTipoPagoPV" #valorTipoPagoPV placeholder="Valor tipo Pago"
-                            class="form-control" id="valorTipoPagoPV" (keydown.enter)="enterTecla(valorTipoPagoPV)"
-                            (keydown.esc)="scapeTecla(valorTipoPagoPV)">
-                    </div>
-                    <div class="col col-ms-1">
-                        <h6>Efectivo: </h6>
-                        <input name="efectovoPV" #efectovoPV placeholder="Efectivo" class="form-control" id="efectovoPV"
-                            (keydown.enter)="enterTecla(efectovoPV)" (keydown.esc)="scapeTecla(efectovoPV)">
-                    </div>
-                    <div class="col col-ms-1">
-                        <h5>Cambio:</h5>
-                        <h4 style="color:red">{{document.cambio}}</h4>
-                    </div>
-                    <div class="col col-ms-1">
-                        <h6>Imprimir en pantalla?: </h6>
-                        <input name="enPantallaPV" #enPantallaPV placeholder="S/N?" class="form-control"
-                            id="enPantallaPV" (keydown.enter)="enterTecla(enPantallaPV)"
-                            (keydown.esc)="scapeTecla(enPantallaPV)">
-                    </div>
-
-                    <div class="col col-ms-2">
-                        <h6>Continúa Impresión? </h6>
-                        <input name="continuaImpresionPV" #continuaImpresionPV placeholder="S/N?" class="form-control"
-                            id="continuaImpresionPV" (keydown.enter)="enterTecla(continuaImpresionPV)"
-                            (keydown.esc)="scapeTecla(continuaImpresionPV)"
-                            (keydown.S)="enterTecla(continuaImpresionPV)" (keydown.N)="cancelarImpresion()">
-                    </div>
-
-                </div>
+              
             </div>
         </div>
         <div class="form-row col-md-12 ">
@@ -340,6 +291,93 @@
         </div>
     </div>
 
+    <!-- imprimir Modal -->
+    <div class="modal fade" id="imprimirModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header"> 
+                    <h5 class="modal-title" id="exampleModalLabel">Imprimir documento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row ">
+                        <div class="col col-ms-12 ">
+                            <h6 #descuentoLavel name="descuentoLavel" id="descuentoLavel" class="d-none">Descuento:
+                            </h6>
+                            <input name="descuentoPV" #descuentoPV placeholder="Descuento" class="form-control d-none"
+                                id="descuentoPV" (keydown.enter)="enterTecla(descuentoPV)"
+                                (keydown.esc)="scapeTecla(descuentoPV)">
+                        </div>
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12 ">
+                            <h6 class="d-none" #impresoraLavel name="impresoraLavel" id="impresoraLavel">Impresora:
+                            </h6>
+                            <input name="impresoraPV" #impresoraPV placeholder="Impresora" class="form-control d-none"
+                                id="impresoraPV" (keydown.enter)="enterTecla(impresoraPV)"
+                                (keydown.esc)="scapeTecla(impresoraPV)">
+                        </div>
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12">
+                            <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago: </h6>
+                            <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV" data-toggle="tooltip"
+                                title="" (keydown.enter)="enterTecla(tipoPagoPV)" (keydown.esc)="scapeTecla(tipoPagoPV)">
+                        </div>
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12">
+                            <h6 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">Valor
+                                pago: </h6>
+                            <input name="valorTipoPagoPV" #valorTipoPagoPV placeholder="Valor tipo Pago"
+                                class="form-control" id="valorTipoPagoPV" (keydown.enter)="enterTecla(valorTipoPagoPV)"
+                                (keydown.esc)="scapeTecla(valorTipoPagoPV)">
+                        </div>
+                      
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12">
+                            <h6>Efectivo: </h6>
+                            <input name="efectovoPV" #efectovoPV placeholder="Efectivo" class="form-control" id="efectovoPV"
+                                (keydown.enter)="enterTecla(efectovoPV)" (keydown.esc)="scapeTecla(efectovoPV)">
+                        </div>
+                     
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-3">
+                            <h5>Cambio:</h5>
+                        </div>
+                            <div class="col col-ms-9">
+                            <h4 style="color:red">{{document.cambio}}</h4>
+                        </div>
+                       
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12">
+                            <h6>Imprimir en pantalla?: </h6>
+                            <input name="enPantallaPV" #enPantallaPV placeholder="S/N?" class="form-control"
+                                id="enPantallaPV" (keydown.enter)="enterTecla(enPantallaPV)"
+                                (keydown.esc)="scapeTecla(enPantallaPV)">
+                        </div>
+    
+                      
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12">
+                            <h6>Continúa Impresión? </h6>
+                            <input name="continuaImpresionPV" #continuaImpresionPV placeholder="S/N?" class="form-control"
+                                id="continuaImpresionPV" (keydown.enter)="enterTecla(continuaImpresionPV)"
+                                (keydown.esc)="scapeTecla(continuaImpresionPV)"
+                                (keydown.S)="enterTecla(continuaImpresionPV)" (keydown.N)="cancelarImpresion()">
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
     <!-- crear cliente Modal -->
     <div class="modal fade" id="crearClienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         data-backdrop="static" data-keyboard="false">
@@ -355,33 +393,39 @@
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             * Primer nombre
-                            <input class="form-control" id="nombreCliente" (keydown.esc)="scapeTecla(nombreCliente)" placeholder="* Primer nombre"
-                                name="nombreCliente" #nombreCliente required [(ngModel)]="clienteNew.nombre" (keyup)="controlTeclasCliente($event,nombreCliente)">
+                            <input class="form-control" id="nombreCliente" (keydown.esc)="scapeTecla(nombreCliente)"
+                                placeholder="* Primer nombre" name="nombreCliente" #nombreCliente required
+                                [(ngModel)]="clienteNew.nombre" (keyup)="controlTeclasCliente($event,nombreCliente)">
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             Segundo Nombre
-                            <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre" (keyup)="controlTeclasCliente($event,segundoNombreCliente)"
-                                name="segundoNombreCliente" #segundoNombreCliente required (keydown.esc)="scapeTecla(nombreCliente)"
+                            <input class="form-control" id="segundoNombreCliente" placeholder="Segundo Nombre"
+                                (keyup)="controlTeclasCliente($event,segundoNombreCliente)" name="segundoNombreCliente"
+                                #segundoNombreCliente required (keydown.esc)="scapeTecla(nombreCliente)"
                                 [(ngModel)]="clienteNew.segundo_nombre">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             Primer Apellido
-                            <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente" (keydown.esc)="scapeTecla(nombreCliente)"
-                                name="apellidoCliente" #apellidoCliente required [(ngModel)]="clienteNew.apellidos" (keyup)="controlTeclasCliente($event,apellidoCliente)"> 
+                            <input class="form-control" id="apellidoCliente" placeholder=" Apellidos cliente"
+                                (keydown.esc)="scapeTecla(nombreCliente)" name="apellidoCliente" #apellidoCliente
+                                required [(ngModel)]="clienteNew.apellidos"
+                                (keyup)="controlTeclasCliente($event,apellidoCliente)">
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             Segundo Apellido
-                            <input class="form-control" id="segundoApellidoCliente" placeholder=" Segundo Apellidos" (keyup)="controlTeclasCliente($event,segundoApellidoCliente)"
-                                name="segundoApellidoCliente" #segundoApellidoCliente required (keydown.esc)="scapeTecla(nombreCliente)"
-                                [(ngModel)]="clienteNew.segundo_apellido">
+                            <input class="form-control" id="segundoApellidoCliente" placeholder=" Segundo Apellidos"
+                                (keyup)="controlTeclasCliente($event,segundoApellidoCliente)"
+                                name="segundoApellidoCliente" #segundoApellidoCliente required
+                                (keydown.esc)="scapeTecla(nombreCliente)" [(ngModel)]="clienteNew.segundo_apellido">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             * Tipo Identificación
-                            <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion (keyup)="controlTeclasCliente($event,tipoIdentificacion)"
+                            <select id="tipoIdentificacion" name="pagoPV" #tipoIdentificacion
+                                (keyup)="controlTeclasCliente($event,tipoIdentificacion)"
                                 [(ngModel)]="clienteNew.tipo_identificacion_id" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option *ngFor="let pago of tipoIdentificacionList"
@@ -392,39 +436,47 @@
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             * Identificación
-                            <input class="form-control" id="documentoCliente" placeholder="* Documento cliente" (keydown.esc)="scapeTecla(nombreCliente)"
-                                name="documentoCliente" #documentoCliente required [(ngModel)]="clienteNew.documento" (keyup)="controlTeclasCliente($event,documentoCliente)">
+                            <input class="form-control" id="documentoCliente" placeholder="* Documento cliente"
+                                (keydown.esc)="scapeTecla(nombreCliente)" name="documentoCliente" #documentoCliente
+                                required [(ngModel)]="clienteNew.documento"
+                                (keyup)="controlTeclasCliente($event,documentoCliente)">
                         </div>
 
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             Dirección Cliente
-                            <input class="form-control" id="direccionCliente" placeholder="* Dirección cliente" (keydown.esc)="scapeTecla(nombreCliente)"
-                                name="direccionCliente" #direccionCliente required [(ngModel)]="clienteNew.direccion" (keyup)="controlTeclasCliente($event,direccionCliente)">
+                            <input class="form-control" id="direccionCliente" placeholder="* Dirección cliente"
+                                (keydown.esc)="scapeTecla(nombreCliente)" name="direccionCliente" #direccionCliente
+                                required [(ngModel)]="clienteNew.direccion"
+                                (keyup)="controlTeclasCliente($event,direccionCliente)">
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             Fijo
-                            <input class="form-control" id="fijoCliente" placeholder="Telefono fijo" name="fijoCliente" (keyup)="controlTeclasCliente($event,fijoCliente)"
-                                #fijoCliente required [(ngModel)]="clienteNew.fijo" (keydown.esc)="scapeTecla(nombreCliente)">
+                            <input class="form-control" id="fijoCliente" placeholder="Telefono fijo" name="fijoCliente"
+                                (keyup)="controlTeclasCliente($event,fijoCliente)" #fijoCliente required
+                                [(ngModel)]="clienteNew.fijo" (keydown.esc)="scapeTecla(nombreCliente)">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             Celular
-                            <input class="form-control" id="celular" placeholder="Telefono Celular" name="celular" (keyup)="controlTeclasCliente($event,celular)"
-                                #celular required [(ngModel)]="clienteNew.celular" (keydown.esc)="scapeTecla(nombreCliente)">
+                            <input class="form-control" id="celular" placeholder="Telefono Celular" name="celular"
+                                (keyup)="controlTeclasCliente($event,celular)" #celular required
+                                [(ngModel)]="clienteNew.celular" (keydown.esc)="scapeTecla(nombreCliente)">
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             * Mail
-                            <input class="form-control" id="mailCliente" placeholder="* Correo cliente" (keydown.esc)="scapeTecla(nombreCliente)"
-                                name="mailCliente" #mailCliente required [(ngModel)]="clienteNew.mail" (keyup)="controlTeclasCliente($event,mailCliente)">
+                            <input class="form-control" id="mailCliente" placeholder="* Correo cliente"
+                                (keydown.esc)="scapeTecla(nombreCliente)" name="mailCliente" #mailCliente required
+                                [(ngModel)]="clienteNew.mail" (keyup)="controlTeclasCliente($event,mailCliente)">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6 col-sm-6">
                             * Tipo Empresa
-                            <select id="tipoEmpresa" name="tipoEmpresa" #tipoEmpresa (keyup)="controlTeclasCliente($event,tipoEmpresa)"
+                            <select id="tipoEmpresa" name="tipoEmpresa" #tipoEmpresa
+                                (keyup)="controlTeclasCliente($event,tipoEmpresa)"
                                 [(ngModel)]="clienteNew.fact_tipo_empresa_id" class="form-control">
                                 <option *ngFor="let pago of tipoEmpresaList" [value]="pago.fact_tipo_empresa_id">
                                     {{pago.nombre}}
@@ -433,16 +485,17 @@
                         </div>
                         <div class="form-group col-md-6 col-sm-6">
                             % de retención
-                            <input class="form-control" id="retencion" type="number" min="0" max="100" (keyup)="controlTeclasCliente($event,retencion)"
-                                placeholder="% de retención" name="retencion" #retencion required (keydown.esc)="scapeTecla(nombreCliente)"
+                            <input class="form-control" id="retencion" type="number" min="0" max="100"
+                                (keyup)="controlTeclasCliente($event,retencion)" placeholder="% de retención"
+                                name="retencion" #retencion required (keydown.esc)="scapeTecla(nombreCliente)"
                                 [(ngModel)]="clienteNew.retencion">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" *ngIf="crearClienteVisible">
                     Desea Crear El cliente S/N?
-                    <input class="form-control" id="confirmarCliente"  placeholder="* Primer nombre" 
-                    name="confirmarCliente" #confirmarCliente required (keyup)="CrearCliente(confirmarCliente)" >              
+                    <input class="form-control" id="confirmarCliente" placeholder="* Primer nombre"
+                        name="confirmarCliente" #confirmarCliente required (keyup)="CrearCliente(confirmarCliente)">
                 </div>
             </div>
         </div>

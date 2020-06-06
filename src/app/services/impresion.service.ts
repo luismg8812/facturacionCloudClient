@@ -750,6 +750,7 @@ export class ImpresionService {
           , 4, 264);
         for (let e = 0; e < tope; e++) {
           if (contadorP < factura.detalle.length) {
+           // posy = posy + 5;
             let codigo = factura.detalle[contadorP].documento_detalle_id;
             let cantidad = factura.detalle[contadorP].cantidad;
             let descripcion = factura.detalle[contadorP].descripcion.trim().replace(/(\r\n|\n|\r)/gm, "");
@@ -771,14 +772,12 @@ export class ImpresionService {
             for (let i = 0; i <= numlineas; i++) {
               let parcial = descripcion.substring(ini, fin);
               this.doc.text(parcial, 33, posy);
-              if(descripcion.length>topeLinea){
+              //if(descripcion.length>topeLinea){
                 posy = posy + 5;
-              }
-              
+             // }
               ini = ini + topeLinea;
               fin = fin + topeLinea;
             }
-            posy = posy + 5;
           } else {
             break;
           }
