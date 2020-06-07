@@ -322,29 +322,29 @@
                         </div>
                     </div>
                     <div class="form-row ">
-                        <div class="col col-ms-12">
+                        <div class="col col-ms-6">
                             <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago: </h6>
                             <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV" data-toggle="tooltip"
                                 title="" (keydown.enter)="enterTecla(tipoPagoPV)" (keydown.esc)="scapeTecla(tipoPagoPV)">
-                        </div>
-                    </div>
-                    <div class="form-row ">
-                        <div class="col col-ms-12">
+                        </div>    
+                        <div class="col col-ms-6">
                             <h6 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">Valor
                                 pago: </h6>
                             <input name="valorTipoPagoPV" #valorTipoPagoPV placeholder="Valor tipo Pago"
                                 class="form-control" id="valorTipoPagoPV" (keydown.enter)="enterTecla(valorTipoPagoPV)"
                                 (keydown.esc)="scapeTecla(valorTipoPagoPV)">
                         </div>
-                      
+                       
                     </div>
-                    <div class="form-row ">
-                        <div class="col col-ms-12">
-                            <h6>Efectivo: </h6>
-                            <input name="efectovoPV" #efectovoPV placeholder="Efectivo" class="form-control" id="efectovoPV"
-                                (keydown.enter)="enterTecla(efectovoPV)" (keydown.esc)="scapeTecla(efectovoPV)">
+                    <div class="form-row " *ngFor="let tipos of tiposPagosDocumento" >
+                        <div class="col col-ms-6">
+                            <h6>Tipo de Pago: {{nombreTipoPago(tipos.tipo_pago_id) }} </h6>
+                            
+                        </div>    
+                        <div class="col col-ms-6">
+                            <h6 >Valor pago: {{tipos.valor }}  </h6>
+                            
                         </div>
-                     
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-3">
