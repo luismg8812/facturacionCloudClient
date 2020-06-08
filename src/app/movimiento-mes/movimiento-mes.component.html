@@ -439,6 +439,19 @@
             </div>
           </div>
           <div class="form-row">
+             
+            <div class="form-group col-md-6 col-sm-6">    
+                % ganancia      
+              <input class="form-control" id="ganancia" placeholder="% ganancia" name="ganancia" #ganancia required
+                [(ngModel)]="productoNew.porcentaje_venta">
+            </div>
+            <div class="form-group col-md-6 col-sm-6">
+              Fecha vencimiento
+              <input class="form-control" id="vencimiento" placeholder="Fecha vencimiento" type="date" name="vencimiento"
+                #vencimiento  [(ngModel)]="productoNew.fecha_vencimiento">
+            </div>
+          </div>
+          <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Peso
               <input class="form-control" id="peso"  placeholder="peso"

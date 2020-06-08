@@ -36,6 +36,7 @@ import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.co
 import { AppConfigService } from './services/app-config.service';
 import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
+import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -63,7 +64,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     CierresComponent,
     InformeDiarioComponent,
     EnvioDocumentosComponent,
-    EstadoDocumentosComponent
+    EstadoDocumentosComponent,
+    MovimientoProductosComponent
   ],
   imports: [
     BrowserModule,

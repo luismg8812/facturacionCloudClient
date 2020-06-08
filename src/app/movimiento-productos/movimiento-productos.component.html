@@ -1,0 +1,82 @@
+<app-menu></app-menu>
+<div class="container-fluid main">
+    <div class="form-row">
+        <h4 class="mt-3">Movimiento de productos</h4>
+    </div>
+    <br />
+    <div class="form-row">
+      <div class="form-group col-md-6 col-sm-12 ">
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-1">
+            Fecha Inicial
+            <input class="form-control" type="date"   id="fechaIni" #fechaIni>
+          </div>
+          <div class="form-group col-md-6 col-sm-1">
+            Fecha Final
+            <input class="form-control" type="date"   id="fechaFin" #fechaFin>
+          </div>
+        </div> 
+        <div class="form-row">
+            <div class="form-group col-md-6 col-sm-1">
+              Empleado
+              <select id="empleadoPV" name="empleadoPV" #empleadoPV placeholder="" class="form-control" >
+                <option value="">Seleccione</option>
+                <option *ngFor="let empleado of empleados" [value]="empleado.empleado_id">
+                  {{empleado.nombre}}
+                </option>
+              </select>
+            </div>
+            <div class="form-group col-md-6 col-sm-1">
+              Usuario
+              <select id="usuariosPV" name="usuariosPV" #usuariosPV placeholder="" class="form-control" >
+                <option value="">Seleccione</option>
+                <option *ngFor="let usuario of usuarios" [value]="usuario.usuario_id">
+                  {{usuario.nombre}}
+                </option>
+              </select>
+            </div>
+          </div>
+      </div>
+      <div class="form-group col-md-1 col-sm-12 "></div>
+      <div class="form-group col-md-5 col-sm-12 ">
+        <div class="form-row">
+          <b>Total: $</b> {{formatearNumber(total)}}
+        </div>
+        <div class="form-row">
+          <b>Total Ganancia: $</b>{{formatearNumber(ganancia)}}
+        </div>
+      
+      </div>
+    </div>
+    <div class="form-row">
+        <button type="button" class="btn btn-primary mb-2" (click)="calcular()">Buscar</button>
+      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Vendedor</th>
+            <th scope="col">Fecha Transación</th>
+            <th scope="col">Factura Número</th>
+            <th scope="col">Producto</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Valor unitario</th>
+            <th scope="col">Total</th>
+            <th scope="col">% venta</th>
+            <th scope="col">Ganancia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ordenes of dias">
+            <td>{{nombreClienteFun(ordenes.vendedor)}}</td>
+            <td>{{ordenes.fecha_registro| date: 'dd/MM/yyyy'}}</td>
+            <td>{{ordenes.consecutivo_dian}}</td>
+            <td>{{ordenes.nombre}}</td> 
+            <td>{{ordenes.cantidad}}</td>
+            <td>{{formatearNumber(ordenes.unitario)}}</td>
+            <td>{{formatearNumber(ordenes.parcial)}}</td>
+            <td>{{formatearNumber(ordenes.porcentaje_venta)}}</td>
+            <td>{{formatearNumber(ordenes.gana)}}</td>
+          </tr>
+        </tbody>
+      </table>
+</div>
