@@ -3,6 +3,8 @@ import { CalculosService } from '../services/calculos.service';
 import { DocumentoDetalleService } from '../services/documento-detalle.service';
 import { EmpleadoModel } from '../model/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
+import { UsuarioModel } from '../model/usuario.model';
+import { UsuarioService } from '../services/usuario.service';
 
 @Component({
   selector: 'app-movimiento-productos',
@@ -12,6 +14,7 @@ import { EmpleadoService } from '../services/empleado.service';
 export class MovimientoProductosComponent implements OnInit {
 
   constructor(public documentoDetalleService: DocumentoDetalleService,
+    public usuarioService: UsuarioService,
     public empleadoService: EmpleadoService,
     public calculosService: CalculosService) { }
 
@@ -20,6 +23,7 @@ export class MovimientoProductosComponent implements OnInit {
   public empresaId: number;
   public dias: Array<any>;
   public empleados: Array<EmpleadoModel>;
+  public usuarios: Array<UsuarioModel>;
 
   @ViewChild("fechaIni") fechaIni: ElementRef;
   @ViewChild("fechaFin") fechaFin: ElementRef;
@@ -29,6 +33,7 @@ export class MovimientoProductosComponent implements OnInit {
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getEmpleados(this.empresaId);
+    this.getUsuarios(this.empresaId);
   }
 
   formatearNumber(number: number) {
@@ -80,5 +85,10 @@ export class MovimientoProductosComponent implements OnInit {
     }
   }
 
+  getUsuarios(empresaId: number) {
+    this.usuarioService.getByUsuario(null, empresaId.toString(), null).subscribe(res => {
+      this.usuarios = res;
+    });
+  } 
 
 }
