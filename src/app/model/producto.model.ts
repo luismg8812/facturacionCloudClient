@@ -5,6 +5,7 @@ export class ProductoModel {
     public proveedor_id:string;
     public marca_id:string;
     public fecha_registro:Date;
+    public fecha_vencimiento:Date;
     public costo:number;
     public costo_publico:number;
     public impuesto:number;
@@ -23,6 +24,9 @@ export class ProductoModel {
     public activo:string;
     public utilidad_sugerida:number;
     public sub_producto:number;
+    public porcentaje_venta:number;
+    
+
 
     constructor(){
         this.producto_id=null;
@@ -31,6 +35,7 @@ export class ProductoModel {
         this. proveedor_id=null;
         this. marca_id=null;
         this. fecha_registro=new Date();
+        this. fecha_vencimiento=null;
         this. costo=0;
         this. costo_publico=0;
         this. impuesto=0;
@@ -48,5 +53,6 @@ export class ProductoModel {
         this. varios=0;
         this. utilidad_sugerida=0;
         this. sub_producto=0;
+        this.porcentaje_venta=0;
     }
 }

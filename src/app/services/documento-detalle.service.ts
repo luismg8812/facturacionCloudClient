@@ -27,5 +27,9 @@ export class DocumentoDetalleService {
   getDocumentoDetalleByDocumentoList(documentoId:string[]) {
     return this.http.get<DocumentoDetalleModel[]>(this.server_api + '/documentoDetalle/getDocumentoDetalleByDocumentoList?documento_id='+documentoId);
   }
+
+  getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,usuarioId:string,empresaId:number) {
+    return this.http.get<any[]>(this.server_api + '/documentoDetalle/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
+  }
   
 }
