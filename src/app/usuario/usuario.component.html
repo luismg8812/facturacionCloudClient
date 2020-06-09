@@ -134,17 +134,20 @@
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="rutasActivas">Activas</label>
-              <select multiple class="form-control" id="rutasActivas">
-                  <option *ngFor="let select of submenuSelect"  (click)="desactivarRuta(select)" value="{{select.subMenuId}}">{{select.nombre}}</option>
-              </select>
+              <div  id="rutasActivas" class="btn-group-vertical" >
+                <button type="button" class="btn btn-primary" *ngFor="let select of submenuSelect" (click)="desactivarRuta(select)"
+                title="{{select.descripcion}}">{{select.nombre}}</button>
+              </div>
+              
+             
             </div>
             <div class="form-group col-md-6">
-              <label for="rutasActivas">Inactivas</label>
-              <select multiple class="form-control" id="rutasInactivas">
-                  <option *ngFor="let unSelect of opusuarioUnSelect" (click)="activarRuta(unSelect)"
-                   value="{{unSelect.subMenuId}}">{{unSelect.nombre}}</option>
+              <label for="rutasInactivas">Inactivas</label>
 
-              </select>
+              <div  id="rutasInactivas" class="btn-group-vertical" >
+                <button type="button" class="btn btn-primary" *ngFor="let unSelect of opusuarioUnSelect"  title="{{unSelect.descripcion}}" (click)="activarRuta(unSelect)">{{unSelect.nombre}}</button>
+              </div>
+
             </div>
           </div>
           <div class="form-row">
@@ -155,17 +158,18 @@
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="Activas">Activas</label>
-              <select multiple class="form-control" id="Activas">
-                  <option *ngFor="let select of activacionSelect"  (click)="aplicarActivacion(select)" value="{{select.activacionId}}">{{select.nombre}}</option>
 
-              </select>
+              <div  id="Activas" class="btn-group-vertical" >
+                <button type="button" class="btn btn-primary" *ngFor="let select of activacionSelect" title="{{select.descripcion}}" (click)="aplicarActivacion(select)">{{select.nombre}}</button>
+              </div>
+            
             </div>
             <div class="form-group col-md-6">
               <label for="Inactivas">Inactivas</label>
-              <select multiple class="form-control" id="Inactivas">
-                  <option *ngFor="let unSelect of activacionUnSelect" (click)="desaplicarActivacion(unSelect)"
-                  value="{{unSelect.activacionId}}">{{unSelect.nombre}}</option>
-              </select>
+
+              <div  id="Inactivas" class="btn-group-vertical" >
+                <button type="button" class="btn btn-primary" *ngFor="let unSelect of activacionUnSelect"  title="{{unSelect.descripcion}}" (click)="desaplicarActivacion(unSelect)">{{unSelect.nombre}}</button>
+              </div>
             </div>
           </div>
         </div>

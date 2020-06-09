@@ -11,7 +11,7 @@ import { UsuarioService } from '../services/usuario.service';
   templateUrl: './movimiento-productos.component.html',
   styleUrls: ['./movimiento-productos.component.css']
 })
-export class MovimientoProductosComponent implements OnInit {
+export class MovimientoProductosComponent implements OnInit { 
 
   constructor(public documentoDetalleService: DocumentoDetalleService,
     public usuarioService: UsuarioService,
@@ -89,6 +89,6 @@ export class MovimientoProductosComponent implements OnInit {
     this.usuarioService.getByUsuario(null, empresaId.toString(), null).subscribe(res => {
       this.usuarios = res;
     });
-  } 
+  }
 
 }
