@@ -59,7 +59,7 @@ export class SocketService {
       try {
         this.socket.emit('gramera', configuracion.gramera);
         this.socket.on('gramera', (message) => {
-          console.log("respuesta socket:" + message)
+         // console.log("respuesta socket:" + message)
           observer.next(message);
         });
       } catch (error) {
