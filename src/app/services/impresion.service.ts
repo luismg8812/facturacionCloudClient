@@ -288,7 +288,7 @@ export class ImpresionService {
     texto.push(this.calculosService.centrarDescripcion("TEL: " + factura.empresa.telefono_fijo + "-" + factura.empresa.cel, tamanoMax) + "\n");//telefonos
     texto.push('\n');
     let anulada: string = factura.documento.anulado == 0 ? "" : " ¡ANULADA! ";
-    texto.push(factura.nombreTipoDocumento + ": " + anulada + factura.documento.consecutivo_dian + "\n");//consecutivo
+    texto.push(factura.nombreTipoDocumento + ": " + anulada +factura.empresa.letra_consecutivo+ factura.documento.consecutivo_dian + "\n");//consecutivo
     texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19) + "\n");//fecha
     texto.push("CAJERO: " + factura.nombreUsuario + "\n");//fecha
     texto.push("CAJA: " + '\n');
@@ -310,22 +310,22 @@ export class ImpresionService {
     for (var i = 0; i < factura.detalle.length; i++) {
       let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 17);
       let cantidadProducto: string = this.calculosService.cortarCantidades(factura.detalle[i].cantidad.toString(), 4);
-      let unidadProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.detalle[i].unitario).replace("COP",""), 8);
-      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.detalle[i].parcial).replace("COP",""), 8);
+      let unidadProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].unitario), 8);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 8);
       texto.push(nombreProducto + " " + cantidadProducto + " " + unidadProducto + " " + totalProducto + "\n");
     }
     texto.push('----------------------------------------\n');
-    texto.push("Valor Exento:             " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.excento).replace("COP",""), 14) + '\n');
-    texto.push("Valor Gravado:            " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP",""), 14) + '\n');
-    texto.push("Iva:                      " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP",""), 14) + '\n');
-    texto.push("TOTAL A PAGAR:            " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP",""), 14) + '\n');
+    texto.push("Valor Exento:             " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.excento), 14) + '\n');
+    texto.push("Valor Gravado:            " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.gravado), 14) + '\n');
+    texto.push("Iva:                      " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.iva), 14) + '\n');
+    texto.push("TOTAL A PAGAR:            " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
     texto.push('----------------------------------------\n');
     texto.push("         **** FORMA DE PAGO****        \n");
     texto.push("Vr. Pago con Tarjeta:                  0" + '\n');
     texto.push("Vr. Comisión Tarjeta:                  0" + '\n');
-    texto.push("Vr. Total Factura:        " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP",""), 14) + '\n');
-    texto.push("fectivo:		      	  " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP",""), 14) + '\n');
-    texto.push("Cambio:			          " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.cambio).replace("COP",""), 14) + '\n');
+    texto.push("Vr. Total Factura:        " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
+    texto.push("fectivo:		      	  " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
+    texto.push("Cambio:			          " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.cambio), 14) + '\n');
     texto.push('----------------------------------------\n');
     texto.push("Res. " + factura.empresa.resolucion_dian + "Fecha: " + factura.empresa.fecha_resolucion + '\n');
     texto.push("Rango autorizado desde: " + factura.empresa.autorizacion_desde + " a " + factura.empresa.autorizacion_hasta + '\n');
@@ -358,7 +358,7 @@ export class ImpresionService {
     texto.push(this.calculosService.centrarDescripcion("TEL: " + factura.empresa.telefono_fijo + "-" + factura.empresa.cel, tamanoMax) + "\n");//telefonos
     texto.push('\n');
     let anulada: string = factura.documento.anulado == 0 ? "" : " ¡ANULADA! ";
-    texto.push(factura.nombreTipoDocumento + ": " + anulada + factura.documento.consecutivo_dian + "\n");//consecutivo
+    texto.push(factura.nombreTipoDocumento + ": " + anulada +factura.empresa.letra_consecutivo+ factura.documento.consecutivo_dian + "\n");//consecutivo
     texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toString(), 19) + "\n");//fecha
     texto.push("CAJERO: " + factura.nombreUsuario + "\n");//fecha
     texto.push("CAJA: " + '\n');
@@ -484,7 +484,7 @@ export class ImpresionService {
     this.doc.line(138, 52, 138, 58) // vertical line    
     this.doc.line(157, 52, 157, 58) // vertical line    
     this.doc.line(181, 52, 181, 58) // vertical line    
-    this.doc.text("N° " + factura.documento.consecutivo_dian, 175, 18);
+    this.doc.text("N° " +factura.empresa.letra_consecutivo+ factura.documento.consecutivo_dian, 175, 18);
     this.doc.text(this.calculosService.cortarDescripcion(this.calculosService.formatDate(factura.documento.fecha_registro, true), 19), 160, 35);
 
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.gravado)).replace("COP",""), 15), 183, 275);
@@ -642,7 +642,7 @@ export class ImpresionService {
     }
     this.doc.setFontType('bold');
     this.doc.setFontSize(11);
-    this.doc.text( titulo + ": " + factura.documento.consecutivo_dian, x, y);
+    this.doc.text( titulo + ": " + factura.empresa.letra_consecutivo+factura.documento.consecutivo_dian, x, y);
     y=y+inicio;
     this.doc.setFontType('normal');
     this.doc.setFontSize(9);

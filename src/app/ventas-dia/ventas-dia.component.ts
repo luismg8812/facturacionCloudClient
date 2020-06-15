@@ -541,12 +541,12 @@ export class VentasDiaComponent implements OnInit {
         alert("Error tratando de conectar con la gramera");
         return;
       } else {
-        console.log(res.peso);
-        if (isNaN(res.peso)) {
-          alert("Error obteniendo peso, por favor vuelva a intentarlo: " + res.peso);
+       // console.log(res);
+        if (isNaN(res)) {
+          alert("Error obteniendo peso, por favor vuelva a intentarlo: " + res);
           return;
         }
-        this.pesoGramera = res.peso;
+        this.pesoGramera = res;
       }
     });
   }
@@ -1032,7 +1032,7 @@ export class VentasDiaComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-          consecutivo = res[0].letra_consecutivo + con.toString();
+          consecutivo =  con.toString();
           console.log("consecutivo Dian: " + consecutivo);
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";

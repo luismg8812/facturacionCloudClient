@@ -119,7 +119,7 @@ export class CuadreCajaComponent implements OnInit {
         }
 
       }
-      if (!this.cuadreCajaActivo) {
+      if (!this.cuadreCajaActivo) { 
         let tiposDocumento: number[] = [];
         let cerrado ='0'; //tra todos los documentos que no han sido cerrados 
         if (this.verRemisionesActivo) {

@@ -18,6 +18,7 @@ import { InformeDiarioComponent } from './informe-diario/informe-diario.componen
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
+import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -38,6 +39,7 @@ const routes: Routes = [
    { path: 'estadoDocumentos', component: EstadoDocumentosComponent },
    { path: 'movimientoProductos', component: MovimientoProductosComponent },
    { path: 'informeDiario', component: InformeDiarioComponent },
+   { path: 'EditarProductos', component: EditarProductoComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];

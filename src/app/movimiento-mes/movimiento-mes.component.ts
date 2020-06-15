@@ -25,6 +25,7 @@ import { ImpresionService } from '../services/impresion.service';
 import { SubMenuModel } from '../model/submenu.model';
 import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
+import { GrupoModel } from '../model/grupo.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -42,7 +43,7 @@ export class MovimientoMesComponent implements OnInit {
   public productosAll: Array<ProductoModel>;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public opciones: Array<SubMenuModel>;
-  public grupoList: Array<any>;
+  public grupoList: Array<GrupoModel>;
   public marcaList: Array<any>;
   
   public document: DocumentoModel;
@@ -181,6 +182,7 @@ export class MovimientoMesComponent implements OnInit {
     this.getConfiguracion(this.empresaId);
     this.getImpresorasEmpresa(this.empresaId);
     this.opcionesSubmenu();
+    this.getGrupos(this.empresaId);
     this.guiaTransporteActivo = false;
     this.documentosList = [];
     this.modificarFactura = false;
@@ -763,6 +765,9 @@ export class MovimientoMesComponent implements OnInit {
     if (element.id == "descuentoPV") {
       this.descuentoEnter();
     }
+    if (element.id == "grameraPV") {
+      this.precioGrameraEnter(element);
+    }
     if (element.id == "impresoraPV") {
       this.impresoraEnter();
     }
@@ -803,6 +808,27 @@ export class MovimientoMesComponent implements OnInit {
 
     
 
+  }
+
+  precioGrameraEnter(element) {
+
+    if (this.codigoBarrasActivo) {
+      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+      this.CodigoBarrasPV.nativeElement.focus();
+    } else {
+      this.articuloPV.nativeElement.focus();
+    }
+
+    let facturar = element.value;
+    this.articuloPV.nativeElement.value = "";
+    this.CodigoBarrasPV.nativeElement.value = "";
+
+    console.log("precio enter:" + facturar);
+    if (facturar != "S") {
+      return;
+    }
+    this.asignarDocumento(this.pesoGramera);
+    this.pesoGramera = 0.0;
   }
 
   modificarEnter() {
@@ -1424,6 +1450,10 @@ export class MovimientoMesComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  ocultarGramera() {
+    this.divGramera = false;
+  }
+
   getGramera() {
     console.log(this.configuracion);
     this.socketService.getPesoGramera(this.configuracion).subscribe(res => {
@@ -1431,12 +1461,12 @@ export class MovimientoMesComponent implements OnInit {
         alert("Error tratando de conectar con la gramera");
         return;
       } else {
-        console.log(res.peso);
-        if (isNaN(res.peso)) {
-          alert("Error obteniendo peso, por favor vuelva a intentarlo: " + res.peso);
+        //console.log(res);
+        if (isNaN(res)) {
+          alert("Error obteniendo peso, por favor vuelva a intentarlo: " + res);
           return;
         }
-        this.pesoGramera = res.peso;
+        this.pesoGramera = res;
       }
     });
   }
@@ -1549,6 +1579,15 @@ export class MovimientoMesComponent implements OnInit {
   getConfiguracion(empresaId: number) {
     this.clienteService.getConfiguracionByEmpresa(empresaId.toString()).subscribe(res => {
       this.configuracion = res[0];
+    });
+  }
+
+  
+
+  getGrupos(empresaId: number) {
+    this.productoService.getGruposByEmpresa(empresaId.toString()).subscribe(res => {
+      this.grupoList = res;
+      console.log("lista de grupos cargados: " + this.grupoList.length);
     });
   }
 

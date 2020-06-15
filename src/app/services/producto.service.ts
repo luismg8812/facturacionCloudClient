@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ProductoModel } from '../model/producto.model';
 import {HttpClient} from '@angular/common/http';
 import { ParametrosModel } from '../model/parametros.model';
+import { GrupoModel } from '../model/grupo.model';
 
 
 @Injectable({
@@ -20,6 +21,12 @@ export class ProductoService {
   public getProductoById(productoId:string,empresaId:string){
     return this.http.get<ProductoModel>(this.server_api+'/producto/getProductoById?empresaId='+empresaId+'&productoId='+productoId);
   }
+
+  public getGruposByEmpresa(empresaId:string){
+    return this.http.get<GrupoModel[]>(this.server_api+'/producto/getGruposByEmpresa?empresaId='+empresaId);
+  }
+
+  
 
   public updateCantidad(productoId:ProductoModel){
     return this.http.put<any>(this.server_api+'/producto/updateCantidad',productoId);
