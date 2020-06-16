@@ -427,6 +427,14 @@ export class OtComponent implements OnInit {
       }
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code == 200) {
+          for (var i = 0; i < this.detallesList.length; i++) {
+            if (this.detallesList[i].documento_detalle_id == this.detalleSelect.documento_detalle_id) {
+              this.detallesList.splice(i, 1);
+              this.detallesList.splice(i, 0, this.detalleSelect);
+              break;
+            }
+          }
+          
           this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
           console.log(this.detallesList);
           this.documentoService.updateDocumento(this.documento).subscribe(res => {
@@ -629,6 +637,7 @@ export class OtComponent implements OnInit {
           this.detallesList = res;
           this.detalleSelect = new DocumentoDetalleModel();
           console.log("detalles encontrados:" + res.length);
+          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
         });
       } else {
         alert("Error agregando repuesto: " + res.error);
