@@ -16,4 +16,12 @@ export class ProveedorService {
   public getProveedoresByEmpresa(empresaId:string){
     return this.http.get<ProveedorModel[]>(this.server_api+'/proveedor/getProveedoresByEmpresa?empresaId='+empresaId);
   }
+
+  saveProveedor(proveedorId: ProveedorModel) {
+    return this.http.post<any>(this.server_api + '/proveedor/saveProveedor', proveedorId);
+  }
+
+  updateProveedor(proveedorId: ProveedorModel) {
+    return this.http.post<any>(this.server_api + '/proveedor/updateProveedor', proveedorId);
+  }
 }
