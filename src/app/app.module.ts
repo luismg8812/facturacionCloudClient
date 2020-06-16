@@ -38,6 +38,7 @@ import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos
 import { NgxQRCodeModule } from 'ngx-qrcode2';
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
+import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -67,7 +68,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     EnvioDocumentosComponent,
     EstadoDocumentosComponent,
     MovimientoProductosComponent,
-    EditarProductoComponent
+    EditarProductoComponent,
+    InfoGananciaComponent
   ],
   imports: [
     BrowserModule,

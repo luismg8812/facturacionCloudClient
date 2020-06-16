@@ -487,7 +487,7 @@ export class ImpresionService {
     this.doc.text("N° " +factura.empresa.letra_consecutivo+ factura.documento.consecutivo_dian, 175, 18);
     this.doc.text(this.calculosService.cortarDescripcion(this.calculosService.formatDate(factura.documento.fecha_registro, true), 19), 160, 35);
 
-    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.gravado)).replace("COP",""), 15), 183, 275);
+    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.gravado+factura.documento.excento)).replace("COP",""), 15), 183, 275);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.iva)).replace("COP",""), 15), 183, 280);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.total)).replace("COP",""), 15), 183, 285);
     //datos del cliente

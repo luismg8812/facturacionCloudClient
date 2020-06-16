@@ -182,7 +182,8 @@ export class CuadreCajaComponent implements OnInit {
                    Number( this.cuadreCajaVo.descuento)+
                    Number( this.cuadreCajaVo.propina)+
                    Number( this.cuadreCajaVo.cartera);
-    this.cuadreCajaVo.totalCaja=totalCaja;           
+    this.cuadreCajaVo.totalCaja=totalCaja;   
+    this.calcularDiferencia();        
   }
 
   calcularDiferencia(){

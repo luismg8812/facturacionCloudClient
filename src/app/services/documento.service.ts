@@ -117,4 +117,9 @@ export class DocumentoService {
     return this.http.get<any>(this.server_api + '/documento/getDocumentosByTipoPago?empresaId=' + empresaId+ '&tipoDocumentoId=' + tipoDocumentoId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
   }
 
+  getGananciaDocumentos(fechaInicial,fechaFinal, empresaId: number  ) {
+    return this.http.get<any>(this.server_api + '/documento/getGananciaDocumentos?empresaId=' + empresaId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal);
+  }
+
+  
 }
