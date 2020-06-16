@@ -517,7 +517,8 @@ export class GestionOrdenComponent implements OnInit {
         if (res.code == 200) {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
-          this.calcularTOtal();
+          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+          //this.calcularTOtal();
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
@@ -538,6 +539,21 @@ export class GestionOrdenComponent implements OnInit {
         if (res.code != 200) {
           alert("Error agregando repuesto: " + res.error);
         }
+        for (var i = 0; i < this.detallesList.length; i++) {
+          if (this.detallesList[i].documento_detalle_id == this.detalleSelect.documento_detalle_id) {
+            this.detallesList.splice(i, 1);
+            this.detallesList.splice(i, 0, this.detalleSelect);
+            break;
+          }
+        }
+        this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+        console.log(this.detallesList);
+        this.documentoService.updateDocumento(this.documento).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
       });
       this.detalleSelect = new DocumentoDetalleModel();
     }
@@ -919,6 +935,7 @@ export class GestionOrdenComponent implements OnInit {
           this.detallesList = res;
           this.detalleSelect = new DocumentoDetalleModel();
           console.log("detalles encontrados:" + res.length);
+          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
         });
       } else {
         alert("Error agregando repuesto: " + res.error);
