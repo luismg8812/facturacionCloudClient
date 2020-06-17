@@ -1,289 +1,292 @@
 <div class="modal-dialog modal-lg" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabel">Cuadre de caja</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-        <div class="row">
-            <div class="col col-md-3">
-                
-              Total facturas
-            </div>
-            <div class="col col-md-3">
-                 <input  class="form-control" [(ngModel)]="cuadreCajaVo.total_facturas" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Cuadre de caja</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Doc. No impresos
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.documentos_no_impresos" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Abonos del día
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.abonosDia" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Avance Efectivo
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.avanceEfectivo" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Cheques recogidos
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.chequesRecogidos" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Otros 
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.otros" (blur)="calcularTotalIngresos()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Base
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.base" (blur)="calcularTotalIngresos()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Consignaciones
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.consignaciones" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Total Ingresos
-            </div>
-            <div class="col col-md-3">
-                
-              </div>
-              <div class="col col-md-3">  <input  class="form-control" [(ngModel)]="cuadreCajaVo.totalIngresos" readonly></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Vr. en fajos
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.fajos" (blur)="calcularEnCaja()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Moneda
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.moneda" (blur)="calcularEnCaja()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div> 
-        <div class="row">
-            <div class="col col-md-3">
-                Efectivo
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.efectivo" (blur)="calcularEnCaja()" > 
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Cheques
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.cheques" (blur)="calcularEnCaja()" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Tarjetas de crédito y débito
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.tarjetas" (blur)="calcularEnCaja()" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Varios
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.varios" (blur)="calcularEnCaja()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Vales
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.vales" (blur)="calcularEnCaja()" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Cartera
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.cartera" (blur)="calcularEnCaja()" readonly>
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Gastado
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.gastado" (blur)="calcularEnCaja()"> 
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Nomina
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.nomina" (blur)="calcularEnCaja()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Descuento
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.descuento" (blur)="calcularEnCaja()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Propina
-            </div>
-            <div class="col col-md-3">
-                  <input  class="form-control" [(ngModel)]="cuadreCajaVo.propina" (blur)="calcularEnCaja()">
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Total en caja
-            </div>
-            <div class="col col-md-3">
-                
-              </div>
-              <div class="col col-md-3">  <input  class="form-control" [(ngModel)]="cuadreCajaVo.totalCaja" readonly></div>
-              <div class="col col-md-3"></div> 
-        </div>
-        <div class="row">
-            <div class="col col-md-3">
-                Diferencia
-            </div>
-            <div class="col col-md-3">
-                
-              </div>
-              <div class="col col-md-3"></div>
-              <div class="col col-md-3">  <input  class="form-control" [(ngModel)]="cuadreCajaVo.diferencia"></div> 
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary">Limpiar</button>
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-      <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#imprimirModal">
-        Imprimir
-      </button>
-    </div>
-  </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col col-md-3">
 
-   <!-- Modal imprimir-->
-   <div class="modal fade bd-example-modal-sm" id="imprimirModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-   aria-hidden="true">
-   <div class="modal-dialog modal-sm" role="document">
-     <div class="modal-content">
-       <div class="modal-header">
-         <h5 class="modal-title" id="exampleModalLabel">Imprimir Orden de trabajo</h5>
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true">&times;</span>
-         </button>
-       </div>
-       <div class="modal-body">
-         <div class="form-row">
-           <div class="form-group col-md-12 col-sm-10" *ngFor="let imp of impresoraEmpresa">
-             {{imp.numero_impresora}}. {{imp.nombre_impresora}}
-           </div>
-         </div>
-         <div class="form-row">
-           <div class="form-group col-md-6 col-sm-10" >
-             Digite el número de impresora:
-           </div>
-           <div class="form-group col-md-6 col-sm-2" >
-             <input class="form-control" id="impresora" type="number" placeholder="Digite el número de impresora:" name="impresora" #impresora required>
-           </div>
-         </div>
-       </div>
-       <div class="modal-footer">
-         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-         <button type="button" class="btn btn-primary" (click)="imprimirOrden(impresora)">Imprimir</button>
-       </div>
-     </div>
-   </div>
- </div>
- <div class="col col-ms-1">
-    <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+                    Total facturas
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.total_facturas" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Doc. No impresos
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.documentos_no_impresos" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Abonos del día
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.abonosDia" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Avance Efectivo
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.avanceEfectivo" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Cheques recogidos
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.chequesRecogidos" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Otros
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.otros" (blur)="calcularTotalIngresos()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Base
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.base" (blur)="calcularTotalIngresos()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Consignaciones
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.consignaciones" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Total Ingresos
+                </div>
+                <div class="col col-md-3">
 
-    </a>
-</div>
+                </div>
+                <div class="col col-md-3"> <input class="form-control" [(ngModel)]="cuadreCajaVo.totalIngresos"
+                        readonly></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Vr. en fajos
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.fajos" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Moneda
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.moneda" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Efectivo
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.efectivo" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Cheques
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.cheques" (blur)="calcularEnCaja()" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Tarjetas de crédito y débito
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.tarjetas" (blur)="calcularEnCaja()" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Varios
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.varios" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Vales
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.vales" (blur)="calcularEnCaja()" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Cartera
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.cartera" (blur)="calcularEnCaja()" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Gastado
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.gastado" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Nomina
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.nomina" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Descuento
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.descuento" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Propina
+                </div>
+                <div class="col col-md-3">
+                    <input class="form-control" [(ngModel)]="cuadreCajaVo.propina" (blur)="calcularEnCaja()">
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Total en caja
+                </div>
+                <div class="col col-md-3">
+
+                </div>
+                <div class="col col-md-3"> <input class="form-control" [(ngModel)]="cuadreCajaVo.totalCaja" readonly>
+                </div>
+                <div class="col col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col col-md-3">
+                    Diferencia
+                </div>
+                <div class="col col-md-3">
+
+                </div>
+                <div class="col col-md-3"></div>
+                <div class="col col-md-3"> <input class="form-control" [(ngModel)]="cuadreCajaVo.diferencia"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary">Limpiar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#imprimirModalCuadre">
+                Imprimir
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal imprimir-->
+    <div class="modal fade bd-example-modal-sm" id="imprimirModalCuadre" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Imprimir Orden de trabajo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-12 col-sm-10" *ngFor="let imp of impresoraEmpresa">
+                            {{imp.numero_impresora}}. {{imp.nombre_impresora}}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-10">
+                            Digite el número de impresora:
+                        </div>
+                        <div class="form-group col-md-6 col-sm-2">
+                            <input class="form-control" id="impresora" type="number"
+                                placeholder="Digite el número de impresora:" name="impresora" #impresora required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="imprimirOrden(impresora)">Imprimir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col col-ms-1">
+        <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+        </a>
+    </div>
 </div>
