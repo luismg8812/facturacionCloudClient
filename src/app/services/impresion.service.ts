@@ -381,22 +381,22 @@ export class ImpresionService {
     for (var i = 0; i < factura.detalle.length; i++) {
       let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 12);
       let cantidadProducto: string = this.calculosService.cortarCantidades(factura.detalle[i].cantidad.toString(), 3);
-      let unidadProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.detalle[i].unitario).replace("COP",""), 7);
-      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.detalle[i].parcial).replace("COP",""), 7);
+      let unidadProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].unitario), 7);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 7);
       texto.push(nombreProducto + " " + cantidadProducto + " " + unidadProducto + " " + totalProducto + "\n");
     }
     texto.push('--------------------------------\n');
-    texto.push("Valor Exento:     " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.excento).replace("COP",""), 14) + '\n');
-    texto.push("Valor Gravado:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP",""), 14) + '\n');
-    texto.push("Iva:              " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP",""), 14) + '\n');
-    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP",""), 14) + '\n');
+    texto.push("Valor Exento:     " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.excento), 14) + '\n');
+    texto.push("Valor Gravado:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.gravado), 14) + '\n');
+    texto.push("Iva:              " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.iva), 14) + '\n');
+    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
     texto.push('--------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("*FORMA DE PAGO*", tamanoMax) + "\n");
     texto.push("Vr. Pago con Tarjeta:          0" + '\n');
     texto.push("Vr. Comisión Tarjeta:          0" + '\n');
-    texto.push("Vr. Total Factura: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP",""), 13) + '\n');
-    texto.push("fectivo:		   " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP",""), 13) + '\n');
-    texto.push("Cambio:			   " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'COP' }).format(factura.documento.cambio).replace("COP",""), 13) + '\n');
+    texto.push("Vr. Total Factura: " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 13) + '\n');
+    texto.push("fectivo:		   " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 13) + '\n');
+    texto.push("Cambio:			   " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.cambio), 13) + '\n');
     texto.push('--------------------------------\n');
     texto.push("Res. " + factura.empresa.resolucion_dian + "Fecha: " + factura.empresa.fecha_resolucion + '\n');
     texto.push("Autorizado desde: " + factura.empresa.autorizacion_desde + " a " + factura.empresa.autorizacion_hasta + '\n');
