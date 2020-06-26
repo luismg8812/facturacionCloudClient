@@ -357,8 +357,8 @@
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-12">
-                            <h6>Imprimir en pantalla?: </h6>
-                            <input name="enPantallaPV" #enPantallaPV placeholder="S/N?" class="form-control"
+                            <h6 class="d-none" #enPantallaLavel name="enPantallaLavel" id="enPantallaLavel">Imprimir en pantalla?: </h6>
+                            <input name="enPantallaPV" #enPantallaPV placeholder="S/N?" class="form-control d-none"
                                 id="enPantallaPV" (keydown.enter)="enterTecla(enPantallaPV)"
                                 (keydown.esc)="scapeTecla(enPantallaPV)">
                         </div>

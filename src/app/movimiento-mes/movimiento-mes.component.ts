@@ -1256,6 +1256,9 @@ export class MovimientoMesComponent implements OnInit {
       }
     }
     console.log(docDetalle);
+    if(this.document.tipo_documento_id==null){//si es nulo se asigna factura por defecto
+      this.document.tipo_documento_id=this.TIPO_DOCUMENTO_ENTRADA_ALMACEN;
+    }
     this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
       if (res.code == 200) {
         docDetalle.documento_detalle_id = res.documento_detalle_id;

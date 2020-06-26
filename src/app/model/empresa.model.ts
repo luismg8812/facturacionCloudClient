@@ -8,7 +8,7 @@ export class EmpresaModel {
     public regimen:string;
     public direccion:string;
     public barrio:string;
-    public cudad:string;
+    public ciudad:string;
     public departamento:string;
     public telefono_fijo:string;
     public cel:string;

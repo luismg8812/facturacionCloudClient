@@ -3,6 +3,7 @@ export class DocumentoModel {
     public tipo_documento_id:number;
     public proveedor_id:number;
     public usuario_id:number;
+    public nota_id:number;
     public cliente_id:number;
     public empleado_id:number;
     public empresa_id:number;
@@ -47,6 +48,7 @@ export class DocumentoModel {
         this. proveedor_id=null;
         this. usuario_id=null;
         this. cliente_id=null;
+        this.nota_id=null;
         this. empleado_id=null;
         this.empresa_id=null;
         this.modelo_marca_id = null;

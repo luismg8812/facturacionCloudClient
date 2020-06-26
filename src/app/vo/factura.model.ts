@@ -13,6 +13,7 @@ export class FacturaModel {
     public titulo:string;
     public nombreTipoDocumento:string;
     public nombreUsuario:string;
+    public nombreEmpleado:string;
     
     
     constructor(){
@@ -22,6 +23,7 @@ export class FacturaModel {
         this.empresa=null;
         this.nombreTipoDocumento="";
         this.nombreUsuario="";
+        this.nombreEmpleado="";
         this.cliente=null;
         this.proveedor=null;
     }
