@@ -20,6 +20,7 @@ import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
+import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -42,6 +43,7 @@ const routes: Routes = [
    { path: 'informeDiario', component: InformeDiarioComponent },
    { path: 'EditarProductos', component: EditarProductoComponent },
    { path: 'infoganancia', component: InfoGananciaComponent },
+   { path: 'reporteProductos', component: ReporteProductosComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];
