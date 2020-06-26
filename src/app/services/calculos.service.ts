@@ -24,8 +24,31 @@ import { ClienteModel } from '../model/cliente.model';
 })
 export class CalculosService {
 
+	readonly TIPO_DOCUMENTO_NOTA_CREDITO: number = 12;
+	readonly TIPO_DOCUMENTO_NOTA_DEBITO: number = 13;
+
 	constructor() { }
 
+	public calcularInfoDiarioNota(documento: DocumentoModel,nota:DocumentoModel, infoDiario: InformeDiarioModel) {
+				infoDiario.base_19 = Number(infoDiario.base_19) - Number(documento.base_19);
+				infoDiario.base_5 = Number(infoDiario.base_5) - Number(documento.base_5);
+				infoDiario.iva_5 = Number(infoDiario.iva_5) - Number(documento.iva_5);
+				infoDiario.iva_19 = Number(infoDiario.iva_19) - Number(documento.iva_19);
+				infoDiario.total_ventas = Number(infoDiario.total_ventas) - Number(documento.total);
+				infoDiario.iva_ventas = Number(infoDiario.iva_ventas) - Number(documento.iva);
+				infoDiario.excento = Number(infoDiario.excento) - Number(documento.excento);
+				infoDiario.costo_ventas = Number(infoDiario.costo_ventas) - Number(documento.total_costo);
+				
+				infoDiario.base_19 = Number(infoDiario.base_19) + Number(nota.base_19);
+				infoDiario.base_5 = Number(infoDiario.base_5) + Number(nota.base_5);
+				infoDiario.iva_5 = Number(infoDiario.iva_5) + Number(nota.iva_5);
+				infoDiario.iva_19 = Number(infoDiario.iva_19) + Number(nota.iva_19);
+				infoDiario.total_ventas = Number(infoDiario.total_ventas) + Number(nota.total);
+				infoDiario.iva_ventas = Number(infoDiario.iva_ventas) + Number(nota.iva);
+				infoDiario.excento = Number(infoDiario.excento) + Number(nota.excento);
+				infoDiario.costo_ventas = Number(infoDiario.costo_ventas) + Number(nota.total_costo);
+		return infoDiario;
+	}
 
 	public calcularInfoDiario(documento: DocumentoModel, infoDiario: InformeDiarioModel, anulado: boolean) {
 		switch (documento.tipo_documento_id) {

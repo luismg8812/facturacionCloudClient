@@ -153,7 +153,7 @@ export class NominaComponent implements OnInit {
     this.vales = 0;
     this.productos = 0;
     this.total = 0;
-    this.documentoService.getNominaByEmpleado(this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString(), this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString(), idEmpleados).subscribe(res => {
+    this.documentoService.getNominaByEmpleado(this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString(), this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString(), idEmpleados,"11").subscribe(res => {
       this.nomimas = res;
       for (let nomi of this.nomimas) {
         this.subtotal = Number(this.subtotal) + Number(nomi.subtotal);
@@ -205,7 +205,7 @@ export class NominaComponent implements OnInit {
     this.vales = 0;
     this.productos = 0;
     this.total = 0;
-    this.documentoService.getNominaByEmpleado("", "", idEmpleados).subscribe(res => {
+    this.documentoService.getNominaByEmpleado("", "", idEmpleados,"11").subscribe(res => {
       this.nomimas = res;
       for (let nomi of this.nomimas) {
         this.subtotal = Number(this.subtotal) + Number(nomi.subtotal);

@@ -43,9 +43,10 @@ declare var $: any;
 })
 export class VentasDiaComponent implements OnInit {
 
-  readonly CLIENTE_FACTURACION: string = '19';
-  readonly MULTIPLE_IMPRESORA: string = '4';
+  
+  readonly IMPRESION_PANTALLA: string = '2';
   readonly PROPORCION: string = '3';
+  readonly MULTIPLE_IMPRESORA: string = '4';
   readonly CODIGO_BARRAS: string = '7';
   readonly GUIA_TRANSPORTE: string = '8';
   readonly CLAVE_BORRADO: string = '9';
@@ -53,6 +54,7 @@ export class VentasDiaComponent implements OnInit {
   readonly CLIENTE_OBLIGATORIO: string = '14';
   readonly CAMBIO_PRECIO: string = '15';
   readonly EMPLEADOS: string = '18';
+  readonly CLIENTE_FACTURACION: string = '19';
   readonly TIPOS_PAGOS: string = '20';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_REMISION: number = 9;
@@ -61,6 +63,7 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDF80MM: number = 4;
+  readonly TIPO_IMPRESION_PDF50MM: number = 5;
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
 
@@ -100,6 +103,7 @@ export class VentasDiaComponent implements OnInit {
   public cambioPrecioActivo: boolean = false;
   public claveBorradoActivo: boolean = false;
   public proporcionActivo: boolean = false;
+  public impresionPantallaActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
   public clienteSelect: number;
@@ -181,6 +185,8 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("divUnitario") divUnitario: ElementRef; // div de donde se busca el articulo
   @ViewChild("divParcial") divParcial: ElementRef; // div de donde se busca el articulo
   @ViewChild("enPantallaPV") enPantallaPV: ElementRef; // div de donde se busca el articulo
+  @ViewChild("enPantallaLavel") enPantallaLavel: ElementRef; // div de donde se busca el articulo
+  
 
 
   //impresion
@@ -242,25 +248,25 @@ export class VentasDiaComponent implements OnInit {
 
 
   clienteSelectFun(element) {
-    console.log(this.clientes);
+    console.log(element.value);
     if (this.clienteObligatorioActivo && element.value == '') {
       alert("El cliente es obligatorio");
       return;
-    } else {
-      let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
-
-      if (cliente == undefined) {
-        return;
-      } else {
-        console.log(cliente);
-        this.clienteSelect = cliente.cliente_id;
-        this.document.cliente_id = this.clienteSelect;
-        this.factura.cliente = cliente;
-        //this.clientePV.nativeElement.value=cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento ; 
-        //console.log(cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento );
-      }
-
     }
+    let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
+    if (this.clienteObligatorioActivo && cliente == undefined) {
+      alert("El cliente " + element.value + " no existe, presione la tecla lado derecho para crearlo");
+      return;
+    }
+    if (!this.clienteObligatorioActivo && element.value == '') {
+      cliente = this.clientes.find(cliente => cliente.cliente_id == 1);//trae cliente varios por defecto
+    }
+    console.log(cliente);
+    this.clienteSelect = cliente.cliente_id;
+    this.document.cliente_id = this.clienteSelect;
+    this.factura.cliente = cliente;
+    //this.clientePV.nativeElement.value=cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento ; 
+    //console.log(cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento );
     console.log("cliente select:" + this.clienteSelect);
     if (this.guiaTransporteActivo) {
       this.tipoDocumentoPV.nativeElement.focus();
@@ -442,6 +448,7 @@ export class VentasDiaComponent implements OnInit {
       console.log(empleado);
       this.empleadoSelect = element.value;
       this.document.empleado_id = empleado.empleado_id;
+      this.factura.nombreEmpleado = empleado.nombre + " " + empleado.apellido;
       console.log(empleado.nombre + " " + empleado.apellido);
     }
   }
@@ -541,7 +548,7 @@ export class VentasDiaComponent implements OnInit {
         alert("Error tratando de conectar con la gramera");
         return;
       } else {
-       // console.log(res);
+        // console.log(res);
         if (isNaN(res)) {
           alert("Error obteniendo peso, por favor vuelva a intentarlo: " + res);
           return;
@@ -569,8 +576,7 @@ export class VentasDiaComponent implements OnInit {
     if (element.id == "nuevaPV") {
       this.nuevafactura();
     }
-
-    if (element.id == "clientePV") {
+    if (element.id == 'clientePV') {
       this.clienteSelectFun(element);
     }
     if (element.id == "tipoDocumentoPV") {
@@ -609,7 +615,7 @@ export class VentasDiaComponent implements OnInit {
     }
     if (element.id == "tipoPagoPV") {
       this.tipoPagoEnter(element);
-      
+
     }
     if (element.id == "valorTipoPagoPV") {
       this.calcularTiposPagos(element);
@@ -663,8 +669,8 @@ export class VentasDiaComponent implements OnInit {
     }
   }
 
-  tipoPagoEnter(element){   
-    if (element.value != "") { 
+  tipoPagoEnter(element) {
+    if (element.value != "") {
       let tipoPago = this.tipoPagosAll.find(usua => usua.tipo_pago_id == element.value);
       if (tipoPago == undefined) {
         alert("Tipo de pago no valido")
@@ -677,15 +683,15 @@ export class VentasDiaComponent implements OnInit {
 
   calcularTiposPagos(element) {
     // aqui voy toca verificar si el tipo de pago esta en la lista sino retorna con un mensaje  y va agregando tipos de pago hasta que se concrete el finally, hacer validaciones de topes maximos y minimos
-    let tipoId=this.tipoPagoPV.nativeElement.value;
+    let tipoId = this.tipoPagoPV.nativeElement.value;
     let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
     if (tipoId != "") {
-      if(element.value<=0 || element.value=="" ||isNaN(element.value)){
+      if (element.value <= 0 || element.value == "" || isNaN(element.value)) {
         alert("cantidad invalida");
         return;
       }
-      tipoPagoDocumento.tipo_pago_id =tipoId ;
-    }else{
+      tipoPagoDocumento.tipo_pago_id = tipoId;
+    } else {
       tipoPagoDocumento.tipo_pago_id = 1;//efectivo por defecto
     }
     //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
@@ -693,16 +699,21 @@ export class VentasDiaComponent implements OnInit {
     tipoPagoDocumento.fecha_registro = new Date;
     tipoPagoDocumento.valor = element.value;
     this.tiposPagosDocumento.unshift(tipoPagoDocumento);
-    let suma:number=0;
-    for(let sum of this.tiposPagosDocumento){
-      suma=suma+Number(sum.valor);
+    let suma: number = 0;
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
     }
     this.document.cambio = Number(suma) - Number(this.document.total);
-    if(suma<Number(this.document.total) && tipoId != ""){
+    if (suma < Number(this.document.total) && tipoId != "") {
       this.tipoPagoPV.nativeElement.focus();
       this.tipoPagoPV.nativeElement.select();
-    }else{
-      this.enPantallaPV.nativeElement.focus();       
+    } else {
+      if(this.impresionPantallaActivo){
+        this.enPantallaPV.nativeElement.focus();
+      }else{
+        this.continuaImpresionPV.nativeElement.focus();
+      }
+      
     }
   }
 
@@ -861,9 +872,9 @@ export class VentasDiaComponent implements OnInit {
     let tiposPagosList: TipoPagoModel[] = [];
     if (des1 == "") { //no se por que tiene que ver con el descuento... validar esta parte
       //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
-      for(let tipo of this.tiposPagosDocumento){
+      for (let tipo of this.tiposPagosDocumento) {
         this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
-    }
+      }
     } else {
 
     }
@@ -942,8 +953,8 @@ export class VentasDiaComponent implements OnInit {
     let tituloDocumento: string = "";
 
     let pantalla = this.enPantallaPV.nativeElement.value;
-    if (pantalla == "") {
-      pantalla = "false";
+    if (pantalla == 'S'||pantalla == 's') {
+      pantalla = "pantalla";
     }
     if (numeroImpresiones == undefined) {
       numeroImpresiones = 1;
@@ -978,6 +989,10 @@ export class VentasDiaComponent implements OnInit {
         case this.TIPO_IMPRESION_PDF80MM:
           formato = ".pdf";
           this.impresionService.imprimirFacturaPdf80(this.factura, this.configuracion, false);
+          break;
+        case this.TIPO_IMPRESION_PDF50MM:
+          formato = ".pdf";
+          this.impresionService.imprimirFacturaPdf50(this.factura, this.configuracion, false);
           break;
         default:
           alert("no tiene un tipo impresion");
@@ -1032,7 +1047,7 @@ export class VentasDiaComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-          consecutivo =  con.toString();
+          consecutivo = con.toString();
           console.log("consecutivo Dian: " + consecutivo);
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
@@ -1117,7 +1132,7 @@ export class VentasDiaComponent implements OnInit {
     this.scapeTecla(null);
   }
 
-  
+
 
   impresoraEnter() {
     if (this.TipoPagosActivo) {
@@ -1391,7 +1406,9 @@ export class VentasDiaComponent implements OnInit {
       }
     }
     console.log(docDetalle);
-
+    if(this.document.tipo_documento_id==null){//si es nulo se asigna factura por defecto
+      this.document.tipo_documento_id=this.TIPO_DOCUMENTO_FACTURA;
+    }
     this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
       if (res.code == 200) {
         docDetalle.documento_detalle_id = res.documento_detalle_id;
@@ -1467,6 +1484,12 @@ export class VentasDiaComponent implements OnInit {
         });
       }
     }
+    if (event.keyCode == 13) { //cuando se presiona la tacla enter 			     	
+      if (element.id == 'clientePV') {
+        this.clienteSelectFun(element);
+      }
+    }
+
     if (event.keyCode == 40 || event.keyCode == 13) { //cuando se presiona la tacla abajo
       if (element.id == 'nombreCliente') {
         $('#segundoNombreCliente').focus();
@@ -1931,6 +1954,18 @@ export class VentasDiaComponent implements OnInit {
       this.impresoraPV.nativeElement.classList.remove("d-none");
       this.impresoraPV.nativeElement.classList.add("d-block");
     }
+    if (this.impresionPantallaActivo) {
+      this.enPantallaLavel.nativeElement.classList.remove("d-none");
+      this.enPantallaLavel.nativeElement.classList.add("d-block");
+      this.enPantallaPV.nativeElement.classList.remove("d-none");
+      this.enPantallaPV.nativeElement.classList.add("d-block");
+    }
+    if (this.imp) {
+      this.impresoraLavel.nativeElement.classList.remove("d-none");
+      this.impresoraLavel.nativeElement.classList.add("d-block");
+      this.impresoraPV.nativeElement.classList.remove("d-none");
+      this.impresoraPV.nativeElement.classList.add("d-block");
+    }
     if (this.TipoPagosActivo) {
       this.tiposPagosDocumento = [];
       this.valorTipoPagoLavel.nativeElement.classList.remove("d-none");
@@ -1944,7 +1979,7 @@ export class VentasDiaComponent implements OnInit {
 
       this.valorTipoPagoPV.nativeElement.classList.remove("d-none");
       this.valorTipoPagoPV.nativeElement.classList.add("d-block");
-    }else{
+    } else {
       this.valorTipoPagoLavel.nativeElement.classList.add("d-none");
       this.tipoPagoLavel.nativeElement.classList.add("d-none");
       this.valorTipoPagoPV.nativeElement.classList.add("d-none");
@@ -1961,7 +1996,11 @@ export class VentasDiaComponent implements OnInit {
           if (this.TipoPagosActivo) {
             this.tipoPagoPV.nativeElement.focus();
           } else {
-            this.efectovoPV.nativeElement.focus();
+            if(this.impresionPantallaActivo){
+              this.enPantallaPV.nativeElement.focus();
+            }else{
+              this.continuaImpresionPV.nativeElement.focus();
+            }
           }
         }
       }
@@ -2015,6 +2054,10 @@ export class VentasDiaComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.PROPORCION) {
           console.log("proporcion activo ");
           this.proporcionActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.IMPRESION_PANTALLA) {
+          console.log("impresion en pantalla activo ");
+          this.impresionPantallaActivo = true;
         }
       }
     });
@@ -2183,7 +2226,7 @@ export class VentasDiaComponent implements OnInit {
     return formato;
   }
 
-  nombreTipoPago(id){
+  nombreTipoPago(id) {
     let tipo = this.tipoPagosAll.find(tipos => tipos.tipo_pago_id == id);
     if (tipo == undefined) {
       return "";

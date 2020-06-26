@@ -7,6 +7,8 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { ClienteService } from '../services/cliente.service';
 import { EmpresaService } from '../services/empresa.service';
 import { ImpresionService } from '../services/impresion.service';
+import { EmpleadoService } from '../services/empleado.service';
+import { EmpleadoModel } from '../model/empleado.model';
 
 @Component({
   selector: 'app-cuadre-caja',
@@ -24,6 +26,7 @@ export class CuadreCajaComponent implements OnInit {
  
   public cuadreCajaActivo: boolean = false;
   public verRemisionesActivo: boolean = false;
+  public empleados: Array<EmpleadoModel>;
 
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
   
@@ -32,7 +35,8 @@ export class CuadreCajaComponent implements OnInit {
     public empresaService:EmpresaService,
     public documentoService: DocumentoService, 
     public impresionService:ImpresionService,
-    public clienteService:ClienteService) {
+    public clienteService:ClienteService,
+    public empleadoService:EmpleadoService) {
     console.log("cuadre cargado");
     this.inicio();
     console.log("cuadre cargado");
@@ -47,6 +51,7 @@ export class CuadreCajaComponent implements OnInit {
 
   ngOnInit() {
     this.getImpresorasEmpresa(this.empresaId);
+    this.getEmpleados(this.empresaId);
   }
 
   imprimirOrden(impresora) {
@@ -128,15 +133,31 @@ export class CuadreCajaComponent implements OnInit {
         tiposDocumento.push(10); // se agrega factura de venta
         this.documentoService.getCuadreCaja(tiposDocumento,  company.toString(),user.toString(), cerrado).subscribe(res => {
           console.log(res);
+          this.cuadreCajaVo.total_facturas=Number(this.cuadreCajaVo.total_facturas)+Number(this.cuadreCajaVo.total_notas);
           this.cuadreCajaVo =res[0];
           console.log(this.cuadreCajaVo.abonosDia);
           this.asignarValoresNulos();
           this.calcularTotalIngresos();
           this.calcularEnCaja();
           this.calcularDiferencia();
+          this.ventaEmpleados();
         });      
       }
     });
+  }
+
+  ventaEmpleados(){
+    
+    let idEmpleados: number[] = [];
+    for (let id of this.empleados) {
+      idEmpleados.push(id.empleado_id);
+    }
+      this.documentoService.getNominaByEmpleado("","",idEmpleados, "10").subscribe(res => {
+        console.log(this.cuadreCajaVo);
+        this.cuadreCajaVo.empleados=res;
+      
+      });    
+    
   }
 
   asignarValoresNulos(){
@@ -194,6 +215,13 @@ export class CuadreCajaComponent implements OnInit {
     this.clienteService.getImpresorasEmpresa(empresaId.toString()).subscribe(res => {
       this.impresoraEmpresa = res;
       console.log("impresoras configuradas en la empresa:" + res.length);
+    });
+  }
+
+  getEmpleados(empresaId: number) {
+    this.empleadoService.getEmpleadoAll(empresaId).subscribe(res => {
+      this.empleados = res;
+      console.log("lista de empleados cargados: " + this.empleados.length);
     });
   }
 

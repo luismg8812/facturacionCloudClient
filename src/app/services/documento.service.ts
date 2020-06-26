@@ -9,6 +9,7 @@ import { NominaModel } from '../model/nomina.model';
 import { TipoDocumentoModel } from '../model/tipoDocumento.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 import { InvoiceModel } from '../model/invoice.model';
+import { DocumentoNotaModel } from '../model/documentoNota.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,10 +28,21 @@ export class DocumentoService {
     return this.http.post<any>(this.server_api + '/documento/saveInvoice', documentoId);
   }
 
+  saveDocumentoNota(documentoId: DocumentoNotaModel) {
+    return this.http.post<any>(this.server_api + '/documento/saveDocumentoNota', documentoId);
+  }
+
+  updateDocumentoNota(documentoId: DocumentoNotaModel) {
+    return this.http.post<any>(this.server_api + '/documento/updateDocumentoNota', documentoId);
+  }
   
 
   getDocumentoInvoiceByDocumento(documentoId) {
     return this.http.get<DocumentoInvoiceModel[]>(this.server_api + '/documento/getDocumentoInvoiceByDocumento?documentoId='+documentoId);
+  }
+
+  getDocumentoNotaByDocumento(documentoId) {
+    return this.http.get<DocumentoNotaModel[]>(this.server_api + '/documento/getDocumentoNotaByDocumento?documentoId='+documentoId);
   }
 
   saveDocumentoOrden(documentoOrdenId: DocumentoOrdenModel) {
@@ -92,8 +104,8 @@ export class DocumentoService {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesTrabajo?empresaId='+empresaId+'&placa='+placa+'&cliente=' + cliente + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);
   }
 
-  getNominaByEmpleado(fechaInicial,fechaFinal,idEmpleados: number[]) {
-    return this.http.get<NominaModel[]>(this.server_api + '/documento/getNominaByEmpleado?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+idEmpleados);
+  getNominaByEmpleado(fechaInicial,fechaFinal,idEmpleados: number[],tipoDocumentoId:string) {
+    return this.http.get<NominaModel[]>(this.server_api + '/documento/getNominaByEmpleado?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+idEmpleados+"&tipoDocumentoId="+tipoDocumentoId);
   }
 
   getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
