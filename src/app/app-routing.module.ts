@@ -41,7 +41,7 @@ const routes: Routes = [
    { path: 'estadoDocumentos', component: EstadoDocumentosComponent },
    { path: 'movimientoProductos', component: MovimientoProductosComponent },
    { path: 'informeDiario', component: InformeDiarioComponent },
-   { path: 'EditarProductos', component: EditarProductoComponent },
+   { path: 'editarProductos', component: EditarProductoComponent },
    { path: 'infoganancia', component: InfoGananciaComponent },
    { path: 'reporteProductos', component: ReporteProductosComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },

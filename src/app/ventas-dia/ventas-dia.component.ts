@@ -204,6 +204,8 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("continuaImpresionPV") continuaImpresionPV: ElementRef;
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
   @ViewChild("buscarDocumentoXFecha") buscarDocumentoXFecha: ElementRef;
+  @ViewChild("editarProducto") editarProducto: ElementRef;
+  
 
   //cliente
   @ViewChild("nombreCliente") nombreCliente: ElementRef;
@@ -664,9 +666,13 @@ export class VentasDiaComponent implements OnInit {
     }
 
     if (element.id == "documentosXFechaPV") {
-      console.log("aquientra");
       this.buscarDocumentoXFecha.nativeElement.click();
     }
+    if (element.id == "EditarProductos") {
+      this.editarProducto.nativeElement.click();
+    }
+    
+    
   }
 
   tipoPagoEnter(element) {
