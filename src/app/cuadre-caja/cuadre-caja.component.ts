@@ -133,8 +133,8 @@ export class CuadreCajaComponent implements OnInit {
         tiposDocumento.push(10); // se agrega factura de venta
         this.documentoService.getCuadreCaja(tiposDocumento,  company.toString(),user.toString(), cerrado).subscribe(res => {
           console.log(res);
-          this.cuadreCajaVo.total_facturas=Number(this.cuadreCajaVo.total_facturas)+Number(this.cuadreCajaVo.total_notas);
           this.cuadreCajaVo =res[0];
+          this.cuadreCajaVo.total_facturas=Number(this.cuadreCajaVo.total_facturas)+Number(this.cuadreCajaVo.total_notas);
           console.log(this.cuadreCajaVo.abonosDia);
           this.asignarValoresNulos();
           this.calcularTotalIngresos();

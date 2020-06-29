@@ -1,3 +1,142 @@
-<p>
-  editar-producto works!
-</p>
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Editar producto</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Primer nombre
+          <input list="articulos" name="articuloPV1" #articuloPV1 placeholder="Articulo" class="form-control"  
+                    id="articuloPV1" (change)="articuloSelect(articuloPV1)"
+                    (keydown.esc)="scapeTecla(articuloPV1)">
+                <datalist id="articulos">
+                    <option *ngFor="let producto of productosAll" [value]="producto.nombre">
+                        Venta: {{producto.costo_publico}} Costo: {{producto.costo}} Cantidad:{{producto.cantidad}}
+                        id:{{producto.producto_id}}
+                    </option>
+                </datalist>
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Grupo
+          <select id="grupo" name="grupoPV" #grupoPV placeholder=""
+            [(ngModel)]="productoNew.grupo_id" class="form-control">
+            <option value="">Seleccione</option>
+            <option *ngFor="let grupo of grupoList" [value]="grupo.grupo_id">
+               {{grupo.nombre}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Proveedor
+          <select id="proveedorPV" name="proveedorPV" #proveedorPV placeholder=""
+            [(ngModel)]="productoNew.proveedor_id" class="form-control">
+            <option *ngFor="let proveedor of proveedores" [value]="proveedor.proveedor_id">
+              {{proveedor.nombre}}
+           </option>
+          </select>
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Marca
+          <select id="marca" name="marcaPV" #marcaPV placeholder=""
+            [(ngModel)]="productoNew.marca_id" class="form-control">
+            <option value="">Seleccione</option>
+            <option *ngFor="let marca of marcaList" [value]="marca.marca_id">
+               {{marca.nombre}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Precio de compra
+          <input class="form-control" id="costo" placeholder="* Precio de compra"
+          name="costoPV" #costoPV required [(ngModel)]="productoNew.costo">
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Precio de venta
+          <input class="form-control" id="costoPublicoPV" placeholder="* Precio de venta"
+          name="costoPublicoPV" #costoPublicoPV required [(ngModel)]="productoNew.costo_publico">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Impuesto
+          <input class="form-control" id="impuestoPV" placeholder="Iva o Ipoconsumo"
+          name="impuestoPV" #impuestoPV required [(ngModel)]="productoNew.impuesto">
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Stock Mínimo
+          <input class="form-control" id="stockMin" placeholder="Stock mínimo" name="stockMin" #stockMin
+            required [(ngModel)]="productoNew.stock_min">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Stock Máximo
+          <input class="form-control" id="stockMax" placeholder="Stock Máximo" name="stockMax" #stockMax required
+            [(ngModel)]="productoNew.stock_max"> 
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Codigo de barras
+          <input class="form-control" id="codBarrasPv" placeholder="Codigo de barras" name="codBarrasPv"
+            #codBarrasPv required [(ngModel)]="productoNew.codigo_barras">
+        </div>
+      </div>
+      <div class="form-row"> 
+         
+        <div class="form-group col-md-6 col-sm-6">    
+            % ganancia      
+          <input class="form-control" id="ganancia" placeholder="% ganancia" name="ganancia" #ganancia required
+            [(ngModel)]="productoNew.porcentaje_venta">
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          Fecha vencimiento
+          <input class="form-control" id="vencimiento" placeholder="Fecha vencimiento" type="date" name="vencimiento"
+            #vencimiento  [(ngModel)]="productoNew.fecha_vencimiento">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-6">
+          Peso
+          <input class="form-control" id="peso"  placeholder="peso"
+            name="peso" #peso required [(ngModel)]="productoNew.peso">
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-3 col-sm-6">
+          Balanza
+          <input class="form-control" id="BalanzaPV"  placeholder="1 o 0"
+            name="peso" #peso required [(ngModel)]="productoNew.balanza">
+        </div>
+        <div class="form-group col-md-3 col-sm-6">
+          Varios
+          <input class="form-control" id="varios"  placeholder="1 o 0"
+            name="varios" #varios required [(ngModel)]="productoNew.varios">
+        </div>
+        <div class="form-group col-md-3 col-sm-6">
+          Sub producto
+          <input class="form-control" id="subproducto"  placeholder="1 o 0"
+            name="subproducto" #subproducto required [(ngModel)]="productoNew.sub_producto">
+        </div>
+      </div>
+    
+  
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      <button type="button" class="btn btn-primary" (click)="CrearProducto()">Editar</button>
+    </div>
+  </div>
+
+
+
+</div>

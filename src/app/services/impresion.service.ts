@@ -94,9 +94,13 @@ export class ImpresionService {
     texto.push((Number(factura.diferencia) < 0.0 ? "SOBRANTE" : "FALTANTE") + "$...........: " + factura.diferencia + "\n");
     texto.push('----------------------------------------\n');
     texto.push('Ventas por empleado\n');
-    for (let emp of factura.empleados) {
-      texto.push(emp.nombre + ":...$" + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12) + '\n');
+    console.log(factura.empleados);
+    if(factura.empleados!=undefined){
+      for (let emp of factura.empleados) {
+        texto.push(emp.nombre + ":...$" + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12) + '\n');
+      }
     }
+    
     texto.push('----------------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("\n", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');

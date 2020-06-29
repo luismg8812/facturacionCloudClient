@@ -200,7 +200,7 @@
         </div>
         <div class="form-row">
             <div class="form-group col-sm-6 col-md-12 d-none" id="divImprimirModal" #divImprimirModal>
-              
+
             </div>
         </div>
         <div class="form-row col-md-12 ">
@@ -296,7 +296,7 @@
         aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header"> 
+                <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Imprimir documento</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -323,53 +323,58 @@
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-6">
-                            <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago: </h6>
-                            <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV" data-toggle="tooltip"
-                                title="" (keydown.enter)="enterTecla(tipoPagoPV)" (keydown.esc)="scapeTecla(tipoPagoPV)">
-                        </div>    
+                            <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago:
+                            </h6>
+                            <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV"
+                                data-toggle="tooltip" title="" (keydown.enter)="enterTecla(tipoPagoPV)"
+                                (keydown.esc)="scapeTecla(tipoPagoPV)">
+                        </div>
                         <div class="col col-ms-6">
-                            <h6 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">Valor
+                            <h6 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">
+                                Valor
                                 pago: </h6>
                             <input name="valorTipoPagoPV" #valorTipoPagoPV placeholder="Valor tipo Pago"
                                 class="form-control" id="valorTipoPagoPV" (keydown.enter)="enterTecla(valorTipoPagoPV)"
                                 (keydown.esc)="scapeTecla(valorTipoPagoPV)">
                         </div>
-                       
+
                     </div>
-                    <div class="form-row " *ngFor="let tipos of tiposPagosDocumento" >
+                    <div class="form-row " *ngFor="let tipos of tiposPagosDocumento">
                         <div class="col col-ms-6">
                             <h6>Tipo de Pago: {{nombreTipoPago(tipos.tipo_pago_id) }} </h6>
-                            
-                        </div>    
+
+                        </div>
                         <div class="col col-ms-6">
-                            <h6 >Valor pago: {{tipos.valor }}  </h6>
-                            
+                            <h6>Valor pago: {{tipos.valor }} </h6>
+
                         </div>
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-3">
                             <h5>Cambio:</h5>
                         </div>
-                            <div class="col col-ms-9">
+                        <div class="col col-ms-9">
                             <h4 style="color:red">{{document.cambio}}</h4>
                         </div>
-                       
+
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-12">
-                            <h6 class="d-none" #enPantallaLavel name="enPantallaLavel" id="enPantallaLavel">Imprimir en pantalla?: </h6>
+                            <h6 class="d-none" #enPantallaLavel name="enPantallaLavel" id="enPantallaLavel">Imprimir en
+                                pantalla?: </h6>
                             <input name="enPantallaPV" #enPantallaPV placeholder="S/N?" class="form-control d-none"
                                 id="enPantallaPV" (keydown.enter)="enterTecla(enPantallaPV)"
                                 (keydown.esc)="scapeTecla(enPantallaPV)">
                         </div>
-    
-                      
+
+
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-12">
                             <h6>Continúa Impresión? </h6>
-                            <input name="continuaImpresionPV" #continuaImpresionPV placeholder="S/N?" class="form-control"
-                                id="continuaImpresionPV" (keydown.enter)="enterTecla(continuaImpresionPV)"
+                            <input name="continuaImpresionPV" #continuaImpresionPV placeholder="S/N?"
+                                class="form-control" id="continuaImpresionPV"
+                                (keydown.enter)="enterTecla(continuaImpresionPV)"
                                 (keydown.esc)="scapeTecla(continuaImpresionPV)"
                                 (keydown.S)="enterTecla(continuaImpresionPV)" (keydown.N)="cancelarImpresion()">
                         </div>
@@ -526,5 +531,15 @@
     <div class="modal fade" id="buscarDocumentoXFech" tabindex="-1" role="dialog" aria-labelledby="cuadreCajaModalLabel"
         aria-hidden="true">
         <app-buscar-documentos></app-buscar-documentos>
+    </div>
+
+    <button type="button" class="btn btn-primary d-none" id="editarProducto" #editarProducto
+        data-toggle="modal" data-target="#editarProduct">
+        Launch demo modal
+    </button>
+    <!-- info articulos -->
+    <div class="modal fade" id="editarProduct" tabindex="-1" role="dialog" aria-labelledby="cuadreCajaModalLabel"
+        aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <app-editar-producto></app-editar-producto>
     </div>
 </div>
