@@ -1,0 +1,170 @@
+<app-menu></app-menu>
+<div class="container-fluid main">
+  <div class="form-row">
+    <h4 class="mt-3">Cartera de clientes</h4>
+  </div>
+  <br />
+  <div class="form-row">
+    <div class="form-group col-md-6">Cliente
+      <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="cliente">
+      <datalist id="browsers">
+        <option *ngFor="let cliente of clientes" [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
+          Cod. interno: {{cliente.cliente_id}}
+        </option>
+      </datalist>
+    </div>
+    <div class="form-group col-md-3">
+      Fecha Inicial
+      <input class="form-control" type="date" id="fechaIni" #fechaIni>
+    </div>
+    <div class="form-group col-md-3">
+      Fecha Final
+      <input class="form-control" type="date" id="fechaFin" #fechaFin>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <button type="button" class="btn btn-primary mr-2" (click)="buscar(clientePV,fechaIni,fechaFin)">Buscar</button>
+    </div>
+  </div>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Opciones</th>
+        <th scope="col">Fecha Registro</th>
+        <th scope="col">N° interno</th>
+        <th scope="col">Consecutivo DIAN</th>
+        <th scope="col">Valor Factura</th>
+        <th scope="col">Valor Crédito</th>
+        <th scope="col">Saldo</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ordenes of cartera">
+        <th scope="row">
+          <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Detalle"
+            data-target="#detalleModal"  (click)="detalleAbonos(ordenes)" >
+            <i class="fas fa-search"></i>
+          </button>
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-secondary btn-sm" title="Crear Abono" data-toggle="modal"
+            data-target="#crearAbonoModal" (click)="selectDocumento(ordenes)">
+            <i class="fas fa-plus-circle"></i>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" (click)="imprimirInforme(ordenes)" title="Imprimir abonos"
+            >
+            <i class="fas fa-print"></i>
+          </button>
+        </th>
+        <td>{{ordenes.fecha_registro| date: 'dd/MM/yyyy'}}</td>
+        <td>{{ordenes.documento_id}}</td>
+        <td>{{ordenes.consecutivo_dian}}</td>
+        <td>{{formatearNumber(ordenes.total)}}</td>
+        <td>{{formatearNumber(ordenes.valor)}}</td>
+        <td>{{formatearNumber(ordenes.saldo)}}</td>
+        
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal detalle-->
+<div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Detalle de abonos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            N° interno: {{documentoSelect.documento_id}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            Total Factura: {{formatearNumber(documentoSelect.total)}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            Saldo: {{formatearNumber(documentoSelect.saldo)}}
+          </div>
+        </div>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Fecha Registro</th>
+              <th scope="col">N° interno Abono</th>
+              <th scope="col">Tipo de Pago</th>
+              <th scope="col">Valor Pagado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ordenes of abonosDetalle">             
+              <td>{{ordenes.fecha_ingreso| date: 'dd/MM/yyyy'}}</td>
+              <td>{{ordenes.abono_id}}</td>
+              <td>{{nombreTipoPago(ordenes.tipo_pago_id)}}</td>
+              <td>{{formatearNumber(ordenes.cantidad)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal crear abono-->
+<div class="modal fade" id="crearAbonoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Crear Abono</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-row">
+          <div class="form-group col-md-6">
+            N° interno: {{documentoSelect.documento_id}}
+          </div>
+          <div class="form-group col-md-6">
+            Total Factura: ${{formatearNumber(documentoSelect.total)}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+           Tipo de pago
+            <select id="tipoPago" name="tipoPago" #tipoPago 
+            [(ngModel)]="abonoNew.tipo_pago_id" class="form-control">
+            <option value="">Seleccione</option>
+            <option *ngFor="let tipo of tipoPagosAll" [value]="tipo.tipo_pago_id">
+               {{tipo.nombre}}
+            </option>
+          </select>
+          </div>
+          <div class="form-group col-md-6">
+            Valor Abono
+            <input class="form-control" id="valor" placeholder=" Valor Abono"
+            name="valor" #valor required [(ngModel)]="abonoNew.cantidad">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="crearAbono()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>

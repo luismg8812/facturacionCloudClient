@@ -129,6 +129,12 @@ export class DocumentoService {
     return this.http.get<any>(this.server_api + '/documento/getDocumentosByTipoPago?empresaId=' + empresaId+ '&tipoDocumentoId=' + tipoDocumentoId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
   }
 
+  public getCarteraClientes(clienteId,fechaInicial,fechaFinal,empresaId) {
+    return this.http.get<any>(this.server_api + '/documento/getCarteraClientes?empresaId=' + empresaId+ '&clienteId=' + clienteId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
+  }
+
+  
+
   getGananciaDocumentos(fechaInicial,fechaFinal, empresaId: number  ) {
     return this.http.get<any>(this.server_api + '/documento/getGananciaDocumentos?empresaId=' + empresaId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal);
   }

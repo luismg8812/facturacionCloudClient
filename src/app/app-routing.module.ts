@@ -21,6 +21,7 @@ import { MovimientoProductosComponent } from './movimiento-productos/movimiento-
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
 import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
+import { CarteraClientesComponent } from './cartera-clientes/cartera-clientes.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -44,6 +45,7 @@ const routes: Routes = [
    { path: 'editarProductos', component: EditarProductoComponent },
    { path: 'infoganancia', component: InfoGananciaComponent },
    { path: 'reporteProductos', component: ReporteProductosComponent },
+   { path: 'carteraClientes', component: CarteraClientesComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];

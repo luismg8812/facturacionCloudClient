@@ -40,6 +40,7 @@ import { MovimientoProductosComponent } from './movimiento-productos/movimiento-
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
 import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
+import { CarteraClientesComponent } from './cartera-clientes/cartera-clientes.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -71,7 +72,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     MovimientoProductosComponent,
     EditarProductoComponent,
     InfoGananciaComponent,
-    ReporteProductosComponent
+    ReporteProductosComponent,
+    CarteraClientesComponent
   ],
   imports: [
     BrowserModule,
