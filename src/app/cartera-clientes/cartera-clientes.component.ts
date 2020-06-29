@@ -54,7 +54,7 @@ export class CarteraClientesComponent implements OnInit {
       informeDiario.tituloArchivo=tituloDocumento;
       this.impresionService.imprimirInformeDiarioPDFCarta(informeDiario);
     });*/
-  }
+  } 
 
   crearAbono() {
     let valido: boolean = true;
