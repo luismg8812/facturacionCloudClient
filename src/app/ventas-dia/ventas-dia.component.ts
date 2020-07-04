@@ -43,7 +43,7 @@ declare var $: any;
 })
 export class VentasDiaComponent implements OnInit {
 
-  
+
   readonly IMPRESION_PANTALLA: string = '2';
   readonly PROPORCION: string = '3';
   readonly MULTIPLE_IMPRESORA: string = '4';
@@ -186,7 +186,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("divParcial") divParcial: ElementRef; // div de donde se busca el articulo
   @ViewChild("enPantallaPV") enPantallaPV: ElementRef; // div de donde se busca el articulo
   @ViewChild("enPantallaLavel") enPantallaLavel: ElementRef; // div de donde se busca el articulo
-  
+
 
 
   //impresion
@@ -205,7 +205,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
   @ViewChild("buscarDocumentoXFecha") buscarDocumentoXFecha: ElementRef;
   @ViewChild("editarProducto") editarProducto: ElementRef;
-  
+
 
   //cliente
   @ViewChild("nombreCliente") nombreCliente: ElementRef;
@@ -671,8 +671,8 @@ export class VentasDiaComponent implements OnInit {
     if (element.id == "EditarProductos") {
       this.editarProducto.nativeElement.click();
     }
-    
-    
+
+
   }
 
   tipoPagoEnter(element) {
@@ -714,12 +714,12 @@ export class VentasDiaComponent implements OnInit {
       this.tipoPagoPV.nativeElement.focus();
       this.tipoPagoPV.nativeElement.select();
     } else {
-      if(this.impresionPantallaActivo){
+      if (this.impresionPantallaActivo) {
         this.enPantallaPV.nativeElement.focus();
-      }else{
+      } else {
         this.continuaImpresionPV.nativeElement.focus();
       }
-      
+
     }
   }
 
@@ -842,7 +842,7 @@ export class VentasDiaComponent implements OnInit {
 
   calcularInfoDiario(anulado: boolean) {
     console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(new Date(), false), this.calculosService.formatDate(new Date(), false)).subscribe(res => {
+    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(this.document.fecha_registro, false), this.calculosService.formatDate(this.document.fecha_registro, false)).subscribe(res => {
 
       if (res.length == 0) {
         this.informeDiario = new InformeDiarioModel();
@@ -851,8 +851,8 @@ export class VentasDiaComponent implements OnInit {
         console.log(this.informeDiario);
       }
       this.informeDiario = this.calculosService.calcularInfoDiario(this.document, this.informeDiario, anulado);
-      this.informeDiario.fecha_ingreso = new Date();
-      this.informeDiario.fecha_informe = this.calculosService.formatDate(new Date(), false);
+      this.informeDiario.fecha_ingreso = this.document.fecha_registro;
+      this.informeDiario.fecha_informe = this.calculosService.formatDate(this.document.fecha_registro, false);
       if (this.informeDiario.informe_diario_id == null) {
         this.informeDiario.empresa_id = this.empresaId;
         console.log(this.informeDiario.fecha_ingreso);
@@ -959,7 +959,7 @@ export class VentasDiaComponent implements OnInit {
     let tituloDocumento: string = "";
 
     let pantalla = this.enPantallaPV.nativeElement.value;
-    if (pantalla == 'S'||pantalla == 's') {
+    if (pantalla == 'S' || pantalla == 's') {
       pantalla = "pantalla";
     }
     if (numeroImpresiones == undefined) {
@@ -1347,6 +1347,7 @@ export class VentasDiaComponent implements OnInit {
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
+          this.document.fecha_registro = res.fecha_registro;
           let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
           documentoInvoice.documento_id = res.documento_id;
           documentoInvoice.fecha_registro = new Date();
@@ -1412,8 +1413,8 @@ export class VentasDiaComponent implements OnInit {
       }
     }
     console.log(docDetalle);
-    if(this.document.tipo_documento_id==null){//si es nulo se asigna factura por defecto
-      this.document.tipo_documento_id=this.TIPO_DOCUMENTO_FACTURA;
+    if (this.document.tipo_documento_id == null) {//si es nulo se asigna factura por defecto
+      this.document.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
     }
     this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
       if (res.code == 200) {
@@ -2002,9 +2003,9 @@ export class VentasDiaComponent implements OnInit {
           if (this.TipoPagosActivo) {
             this.tipoPagoPV.nativeElement.focus();
           } else {
-            if(this.impresionPantallaActivo){
+            if (this.impresionPantallaActivo) {
               this.enPantallaPV.nativeElement.focus();
-            }else{
+            } else {
               this.continuaImpresionPV.nativeElement.focus();
             }
           }

@@ -48,7 +48,15 @@ export class ProductoService {
     return this.http.put<any>(this.server_api+'/producto/saveProducto',productoId);
   }
   
+  public saveGrupo(grupoId:GrupoModel){
+    return this.http.put<any>(this.server_api+'/producto/saveGrupo',grupoId);
+  }
 
+  public updateGrupo(grupoId:GrupoModel){
+    return this.http.put<any>(this.server_api+'/producto/updateGrupo',grupoId);
+  }
+  
+  
   
   
 }

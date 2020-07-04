@@ -11,8 +11,10 @@
         Crear Producto
       </button>
 
-      <button type="button" class="btn btn-primary ml-2" id="siguiente"
-        >Crear Grupo</button>
+      <button type="button" (click)="limpiarGrupo()" class="btn btn-primary" data-toggle="modal"
+        data-target="#crearGrupoModal">
+        Gestión de Grupos
+      </button>
     </div>
   </div>
   <div class="form-row">
@@ -24,7 +26,7 @@
   <table class="table table-hover ">
     <thead>
       <tr>
-        <th scope="col" >Ops</th>
+        <th scope="col">Ops</th>
         <th scope="col" class="w-25">Producto</th>
         <th scope="col">Cant.</th>
         <th scope="col">Costo</th>
@@ -107,6 +109,81 @@
     </tbody>
   </table>
 
+  <!-- grestoion Modal -->
+  <div class="modal fade" id="crearGrupoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Gestion de grupos</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#crearGrupoNewModal">
+              Crear grupo
+            </button>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Opciones</th>
+                  <th scope="col"># interno</th>
+                  <th scope="col">Nombre</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let group of grupoList">
+                  <th scope="row">
+                    <button type="button" (click)="editarGrupo(group)" class="btn btn-primary" data-toggle="modal" data-target="#crearGrupoNewModal">
+                      Editar
+                    </button>
+                    
+                  </th>
+                  <td>{{group.grupo_id}}</td>
+                  <td>{{group.nombre}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--crear Modal -->
+<div class="modal fade" id="crearGrupoNewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Crear Modal</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group col-md-7 col-sm-12 ">
+            <input class="form-control" id="nombreGrupo" placeholder="* Nombres Grupo" name="nombreGrupo"
+                #nombreGrupo required [(ngModel)]="grupoNew.nombre">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)=" CrearGrupo()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <!-- crear producto Modal -->
   <div class="modal fade" id="crearProductoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
@@ -127,11 +204,11 @@
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Grupo
-              <select id="grupo" name="grupoPV" #grupoPV placeholder=""
-                [(ngModel)]="productoNew.grupo_id" class="form-control">
+              <select id="grupo" name="grupoPV" #grupoPV placeholder="" [(ngModel)]="productoNew.grupo_id"
+                class="form-control">
                 <option value="">Seleccione</option>
                 <option *ngFor="let grupo of grupoList" [value]="grupo.grupo_id">
-                   {{grupo.nombre}}
+                  {{grupo.nombre}}
                 </option>
               </select>
             </div>
@@ -144,16 +221,16 @@
                 <option value="">Seleccione</option>
                 <option *ngFor="let proveedor of proveedorList" [value]="proveedor.proveedor_id">
                   {{proveedor.nombre}}
-               </option>
+                </option>
               </select>
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Marca
-              <select id="marca" name="marcaPV" #marcaPV placeholder=""
-                [(ngModel)]="productoNew.marca_id" class="form-control">
+              <select id="marca" name="marcaPV" #marcaPV placeholder="" [(ngModel)]="productoNew.marca_id"
+                class="form-control">
                 <option value="">Seleccione</option>
                 <option *ngFor="let marca of marcaList" [value]="marca.marca_id">
-                   {{marca.nombre}}
+                  {{marca.nombre}}
                 </option>
               </select>
             </div>
@@ -161,25 +238,25 @@
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Precio de compra
-              <input class="form-control" id="costo" placeholder="* Precio de compra"
-              name="costoPV" #costoPV required [(ngModel)]="productoNew.costo">
+              <input class="form-control" id="costo" placeholder="* Precio de compra" name="costoPV" #costoPV required
+                [(ngModel)]="productoNew.costo">
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Precio de venta
-              <input class="form-control" id="costoPublicoPV" placeholder="* Precio de venta"
-              name="costoPublicoPV" #costoPublicoPV required [(ngModel)]="productoNew.costo_publico">
+              <input class="form-control" id="costoPublicoPV" placeholder="* Precio de venta" name="costoPublicoPV"
+                #costoPublicoPV required [(ngModel)]="productoNew.costo_publico">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Impuesto
-              <input class="form-control" id="impuestoPV" placeholder="Iva o Ipoconsumo"
-              name="impuestoPV" #impuestoPV required [(ngModel)]="productoNew.impuesto">
+              <input class="form-control" id="impuestoPV" placeholder="Iva o Ipoconsumo" name="impuestoPV" #impuestoPV
+                required [(ngModel)]="productoNew.impuesto">
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Stock Mínimo
-              <input class="form-control" id="stockMin" placeholder="Stock mínimo" name="stockMin" #stockMin
-                required [(ngModel)]="productoNew.stock_min">
+              <input class="form-control" id="stockMin" placeholder="Stock mínimo" name="stockMin" #stockMin required
+                [(ngModel)]="productoNew.stock_min">
             </div>
           </div>
           <div class="form-row">
@@ -195,23 +272,23 @@
             </div>
           </div>
           <div class="form-row">
-             
-            <div class="form-group col-md-6 col-sm-6">    
-                % ganancia      
+
+            <div class="form-group col-md-6 col-sm-6">
+              % ganancia
               <input class="form-control" id="ganancia" placeholder="% ganancia" name="ganancia" #ganancia required
                 [(ngModel)]="productoNew.porcentaje_venta">
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Fecha vencimiento
-              <input class="form-control" id="vencimiento" placeholder="Fecha vencimiento" type="date" name="vencimiento"
-                #vencimiento  [(ngModel)]="productoNew.fecha_vencimiento">
+              <input class="form-control" id="vencimiento" placeholder="Fecha vencimiento" type="date"
+                name="vencimiento" #vencimiento [(ngModel)]="productoNew.fecha_vencimiento">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Peso
-              <input class="form-control" id="peso"  placeholder="peso"
-                name="peso" #peso required [(ngModel)]="productoNew.peso">
+              <input class="form-control" id="peso" placeholder="peso" name="peso" #peso required
+                [(ngModel)]="productoNew.peso">
             </div>
             <div class="form-group col-md-6 col-sm-6">
 
@@ -220,18 +297,18 @@
           <div class="form-row">
             <div class="form-group col-md-3 col-sm-6">
               Balanza
-              <input class="form-control" id="BalanzaPV"  placeholder="1 o 0"
-                name="peso" #peso required [(ngModel)]="productoNew.balanza">
+              <input class="form-control" id="BalanzaPV" placeholder="1 o 0" name="peso" #peso required
+                [(ngModel)]="productoNew.balanza">
             </div>
             <div class="form-group col-md-3 col-sm-6">
               Varios
-              <input class="form-control" id="varios"  placeholder="1 o 0"
-                name="varios" #varios required [(ngModel)]="productoNew.varios">
+              <input class="form-control" id="varios" placeholder="1 o 0" name="varios" #varios required
+                [(ngModel)]="productoNew.varios">
             </div>
             <div class="form-group col-md-3 col-sm-6">
               Sub producto
-              <input class="form-control" id="subproducto"  placeholder="1 o 0"
-                name="subproducto" #subproducto required [(ngModel)]="productoNew.sub_producto">
+              <input class="form-control" id="subproducto" placeholder="1 o 0" name="subproducto" #subproducto required
+                [(ngModel)]="productoNew.sub_producto">
             </div>
           </div>
         </div>
