@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductoService } from '../services/producto.service';
 import { ProductoModel } from '../model/producto.model';
+import { GrupoModel } from '../model/grupo.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -13,12 +14,13 @@ export class InventarioFisicoComponent implements OnInit {
 
   public empresaId: number;
   public productosAll: Array<ProductoModel>;
-  public grupoList: Array<any>;
+  public grupoList: Array<GrupoModel>;
   public proveedorList: Array<any>;
   public marcaList: Array<any>;
   public indexModificarSelect: number = 0;
   public productoEliminar: ProductoModel;
   public productoNew: ProductoModel = new ProductoModel();
+  public grupoNew:GrupoModel= new GrupoModel();
 
   public mensaje: string = "";
 
@@ -27,8 +29,53 @@ export class InventarioFisicoComponent implements OnInit {
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getProductosByEmpresa(this.empresaId);
+    this.getGrupos();
 
   }
+
+  editarGrupo(grupo:GrupoModel){
+    this.grupoNew=grupo;
+  }
+
+  CrearGrupo() {
+    console.log(this.grupoNew);
+   let valido: boolean = true;
+   let mensageError: string = "Son obligatorios:\n ";
+   if (this.grupoNew.nombre == "") {
+     mensageError += "nombre\n";
+     valido = false;
+   }
+   if (valido == false) {
+     alert(mensageError);
+     return;
+   }
+   if(this.grupoNew.grupo_id==null){
+    this.grupoNew.empresa_id = this.empresaId;
+   this.productoService.saveGrupo(this.grupoNew).subscribe(res => {
+     if (res.code == 200) {
+       this.grupoNew = new GrupoModel();
+       $('#crearGrupoNewModal').modal('hide');
+       this.getGrupos();
+     } else {
+       alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+       return;
+     }
+   });
+   }else{
+    this.productoService.updateGrupo(this.grupoNew).subscribe(res => {
+      if (res.code == 200) {
+        this.grupoNew = new GrupoModel();
+        $('#crearGrupoNewModal').modal('hide');
+        this.getGrupos();
+      } else {
+        alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+        return;
+      }
+    });
+   }
+   
+
+ }
 
   CrearProducto() {
      console.log(this.productoNew);
@@ -63,6 +110,16 @@ export class InventarioFisicoComponent implements OnInit {
 
   limpiar() {
     this.productoNew = new ProductoModel();
+  }
+
+  limpiarGrupo(){
+    this.grupoNew = new GrupoModel();
+  }
+
+  getGrupos(){
+    this.productoService.getGruposByEmpresa(this.empresaId.toString()).subscribe(async res => {
+      this.grupoList = res;
+    });
   }
 
   cambioPrecioLista(producto: ProductoModel, element) {
