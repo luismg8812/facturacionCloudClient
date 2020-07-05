@@ -3,6 +3,7 @@ import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
 import { EmpresaModel } from '../model/empresa.model';
 import { ClienteModel } from '../model/cliente.model';
 import { ProveedorModel } from '../model/proveedor.model';
+import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 
 export class FacturaModel {
     public documento:DocumentoModel;
@@ -14,10 +15,12 @@ export class FacturaModel {
     public nombreTipoDocumento:string;
     public nombreUsuario:string;
     public nombreEmpleado:string;
+    public resolucionEmpresa:ResolucionEmpresaModel;
     
     
     constructor(){
         this.documento=new DocumentoModel();
+        this.resolucionEmpresa=new ResolucionEmpresaModel();
         this.detalle=[];
         this.titulo="";
         this.empresa=null;

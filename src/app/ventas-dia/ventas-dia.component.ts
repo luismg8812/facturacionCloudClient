@@ -33,6 +33,7 @@ import { InformeDiarioModel } from '../model/informeDiario.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 import { ProporcionModel } from '../model/proporcion.model';
+import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -126,7 +127,7 @@ export class VentasDiaComponent implements OnInit {
   public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
   public proporcion: ProporcionModel;
   public tiposPagosDocumento: TipoPagoDocumentoModel[] = [];
-
+  public resolucionAll: Array<ResolucionEmpresaModel>;
 
 
   public modificarFactura: boolean = false;
@@ -246,6 +247,7 @@ export class VentasDiaComponent implements OnInit {
     this.getTiposDocumento();
     this.getTipoEmpresa();
     this.getTipoPago();
+    this.getResolucion();
   }
 
 
@@ -1026,10 +1028,12 @@ export class VentasDiaComponent implements OnInit {
       console.log(empr);
       let con: number;
       let consecutivo: string;
+         let resolucion:ResolucionEmpresaModel = this.resolucionAll[0];
+      this.factura.resolucionEmpresa=resolucion;
       switch (this.document.tipo_documento_id) {
         case 9:
-          con = empr[0].consecutivo;
-          consecutivo = res[0].letra_consecutivo + con;
+          con =resolucion.consecutivo;
+          consecutivo = resolucion.letra_consecutivo + con;
           this.document.consecutivo_dian = consecutivo;
           console.log("consecutivo documentoId: " + consecutivo);
           this.tituloFactura = "FACTURA DE VENTA.";
@@ -1041,10 +1045,10 @@ export class VentasDiaComponent implements OnInit {
           this.tituloFactura = "No. DE COTIZACIÓN";
           break;
         default:
-          console.log(empr[0].consecutivo);
-          con = empr[0].consecutivo + 1;
+          console.log(resolucion.consecutivo);
+          con = resolucion.consecutivo + 1;
 
-          let topeConsecutivo = res[0].autorizacion_hasta;
+          let topeConsecutivo = resolucion.autorizacion_hasta;
           let consegutivo = con;
           if (consegutivo + 500 > topeConsecutivo) {
             alert(" se esta agotando el consegutivo DIAN");
@@ -1057,7 +1061,7 @@ export class VentasDiaComponent implements OnInit {
           console.log("consecutivo Dian: " + consecutivo);
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
-          res[0].consecutivo = con;
+          resolucion.consecutivo = con;
           break;
       }
       this.calcularInfoDiario(cancelado);
@@ -2111,6 +2115,13 @@ export class VentasDiaComponent implements OnInit {
   getUsuarios(empresaId: number) {
     this.usuarioService.getByUsuario(null, empresaId.toString(), null).subscribe(res => {
       this.usuarios = res;
+    });
+  }
+
+  getResolucion() {
+    this.clienteService.getResolucion(this.empresaId).subscribe(res => {
+      this.resolucionAll = res;
+      console.log("resoluciones:"+this.resolucionAll.length);
     });
   }
 

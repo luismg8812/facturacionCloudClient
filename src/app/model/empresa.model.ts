@@ -12,15 +12,8 @@ export class EmpresaModel {
     public departamento:string;
     public telefono_fijo:string;
     public cel:string;
-    public letra_consecutivo:string;
-    public resolucion_dian:string;
-    public fecha_resolucion:Date;
-    public t_factura:string;
-    public autorizacion_desde:number;
-    public autorizacion_hasta:number;
     public slogan:string;
     public impuesto:string;
-    public consecutivo:number;
     public actividad_economica:string;
     public url_logo:string;
 }

@@ -32,6 +32,7 @@ import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
+import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 
 
 declare var jquery: any;
@@ -99,6 +100,7 @@ export class GestionOrdenComponent implements OnInit {
   public configuracion: ConfiguracionModel;
   public documentoFactura: DocumentoModel = new DocumentoModel();
   public tipoPagosAll: Array<TipoPagoModel>;
+  public resolucionAll: Array<ResolucionEmpresaModel>;
   public tituloFactura: string = "";
   public informeDiario: InformeDiarioModel;
 
@@ -121,6 +123,7 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("clienteFactura") clienteFactura: ElementRef;
   @ViewChild("observacionFact") observacionFact: ElementRef;
   @ViewChild("tipoPago") tipoPago: ElementRef;
+  @ViewChild("resolucionEmpresa") resolucionEmpresa: ElementRef;
   @ViewChild("impresora") impresora: ElementRef;
 
 
@@ -149,6 +152,7 @@ export class GestionOrdenComponent implements OnInit {
     this.getImpresorasEmpresa(this.empresaId);
     this.getConfiguracion(this.empresaId);
     this.getTipoPago();
+    this.getResolucion();
     this.getEmpleados();
     this.getTipoIdentificacion();
     this.factura = new FacturaModel();
@@ -780,10 +784,17 @@ export class GestionOrdenComponent implements OnInit {
       let empr: EmpresaModel[] = res;
       let con: number;
       let consecutivo: string;
+      let resolucion:ResolucionEmpresaModel;
+      if (this.resolucionEmpresa.nativeElement.value != "") {
+        resolucion = this.resolucionAll.find(cliente => cliente.nombre == this.resolucionEmpresa.nativeElement.value);
+      }else {
+        resolucion = this.resolucionAll[0];
+      }
+      this.factura.resolucionEmpresa=resolucion;
       switch (this.documentoFactura.tipo_documento_id) {
         case 9:
-          con = empr[0].consecutivo;
-          consecutivo = res[0].letra_consecutivo + con;
+          con = resolucion.consecutivo;
+          consecutivo = resolucion.letra_consecutivo + con;
           this.documentoFactura.consecutivo_dian = consecutivo;
           console.log("consecutivo documentoId: " + consecutivo);
           this.tituloFactura = "FACTURA DE VENTA.";
@@ -805,12 +816,12 @@ export class GestionOrdenComponent implements OnInit {
           break;
         default:
           // log
-          console.log(empr[0].consecutivo);
-          con = empr[0].consecutivo + 1;
+          console.log(resolucion.consecutivo);
+          con = resolucion.consecutivo+ 1;
           // dentro de try se valida si faltan 500 facturas para
           // llegar hasta el tope
 
-          let topeConsecutivo = res[0].autorizacion_hasta;
+          let topeConsecutivo = resolucion.autorizacion_hasta;
           let consegutivo = con;
           if (consegutivo + 500 > topeConsecutivo) {
             alert(" se esta agotando el consegutivo DIAN");
@@ -820,11 +831,11 @@ export class GestionOrdenComponent implements OnInit {
             return;
           }
 
-          consecutivo = res[0].letra_consecutivo + con.toString();
+          consecutivo = resolucion.letra_consecutivo + con.toString();
           console.log("consecutivo Dian: " + consecutivo);
           this.documentoFactura.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
-          res[0].consecutivo = con;
+          resolucion.consecutivo = con;
           this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
             console.log("consecutivo actualizado");
             console.log(this.documentoFactura);
@@ -1391,6 +1402,12 @@ export class GestionOrdenComponent implements OnInit {
     this.clienteService.getTipoPago().subscribe(res => {
       this.tipoPagosAll = res;
       console.log("tipos de pago:" + this.tipoPagosAll.length);
+    });
+  }
+
+  getResolucion() {
+    this.clienteService.getResolucion(this.empresaId).subscribe(res => {
+      this.resolucionAll = res;
     });
   }
 
