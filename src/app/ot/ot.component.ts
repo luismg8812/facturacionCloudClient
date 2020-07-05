@@ -66,18 +66,18 @@ export class OtComponent implements OnInit {
   public articuloPV: string = "";
   public factura: FacturaModel;
   public empleados: Array<EmpleadoModel>;
-  
+
 
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
-  
+
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
   @ViewChild("observacion") observacion: ElementRef;
   @ViewChild("item") item: ElementRef;
   @ViewChild("cantidad") cantidad: ElementRef;
   @ViewChild("articuloC") articuloC: ElementRef;
-  
+
   @ViewChild("modelo") modelo: ElementRef;
   @ViewChild("marca") marca: ElementRef;
   @ViewChild("linea") linea: ElementRef;
@@ -93,7 +93,7 @@ export class OtComponent implements OnInit {
     public calculosService: CalculosService,
     public afStorage: AngularFireStorage,
     public impresionService: ImpresionService,
-    public empleadoService:EmpleadoService
+    public empleadoService: EmpleadoService
   ) { }
 
   ngOnInit() {
@@ -122,7 +122,7 @@ export class OtComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.ACTIVAR_EMPLEADOS_ORDEN) {
           console.log("empleados en orden activo");
           this.empleadoOrdenActivo = true;
-        }  
+        }
 
       }
     });
@@ -225,6 +225,7 @@ export class OtComponent implements OnInit {
   }
 
   imprimirOrden(impresora) {
+    let parametros: ParametrosModel = new ParametrosModel;
     if (this.documento.documento_id == "") {
       alert("Debe pulsar el boton nuevo documento");
       return;
@@ -259,6 +260,9 @@ export class OtComponent implements OnInit {
       this.factura.nombreTipoDocumento = tituloDocumento;
       this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
+      if (parametros.ambiente != 'cloud') {
+        this.factura.empresa.url_logo = "assets/images/logoempresa.jpg";
+      }
       switch (tipoImpresion) {
         case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt80(this.factura), tituloDocumento + '.txt');
@@ -266,10 +270,10 @@ export class OtComponent implements OnInit {
         case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
           break;
-            //case this.TIPO_IMPRESION_PDF50MM:
-             // this.impresionService.imprimirFacturaPdf50(this.factura, this.configuracion, false);
-             // break;
-             //aqui voy impresion orden en pdf50
+        case this.TIPO_IMPRESION_PDF50MM:
+          this.impresionService.imprimirOrdenPDF50(this.factura, false);
+          break;
+
         default:
           alert("no tiene un tipo impresion");
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
@@ -347,8 +351,8 @@ export class OtComponent implements OnInit {
     }
     console.log(element.value);
     this.documento.detalle_entrada = element.value;
-    this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase( );
-    element.value=this.documento.detalle_entrada.toUpperCase( );
+    this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase();
+    element.value = this.documento.detalle_entrada.toUpperCase();
     this.documentoService.updateDocumento(this.documento).subscribe(res => {
       if (res.code != 200) {
         alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
@@ -404,7 +408,7 @@ export class OtComponent implements OnInit {
         if (res.code == 200) {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
-          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+          this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
           console.log(this.detallesList);
           this.documentoService.updateDocumento(this.documento).subscribe(res => {
             if (res.code != 200) {
@@ -438,8 +442,8 @@ export class OtComponent implements OnInit {
               break;
             }
           }
-          
-          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+
+          this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
           console.log(this.detallesList);
           this.documentoService.updateDocumento(this.documento).subscribe(res => {
             if (res.code != 200) {
@@ -454,15 +458,15 @@ export class OtComponent implements OnInit {
       });
       this.detalleSelect = new DocumentoDetalleModel();
     }
-  
+
     this.productoIdSelect = null;
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
-    }else{
-      this.articuloC.nativeElement.value = "";  
+    } else {
+      this.articuloC.nativeElement.value = "";
     }
     this.articuloPV = "";
-    
+
     this.cantidad.nativeElement.value = 1;
     this.cantidad.nativeElement.value = 1;
     this.downloadURL2 = null;
@@ -507,7 +511,7 @@ export class OtComponent implements OnInit {
   teclaAnteriorSiguiente(apcion: string) {
     if (this.ordenesList.length == 0) {
       let tipoDocumentoId: Array<number> = [11];
-      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '','').subscribe(res => {
+      this.documentoService.getDocumentoByTipo(tipoDocumentoId, this.empresaId.toString(), this.usuarioId.toString(), '', '').subscribe(res => {
         this.ordenesList = res;
         console.log("lista de docuemntos cargados: " + this.ordenesList.length);
         if (this.ordenesList.length == 0) {
@@ -641,7 +645,7 @@ export class OtComponent implements OnInit {
           this.detallesList = res;
           this.detalleSelect = new DocumentoDetalleModel();
           console.log("detalles encontrados:" + res.length);
-          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+          this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
         });
       } else {
         alert("Error agregando repuesto: " + res.error);
@@ -650,7 +654,7 @@ export class OtComponent implements OnInit {
     $('#eliminarModal').modal('hide');
   }
 
-  
+
 
   buscarOrdenesHoy(placa, clien) {
     let idCliente = "";
@@ -659,7 +663,7 @@ export class OtComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(),tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId).subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -671,7 +675,7 @@ export class OtComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value,tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -704,12 +708,12 @@ export class OtComponent implements OnInit {
     return usuario == undefined ? "" : usuario.nombre;
   }
 
-  getEmpleados(){
+  getEmpleados() {
     this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
       this.empleados = res;
     });
   }
-  
+
 
 
 
