@@ -55,6 +55,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
+  readonly TIPO_IMPRESION_PDF50MM: number = 5;
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
 
@@ -640,6 +641,9 @@ export class GestionOrdenComponent implements OnInit {
         case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
           break;
+          case this.TIPO_IMPRESION_PDF50MM:
+            this.impresionService.imprimirOrdenPDF50(this.factura, false);
+            break;
         default:
           alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");
           return;
