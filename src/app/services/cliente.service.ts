@@ -6,6 +6,7 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { ParametrosModel } from '../model/parametros.model';
 import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
+import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,12 @@ export class ClienteService {
   public getTipoPago(){
     return this.http.get<TipoPagoModel[]>(this.server_api+'/cliente/getTipoPago');
   }
+
+  public getResolucion(empresaId:number){
+    return this.http.get<ResolucionEmpresaModel[]>(this.server_api+'/cliente/getResolucion?empresaId='+empresaId);
+  }
+
+  
 
   public getTipoIdentificacionAll(){
     return this.http.get<TipoIdentificacionModel[]>(this.server_api+'/cliente/getTipoIdentificacionAll');

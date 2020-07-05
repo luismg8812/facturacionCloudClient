@@ -37,6 +37,7 @@ export class OtComponent implements OnInit {
   readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
+  readonly TIPO_IMPRESION_PDF50MM: number = 5;
 
   public ref: AngularFireStorageReference;
   public task: AngularFireUploadTask;
@@ -265,7 +266,10 @@ export class OtComponent implements OnInit {
         case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
           break;
-
+            //case this.TIPO_IMPRESION_PDF50MM:
+             // this.impresionService.imprimirFacturaPdf50(this.factura, this.configuracion, false);
+             // break;
+             //aqui voy impresion orden en pdf50
         default:
           alert("no tiene un tipo impresion");
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,

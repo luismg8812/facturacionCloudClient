@@ -79,9 +79,9 @@ export class CuadreCajaComponent implements OnInit {
         case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirCuadreTxt80(this.cuadreCajaVo, empr[0],nombreUsuario), tituloDocumento + '.txt');
           break;
-       // case "TXT50MM":
-         // this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
-        //  break;
+        case this.TIPO_IMPRESION_TXT50MM:
+          this.descargarArchivo(this.impresionService.imprimirCuadreTxt50(this.cuadreCajaVo, empr[0],nombreUsuario), tituloDocumento + '.txt');
+          break;
 
         default:
           alert("no tiene un tipo impresion");
