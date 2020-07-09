@@ -1067,7 +1067,7 @@ export class VentasDiaComponent implements OnInit {
           break;
       }
       this.calcularInfoDiario(cancelado);
-      this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
+      this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
         console.log("consecutivo actualizado");
         console.log(this.document);
         this.documentoService.updateDocumento(this.document).subscribe(res => {
