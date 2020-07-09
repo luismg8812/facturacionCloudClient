@@ -134,6 +134,7 @@ export class VentasDiaComponent implements OnInit {
   public claveBorrado: boolean = false;
   public divGramera: boolean = false;
   public pesoGramera: number = 0.0;
+  public parcialGramera: number=0.0;
   public informeDiario: InformeDiarioModel;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
@@ -558,6 +559,7 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
         this.pesoGramera = res;
+        this.parcialGramera=Number(this.productoIdSelect.costo_publico)*Number(this.pesoGramera);
       }
     });
   }
@@ -1207,6 +1209,7 @@ export class VentasDiaComponent implements OnInit {
     }
     this.asignarDocumento(this.pesoGramera);
     this.pesoGramera = 0.0;
+    this.parcialGramera = 0.0;
   }
 
   cantidadEnter(element) {

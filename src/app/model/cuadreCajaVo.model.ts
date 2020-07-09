@@ -1,5 +1,6 @@
 export class CuadreCajaVoModel {
     public empleados:any;
+    public grupos:any
     public total_facturas: number;
     public total_notas:number;
     public documentos_no_impresos: number;

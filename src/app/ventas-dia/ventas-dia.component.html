@@ -76,7 +76,7 @@
         </div>
     </div>
     <div class="form-row" *ngIf="divGramera">
-        <div class="form-group col-md-5 col-sm-2">
+        <div class="form-group col-md-4 col-sm-2">
             Producto:
             <b>
                 <h1 style="color:darkblue">
@@ -84,10 +84,16 @@
                 </h1>
             </b>
         </div>
-        <div class="form-group col-md-5 col-sm-2">
+        <div class="form-group col-md-3 col-sm-2">
             Peso:
             <h1 style="color:red">
                 {{formatearNumber(pesoGramera)}}
+            </h1>
+        </div>
+        <div class="form-group col-md-3 col-sm-2">
+            Precio:
+            <h1 style="color:red">
+                {{formatearNumber(parcialGramera)}}
             </h1>
         </div>
         <div class="form-group col-md-2 col-sm-2">
