@@ -9,6 +9,8 @@ import { EmpresaService } from '../services/empresa.service';
 import { ImpresionService } from '../services/impresion.service';
 import { EmpleadoService } from '../services/empleado.service';
 import { EmpleadoModel } from '../model/empleado.model';
+import { ProductoService } from '../services/producto.service';
+import { GrupoModel } from '../model/grupo.model';
 
 @Component({
   selector: 'app-cuadre-caja',
@@ -23,20 +25,24 @@ export class CuadreCajaComponent implements OnInit {
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
- 
+
   public cuadreCajaActivo: boolean = false;
   public verRemisionesActivo: boolean = false;
   public empleados: Array<EmpleadoModel>;
+  public grupoList: Array<GrupoModel>;
+
+
 
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
-  
 
-  constructor(public usuarioService: UsuarioService, 
-    public empresaService:EmpresaService,
-    public documentoService: DocumentoService, 
-    public impresionService:ImpresionService,
-    public clienteService:ClienteService,
-    public empleadoService:EmpleadoService) {
+
+  constructor(public usuarioService: UsuarioService,
+    public empresaService: EmpresaService,
+    public documentoService: DocumentoService,
+    public impresionService: ImpresionService,
+    public clienteService: ClienteService,
+    public productoService: ProductoService,
+    public empleadoService: EmpleadoService) {
     console.log("cuadre cargado");
     this.inicio();
     console.log("cuadre cargado");
@@ -50,11 +56,17 @@ export class CuadreCajaComponent implements OnInit {
   public activaciones: Array<ActivacionModel> = [];
 
   ngOnInit() {
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.getImpresorasEmpresa(this.empresaId);
     this.getEmpleados(this.empresaId);
+    this.getGrupos();
   }
 
   imprimirOrden(impresora) {
+    if (Number(this.cuadreCajaVo.documentos_no_impresos) > 0) {
+      alert("Existen " + this.cuadreCajaVo.documentos_no_impresos + " documentos no impresos");
+      return;
+    }
     if (impresora.value == "") {
       impresora.value = 1;
     }
@@ -73,14 +85,14 @@ export class CuadreCajaComponent implements OnInit {
     tituloDocumento = "Cuadre_caja" + "_" + this.cuadreCajaVo.totalCaja + "_" + impresora.value + "_" + tipoImpresion;
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
-     
+
       let nombreUsuario = localStorage.getItem("nombreUsuario");
       switch (tipoImpresion) {
         case this.TIPO_IMPRESION_TXT80MM:
-          this.descargarArchivo(this.impresionService.imprimirCuadreTxt80(this.cuadreCajaVo, empr[0],nombreUsuario), tituloDocumento + '.txt');
+          this.descargarArchivo(this.impresionService.imprimirCuadreTxt80(this.cuadreCajaVo, empr[0], nombreUsuario), tituloDocumento + '.txt');
           break;
         case this.TIPO_IMPRESION_TXT50MM:
-          this.descargarArchivo(this.impresionService.imprimirCuadreTxt50(this.cuadreCajaVo, empr[0],nombreUsuario), tituloDocumento + '.txt');
+          this.descargarArchivo(this.impresionService.imprimirCuadreTxt50(this.cuadreCajaVo, empr[0], nombreUsuario), tituloDocumento + '.txt');
           break;
 
         default:
@@ -124,91 +136,100 @@ export class CuadreCajaComponent implements OnInit {
         }
 
       }
-      if (!this.cuadreCajaActivo) { 
+      if (!this.cuadreCajaActivo) {
         let tiposDocumento: number[] = [];
-        let cerrado ='0'; //tra todos los documentos que no han sido cerrados 
+        let cerrado = '0'; //tra todos los documentos que no han sido cerrados 
         if (this.verRemisionesActivo) {
           tiposDocumento.push(9); //se agrea tipo documento remision si tiene activos remisiones en cuadre de caja 
         }
         tiposDocumento.push(10); // se agrega factura de venta
-        this.documentoService.getCuadreCaja(tiposDocumento,  company.toString(),user.toString(), cerrado).subscribe(res => {
+        this.documentoService.getCuadreCaja(tiposDocumento, company.toString(), user.toString(), cerrado).subscribe(res => {
           console.log(res);
-          this.cuadreCajaVo =res[0];
-          this.cuadreCajaVo.total_facturas=Number(this.cuadreCajaVo.total_facturas)+Number(this.cuadreCajaVo.total_notas);
+          this.cuadreCajaVo = res[0];
+          this.cuadreCajaVo.total_facturas = Number(this.cuadreCajaVo.total_facturas) + Number(this.cuadreCajaVo.total_notas);
           console.log(this.cuadreCajaVo.abonosDia);
           this.asignarValoresNulos();
           this.calcularTotalIngresos();
           this.calcularEnCaja();
           this.calcularDiferencia();
           this.ventaEmpleados();
-        });      
+          this.ventaGrupos();
+        });
       }
     });
   }
 
-  ventaEmpleados(){
-    
+  ventaEmpleados() {
+
     let idEmpleados: number[] = [];
     for (let id of this.empleados) {
       idEmpleados.push(id.empleado_id);
     }
-      this.documentoService.getNominaByEmpleado("","",idEmpleados, "10").subscribe(res => {
-        console.log(this.cuadreCajaVo);
-        this.cuadreCajaVo.empleados=res;
-      
-      });    
-    
+    this.documentoService.getNominaByEmpleado("", "", idEmpleados, "10").subscribe(res => {
+      console.log(this.cuadreCajaVo);
+      this.cuadreCajaVo.empleados = res;
+
+    });
+
   }
 
-  asignarValoresNulos(){
-    this.cuadreCajaVo.abonosDia=this.cuadreCajaVo.abonosDia==undefined?0:this.cuadreCajaVo.abonosDia;
-    this.cuadreCajaVo.avanceEfectivo=this.cuadreCajaVo.avanceEfectivo==undefined?0:this.cuadreCajaVo.avanceEfectivo;
-    this.cuadreCajaVo.chequesRecogidos=this.cuadreCajaVo.chequesRecogidos==undefined?0:this.cuadreCajaVo.chequesRecogidos;
-    this.cuadreCajaVo.otros=this.cuadreCajaVo.otros==undefined?0:this.cuadreCajaVo.otros;
-    this.cuadreCajaVo.base=this.cuadreCajaVo.base==undefined?0:this.cuadreCajaVo.base;
-    this.cuadreCajaVo.consignaciones=this.cuadreCajaVo.consignaciones==undefined?0:this.cuadreCajaVo.consignaciones;
-    this.cuadreCajaVo.fajos=this.cuadreCajaVo.fajos==undefined?0:this.cuadreCajaVo.fajos;
-    this.cuadreCajaVo.moneda=this.cuadreCajaVo.moneda==undefined?0:this.cuadreCajaVo.moneda;
-    this.cuadreCajaVo.varios=this.cuadreCajaVo.varios==undefined?0:this.cuadreCajaVo.varios;
-    this.cuadreCajaVo.gastado=this.cuadreCajaVo.gastado==undefined?0:this.cuadreCajaVo.gastado;
-    this.cuadreCajaVo.nomina=this.cuadreCajaVo.nomina==undefined?0:this.cuadreCajaVo.nomina;
-    this.cuadreCajaVo.descuento=this.cuadreCajaVo.descuento==undefined?0:this.cuadreCajaVo.descuento;
-    this.cuadreCajaVo.propina=this.cuadreCajaVo.propina==undefined?0:this.cuadreCajaVo.propina;
+  ventaGrupos() {
+    this.documentoService.getVentasPorGrupos(this.usuarioId).subscribe(res => {
+      console.log(this.cuadreCajaVo);
+      this.cuadreCajaVo.grupos = res;
+    });
+
   }
 
-  calcularTotalIngresos(){
-    let totalingresos=0.0;
-    totalingresos= Number(this.cuadreCajaVo.total_facturas)+
-                   Number( this.cuadreCajaVo.base)+
-                   Number( this.cuadreCajaVo.abonosDia)+
-                   Number( this.cuadreCajaVo.avanceEfectivo)+
-                   Number( this.cuadreCajaVo.chequesRecogidos)+
-                   Number( this.cuadreCajaVo.otros)+
-                   Number( this.cuadreCajaVo.base)+
-                   Number( this.cuadreCajaVo.consignaciones);
-    this.cuadreCajaVo.totalIngresos=totalingresos;           
+  asignarValoresNulos() {
+    this.cuadreCajaVo.abonosDia = this.cuadreCajaVo.abonosDia == undefined ? 0 : this.cuadreCajaVo.abonosDia;
+    this.cuadreCajaVo.avanceEfectivo = this.cuadreCajaVo.avanceEfectivo == undefined ? 0 : this.cuadreCajaVo.avanceEfectivo;
+    this.cuadreCajaVo.chequesRecogidos = this.cuadreCajaVo.chequesRecogidos == undefined ? 0 : this.cuadreCajaVo.chequesRecogidos;
+    this.cuadreCajaVo.otros = this.cuadreCajaVo.otros == undefined ? 0 : this.cuadreCajaVo.otros;
+    this.cuadreCajaVo.base = this.cuadreCajaVo.base == undefined ? 0 : this.cuadreCajaVo.base;
+    this.cuadreCajaVo.consignaciones = this.cuadreCajaVo.consignaciones == undefined ? 0 : this.cuadreCajaVo.consignaciones;
+    this.cuadreCajaVo.fajos = this.cuadreCajaVo.fajos == undefined ? 0 : this.cuadreCajaVo.fajos;
+    this.cuadreCajaVo.moneda = this.cuadreCajaVo.moneda == undefined ? 0 : this.cuadreCajaVo.moneda;
+    this.cuadreCajaVo.varios = this.cuadreCajaVo.varios == undefined ? 0 : this.cuadreCajaVo.varios;
+    this.cuadreCajaVo.gastado = this.cuadreCajaVo.gastado == undefined ? 0 : this.cuadreCajaVo.gastado;
+    this.cuadreCajaVo.nomina = this.cuadreCajaVo.nomina == undefined ? 0 : this.cuadreCajaVo.nomina;
+    this.cuadreCajaVo.descuento = this.cuadreCajaVo.descuento == undefined ? 0 : this.cuadreCajaVo.descuento;
+    this.cuadreCajaVo.propina = this.cuadreCajaVo.propina == undefined ? 0 : this.cuadreCajaVo.propina;
   }
 
-  calcularEnCaja(){
-    let totalCaja=0.0;
-    totalCaja= Number(this.cuadreCajaVo.moneda)+
-                   Number( this.cuadreCajaVo.fajos)+
-                   Number( this.cuadreCajaVo.efectivo)+
-                   Number( this.cuadreCajaVo.cheques)+
-                   Number( this.cuadreCajaVo.tarjetas)+
-                   Number( this.cuadreCajaVo.varios)+
-                   Number( this.cuadreCajaVo.vales)+
-                   Number( this.cuadreCajaVo.gastado)+
-                   Number( this.cuadreCajaVo.nomina)+
-                   Number( this.cuadreCajaVo.descuento)+
-                   Number( this.cuadreCajaVo.propina)+
-                   Number( this.cuadreCajaVo.cartera);
-    this.cuadreCajaVo.totalCaja=totalCaja;   
-    this.calcularDiferencia();        
+  calcularTotalIngresos() {
+    let totalingresos = 0.0;
+    totalingresos = Number(this.cuadreCajaVo.total_facturas) +
+      Number(this.cuadreCajaVo.base) +
+      Number(this.cuadreCajaVo.abonosDia) +
+      Number(this.cuadreCajaVo.avanceEfectivo) +
+      Number(this.cuadreCajaVo.chequesRecogidos) +
+      Number(this.cuadreCajaVo.otros) +
+      Number(this.cuadreCajaVo.base) +
+      Number(this.cuadreCajaVo.consignaciones);
+    this.cuadreCajaVo.totalIngresos = totalingresos;
   }
 
-  calcularDiferencia(){
-    this.cuadreCajaVo.diferencia = Number(this.cuadreCajaVo.totalIngresos)-Number(this.cuadreCajaVo.totalCaja)
+  calcularEnCaja() {
+    let totalCaja = 0.0;
+    totalCaja = Number(this.cuadreCajaVo.moneda) +
+      Number(this.cuadreCajaVo.fajos) +
+      Number(this.cuadreCajaVo.efectivo) +
+      Number(this.cuadreCajaVo.cheques) +
+      Number(this.cuadreCajaVo.tarjetas) +
+      Number(this.cuadreCajaVo.varios) +
+      Number(this.cuadreCajaVo.vales) +
+      Number(this.cuadreCajaVo.gastado) +
+      Number(this.cuadreCajaVo.nomina) +
+      Number(this.cuadreCajaVo.descuento) +
+      Number(this.cuadreCajaVo.propina) +
+      Number(this.cuadreCajaVo.cartera);
+    this.cuadreCajaVo.totalCaja = totalCaja;
+    this.calcularDiferencia();
+  }
+
+  calcularDiferencia() {
+    this.cuadreCajaVo.diferencia = Number(this.cuadreCajaVo.totalIngresos) - Number(this.cuadreCajaVo.totalCaja)
   }
 
   getImpresorasEmpresa(empresaId: number) {
@@ -222,6 +243,12 @@ export class CuadreCajaComponent implements OnInit {
     this.empleadoService.getEmpleadoAll(empresaId).subscribe(res => {
       this.empleados = res;
       console.log("lista de empleados cargados: " + this.empleados.length);
+    });
+  }
+
+  getGrupos() {
+    this.productoService.getGruposByEmpresa(this.empresaId.toString()).subscribe(async res => {
+      this.grupoList = res;
     });
   }
 

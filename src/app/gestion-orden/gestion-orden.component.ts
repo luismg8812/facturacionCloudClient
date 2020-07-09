@@ -788,12 +788,16 @@ export class GestionOrdenComponent implements OnInit {
       let empr: EmpresaModel[] = res;
       let con: number;
       let consecutivo: string;
-      let resolucion:ResolucionEmpresaModel;
+      let resolucion:ResolucionEmpresaModel=new ResolucionEmpresaModel();
       if (this.resolucionEmpresa.nativeElement.value != "") {
-        resolucion = this.resolucionAll.find(cliente => cliente.nombre == this.resolucionEmpresa.nativeElement.value);
+        console.log(this.resolucionEmpresa.nativeElement.value);
+        resolucion = this.resolucionAll.find(reso => reso.nombre.trim() == this.resolucionEmpresa.nativeElement.value.toString().trim());
+        console.log(resolucion.nombre);
       }else {
         resolucion = this.resolucionAll[0];
       }
+      console.log(resolucion);
+      console.log(this.resolucionAll);
       this.factura.resolucionEmpresa=resolucion;
       switch (this.documentoFactura.tipo_documento_id) {
         case 9:
@@ -827,23 +831,21 @@ export class GestionOrdenComponent implements OnInit {
 
           let topeConsecutivo = resolucion.autorizacion_hasta;
           let consegutivo = con;
-          if (consegutivo + 500 > topeConsecutivo) {
+          if (consegutivo + 200 > topeConsecutivo) {
             alert(" se esta agotando el consegutivo DIAN");
           }
           if (consegutivo > topeConsecutivo) {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-
           consecutivo = resolucion.letra_consecutivo + con.toString();
           console.log("consecutivo Dian: " + consecutivo);
           this.documentoFactura.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
           resolucion.consecutivo = con;
-          this.empresaService.updateConsecutivoEmpresa(empr[0]).subscribe(emp => {
+          this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
             console.log("consecutivo actualizado");
             console.log(this.documentoFactura);
-
             this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
               if (res.code != 200) {
                 alert("error creando documento, por favor inicie nuevamente la creación del documento");
@@ -851,7 +853,6 @@ export class GestionOrdenComponent implements OnInit {
               }
               this.imprimirFactura(numImpresiones, empr[0], tipoImpresion);
               this.limpiarFactura();
-
             });
           });
 

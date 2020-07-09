@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {PagosEmpresaModel} from '../model/pagosEmpresa.model';
 import { EmpresaModel } from '../model/empresa.model';
 import { ParametrosModel } from '../model/parametros.model';
+import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class EmpresaService {
     return this.http.get<EmpresaModel[]>(this.server_api+'/empresa/getEmpresaById?empresa_id='+empresa_id);
   }
 
-  updateConsecutivoEmpresa(empresaId:EmpresaModel){
+  updateConsecutivoEmpresa(empresaId:ResolucionEmpresaModel){
     return this.http.post<any>(this.server_api+'/empresa/updateConsecutivoEmpresa',empresaId);
   }
   
