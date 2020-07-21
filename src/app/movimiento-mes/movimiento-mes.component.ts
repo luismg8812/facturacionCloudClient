@@ -103,6 +103,7 @@ export class MovimientoMesComponent implements OnInit {
   @ViewChild("finPV") finPV: ElementRef;
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
   @ViewChild("buscarDocumentoXFecha") buscarDocumentoXFecha: ElementRef;
+  @ViewChild("editarProducto") editarProducto: ElementRef;
 
   //div botones de acciones
   @ViewChild("divSiguiente") divSiguiente: ElementRef;
@@ -132,6 +133,7 @@ export class MovimientoMesComponent implements OnInit {
   @ViewChild("crearProductoPV") crearProductoPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
   @ViewChild("codigoPV") codigoPV: ElementRef;
+  @ViewChild("codBarrasPv") codBarrasPv: ElementRef;
   @ViewChild("cantidadPV") cantidadPV: ElementRef;
   @ViewChild("precioPV") precioPV: ElementRef;
   @ViewChild("grameraPV") grameraPV: ElementRef;
@@ -519,6 +521,7 @@ export class MovimientoMesComponent implements OnInit {
       case "c_":
         cantidad = element.value;
         precio = anterior.unitario;
+        this.updateCantidad(anterior,'suma');
         break;
       case "p_":
         cantidad = anterior.cantidad;
@@ -532,6 +535,27 @@ export class MovimientoMesComponent implements OnInit {
         this.asignarDocumentoDetalle(cantidad, precio);
         this.siguientePV.nativeElement.focus();
         this.modificarFactura = false;
+      }
+    });
+  }
+
+  updateCantidad(anterior:DocumentoDetalleModel,operacion:string){
+    let newCantidad: number = this.productoIdSelect.cantidad;
+    let product:ProductoModel=new ProductoModel();
+    product = this.productoIdSelect;
+    if(operacion=='suma'){
+      product.cantidad = Number(newCantidad) + Number(anterior.cantidad);
+    }else{
+      product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
+    }
+    this.restarCantidadesSubProducto(anterior);
+    this.productoService.updateCantidad(product).subscribe(res => {
+      if (res.code == 200) {
+        this.productoIdSelect=product;
+        //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
+      } else {
+        alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
+        return;
       }
     });
   }
@@ -560,17 +584,7 @@ export class MovimientoMesComponent implements OnInit {
           }
         });
 
-        let newCantidad: number = this.productoIdSelect.cantidad;
-        this.productoIdSelect.cantidad = newCantidad - anterior.cantidad;
-        this.restarCantidadesSubProducto(anterior);
-        this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
-          if (res.code == 200) {
-            //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
-          } else {
-            alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
-            return;
-          }
-        });
+        this.updateCantidad(anterior,'suma');
 
 
         this.siguientePV.nativeElement.focus();
@@ -799,6 +813,10 @@ export class MovimientoMesComponent implements OnInit {
     if (element.id == "documentosXFechaPV") { 
       console.log("aquientra");
       this.buscarDocumentoXFecha.nativeElement.click();   
+    }
+
+    if (element.id == "EditarProductos") {
+      this.editarProducto.nativeElement.click();
     }
 
     if (element.id == "finPV") { 
@@ -1275,19 +1293,11 @@ export class MovimientoMesComponent implements OnInit {
       });
       let newCantidad: number = this.productoIdSelect.cantidad;
       if(this.document.tipo_documento_id==this.TIPO_DOCUMENTO_SALIDA_ALMACEN){//si es salida de almacen se restan las cantidades
-        this.productoIdSelect.cantidad = Number(newCantidad) - Number(docDetalle.cantidad);
+        this.updateCantidad(docDetalle,'resta');
       }else{
-        this.productoIdSelect.cantidad = Number(newCantidad) + Number(docDetalle.cantidad);
+        this.updateCantidad(docDetalle,'suma');
       }
-      this.restarCantidadesSubProducto(docDetalle);
-      this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
-        if (res.code == 200) {
-          //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
-        } else {
-          alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
-          return;
-        }
-      });
+    
 
     });
   }
@@ -1395,7 +1405,7 @@ export class MovimientoMesComponent implements OnInit {
       $('#crearProductoModal').modal('show');
       await this.delay(160);
       this.nombreproductoNew.nativeElement.value=this.articuloPV.nativeElement.value;
-      //this.CodigoBarrasPV.nativeElement.value
+      this.codBarrasPv.nativeElement.value=this.CodigoBarrasPV.nativeElement.value;
       this.nombreproductoNew.nativeElement.focus();
 
     } else {

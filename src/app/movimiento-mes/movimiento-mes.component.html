@@ -512,4 +512,14 @@
    aria-hidden="true">
    <app-buscar-documentos></app-buscar-documentos>
 </div>
+
+<button type="button" class="btn btn-primary d-none" id="editarProducto" #editarProducto
+data-toggle="modal" data-target="#editarProduct">
+Launch demo modal
+</button>
+<!-- info articulos -->
+<div class="modal fade" id="editarProduct" tabindex="-1" role="dialog" aria-labelledby="cuadreCajaModalLabel"
+aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<app-editar-producto></app-editar-producto>
+</div>
 </div>

@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
     let parametros: ParametrosModel = new ParametrosModel;
     if (parametros.ambiente == 'cloud') {
 
-      this.usuarioService.loginUsuario(usuario, clave).then(res => {
+      this.usuarioService.loginUsuario(usuario.trim(), clave).then(res => {
         localStorage.setItem("userLogin", usuario);
         this.usuarioService.usuarioByMail(usuario).subscribe((res) => {
           console.log(res);

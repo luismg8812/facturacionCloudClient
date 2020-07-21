@@ -67,6 +67,9 @@ export class InformeDiarioComponent implements OnInit {
     if (ini == '' || fin == '') {
       ini=this.calculosService.formatDate(new Date(),false);
       fin=this.calculosService.formatDate(new Date(),false);
+    }else{
+      ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
+      fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
     }
     this.cierreService.getInfoDiarioByDate(this.empresaId,ini,fin).subscribe(res => {
     this.informesDiarios=res;

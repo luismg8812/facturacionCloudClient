@@ -153,7 +153,13 @@ export class NominaComponent implements OnInit {
     this.vales = 0;
     this.productos = 0;
     this.total = 0;
-    this.documentoService.getNominaByEmpleado(this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString(), this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString(), idEmpleados,"11").subscribe(res => {
+    let ini: string = this.fechaIni.nativeElement.value;
+    let fin: string = this.fechaFin.nativeElement.value;
+    if (ini != '' && fin != '') {
+      ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
+      fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
+    } 
+    this.documentoService.getNominaByEmpleado(ini,fin, idEmpleados,"11").subscribe(res => {
       this.nomimas = res;
       for (let nomi of this.nomimas) {
         this.subtotal = Number(this.subtotal) + Number(nomi.subtotal);
