@@ -48,8 +48,8 @@ export class MovimientoProductosComponent implements OnInit {
     let ini: string = this.fechaIni.nativeElement.value;
     let fin: string = this.fechaFin.nativeElement.value;
     if (ini != '' && fin != '') {
-      ini = this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString();
-      fin = this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString();
+      ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
+      fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
     } else {
       let date: Date = new Date();
       date.setDate(1);

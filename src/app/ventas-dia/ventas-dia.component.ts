@@ -1267,22 +1267,30 @@ export class VentasDiaComponent implements OnInit {
             return;
           }
         });
-
-        let newCantidad: number = this.productoIdSelect.cantidad;
-        this.productoIdSelect.cantidad = newCantidad + anterior.cantidad;
-        this.restarCantidadesSubProducto(anterior);
-        this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
-          if (res.code == 200) {
-            //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
-          } else {
-            alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
-            return;
-          }
-        });
-
-
+        this.updateCantidad(anterior,'suma');
         this.siguientePV.nativeElement.focus();
         this.modificarFactura = false;
+      }
+    });
+  }
+
+  updateCantidad(anterior:DocumentoDetalleModel,operacion:string){
+    let newCantidad: number = this.productoIdSelect.cantidad;
+    let product:ProductoModel=new ProductoModel();
+    product = this.productoIdSelect;
+    if(operacion=='suma'){
+      product.cantidad = Number(newCantidad) + Number(anterior.cantidad);
+    }else{
+      product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
+    }
+    this.restarCantidadesSubProducto(anterior);
+    this.productoService.updateCantidad(product).subscribe(res => {
+      if (res.code == 200) {
+        this.productoIdSelect=product;
+        //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
+      } else {
+        alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
+        return;
       }
     });
   }
@@ -1327,6 +1335,8 @@ export class VentasDiaComponent implements OnInit {
       case "c_":
         cantidad = element.value;
         precio = anterior.unitario;
+        //anterior.cantidad= Number(anterior.cantidad)-Number(element.value);
+        this.updateCantidad(anterior,'suma');
         break;
       case "p_":
         cantidad = anterior.cantidad;
@@ -1335,7 +1345,6 @@ export class VentasDiaComponent implements OnInit {
       default:
         break;
     }
-
     this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(cantidad, precio);
@@ -1401,6 +1410,7 @@ export class VentasDiaComponent implements OnInit {
       let unitarioPromo: number = precioPromo / cantidadPromo;
       docDetalle.parcial = cantidad * unitarioPromo;
       docDetalle.unitario = unitarioPromo;
+      this.unitarioPV.nativeElement.value = unitarioPromo;
     } else {
       if (cantidad != null && costo_publico != null) {
         if (this.productoIdSelect.varios) {
@@ -1437,17 +1447,7 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
       });
-      let newCantidad: number = this.productoIdSelect.cantidad;
-      this.productoIdSelect.cantidad = newCantidad - docDetalle.cantidad;
-      this.restarCantidadesSubProducto(docDetalle);
-      this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
-        if (res.code == 200) {
-          //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
-        } else {
-          alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
-          return;
-        }
-      });
+      this.updateCantidad(docDetalle,'resta');
 
     });
   }
@@ -1927,6 +1927,7 @@ export class VentasDiaComponent implements OnInit {
     this.estadoDivBotones("d-none");
     this.estadoDivProducto("d-block") // se muestra el div de producto
     this.getproporcion();
+    this.getProductosByEmpresa(this.empresaId);
     if (this.clienteActivo) {
       this.clientePV.nativeElement.focus();
     } else {

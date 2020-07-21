@@ -453,6 +453,12 @@ export class BuscarDocumentosComponent implements OnInit {
     if (tipoDocumento == "") {
       tipoDocumento = "10";
     }
+    if (fechaIniBuscar != '' ) {
+      fechaIniBuscar = this.calculosService.fechaIniBusqueda(this.fechaIniBuscar.nativeElement.value);
+    }
+      if ( fechaFinBuscar != '') {
+      fechaFinBuscar = this.calculosService.fechaFinBusqueda(this.fechaFinBuscar.nativeElement.value);
+    } 
     let cliente1 = this.clientes.find(cliente => cliente.nombre == clientePV);
     let cliente_id = "";
     if (cliente1 != undefined) {

@@ -182,7 +182,7 @@
                     (keydown.esc)="scapeTecla(clientePV)">
                 <datalist id="articulos">
                     <option *ngFor="let producto of productosAll" [value]="producto.nombre">
-                        Venta: {{producto.costo_publico}} Costo: {{producto.costo}} Cantidad:{{producto.cantidad}}
+                        Venta: {{producto.costo_publico}} Cantidad:{{producto.cantidad}}
                         id:{{producto.producto_id}}
                     </option>
                 </datalist>

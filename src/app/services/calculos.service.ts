@@ -81,7 +81,7 @@ export class CalculosService {
 
 	private asignarValorInfoDiario(documento: DocumentoModel, info: InformeDiarioModel, anulado: boolean) {
 		//facturas
-		info.cantidad_documentos = info.cantidad_documentos + 1;
+		info.cantidad_documentos = Number(info.cantidad_documentos) + 1;
 		if (anulado) {
 			info.base_19 = Number(info.base_19) - Number(documento.base_19);
 			info.base_5 = Number(info.base_5) - Number(documento.base_5);
@@ -166,6 +166,27 @@ export class CalculosService {
 		hoy.setSeconds(0);
 		return hoy;
 	}
+
+	public fechaIniBusqueda(fecha:string){
+		let date = fecha.split("-")
+		let ano=date[0];
+		let mes=date[1];
+		let dia=date[2];
+		fecha= [ano, mes, dia].join('-')+ " 0:00:00";
+		console.log(fecha);
+		return fecha;
+	}
+
+	public fechaFinBusqueda(fecha:string){
+		let date = fecha.split("-")
+		let ano=date[0];
+		let mes=date[1];
+		let dia=date[2];
+		fecha= [ano, mes, dia].join('-')+ " 23:59:59";
+		console.log(fecha);
+		return fecha;
+	}
+
 
 	public fechaInicial1(hoy: string) {
 		console.log(hoy)
