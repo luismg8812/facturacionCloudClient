@@ -175,7 +175,11 @@ export class InventarioFisicoComponent implements OnInit {
         let grupo= curruntRecord[1].trim();
         let estado= curruntRecord[6].trim();
         let nombre = curruntRecord[7].trim();
-        
+        let costo = curruntRecord[11].trim();
+        let costoPublico = curruntRecord[12].trim();
+        let impuesto = curruntRecord[13].trim();
+        let codigoBarras = curruntRecord[14].trim();
+        let cantidad = curruntRecord[17].trim();
         if (id != "") {
           if (isNaN(Number(id))) {
             this.texto.push("Error en la linea " + i + " El campo " + headerLength[0] + " no es numerico" + '\n');
@@ -208,11 +212,43 @@ export class InventarioFisicoComponent implements OnInit {
           this.texto.push("Error en la linea " + i + " El campo " + headerLength[7]  + " es obligatorio" + '\n');
           valido = false;
         }
+        if (costo != "") {
+          if (isNaN(Number(costo))) {
+            this.texto.push("Error en la linea " + i + " El campo " + headerLength[11] + " no es numerico" + '\n');
+            valido = false;
+          }
+        }
+        if (costoPublico != "") {
+          if (isNaN(Number(costoPublico))) {
+            this.texto.push("Error en la linea " + i + " El campo " + headerLength[12] + " no es numerico" + '\n');
+            valido = false;
+          }
+        }
+        if (impuesto != "") {
+          if (isNaN(Number(impuesto))) {
+            this.texto.push("Error en la linea " + i + " El campo " + headerLength[13] + " no es numerico" + '\n');
+            valido = false;
+          }
+        }
+        if (cantidad != "") {
+          if (isNaN(Number(cantidad))) {
+            this.texto.push("Error en la linea " + i + " El campo " + headerLength[17] + " no es numerico" + '\n');
+            valido = false;
+          }
+        }else{
+          this.texto.push("Error en la linea " + i + " El campo " + headerLength[17]  + " es obligatorio" + '\n');
+          valido = false;
+        }
         if (valido) {
           producto.producto_id = Number(id);
           producto.estado=Number(estado);
+          producto.grupo_id=grupo;
           producto.nombre = nombre;
-         
+          producto.costo = Number(costo);
+          producto.costo_publico = Number(costoPublico);
+          producto.impuesto = Number(impuesto);
+          producto.codigo_barras = codigoBarras;
+          
           //csvRecord.firstName = curruntRecord[1].trim();  
           //csvRecord.lastName = curruntRecord[2].trim();  
           //csvRecord.age = curruntRecord[3].trim();  

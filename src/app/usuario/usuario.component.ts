@@ -376,22 +376,22 @@ export class UsuarioComponent implements OnInit {
       if (curruntRecord.length == headerLength) {
         mensageError = "Error en la linea " + i + " ";
         let csvRecord: UsuarioModel = new UsuarioModel();
-        if (curruntRecord[0].trim() == "") {
+        if (curruntRecord[1].trim() == "") {
           mensageError += "Identificación requerida, ";
           valido = false;
         }
 
-        if (curruntRecord[1].trim() == "") {
+        if (curruntRecord[2].trim() == "") {
           mensageError += "Nombre requerido, ";
           valido = false;
         }
 
-        if (curruntRecord[2].trim() == "") {
+        if (curruntRecord[3].trim() == "") {
           mensageError += "Apellido requerido";
           valido = false;
         }
         
-        if(curruntRecord[0].trim() === "0"){
+        if(curruntRecord[0].trim() === "0" || curruntRecord[0].trim() == ""){
           contadorNuevos++;
         } else {
           contadorActualizados++;
