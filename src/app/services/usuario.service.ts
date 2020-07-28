@@ -84,6 +84,10 @@ export class UsuarioService {
     return this.http.post<any>(this.server_api + '/usuario/createUsuario?rolId=' + rolId, usuario);
   }
 
+  saveUsuarioMasive(usuario: UsuarioModel){
+    return this.http.post<any>(this.server_api + '/usuario/createUsuarioMasivo', usuario);
+  }
+
   updateUsuario(usuario: UsuarioModel, rolId: Array<number>) {
     return this.http.put<any>(this.server_api + '/usuario/updateUsuario?rolId=' + rolId, usuario);
   }

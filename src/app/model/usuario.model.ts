@@ -8,6 +8,11 @@ export class UsuarioModel {
     public fecha_registro: Date;
     public identificacion: string;
     public estado: string;
+    public tipoVinculacion: string;
+    public supervisor: string;
+    public area: string;
+    public sede: string;
+    public puesto: string;
 
     constructor(){
         this.usuario_id= 0,
@@ -18,6 +23,11 @@ export class UsuarioModel {
         this.clave= "",
         this.fecha_registro= new Date(),
         this.identificacion= "",
-        this.estado= ""
+        this.estado= "",
+        this.tipoVinculacion= "",
+        this.supervisor= "",
+        this.area= "",
+        this.sede= "",
+        this.puesto= ""
     };
 }

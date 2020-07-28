@@ -1396,4 +1396,9 @@ export class ImpresionService {
     });
   }
 
+  imprimirDetalleCargaMasiva(texto:string[]){
+    return new Blob(texto, {
+      type: 'text/plain'
+    });
+  }
 }
