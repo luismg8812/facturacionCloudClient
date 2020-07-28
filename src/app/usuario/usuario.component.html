@@ -10,113 +10,131 @@
     </div>
     <div class="form-group col-md-6">
       <input class="form-control" id="mailUsuarioBusqueda" [(ngModel)]="usuarioBuscar.correo" placeholder="Mail">
-    </div>  
+    </div>
   </div>
   <div class="form-row">
-      <div class="form-group col-md-6">    
-        <select class="form-control " [(ngModel)]="usuarioBuscar.identificacion" >
-          <option value="">Lista de roles</option>
-          <option *ngFor="let rol of rolList" value="{{rol.rolId}}">{{rol.nombre}}</option>
-        </select>
-      </div>
-      <div class="form-group col-md-6">
-        <input class="form-control" id="identificacionUsuarioBusqueda" [(ngModel)]="usuarioBuscar.identificacion" placeholder="Identificación">
-      </div>
+    <div class="form-group col-md-6">
+      <select class="form-control " [(ngModel)]="usuarioBuscar.identificacion">
+        <option value="">Lista de roles</option>
+        <option *ngFor="let rol of rolList" value="{{rol.rolId}}">{{rol.nombre}}</option>
+      </select>
     </div>
+    <div class="form-group col-md-6">
+      <input class="form-control" id="identificacionUsuarioBusqueda" [(ngModel)]="usuarioBuscar.identificacion"
+        placeholder="Identificación">
+    </div>
+  </div>
+  <div class="form-row">
     <button type="submit" class="btn btn-primary mr-1" (click)="buscarUsuarios()">Buscar</button>
-  <button type="button" (click)="limpiar()" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Crear
-  </button>
+    <button type="button" (click)="limpiar()" class="btn btn-primary mr-1" data-toggle="modal"
+      data-target="#exampleModal">
+      Crear
+    </button>
+    <button type="button" (click)="limpiar()" class="btn btn-primary mr-1" data-toggle="modal"
+      data-target="#masiveModal">
+      Cargue masivo de usuarios
+    </button>
+  </div>
   <div class="mt-2"></div>
   <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Opciones</th>
-          <th scope="col">Nombre</th>
-          <th scope="col">Roles</th>
-          <th scope="col">Correo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of usuarioList">
-          <th scope="row">
-            <button type="button" (click)="editarUsuarios(user)" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal">
-              Editar
-            </button>
-            <button type="button" (click)="opcionesPorUsuario(user)" class="btn  btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal2">
-              Opciones
-            </button>
-          </th>
-  
-          <td>{{user.nombre}}</td>
-          <td>{{nameRol(user.usuario_id)}}</td>
-          <td>{{user.correo}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <thead>
+      <tr>
+        <th scope="col">Opciones</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Roles</th>
+        <th scope="col">Correo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of usuarioList">
+        <th scope="row">
+          <button type="button" (click)="editarUsuarios(user)" class="btn btn-secondary btn-sm" data-toggle="modal"
+            data-target="#exampleModal">
+            Editar
+          </button>
+          <button type="button" (click)="opcionesPorUsuario(user)" class="btn  btn-secondary btn-sm" data-toggle="modal"
+            data-target="#exampleModal2">
+            Opciones
+          </button>
+        </th>
 
-    <!-- Modal Crear Usuario-->
-  <div class="modal fade" id="exampleModal"   tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Crear Usuario</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-row">
-              <div class="form-group col-md-4 col-lg-6">
-               <input class="form-control" id="nombreUsuarioCreacion" [(ngModel)]="usuarioCrear.nombre" placeholder="* Nombre" name="nombreUsuarioCreacion">
-              </div>
-              <div class="form-group col-md-4 col-lg-6">
-                  <input class="form-control" id="meilUsuarioCrear" [(ngModel)]="usuarioCrear.correo" placeholder="* Correo">
-                </div>
+        <td>{{user.nombre}}</td>
+        <td>{{nameRol(user.usuario_id)}}</td>
+        <td>{{user.correo}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal Crear Usuario-->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Crear Usuario</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-4 col-lg-6">
+              <input class="form-control" id="nombreUsuarioCreacion" [(ngModel)]="usuarioCrear.nombre"
+                placeholder="* Nombre" name="nombreUsuarioCreacion">
             </div>
-            <div class="form-row">
-              <div class="form-group col-md-4 col-lg-6 " >
-                <label for="rolUsuarioCrear">Lista Roles</label>
-                <div  id="rolUsuarioCrear" class="btn-group-vertical" >
-                  <button type="button" class="btn btn-primary" *ngFor="let rol1 of rolList" (click)="seleccionarRol(rol1)">{{rol1.nombre}}</button>
-                </div>
-              </div>
-              <div class="form-group col-md-4 col-lg-6">
-                  <label for="Activas">Roles Activos</label>
-                  <div  id="Activas" class="btn-group-vertical" >
-                    <button type="button" class="btn btn-primary" *ngFor="let select1 of rolListSelect"  (click)="unSeleccionarRol(select1)">{{select1.nombre}}</button>
-                  </div>
-               
-                </div>
-            </div> 
-            <div class="form-row">
-                <div class="form-group col-md-4 col-lg-6">
-                   <input class="form-control" type="number" id="identificacionUsuarioCrear" [(ngModel)]="usuarioCrear.identificacion" placeholder="Identificación">
-                  </div>
-
-
-              <div class="form-check col-md-4 col-lg-6">
-                 <input class="form-control" type="password" id="claveUsuarioCrear" [(ngModel)]="usuarioCrear.clave" placeholder="* Clave">
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="estadoUsuarioCrear" [(ngModel)]="usuarioCrear.estado">
-                <label class="form-check-label" for="estadoUsuarioCrear">
-                  *Estado
-                </label>
-              </div>
+            <div class="form-group col-md-4 col-lg-6">
+              <input class="form-control" id="meilUsuarioCrear" [(ngModel)]="usuarioCrear.correo"
+                placeholder="* Correo">
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" (click)="crearUsuario()">Guardar</button>
+          <div class="form-row">
+            <div class="form-group col-md-4 col-lg-6 ">
+              <label for="rolUsuarioCrear">Lista Roles</label>
+              <div id="rolUsuarioCrear" class="btn-group-vertical">
+                <button type="button" class="btn btn-primary" *ngFor="let rol1 of rolList"
+                  (click)="seleccionarRol(rol1)">{{rol1.nombre}}</button>
+              </div>
+            </div>
+            <div class="form-group col-md-4 col-lg-6">
+              <label for="Activas">Roles Activos</label>
+              <div id="Activas" class="btn-group-vertical">
+                <button type="button" class="btn btn-primary" *ngFor="let select1 of rolListSelect"
+                  (click)="unSeleccionarRol(select1)">{{select1.nombre}}</button>
+              </div>
+
+            </div>
           </div>
+          <div class="form-row">
+            <div class="form-group col-md-4 col-lg-6">
+              <input class="form-control" type="number" id="identificacionUsuarioCrear"
+                [(ngModel)]="usuarioCrear.identificacion" placeholder="Identificación">
+            </div>
+
+
+            <div class="form-check col-md-4 col-lg-6">
+              <input class="form-control" type="password" id="claveUsuarioCrear" [(ngModel)]="usuarioCrear.clave"
+                placeholder="* Clave">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="estadoUsuarioCrear" [(ngModel)]="usuarioCrear.estado">
+              <label class="form-check-label" for="estadoUsuarioCrear">
+                *Estado
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="crearUsuario()">Guardar</button>
         </div>
       </div>
     </div>
-     <!-- Modal Opciones Usuario-->
-  <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+  </div>
+  <!-- Modal Opciones Usuario-->
+  <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -134,18 +152,19 @@
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="rutasActivas">Activas</label>
-              <div  id="rutasActivas" class="btn-group-vertical" >
-                <button type="button" class="btn btn-primary" *ngFor="let select of submenuSelect" (click)="desactivarRuta(select)"
-                title="{{select.descripcion}}">{{select.nombre}}</button>
+              <div id="rutasActivas" class="btn-group-vertical">
+                <button type="button" class="btn btn-primary" *ngFor="let select of submenuSelect"
+                  (click)="desactivarRuta(select)" title="{{select.descripcion}}">{{select.nombre}}</button>
               </div>
-              
-             
+
+
             </div>
             <div class="form-group col-md-6">
               <label for="rutasInactivas">Inactivas</label>
 
-              <div  id="rutasInactivas" class="btn-group-vertical" >
-                <button type="button" class="btn btn-primary" *ngFor="let unSelect of opusuarioUnSelect"  title="{{unSelect.descripcion}}" (click)="activarRuta(unSelect)">{{unSelect.nombre}}</button>
+              <div id="rutasInactivas" class="btn-group-vertical">
+                <button type="button" class="btn btn-primary" *ngFor="let unSelect of opusuarioUnSelect"
+                  title="{{unSelect.descripcion}}" (click)="activarRuta(unSelect)">{{unSelect.nombre}}</button>
               </div>
 
             </div>
@@ -158,14 +177,16 @@
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="Activas">Activas</label>
-              <div  id="Activas" class="btn-group-vertical" >
-                <button type="button" class="btn btn-primary" *ngFor="let select of activacionSelect" title="{{select.descripcion}}" (click)="aplicarActivacion(select)">{{select.nombre}}</button>
-              </div>         
+              <div id="Activas" class="btn-group-vertical">
+                <button type="button" class="btn btn-primary" *ngFor="let select of activacionSelect"
+                  title="{{select.descripcion}}" (click)="aplicarActivacion(select)">{{select.nombre}}</button>
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label for="Inactivas">Inactivas</label>
-              <div  id="Inactivas" class="btn-group-vertical" >
-                <button type="button" class="btn btn-primary" *ngFor="let unSelect of activacionUnSelect"  title="{{unSelect.descripcion}}" (click)="desaplicarActivacion(unSelect)">{{unSelect.nombre}}</button>
+              <div id="Inactivas" class="btn-group-vertical">
+                <button type="button" class="btn btn-primary" *ngFor="let unSelect of activacionUnSelect"
+                  title="{{unSelect.descripcion}}" (click)="desaplicarActivacion(unSelect)">{{unSelect.nombre}}</button>
               </div>
             </div>
           </div>
@@ -173,6 +194,69 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <button type="button" class="btn btn-primary" (click)="guardarRutas()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="masiveModal" tabindex="-1" role="dialog" aria-labelledby="masiveModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">Cargue Masivo de Usuarios </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <input class="file" id="fileCargaMasiva" name="fileCargaMasiva" type="file"
+              (change)="cargarManejador($event)" accept=".csv">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <input type="button" id="cargarMasiva" name="cargarMasiva" class="btn btn-primary btn-block"
+                value="Cargar" (click)="guardarMasiva()" >
+            </div>
+            <div class="form-group col-md-8">
+              <input  type="button" id="descargarPlantilla" name="descargarPlantilla"
+                class="btn btn-primary btn-block" value="Descargar Plantilla"
+              >
+            </div>
+          </div>
+          <div class="form-row">
+            <table class="table table-bordered ">
+              <tbody>
+                <tr>
+                  <td>Total Registros</td>
+                  <td >{{this.totalRegistros}}</td>
+                </tr>
+                <tr>
+                  <td>Registros Nuevos Cargados</td>
+                  <td>{{this.totalNuevos}}</td>
+                </tr>
+                <tr>
+                  <td>Registros Actualizados</td>
+                  <td>{{this.totalActualizados}}</td>
+                </tr>
+                <tr>
+                  <td>Registros Erroneos</td>
+                  <td>{{this.totalErrores}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="form-row">
+            <button type="button" class="btn btn-link" (click)="detalleError()">Ver Detalles</button>
+            <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+        </a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         </div>
       </div>
     </div>
