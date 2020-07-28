@@ -5,15 +5,18 @@
   </div>
   <br />
   <div class="form-row">
-    <div class="form-group col-md-3 col-sm-12 ">
+    <div class="form-group col-md-10 col-sm-12 ">
       <button type="button" (click)="limpiar()" class="btn btn-primary" data-toggle="modal"
         data-target="#crearProductoModal">
         Crear Producto
       </button>
 
-      <button type="button" (click)="limpiarGrupo()" class="btn btn-primary" data-toggle="modal"
+      <button type="button" (click)="limpiarGrupo()" class="btn btn-primary ml-2" data-toggle="modal"
         data-target="#crearGrupoModal">
         Gestión de Grupos
+      </button>
+      <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#cargueMasivoModal">
+        Cargue masivo de productos
       </button>
     </div>
   </div>
@@ -109,6 +112,75 @@
     </tbody>
   </table>
 
+  <!-- Modal -->
+  <div class="modal fade" id="cargueMasivoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Cargue masivo de productos</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-7 col-sm-12 ">
+              <input type="file" class="form-control-file" #fotoRepuesto id="fotoRepuesto" accept=".csv" (change)="uploadListener($event)">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 col-sm-12 ">
+              <button type="button" class="btn btn-primary" (click)="cargarArchivo()"  >Cargar</button>
+              <button type="button" class="btn btn-primary ml-2" (click)="exportTableToExcel()">Descargar plantilla
+              </button>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12 ">
+              Total Registros:
+            </div>
+            <div class="form-group col-md-6 col-sm-12 ">
+              {{totalRegistros}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12 ">
+              Registros Nuevos Cargados:
+            </div>
+            <div class="form-group col-md-6 col-sm-12 ">
+              {{registrosNuevosCargados}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12 ">
+              Registros Actualizados:
+            </div>
+            <div class="form-group col-md-6 col-sm-12 ">
+              {{registrosActualizados}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12 ">
+              Registros Erroneos:
+            </div>
+            <div class="form-group col-md-6 col-sm-12 ">
+              {{registrosErroneos}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12 ">
+              <button type="button" class="btn btn-secondary" (click)="descargarDetalle()">Ver detalle</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- grestoion Modal -->
   <div class="modal fade" id="crearGrupoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
@@ -136,10 +208,11 @@
               <tbody>
                 <tr *ngFor="let group of grupoList">
                   <th scope="row">
-                    <button type="button" (click)="editarGrupo(group)" class="btn btn-primary" data-toggle="modal" data-target="#crearGrupoNewModal">
+                    <button type="button" (click)="editarGrupo(group)" class="btn btn-primary" data-toggle="modal"
+                      data-target="#crearGrupoNewModal">
                       Editar
                     </button>
-                    
+
                   </th>
                   <td>{{group.grupo_id}}</td>
                   <td>{{group.nombre}}</td>
@@ -152,37 +225,38 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          
+
         </div>
       </div>
     </div>
   </div>
 
   <!--crear Modal -->
-<div class="modal fade" id="crearGrupoNewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Crear Modal</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="form-group col-md-7 col-sm-12 ">
-            <input class="form-control" id="nombreGrupo" placeholder="* Nombres Grupo" name="nombreGrupo"
-                #nombreGrupo required [(ngModel)]="grupoNew.nombre">
+  <div class="modal fade" id="crearGrupoNewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Crear Modal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-7 col-sm-12 ">
+              <input class="form-control" id="nombreGrupo" placeholder="* Nombres Grupo" name="nombreGrupo" #nombreGrupo
+                required [(ngModel)]="grupoNew.nombre">
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)=" CrearGrupo()">Guardar</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" (click)=" CrearGrupo()">Guardar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- crear producto Modal -->
   <div class="modal fade" id="crearProductoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -319,5 +393,12 @@
       </div>
     </div>
   </div>
+
+  <div class="col col-ms-1">
+    <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+    </a>
+  </div>
+
 
 </div>

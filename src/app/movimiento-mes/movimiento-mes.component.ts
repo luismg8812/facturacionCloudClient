@@ -45,7 +45,7 @@ export class MovimientoMesComponent implements OnInit {
   public opciones: Array<SubMenuModel>;
   public grupoList: Array<GrupoModel>;
   public marcaList: Array<any>;
-  
+
   public document: DocumentoModel;
   public clienteNew: ProveedorModel = new ProveedorModel();
   public empresaId: number;
@@ -69,7 +69,7 @@ export class MovimientoMesComponent implements OnInit {
   public divGramera: boolean = false;
   public pesoGramera: number = 0.0;
   public indexModificarSelect: number = 0;
-  public informeDiario:InformeDiarioModel;
+  public informeDiario: InformeDiarioModel;
 
 
   @ViewChild("tipoDocumentoPV") tipoDocumentoPV: ElementRef;
@@ -142,8 +142,8 @@ export class MovimientoMesComponent implements OnInit {
   @ViewChild("unitarioVentaPV") unitarioVentaPV: ElementRef;
   @ViewChild("facturacionPV") facturacionPV: ElementRef;
   @ViewChild("nombreproductoNew") nombreproductoNew: ElementRef;
-  
-  
+
+
 
 
   readonly MULTIPLE_IMPRESORA: string = '4';
@@ -168,7 +168,7 @@ export class MovimientoMesComponent implements OnInit {
     public clienteService: ClienteService,
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
-    public cierreService:CierreService,
+    public cierreService: CierreService,
     public proveedorService: ProveedorService) { }
 
   ngOnInit() {
@@ -189,7 +189,7 @@ export class MovimientoMesComponent implements OnInit {
     this.documentosList = [];
     this.modificarFactura = false;
     this.siguientePV.nativeElement.focus();
-    
+
   }
 
   ocultarPrecio() {
@@ -203,7 +203,7 @@ export class MovimientoMesComponent implements OnInit {
     this.divImprimirModal.nativeElement.classList.add("d-none");
     this.scapeTecla(null);
   }
-  
+
 
   articuloSelect(element) {
     console.log("articulo select:" + element.value);
@@ -213,7 +213,7 @@ export class MovimientoMesComponent implements OnInit {
     if (this.productoIdSelect != undefined) {
       this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
       this.findByProducto();
-    }else{
+    } else {
       this.crearProductoPV.nativeElement.classList.add("d-block");
       this.crearProductoPV.nativeElement.focus();
       this.crearProductoPV.nativeElement.select();
@@ -469,7 +469,7 @@ export class MovimientoMesComponent implements OnInit {
       //alert("presiona la tecla o");
       this.opcionPV.nativeElement.click();
     }
-   
+
     if (event.keyCode == 83) { //cuando se presiona la tacla s
       this.teclaAnteriorSiguiente('s');
     }
@@ -481,7 +481,7 @@ export class MovimientoMesComponent implements OnInit {
     }
     if (event.keyCode == 85 && !this.modificarFactura) { //cuando se presiona la tacla u
       this.teclaAnteriorSiguiente('u');
-    } 
+    }
     if (event.keyCode == 77) { //cuando se presiona la tacla m
       this.modificarEnter();
     }
@@ -521,7 +521,7 @@ export class MovimientoMesComponent implements OnInit {
       case "c_":
         cantidad = element.value;
         precio = anterior.unitario;
-        this.updateCantidad(anterior,'suma');
+        this.updateCantidad(anterior, 'suma');
         break;
       case "p_":
         cantidad = anterior.cantidad;
@@ -539,19 +539,19 @@ export class MovimientoMesComponent implements OnInit {
     });
   }
 
-  updateCantidad(anterior:DocumentoDetalleModel,operacion:string){
+  updateCantidad(anterior: DocumentoDetalleModel, operacion: string) {
     let newCantidad: number = this.productoIdSelect.cantidad;
-    let product:ProductoModel=new ProductoModel();
+    let product: ProductoModel = new ProductoModel();
     product = this.productoIdSelect;
-    if(operacion=='suma'){
+    if (operacion == 'suma') {
       product.cantidad = Number(newCantidad) + Number(anterior.cantidad);
-    }else{
+    } else {
       product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
     }
     this.restarCantidadesSubProducto(anterior);
     this.productoService.updateCantidad(product).subscribe(res => {
       if (res.code == 200) {
-        this.productoIdSelect=product;
+        this.productoIdSelect = product;
         //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
       } else {
         alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
@@ -561,7 +561,7 @@ export class MovimientoMesComponent implements OnInit {
   }
 
   async borrarLista(detalle: DocumentoDetalleModel, element) {
-      this.borradoPosClave(detalle);
+    this.borradoPosClave(detalle);
   }
 
   borradoPosClave(detalle: DocumentoDetalleModel) {
@@ -584,7 +584,7 @@ export class MovimientoMesComponent implements OnInit {
           }
         });
 
-        this.updateCantidad(anterior,'suma');
+        this.updateCantidad(anterior, 'suma');
 
 
         this.siguientePV.nativeElement.focus();
@@ -754,9 +754,9 @@ export class MovimientoMesComponent implements OnInit {
       this.codigoBarrasSelect(element);
     }
     if (element.id == "crearProductoPV") {
-      
+
       this.crearProductoSelect(element);
-    } 
+    }
     if (element.id == "articuloPV") {
       this.productoEnter(element);
     }
@@ -806,25 +806,25 @@ export class MovimientoMesComponent implements OnInit {
     if (element.id == "modificarPV") {
       this.modificarEnter();
     }
-    if (element.id == "cuadreCajaPV") { 
-      this.cuadreCajaModal.nativeElement.click();   
+    if (element.id == "cuadreCajaPV") {
+      this.cuadreCajaModal.nativeElement.click();
     }
 
-    if (element.id == "documentosXFechaPV") { 
+    if (element.id == "documentosXFechaPV") {
       console.log("aquientra");
-      this.buscarDocumentoXFecha.nativeElement.click();   
+      this.buscarDocumentoXFecha.nativeElement.click();
     }
 
     if (element.id == "EditarProductos") {
       this.editarProducto.nativeElement.click();
     }
 
-    if (element.id == "finPV") { 
+    if (element.id == "finPV") {
       console.log("fin");
-      this.facturacionPV.nativeElement.focus();   
+      this.facturacionPV.nativeElement.focus();
     }
 
-    
+
 
   }
 
@@ -872,44 +872,44 @@ export class MovimientoMesComponent implements OnInit {
       //si el cliente es nulo se asigna el varios por defecto
       this.document.cliente_id = 1;
     }
-    let cancelado:boolean=false; //se sabe si el documento es para cancelacion o no 
+    let cancelado: boolean = false; //se sabe si el documento es para cancelacion o no 
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.document.impreso = 1;
     this.verificarDescuento();
 
-    this.calcularInfoDiario(cancelado); 
+    this.calcularInfoDiario(cancelado);
     this.asignarTipoPago();
     this.asignarConsecutivo(numImpresiones);
   }
 
-  calcularInfoDiario(anulado:boolean) {
+  calcularInfoDiario(anulado: boolean) {
     console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId,this.calculosService.formatDate(new Date(),false),this.calculosService.formatDate(new Date(),false)).subscribe(res => {
-     
-      if(res.length==0){
-        this.informeDiario=new InformeDiarioModel();
-      }else{
+    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(new Date(), false), this.calculosService.formatDate(new Date(), false)).subscribe(res => {
+
+      if (res.length == 0) {
+        this.informeDiario = new InformeDiarioModel();
+      } else {
         this.informeDiario = res[0];
         console.log(this.informeDiario);
       }
-      this.informeDiario=this.calculosService.calcularInfoDiario(this.document,this.informeDiario,anulado);
-      this.informeDiario.fecha_ingreso=new Date();
-      this.informeDiario.fecha_informe= this.calculosService.formatDate(new Date(),false);
-      if(this.informeDiario.informe_diario_id==null){
-        this.informeDiario.empresa_id=this.empresaId;
+      this.informeDiario = this.calculosService.calcularInfoDiario(this.document, this.informeDiario, anulado);
+      this.informeDiario.fecha_ingreso = new Date();
+      this.informeDiario.fecha_informe = this.calculosService.formatDate(new Date(), false);
+      if (this.informeDiario.informe_diario_id == null) {
+        this.informeDiario.empresa_id = this.empresaId;
         console.log(this.informeDiario.fecha_ingreso);
         this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
           if (res.code != 200) {
             alert("error creando informe diario");
             return;
-          } 
+          }
         });
-      }else{
+      } else {
         this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
           if (res.code != 200) {
             alert("error actualizando informe diario");
             return;
-          } 
+          }
         });
       }
     });
@@ -938,35 +938,35 @@ export class MovimientoMesComponent implements OnInit {
     this.document.consecutivo_dian = this.document.documento_id// es necesario asignar el
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
-    switch (this.document.tipo_documento_id) {
-      case 1:
-        this.tituloFactura = "ENTRADA POR GUIA";
-        break;
-      case 2:
-        this.tituloFactura = "ENTRADA DE ALMACEN";
-        break;
-      case 3:
-        this.tituloFactura = "SALIDA DE ALMACEN";
-        break;
-      default:
-        break;
-    }
-    this.documentoService.updateDocumento(this.document).subscribe(res => {
-      if (res.code != 200) {
-        alert("error creando documento, por favor inicie nuevamente la creación del documento");
-        return;
+      switch (this.document.tipo_documento_id) {
+        case 1:
+          this.tituloFactura = "ENTRADA POR GUIA";
+          break;
+        case 2:
+          this.tituloFactura = "ENTRADA DE ALMACEN";
+          break;
+        case 3:
+          this.tituloFactura = "SALIDA DE ALMACEN";
+          break;
+        default:
+          break;
       }
-      this.imprimirFactura(numImpresiones, empr[0]);
-      this.limpiar();
-      this.scapeTecla(null);
+      this.documentoService.updateDocumento(this.document).subscribe(res => {
+        if (res.code != 200) {
+          alert("error creando documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+        this.imprimirFactura(numImpresiones, empr[0]);
+        this.limpiar();
+        this.scapeTecla(null);
+      });
     });
-  });
   }
 
   imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
-   
+
     let pantalla = this.enPantallaPV.nativeElement.value;
     if (pantalla == "") {
       pantalla = "false";
@@ -1145,7 +1145,7 @@ export class MovimientoMesComponent implements OnInit {
   }
 
   unitarioEnter(element) {
-    
+
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;
@@ -1274,8 +1274,8 @@ export class MovimientoMesComponent implements OnInit {
       }
     }
     console.log(docDetalle);
-    if(this.document.tipo_documento_id==null){//si es nulo se asigna factura por defecto
-      this.document.tipo_documento_id=this.TIPO_DOCUMENTO_ENTRADA_ALMACEN;
+    if (this.document.tipo_documento_id == null) {//si es nulo se asigna factura por defecto
+      this.document.tipo_documento_id = this.TIPO_DOCUMENTO_ENTRADA_ALMACEN;
     }
     this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
       if (res.code == 200) {
@@ -1292,13 +1292,11 @@ export class MovimientoMesComponent implements OnInit {
         }
       });
       let newCantidad: number = this.productoIdSelect.cantidad;
-      if(this.document.tipo_documento_id==this.TIPO_DOCUMENTO_SALIDA_ALMACEN){//si es salida de almacen se restan las cantidades
-        this.updateCantidad(docDetalle,'resta');
-      }else{
-        this.updateCantidad(docDetalle,'suma');
+      if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_SALIDA_ALMACEN) {//si es salida de almacen se restan las cantidades
+        this.updateCantidad(docDetalle, 'resta');
+      } else {
+        this.updateCantidad(docDetalle, 'suma');
       }
-    
-
     });
   }
 
@@ -1339,11 +1337,11 @@ export class MovimientoMesComponent implements OnInit {
         this.articuloPV.nativeElement.focus();
       }
     } else {
-      if(element.value    ==99999){ 
+      if (element.value == 99999) {
         this.crearProductoPV.nativeElement.classList.add("d-block");
         this.crearProductoPV.nativeElement.focus();
         this.crearProductoPV.nativeElement.select();
-      }else{
+      } else {
         console.log("articulo select:" + element.value);
         let productoCodigo: string = element.value;
         this.productoIdSelect = this.productosAll.find(product => product.producto_id.toString() === productoCodigo);
@@ -1354,43 +1352,43 @@ export class MovimientoMesComponent implements OnInit {
           this.findByProducto();
         }
       }
-    
+
     }
   }
 
   CrearProducto() {
     console.log(this.productoNew);
-   let valido: boolean = true;
-   let mensageError: string = "Son obligatorios:\n ";
-   if (this.productoNew.nombre == "") {
-     mensageError += "nombre\n";
-     valido = false;
-   }
-   if (valido == false) {
-     alert(mensageError);
-     return;
-   }
+    let valido: boolean = true;
+    let mensageError: string = "Son obligatorios:\n ";
+    if (this.productoNew.nombre == "") {
+      mensageError += "nombre\n";
+      valido = false;
+    }
+    if (valido == false) {
+      alert(mensageError);
+      return;
+    }
 
-   this.productoNew.empresa_id = this.empresaId;
-   this.productoService.saveProducto(this.productoNew).subscribe(res => {
-     if (res.code == 200) {
-      
-       $('#crearProductoModal').modal('hide');
-       this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe( res => {
-         this.productosAll = res;
-         this.productoIdSelect = this.productosAll.find(product => product.nombre === this.productoNew.nombre);
-         this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
-         this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
-         this.productoNew = new ProductoModel();
-         this.findByProducto();
-       });
-     } else {
-       alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
-       return;
-     }
-   });
+    this.productoNew.empresa_id = this.empresaId;
+    this.productoService.saveProducto(this.productoNew).subscribe(res => {
+      if (res.code == 200) {
 
- }
+        $('#crearProductoModal').modal('hide');
+        this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(res => {
+          this.productosAll = res;
+          this.productoIdSelect = this.productosAll.find(product => product.nombre === this.productoNew.nombre);
+          this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
+          this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
+          this.productoNew = new ProductoModel();
+          this.findByProducto();
+        });
+      } else {
+        alert("error creando producto, verifique que los valores de los precios y las cantidades no tengas ',/_' u otro caracter especial, si persiste consulte a su proveedor");
+        return;
+      }
+    });
+
+  }
 
 
   productoEnter(element) {
@@ -1400,17 +1398,18 @@ export class MovimientoMesComponent implements OnInit {
     }
   }
 
-   async crearProductoSelect(element) {
-    if (element.value == 's' || element.value == 'S' ) {
+  async crearProductoSelect(element) {
+    if (element.value == 's' || element.value == 'S') {
       $('#crearProductoModal').modal('show');
       await this.delay(160);
-      this.nombreproductoNew.nativeElement.value=this.articuloPV.nativeElement.value;
-      this.codBarrasPv.nativeElement.value=this.CodigoBarrasPV.nativeElement.value;
+      this.productoNew.nombre = this.articuloPV.nativeElement.value;
+      this.productoNew.codigo_barras = this.CodigoBarrasPV.nativeElement.value;
+
       this.nombreproductoNew.nativeElement.focus();
 
     } else {
       this.articuloPV.nativeElement.focus();
-      } 
+    }
   }
 
   codigoBarrasSelect(element) {
@@ -1422,11 +1421,11 @@ export class MovimientoMesComponent implements OnInit {
       this.productoIdSelect = this.productosAll.find(product => product.codigo_barras === productoCBarras);
       console.log(this.productoIdSelect);
       if (this.productoIdSelect != undefined) {
-        
+
         this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
         this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
         this.findByProducto();
-      }else{
+      } else {
         this.crearProductoPV.nativeElement.classList.add("d-block");
         this.crearProductoPV.nativeElement.focus();
         this.crearProductoPV.nativeElement.select();
@@ -1595,7 +1594,7 @@ export class MovimientoMesComponent implements OnInit {
     });
   }
 
-  
+
 
   getGrupos(empresaId: number) {
     this.productoService.getGruposByEmpresa(empresaId.toString()).subscribe(res => {

@@ -147,20 +147,21 @@ export class ImpresionService {
     texto.push('DESCRIPCIÓN                TOTAL\n');
     texto.push('--------------------------------\n');
     let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.total_facturas).replace("COP", ""), 12);
-    let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.base).replace("COP", ""), 12);
-    let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.cheques).replace("COP", ""), 12);
-    let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.otros).replace("COP", ""), 12);
-    let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(0).replace("COP", ""), 12);
-    let totalIngresos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.totalIngresos).replace("COP", ""), 12);
-    let fajos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.fajos).replace("COP", ""), 12);
-    let monedas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.moneda).replace("COP", ""), 12);
-    let tarjetas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.tarjetas).replace("COP", ""), 12);
-    let varios: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.varios).replace("COP", ""), 12);
-    let vales: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.vales).replace("COP", ""), 12);
-    let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.gastado).replace("COP", ""), 12);
-    let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.propina).replace("COP", ""), 12);
-    let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.cartera).replace("COP", ""), 12);
-    let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.efectivo).replace("COP", ""), 12);
+    let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base).replace("COP", ""), 12);
+    let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques).replace("COP", ""), 12);
+    let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros).replace("COP", ""), 12);
+    let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0).replace("COP", ""), 12);
+    let totalIngresos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.totalIngresos).replace("COP", ""), 12);
+    let fajos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.fajos).replace("COP", ""), 12);
+    let monedas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.moneda).replace("COP", ""), 12);
+    let tarjetas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.tarjetas).replace("COP", ""), 12);
+    let varios: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.varios).replace("COP", ""), 12);
+    let vales: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.vales).replace("COP", ""), 12);
+    let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.gastado).replace("COP", ""), 12);
+    let nomina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.nomina), 12);
+    let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.propina).replace("COP", ""), 12);
+    let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cartera).replace("COP", ""), 12);
+    let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo).replace("COP", ""), 12);
 
     texto.push("Total Facturas:...:" + totalFacturas + "\n");
     texto.push("Base:.............:" + base + "\n");
@@ -177,8 +178,8 @@ export class ImpresionService {
     texto.push("TARJET DÉBI. CRÉD.: " + tarjetas + "\n");
     texto.push("VARIOS:...........: " + varios + "\n");
     texto.push("VALES:............: " + vales + "\n");
-    texto.push("NOMINA:...........: " + totalFacturas + "\n");
-    texto.push("GASTOS:...........: " + gastos + "\n");
+    texto.push("NOMINA:...........: " + nomina + "\n");
+    texto.push("GASTOS:...........: " + gastos + "\n"); 
     texto.push("PROPIAS:..........: " + propina + "\n");
     texto.push("VENTAS A CRÉDITO:.: " + credito + "\n");
 

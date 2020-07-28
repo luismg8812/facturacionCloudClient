@@ -187,6 +187,26 @@ export class CalculosService {
 		return fecha;
 	}
 
+	public fechaIniBusquedaDate(d2:Date){
+		let d= new Date(d2);
+		let month = '' + (d.getMonth() + 1);
+		let day = '' + (d.getDate());
+		let	year = ""+d.getFullYear();
+		let fecha= [year, month, day].join('-')+ " 0:00:00";
+		console.log(fecha);
+		return fecha;
+	}
+
+	public fechaFinBusquedaDate(d2:Date){
+		let d= new Date(d2);
+		let month = '' + (d.getMonth() + 1);
+		let day = '' + (d.getDate());
+		let	year = ""+d.getFullYear();
+		let fecha= [year, month, day].join('-')+ " 23:59:59";
+		console.log(fecha);
+		return fecha;
+	}
+
 
 	public fechaInicial1(hoy: string) {
 		console.log(hoy)

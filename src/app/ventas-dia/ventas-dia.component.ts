@@ -846,8 +846,7 @@ export class VentasDiaComponent implements OnInit {
 
   calcularInfoDiario(anulado: boolean) {
     console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(this.document.fecha_registro, false), this.calculosService.formatDate(this.document.fecha_registro, false)).subscribe(res => {
-
+    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.fechaIniBusquedaDate(this.document.fecha_registro), this.calculosService.fechaFinBusquedaDate(this.document.fecha_registro)).subscribe(res => {
       if (res.length == 0) {
         this.informeDiario = new InformeDiarioModel();
       } else {
@@ -1335,7 +1334,6 @@ export class VentasDiaComponent implements OnInit {
       case "c_":
         cantidad = element.value;
         precio = anterior.unitario;
-        //anterior.cantidad= Number(anterior.cantidad)-Number(element.value);
         this.updateCantidad(anterior,'suma');
         break;
       case "p_":
@@ -1363,11 +1361,13 @@ export class VentasDiaComponent implements OnInit {
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
-          this.document.fecha_registro = res.fecha_registro;
+        
+          this.document.fecha_registro = new Date(res.fecha_registro);
           let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
           documentoInvoice.documento_id = res.documento_id;
           documentoInvoice.fecha_registro = new Date();
           documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+         // console.log(this.document);
           this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
             if (res.code == 200) {
               console.log("Se agrega estado para facturación electrónica");

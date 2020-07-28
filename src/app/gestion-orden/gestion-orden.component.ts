@@ -825,7 +825,7 @@ export class GestionOrdenComponent implements OnInit {
         default:
           // log
           console.log(resolucion.consecutivo);
-          con = resolucion.consecutivo+ 1;
+          con = Number(resolucion.consecutivo)+ 1;
           // dentro de try se valida si faltan 500 facturas para
           // llegar hasta el tope
 

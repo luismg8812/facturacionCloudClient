@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ProductoService } from '../services/producto.service';
 import { ProductoModel } from '../model/producto.model';
 import { GrupoModel } from '../model/grupo.model';
@@ -14,15 +14,25 @@ export class InventarioFisicoComponent implements OnInit {
 
   public empresaId: number;
   public productosAll: Array<ProductoModel>;
+  public productosCargar: Array<ProductoModel> = [];
   public grupoList: Array<GrupoModel>;
   public proveedorList: Array<any>;
   public marcaList: Array<any>;
   public indexModificarSelect: number = 0;
   public productoEliminar: ProductoModel;
   public productoNew: ProductoModel = new ProductoModel();
-  public grupoNew:GrupoModel= new GrupoModel();
+  public grupoNew: GrupoModel = new GrupoModel();
+  @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
+
+  public totalRegistros: number = 0;
+  public registrosNuevosCargados: number = 0;
+  public registrosNuevosActualizados: number = 0;
+  public registrosActualizados: number = 0;
+  public registrosErroneos: number = 0;
+  public separador: string = ';';
 
   public mensaje: string = "";
+  public texto = [];
 
   constructor(public productoService: ProductoService) { }
 
@@ -33,52 +43,249 @@ export class InventarioFisicoComponent implements OnInit {
 
   }
 
-  editarGrupo(grupo:GrupoModel){
-    this.grupoNew=grupo;
+  editarGrupo(grupo: GrupoModel) {
+    this.grupoNew = grupo;
   }
 
   CrearGrupo() {
     console.log(this.grupoNew);
-   let valido: boolean = true;
-   let mensageError: string = "Son obligatorios:\n ";
-   if (this.grupoNew.nombre == "") {
-     mensageError += "nombre\n";
-     valido = false;
-   }
-   if (valido == false) {
-     alert(mensageError);
-     return;
-   }
-   if(this.grupoNew.grupo_id==null){
-    this.grupoNew.empresa_id = this.empresaId;
-   this.productoService.saveGrupo(this.grupoNew).subscribe(res => {
-     if (res.code == 200) {
-       this.grupoNew = new GrupoModel();
-       $('#crearGrupoNewModal').modal('hide');
-       this.getGrupos();
-     } else {
-       alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
-       return;
-     }
-   });
-   }else{
-    this.productoService.updateGrupo(this.grupoNew).subscribe(res => {
-      if (res.code == 200) {
-        this.grupoNew = new GrupoModel();
-        $('#crearGrupoNewModal').modal('hide');
-        this.getGrupos();
-      } else {
-        alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
-        return;
-      }
-    });
-   }
-   
+    let valido: boolean = true;
+    let mensageError: string = "Son obligatorios:\n ";
+    if (this.grupoNew.nombre == "") {
+      mensageError += "nombre\n";
+      valido = false;
+    }
+    if (valido == false) {
+      alert(mensageError);
+      return;
+    }
+    if (this.grupoNew.grupo_id == null) {
+      this.grupoNew.empresa_id = this.empresaId;
+      this.productoService.saveGrupo(this.grupoNew).subscribe(res => {
+        if (res.code == 200) {
+          this.grupoNew = new GrupoModel();
+          $('#crearGrupoNewModal').modal('hide');
+          this.getGrupos();
+        } else {
+          alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+          return;
+        }
+      });
+    } else {
+      this.productoService.updateGrupo(this.grupoNew).subscribe(res => {
+        if (res.code == 200) {
+          this.grupoNew = new GrupoModel();
+          $('#crearGrupoNewModal').modal('hide');
+          this.getGrupos();
+        } else {
+          alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+          return;
+        }
+      });
+    }
 
- }
+
+  }
+
+  exportTableToExcel() {
+    let filename = "plantilla_cargue";
+    var dataType = 'application/vnd.ms-excel';
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push("producto_id;grupo_id;nombre_grupo;marca_id;nombre_marca;orden_ingreso;estado;nombre" +
+      ";Descripcion_detallada;proveedor_id;nombre_proveedor;costo;costo_publico;impuesto;codigo_barras;peso" +
+      ";balanza;cantidad;modelo;area;sede;puesto;codigo_aseguradora;descripcion_aseguradora\n");
+    // Specify file name
+    filename = filename ? filename + '.csv' : 'excel_data.csv';
+    var blob = new Blob(texto, {
+      type: dataType
+    });
+    this.descargarArchivo(blob, filename)
+  }
+
+  descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    const url = window.URL.createObjectURL(contenidoEnBlob);
+    const link = this.downloadZipLink.nativeElement;
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  isValidCSVFile(file: any) {
+    return file.name.endsWith(".csv");
+  }
+
+  getHeaderArray(csvRecordsArr: any) {
+    let headers = (<string>csvRecordsArr[0]).split(this.separador);
+    let headerArray = [];
+    for (let j = 0; j < headers.length; j++) {
+      headerArray.push(headers[j]);
+    }
+    return headerArray;
+  }
+
+  uploadListener($event: any) {
+    this.texto = [];
+    let files = $event.srcElement.files;
+
+    if (this.isValidCSVFile(files[0])) {
+      console.log("si es csv");
+      let input = $event.target;
+      let reader = new FileReader();
+      reader.readAsText(input.files[0]);
+
+      reader.onload = () => {
+        let csvData = reader.result;
+        let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
+
+        let headersRow = this.getHeaderArray(csvRecordsArray);
+
+        this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
+      };
+
+      reader.onerror = function () {
+        console.log('error is occured while reading file!');
+      };
+
+    } else {
+      alert("Formato del archivo invalido, los formatos permitidos son: .csv");
+      //this.fileReset();  
+      return;
+
+    }
+  }
+
+  getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any) {
+
+    this.totalRegistros = csvRecordsArray.length - 2;
+    this.registrosNuevosCargados = 0;
+    this.registrosNuevosActualizados = 0;
+    this.registrosActualizados = 0;
+    this.registrosErroneos = 0;
+    for (let i = 1; i < csvRecordsArray.length; i++) {
+      let curruntRecord: string = csvRecordsArray[i].split(this.separador);
+      if (curruntRecord.length == Number(headerLength.length)) {
+        let valido: boolean = true;
+        let producto: ProductoModel = new ProductoModel();
+        //deben hacerse las validaciones de los datos entrantes
+        //validacion id
+        console.log("aqui entra");
+        let id = curruntRecord[0].trim()
+        let grupo= curruntRecord[1].trim();
+        let estado= curruntRecord[6].trim();
+        let nombre = curruntRecord[7].trim();
+        
+        if (id != "") {
+          if (isNaN(Number(id))) {
+            this.texto.push("Error en la linea " + i + " El campo " + headerLength[0] + " no es numerico" + '\n');
+            valido = false;
+          }
+          let produc = this.productosAll.find(productof => productof.producto_id.toString()  == id);
+          if(produc==undefined){
+            this.texto.push("Error en la linea " + i + " El id " + id  + ' no existe\n');
+            valido = false;
+          }else{
+            producto=produc;
+          }
+        }
+
+        let grup = this.grupoList.find(grupos => grupos.grupo_id.toString()  == grupo);
+        if(grup==undefined){
+          this.texto.push("Error en la linea " + i + " El grupo '" + grupo  + "' no existe\n");
+          valido = false;
+        }
+        if(estado==""){
+          this.texto.push("Error en la linea " + i + " El campo " + headerLength[6]  + " es obligatorio" + '\n');
+          valido = false;
+        }else{
+          if(!(estado=="1" || estado=="0")){
+            this.texto.push("Error en la linea " + i + " El campo " + headerLength[6]  + " debe ser '1' o '0'" + '\n');
+            valido = false;
+          }
+        }
+        if(nombre==""){
+          this.texto.push("Error en la linea " + i + " El campo " + headerLength[7]  + " es obligatorio" + '\n');
+          valido = false;
+        }
+        if (valido) {
+          producto.producto_id = Number(id);
+          producto.estado=Number(estado);
+          producto.nombre = nombre;
+         
+          //csvRecord.firstName = curruntRecord[1].trim();  
+          //csvRecord.lastName = curruntRecord[2].trim();  
+          //csvRecord.age = curruntRecord[3].trim();  
+          //csvRecord.position = curruntRecord[4].trim();  
+          //csvRecord.mobile = curruntRecord[5].trim();  
+          this.productosCargar.push(producto);
+          if (id == "") {
+            this.registrosNuevosCargados = this.registrosNuevosCargados + 1
+          } else {
+            this.registrosActualizados = this.registrosActualizados + 1
+          }
+
+        } else {
+          console.log(this.texto);
+          this.registrosErroneos = this.registrosErroneos + 1
+        }
+
+      }
+      else {
+        //error de que no tiene las mismas columnas
+      }
+
+    }
+
+  }
+
+  descargarDetalle() {
+
+    var blob = new Blob(this.texto, {
+      type: 'text/plain'
+    });
+    this.descargarArchivo(blob, "detalle.txt")
+  }
+
+  cargarArchivo() {
+    if ($('#fotoRepuesto')[0].files[0] == undefined) {
+      alert("El archivo de cargue es obligatorio");
+      return;
+    }
+    $('#cargueMasivoModal').modal('hide');
+    for (let pro of this.productosCargar) {
+      if(pro.producto_id==0){
+        pro.empresa_id = this.empresaId;
+      this.productoService.saveProducto(pro).subscribe(res => {
+        if (res.code == 200) {
+          this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(async res => {
+            this.productosAll = res;
+            await this.delay(100);
+            this.posInicial();
+          });
+        } else {
+          alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+          return;
+        }
+      });
+      }else{
+        this.productoService.updateProducto(pro).subscribe(async res => {
+          if (res.code == 200) {
+    
+          } else {
+            alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
+            return;
+          }
+        });
+      }
+      
+    }
+    console.log(this.productosCargar);
+
+  }
 
   CrearProducto() {
-     console.log(this.productoNew);
+    console.log(this.productoNew);
     let valido: boolean = true;
     let mensageError: string = "Son obligatorios:\n ";
     if (this.productoNew.nombre == "") {
@@ -112,11 +319,11 @@ export class InventarioFisicoComponent implements OnInit {
     this.productoNew = new ProductoModel();
   }
 
-  limpiarGrupo(){
+  limpiarGrupo() {
     this.grupoNew = new GrupoModel();
   }
 
-  getGrupos(){
+  getGrupos() {
     this.productoService.getGruposByEmpresa(this.empresaId.toString()).subscribe(async res => {
       this.grupoList = res;
     });
@@ -130,7 +337,7 @@ export class InventarioFisicoComponent implements OnInit {
       this.mensaje = this.mensaje.replace("valor", "nombre");
       this.mensaje = this.mensaje + " nombre anterior: " + producto.nombre;
       console.log(producto.nombre);
-      producto.nombre = element.value; 
+      producto.nombre = element.value;
     }
     if (element.id.substr(0, 9) == 'cantidad_') {
       this.mensaje = this.mensaje.replace("valor", "cantidad");

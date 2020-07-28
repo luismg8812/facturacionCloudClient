@@ -67,7 +67,7 @@ export class MovimientoProductosComponent implements OnInit {
         this.ganancia = Number(this.ganancia) + Number(dia.gana);
       }
     });
-  }
+  } 
 
   getEmpleados(empresaId: number) {
     this.empleadoService.getEmpleadoAll(empresaId).subscribe(res => {

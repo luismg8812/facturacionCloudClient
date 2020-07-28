@@ -15,6 +15,7 @@ export class CierreService {
   public getCierreDiario(empresaId:number) { 
     return this.http.get<any>(this.server_api + '/informeDiario/getCierreDiario?empresaId=' + empresaId );
   }
+  
 
   public getInfoDiarioByDate(empresaId:number,fechaInforme, fechaFin) { 
     return this.http.get<InformeDiarioModel[]>(this.server_api + '/informeDiario/getInfoDiarioByDate?empresaId=' + empresaId+"&fechaInforme="+fechaInforme+"&fechaFin="+fechaFin);
