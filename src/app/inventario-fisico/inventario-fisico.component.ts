@@ -92,9 +92,9 @@ export class InventarioFisicoComponent implements OnInit {
     var dataType = 'application/vnd.ms-excel';
     var texto = [];
     let tamanoMax: number = 40;
-    texto.push("producto_id;grupo_id;nombre_grupo;marca_id;nombre_marca;orden_ingreso;estado;nombre" +
-      ";Descripcion_detallada;proveedor_id;nombre_proveedor;costo;costo_publico;impuesto;codigo_barras;peso" +
-      ";balanza;cantidad;modelo;area;sede;puesto;codigo_aseguradora;descripcion_aseguradora\n");
+    texto.push("producto_id;grupo_id;nombre_grupo;marca_id;nombre_marca;,granel;estado;nombre" +
+      ";proveedor_id;nombre_proveedor;costo;costo_publico;impuesto;codigo_barras;peso" +
+      ";balanza;cantidad\n");
     // Specify file name
     filename = filename ? filename + '.csv' : 'excel_data.csv';
     var blob = new Blob(texto, {
@@ -175,11 +175,14 @@ export class InventarioFisicoComponent implements OnInit {
         let grupo= curruntRecord[1].trim();
         let estado= curruntRecord[6].trim();
         let nombre = curruntRecord[7].trim();
-        let costo = curruntRecord[11].trim();
-        let costoPublico = curruntRecord[12].trim();
-        let impuesto = curruntRecord[13].trim();
-        let codigoBarras = curruntRecord[14].trim();
-        let cantidad = curruntRecord[17].trim();
+        let costo = curruntRecord[9].trim();
+        let costoPublico = curruntRecord[10].trim();
+        let impuesto = curruntRecord[11].trim();
+        let codigoBarras = curruntRecord[12].trim();
+        let peso = curruntRecord[13].trim();
+        let granel = curruntRecord[14].trim();
+        let balanza = curruntRecord[15].trim();
+        let cantidad = curruntRecord[16].trim();
         if (id != "") {
           if (isNaN(Number(id))) {
             this.texto.push("Error en la linea " + i + " El campo " + headerLength[0] + " no es numerico" + '\n');
@@ -248,6 +251,9 @@ export class InventarioFisicoComponent implements OnInit {
           producto.costo_publico = Number(costoPublico);
           producto.impuesto = Number(impuesto);
           producto.codigo_barras = codigoBarras;
+          producto.peso=peso==""?0:Number(peso);
+          producto.granel=granel==""?0:Number(granel);
+          producto.balanza=balanza==""?0:Number(balanza);
           
           //csvRecord.firstName = curruntRecord[1].trim();  
           //csvRecord.lastName = curruntRecord[2].trim();  

@@ -521,7 +521,11 @@ export class MovimientoMesComponent implements OnInit {
       case "c_":
         cantidad = element.value;
         precio = anterior.unitario;
-        this.updateCantidad(anterior, 'suma');
+        if(this.TIPO_DOCUMENTO_ENTRADA_ALMACEN==this.document.tipo_documento_id){
+          this.updateCantidad(anterior, 'resta');
+        }else{
+          this.updateCantidad(anterior, 'suma');
+        }    
         break;
       case "p_":
         cantidad = anterior.cantidad;
@@ -667,6 +671,7 @@ export class MovimientoMesComponent implements OnInit {
       if (proveedor != undefined) {
         nombre = proveedor.nombre;
       }
+      this.detalleEntrada.nativeElement.value=this.document.detalle_entrada;
       this.proveedorPV.nativeElement.value = nombre;
       let ids: string[] = [];
       ids.unshift(this.document.documento_id);
@@ -945,7 +950,7 @@ export class MovimientoMesComponent implements OnInit {
         case 2:
           this.tituloFactura = "ENTRADA DE ALMACEN";
           break;
-        case 3:
+        case 6:
           this.tituloFactura = "SALIDA DE ALMACEN";
           break;
         default:
@@ -968,8 +973,8 @@ export class MovimientoMesComponent implements OnInit {
     let tituloDocumento: string = "";
 
     let pantalla = this.enPantallaPV.nativeElement.value;
-    if (pantalla == "") {
-      pantalla = "false";
+    if (pantalla == "S" || pantalla == "s") {
+      pantalla = "pantalla";
     }
     if (numeroImpresiones == undefined) {
       numeroImpresiones = 1;
@@ -1006,6 +1011,7 @@ export class MovimientoMesComponent implements OnInit {
           break;
       }
     }
+    this.enPantallaPV.nativeElement.value="";
   }
 
   descargarArchivo(contenidoEnBlob, nombreArchivo) {
@@ -1132,6 +1138,7 @@ export class MovimientoMesComponent implements OnInit {
     if (anterior.unitario == element.value) {
       return;
     }
+   // this.updateCantidad(anterior, 'resta');
     this.productoIdSelect.costo_publico = element.value;
     this.productoService.updateProducto(this.productoIdSelect).subscribe(res => {
       if (res.code == 200) {
@@ -1162,6 +1169,7 @@ export class MovimientoMesComponent implements OnInit {
 
     this.productos.splice(0, 1);
     anterior.estado = 0;
+    this.updateCantidad(anterior, 'resta');
     this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(anterior.cantidad, element.value);
@@ -1404,7 +1412,7 @@ export class MovimientoMesComponent implements OnInit {
       await this.delay(160);
       this.productoNew.nombre = this.articuloPV.nativeElement.value;
       this.productoNew.codigo_barras = this.CodigoBarrasPV.nativeElement.value;
-
+      this.productoNew.proveedor_id=this.proveedorSelect.toString();
       this.nombreproductoNew.nativeElement.focus();
 
     } else {

@@ -587,7 +587,7 @@
                 <th scope="col">Cantidad</th>
                 <th scope="col">Unitario</th>
                 <th scope="col"> % Impuesto  <select class="form-control" value="0"
-                    [disabled]="documentoFactura.impreso==1" (change)="calcularIvaAll(impuestoAll) " #impuestoAll>
+                     (change)="calcularIvaAll(impuestoAll) " #impuestoAll>
                     <option>0</option>
                     <option>0.4</option> 
                     <option>4</option>
@@ -823,6 +823,8 @@
                 <div class="form-group col-md-6 col-sm-2">
                   <select id="tipoDocu" name="tipoDocu" #tipoDocu placeholder="" class="form-control">
                     <option value="10">Factura de Venta</option>
+                    <option value="12">Nota Crédito</option>
+                    <option value="13">Nota Débito</option>
                     <option value="4">Cotización</option>
                   </select>
                 </div>
@@ -845,13 +847,17 @@
                   <tr *ngFor="let ordenes of facturasBuscarList">
                     <th scope="row">
                       <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
-                        (click)="cargarFactura(ordenes)">
-                        Ver
+                        (click)="cargarFactura(ordenes)" title="Ver">
+                        <i class="fas fa-search"></i>
                       </button>
-                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
-                        (click)="imprimirCopia(ordenes)">
-                        Imprimir Copia
+                      <button type="button" class="btn btn-secondary btn-sm"  data-toggle="modal"
+                        (click)="imprimirCopia(ordenes)" title="Imprimir Copia">
+                        <i class="fas fa-print"></i>
                       </button>
+                      <button type="button" class="btn btn-secondary btn-sm"  data-toggle="modal" data-target="#notaModal"
+                      (click)="detalleDocumento(ordenes)"  title="Crear nota crédito/débito" [disabled]="ordenes.impreso!=1">
+                      <i class="far fa-trash-alt"></i>
+                    </button>
                     </th>
                     <td>{{ordenes.documento_id}}</td>
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
@@ -864,6 +870,113 @@
           </div>
         </div>
       </div>
+
+
+       <!-- Modal nota credito -->
+  <div class="modal fade" id="notaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Crear Nota Crédito/Débito</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group col-md-8 col-sm-1">
+            <b>Factura relacionada: </b>
+          </div>
+          <div class="form-group col-md-4 col-sm-1">
+            {{documentoSelect.consecutivo_dian}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-8 col-sm-1">
+            <b># Interno Factura relacionada: </b>
+          </div>
+          <div class="form-group col-md-4 col-sm-1">
+            {{documentoSelect.documento_id}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-8 col-sm-1">
+            <b>Total Nota: </b>
+          </div>
+          <div class="form-group col-md-4 col-sm-1">
+            {{formatearNumber(documentoSelect.total)}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12 col-sm-1">
+            Descripción corrección: 
+          </div>
+          <div class="form-group col-md-12 col-sm-1">
+            <textarea class="form-control " id="observacion" #observacion
+              placeholder="Descripción corrección"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+         
+          <div class="form-group col-sm-8" >
+            Articulo
+            <input list="articulos" name="articuloBuscar" #articuloBuscar placeholder="Articulo" class="form-control"
+              id="articuloBuscar" (change)="articuloSelect(articuloBuscar) ">
+          </div>
+          <div class="form-group col-md-3 col-sm-1">
+            Cantidad
+            <input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control">
+          </div>
+          <div class="form-group col-md-1 col-sm-1">
+            <button type="button" class="btn btn-primary mt-4" title="Adjuntar producto"
+            (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-1">
+          
+            <button type="button" class="btn btn-primary mr-1" (click)="confirmarNota(observacion)">Confirmar</button>
+            <button type="button" class="btn btn-secondary" (click)="cerrarNota()">Salir</button>
+          </div>
+        </div>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Opciones</th>
+              <th scope="col">Producto</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Valor Uni.</th>
+              <th scope="col">Valor Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of itemsFactura2">
+              <th scope="row">
+                <button type="button" id="d_{{item.documento_detalle_id}}" #borraR class="btn btn-secondary btn-sm" title="Eliminar Producto" 
+                  (click)="borrarItem(borraR)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </th>
+              <td>{{item.descripcion}}</td>
+              <td><input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control"
+                  id="c_{{item.documento_detalle_id}}" (blur)="cambioCantidad(cantidadNota)"
+                  value="{{item.cantidad}}">
+              </td>
+              <td>
+                <input name="unitarioNota" #unitarioNota placeholder="Unitario" class="form-control"
+                  id="u_{{item.documento_detalle_id}}" (blur)="cambioUnitario(unitarioNota)"
+                  value="{{item.unitario}}">
+              </td>
+              <td>{{formatearNumber(item.parcial)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
 
     </div>
   </div>

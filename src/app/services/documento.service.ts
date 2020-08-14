@@ -108,8 +108,8 @@ export class DocumentoService {
     return this.http.get<NominaModel[]>(this.server_api + '/documento/getNominaByEmpleado?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+idEmpleados+"&tipoDocumentoId="+tipoDocumentoId);
   }
 
-  getVentasPorGrupos(usuarioId) {
-    return this.http.get<any>(this.server_api + '/documento/getVentasPorGrupos?usuarioId=' + usuarioId );
+  getVentasPorGrupos(usuarioId,fechaInicial,fechaFinal,conCierre:boolean) {
+    return this.http.get<any>(this.server_api + '/documento/getVentasPorGrupos?usuarioId=' + usuarioId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+ '&conCierre=' + conCierre);
   }
 
   getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {

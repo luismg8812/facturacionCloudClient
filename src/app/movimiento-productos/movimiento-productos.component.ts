@@ -43,6 +43,10 @@ export class MovimientoProductosComponent implements OnInit {
   }
 
   calcular() {
+    if(this.empleadoPV.nativeElement.value==""){
+      alert("El empleado es obligatorio");
+      return;
+    }
     this.total = 0;
     this.ganancia = 0;
     let ini: string = this.fechaIni.nativeElement.value;

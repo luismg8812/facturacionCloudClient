@@ -62,6 +62,7 @@ export class BuscarDocumentosComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDF80MM: number = 4;
   readonly TIPO_IMPRESION_PDF50MM: number = 5;
+  readonly TIPO_IMPRESION_TXTMEDIANABOR: number = 6;
 
   readonly NOTA_CREDITO: number = 12;
   readonly NOTA_DEBITO: number = 13;
@@ -213,7 +214,7 @@ export class BuscarDocumentosComponent implements OnInit {
       this.documentoService.saveDocumentoNota(newDocuNota).subscribe(res => {
         if (res.code == 200) {
           console.log("se agrega documento nota");
-          factura.nota_id=res.documento_nota_id;
+          factura.nota_id = res.documento_nota_id;
           this.documentoService.updateDocumento(factura).subscribe(res => {
             if (res.code != 200) {
               alert("error creando documento, por favor inicie nuevamente la creación del documento");
@@ -347,24 +348,37 @@ export class BuscarDocumentosComponent implements OnInit {
         tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
-    switch (this.documentoSelect.tipo_documento_id) {
-      case 9:
-        this.tituloFactura = "FACTURA DE VENTA.";
-        break;
-      case 10:
-        this.tituloFactura = "FACTURA DE VENTA";
-        break;
-      case 4:
-        this.tituloFactura = "No. DE COTIZACIÓN";
-        break;
-      default:
-        break;
-    }
+   
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       this.documentoDetalleService.getDocumentoDetalleByDocumento(this.documentoSelect.documento_id).subscribe(res1 => {
         this.itemsFactura = res1;
         console.log("detalles encontrados:" + res.length);
+        switch (this.documentoSelect.tipo_documento_id) {
 
+          case 1:
+            this.tituloFactura = " ENTRADA POR GUIA";
+            break;
+          case 2:
+            this.tituloFactura = "ENTRADA ALMACEN";
+            break;
+          case 6:
+            this.tituloFactura = "SALIDAS ALMACEN";
+            break;
+          case 12:
+            this.tituloFactura = "NOTA CREDITO";
+            break;
+          case 13:
+            this.tituloFactura = "NOTA DEBITO";
+            break;
+          case 10:
+            this.tituloFactura = "FACTURA DE VENTA";
+            break;
+          case 4:
+            this.tituloFactura = "No. DE COTIZACIÓN";
+            break;
+          default:
+            break;
+        }
         this.imprimirFactura(1, res[0], tipoImpresion);
       });
     });
@@ -398,6 +412,11 @@ export class BuscarDocumentosComponent implements OnInit {
           formato = ".txt";
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + formato);
           break;
+        case this.TIPO_IMPRESION_TXTMEDIANABOR:
+          formato = ".txt";
+          this.descargarArchivo(this.impresionService.imprimirFacturaTxtMediaNabor(this.factura, this.configuracion), tituloDocumento + formato);
+          break;
+
         case this.TIPO_IMPRESION_PDF80MM:
           formato = ".pdf";
           this.impresionService.imprimirFacturaPdf80(this.factura, this.configuracion, false);
@@ -453,12 +472,12 @@ export class BuscarDocumentosComponent implements OnInit {
     if (tipoDocumento == "") {
       tipoDocumento = "10";
     }
-    if (fechaIniBuscar != '' ) {
+    if (fechaIniBuscar != '') {
       fechaIniBuscar = this.calculosService.fechaIniBusqueda(this.fechaIniBuscar.nativeElement.value);
     }
-      if ( fechaFinBuscar != '') {
+    if (fechaFinBuscar != '') {
       fechaFinBuscar = this.calculosService.fechaFinBusqueda(this.fechaFinBuscar.nativeElement.value);
-    } 
+    }
     let cliente1 = this.clientes.find(cliente => cliente.nombre == clientePV);
     let cliente_id = "";
     if (cliente1 != undefined) {

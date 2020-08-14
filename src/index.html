@@ -39,19 +39,20 @@
     $(document).ready(function () {
       $('[data-toggle="tooltip"]').tooltip();
     }); 
-    var time = 600000;
+    var time = 6000000;
     // se llamará a la función que confirmar Cierre después de 10 segundos
     var temp = setTimeout(confirmarCierre, time);
-
+ 
     // hacemos que al pulsar en los botones de Alertify no se propaguen los eventos
     $("body").on("click", ".ajs-button", function (e) {
       e.stopPropagation();
     });
 
+    
     // cuando se detecte actividad en cualquier parte de la app
     $(document).on('click keyup keypress keydown blur change', function (e) {
       // borrar el temporizador de la funcion confirmarCierre
-      clearTimeout(temp);
+      clearTimeout(temp);  
       // y volver a iniciarlo con 10segs
       temp = setTimeout(confirmarCierre, time);
     //  console.log('actividad detectada');

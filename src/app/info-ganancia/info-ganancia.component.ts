@@ -20,6 +20,7 @@ export class InfoGananciaComponent implements OnInit {
   public gananciaVentas:number=0;
   public gananciaRemisiones:number=0;
   public gananciaTotal:number=0;
+  public grupos:any;
   @ViewChild("fechaIni") fechaIni: ElementRef;
   @ViewChild("fechaFin") fechaFin: ElementRef;
 
@@ -55,10 +56,19 @@ export class InfoGananciaComponent implements OnInit {
         this. gananciaRemisiones= res[0].ganancias_remisiones
         this. gananciaTotal= Number(this.gananciaRemisiones)+Number(this.gananciaVentas);
       });
+      this.ventaGrupos(ini,fin);
     }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
+  }
+
+  ventaGrupos(fechaIni,fechaFin) {
+    this.documentoService.getVentasPorGrupos("",fechaIni,fechaFin,false).subscribe(res => {
+      console.log(res);
+      this.grupos = res;
+    });
+
   }
 
   formatearNumber(number: number) {

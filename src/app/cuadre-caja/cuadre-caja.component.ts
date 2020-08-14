@@ -166,7 +166,7 @@ export class CuadreCajaComponent implements OnInit {
       idEmpleados.push(id.empleado_id);
     }
     this.documentoService.getNominaByEmpleado("", "", idEmpleados, "10").subscribe(res => {
-      console.log(this.cuadreCajaVo);
+      console.log(res);
       this.cuadreCajaVo.empleados = res;
 
     });
@@ -174,7 +174,7 @@ export class CuadreCajaComponent implements OnInit {
   }
 
   ventaGrupos() {
-    this.documentoService.getVentasPorGrupos(this.usuarioId).subscribe(res => {
+    this.documentoService.getVentasPorGrupos(this.usuarioId,"","",true).subscribe(res => {
       console.log(this.cuadreCajaVo);
       this.cuadreCajaVo.grupos = res;
     });

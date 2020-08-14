@@ -81,7 +81,7 @@ export class ReporteProductosComponent implements OnInit {
     }
     console.log(tipoImpresion);
     let tituloDocumento: string = "";
-    tituloDocumento = "OrdenTrabajo_reporte_productos" + tipoImpresion;
+    tituloDocumento = "reporte_productos" + tipoImpresion;
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
       switch (tipoImpresion) {

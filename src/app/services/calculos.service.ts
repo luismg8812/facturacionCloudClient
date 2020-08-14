@@ -259,6 +259,22 @@ export class CalculosService {
 		return valido;
 	}
 
+	public ordenar(productos:Array<DocumentoDetalleModel>) {
+		let temp:Array<DocumentoDetalleModel> = [];
+		for (let ddV of productos) {
+			if (ddV.varios  == 1) {
+				temp.push(ddV);
+			}
+		}
+		for (let ddV of productos) {
+			let existe1 = temp.find(existe => existe.documento_detalle_id == ddV.documento_detalle_id);
+			if (existe1==undefined) {
+				temp.push(ddV);
+			}
+		}
+		return temp;
+	}
+
 	public calcularExcento(doc: DocumentoModel, productos: Array<DocumentoDetalleModel>) {
 		let totalReal: number = 0.0;
 		let exectoReal: number = 0.0;

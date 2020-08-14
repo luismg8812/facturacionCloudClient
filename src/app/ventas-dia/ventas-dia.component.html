@@ -329,8 +329,17 @@
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-6">
+                            <h6 class="d-none" #tipoPagoLavel2 name="tipoPagoLavel2" id="tipoPagoLavel2">
+                                1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale.
+                            </h6>
+                        </div>
+                    </div>        
+                    <div class="form-row ">
+                        <div class="col col-ms-6">
                             <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago:
                             </h6>
+                          
+            
                             <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV"
                                 data-toggle="tooltip" title="" (keydown.enter)="enterTecla(tipoPagoPV)"
                                 (keydown.esc)="scapeTecla(tipoPagoPV)">

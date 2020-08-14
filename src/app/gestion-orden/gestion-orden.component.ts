@@ -33,6 +33,8 @@ import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
+import { DocumentoNotaModel } from '../model/documentoNota.model';
+import { DocumentoDetalleVoModel } from '../model/documentoDetalleVo.model';
 
 
 declare var jquery: any;
@@ -58,6 +60,8 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_IMPRESION_PDF50MM: number = 5;
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
+  readonly NOTA_CREDITO: number = 12;
+  readonly NOTA_DEBITO: number = 13;
 
   public documento: DocumentoModel = new DocumentoModel();
   public usuarioId: number;
@@ -93,6 +97,7 @@ export class GestionOrdenComponent implements OnInit {
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
   public itemsFactura: Array<DocumentoDetalleModel> = [];
+  public itemsFactura2: Array<DocumentoDetalleModel> = [];
   public ordenesBuscarListFactura: Array<DocumentoModel> = [];
   public facturasBuscarList: Array<DocumentoModel> = [];
   public ordenesBuscarListFacturaSelect: Array<DocumentoModel> = [];
@@ -104,6 +109,8 @@ export class GestionOrdenComponent implements OnInit {
   public resolucionAll: Array<ResolucionEmpresaModel>;
   public tituloFactura: string = "";
   public informeDiario: InformeDiarioModel;
+
+  public documentoSelect: DocumentoModel = new DocumentoModel();
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -165,6 +172,50 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
+  cambioCantidad(cantidad) {
+    if (isNaN(cantidad.value)) {
+      console.log("no es numérico:" + cantidad.value);
+      return;
+    }
+    if (cantidad.value < 0) {
+      console.log("la cantidad no puede ser negativa:" + cantidad.value);
+      return;
+    }
+    let id = cantidad.id.toString().replace("c_", "");
+    for (let i = 0; i < this.itemsFactura.length; i++) {
+      if (this.itemsFactura[i].documento_detalle_id.toString() == id) {
+        this.itemsFactura[i].cantidad = cantidad.value;
+        this.itemsFactura[i].parcial = Number(cantidad.value) * this.itemsFactura[i].unitario;
+        this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
+        break;
+      }
+    }
+  }
+
+  cambioUnitario(unitario) {
+    if (isNaN(unitario.value)) {
+      alert("no es numérico:" + unitario.value);
+      return;
+    }
+    if (unitario.value < 0) {
+      alert("el valor unitario no puede ser negativa:" + unitario.value);
+      return;
+    }
+    let id = unitario.id.toString().replace("u_", "");
+    for (let i = 0; i < this.itemsFactura.length; i++) {
+      if (this.itemsFactura[i].documento_detalle_id.toString() == id) {
+        this.itemsFactura[i].unitario = unitario.value;
+        this.itemsFactura[i].parcial = Number(unitario.value) * this.itemsFactura[i].cantidad;
+        this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
+        break;
+      }
+    }
+  }
+
+  cerrarNota() {
+    $('#notaModal').modal('hide');
+  }
+
   guardarModelo(modelo) {
     let modeloId = this.modeloList.find(mo => mo.nombre == modelo.value);
     this.documento.modelo_marca_id = modeloId.modelo_marca_id;
@@ -192,6 +243,101 @@ export class GestionOrdenComponent implements OnInit {
     this.marcasService.getMarcas().subscribe(res => {
       this.marcaList = res;
     });
+  }
+
+  confirmarNota(observacion) {
+    let newDocu: DocumentoModel = this.documentoSelect;
+    if (observacion.value == "") {
+      alert("La descripción del error es obligatoria");
+      return;
+    }
+    this.documentoService.getByDocumentoId(this.documentoSelect.documento_id).subscribe(factura => {
+      if (newDocu.total == factura[0].total) {
+        alert("Los valores totales de la factura y de la nota son iguales, por lo cual no se creará la Nota");
+        return;
+      }
+      newDocu.descripcion_trabajador = observacion.value;
+      newDocu.fecha_registro = new Date();
+      newDocu.usuario_id = this.usuarioId;
+      newDocu.invoice_id = this.INVOICE_SIN_ENVIAR;
+      newDocu.cufe = "";
+      if (newDocu.total < factura[0].total) {
+        newDocu.tipo_documento_id = this.NOTA_CREDITO;
+      } else {
+        newDocu.tipo_documento_id = this.NOTA_DEBITO;
+      }
+      this.documentoService.saveDocumento(newDocu).subscribe(res => {
+        if (res.code == 200) {
+          newDocu.documento_id = res.documento_id;
+          let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
+          documentoInvoice.documento_id = res.documento_id;
+          documentoInvoice.fecha_registro = new Date();
+          documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+          this.calcularInfoDiario(newDocu, factura[0], true);
+          this.crearNotaDocumento(newDocu, factura[0]);
+          this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+            if (res.code == 200) {
+              console.log("Se agrega estado para facturación electrónica");
+            } else {
+              alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+              return;
+            }
+          });
+          for (let deta of this.itemsFactura2) {
+            let newdd:DocumentoDetalleModel=new DocumentoDetalleModel();
+            newdd=deta;
+            newdd.documento_id = newDocu.documento_id;
+            this.documentoDetalleService.saveDocumentoDetalle(newdd).subscribe(res => {
+              if (res.code != 200) {
+                alert("Error agregando producto: " + res.error);
+              }
+            });
+          }
+          $('#notaModal').modal('hide');
+        } else {
+          alert("error creando documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    });
+  }
+
+
+
+  crearNotaDocumento(nota: DocumentoModel, factura: DocumentoModel) {
+    this.documentoService.getDocumentoNotaByDocumento(factura.documento_id).subscribe(res => {
+      for (let nota of res) {
+        nota.estado = 0;
+        this.documentoService.updateDocumentoNota(nota).subscribe(res => {
+          if (res.code == 200) {
+            console.log("se edita documento nota");
+          } else {
+            alert("error creando documento Nota, tener en cuenta el error");
+            return;
+          }
+        });
+      }
+      let newDocuNota: DocumentoNotaModel = new DocumentoNotaModel();
+      newDocuNota.estado = 1;
+      newDocuNota.documento_id = factura.documento_id;
+      newDocuNota.documento_nota_id = nota.documento_id;
+      this.documentoService.saveDocumentoNota(newDocuNota).subscribe(res => {
+        if (res.code == 200) {
+          console.log("se agrega documento nota");
+          factura.nota_id = res.documento_nota_id;
+          this.documentoService.updateDocumento(factura).subscribe(res => {
+            if (res.code != 200) {
+              alert("error creando documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+          });
+        } else {
+          alert("error creando documento NOta, tener en cuenta el error");
+          return;
+        }
+      });
+    });
+
   }
 
   nuevaOrden() {
@@ -465,6 +611,54 @@ export class GestionOrdenComponent implements OnInit {
     this.asignarValoresFactura(this.documentoFactura.documento_id);
   }
 
+  adjuntarProducto(cantidad) {
+    if (this.productoIdSelect == undefined) {
+      alert("Debe seleccionar un articulo primero");
+      return;
+    }
+    if (cantidad.value == "") {
+      alert("Debe seleccionar la cantidad primero");
+      return;
+    }
+    this.asignarDocumentoDetalle(cantidad.value, this.productoIdSelect.costo_publico);
+  }
+
+  private asignarDocumentoDetalle(cantidad: number, costo_publico: number,) {
+    let docDetalle = new DocumentoDetalleModel();
+    docDetalle.cantidad = cantidad;
+    docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
+    docDetalle.peso_producto = Number(this.productoIdSelect.peso);
+    docDetalle.producto_id = this.productoIdSelect.producto_id;
+    docDetalle.documento_id = this.documentoSelect.documento_id;
+    docDetalle.descripcion = this.productoIdSelect.nombre;
+    docDetalle.costo_producto = this.productoIdSelect.costo;
+    docDetalle.fecha_registro = new Date;
+    docDetalle.estado = 1;
+    //se valida promocion
+    if (this.calculosService.validarPromo(this.productoIdSelect, cantidad)) {
+      let precioPromo: number = this.productoIdSelect.pub_promo;
+      let cantidadPromo: number = this.productoIdSelect.kg_promo;
+      let unitarioPromo: number = precioPromo / cantidadPromo;
+      docDetalle.parcial = cantidad * unitarioPromo;
+      docDetalle.unitario = unitarioPromo;
+    } else {
+      if (cantidad != null && costo_publico != null) {
+        docDetalle.parcial = cantidad * costo_publico;
+        docDetalle.unitario = costo_publico;
+      } else {
+        docDetalle.parcial = 0;
+        docDetalle.unitario = 0;
+      }
+    }
+    console.log(docDetalle);
+    this.itemsFactura.unshift(docDetalle);
+   // this.itemsFactura2.unshift(docDetalle);
+    this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
+    let newCantidad: number = this.productoIdSelect.cantidad;
+    this.productoIdSelect.cantidad = newCantidad - docDetalle.cantidad;
+    //this.restarCantidadesSubProducto(docDetalle); 
+  }
+
   articuloSelect(element) {
     console.log("articulo select:" + element.value);
     let productoNombre: string = element.value;
@@ -522,7 +716,7 @@ export class GestionOrdenComponent implements OnInit {
         if (res.code == 200) {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
-          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+          this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
           //this.calcularTOtal();
         } else {
           alert("Error agregando repuesto: " + res.error);
@@ -551,7 +745,7 @@ export class GestionOrdenComponent implements OnInit {
             break;
           }
         }
-        this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+        this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
         console.log(this.detallesList);
         this.documentoService.updateDocumento(this.documento).subscribe(res => {
           if (res.code != 200) {
@@ -641,9 +835,9 @@ export class GestionOrdenComponent implements OnInit {
         case this.TIPO_IMPRESION_TXT50MM:
           this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
           break;
-          case this.TIPO_IMPRESION_PDF50MM:
-            this.impresionService.imprimirOrdenPDF50(this.factura, false);
-            break;
+        case this.TIPO_IMPRESION_PDF50MM:
+          this.impresionService.imprimirOrdenPDF50(this.factura, false);
+          break;
         default:
           alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");
           return;
@@ -686,16 +880,16 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoFactura.impresora = impresora;
     if (this.documentoFactura.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA) {
       this.actualizarOrdenes();
-      this.calcularInfoDiario(false);
+      this.calcularInfoDiario(null, null, false);
       this.asignarTipoPago();
     }
     this.asignarConsecutivo(numImpresiones, tipoImpresion);
     $('#imprimirModalFactura').modal('hide');
   }
 
-  calcularInfoDiario(anulado: boolean) {
+  calcularInfoDiario(nota: DocumentoModel, factura: DocumentoModel, crearNota: boolean) {
     console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(new Date(), false), this.calculosService.formatDate(new Date(), false)).subscribe(res => {
+    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.fechaIniBusquedaDate(this.documentoSelect.fecha_registro), this.calculosService.fechaFinBusquedaDate(this.documentoSelect.fecha_registro)).subscribe(res => {
 
       if (res.length == 0) {
         this.informeDiario = new InformeDiarioModel();
@@ -703,7 +897,14 @@ export class GestionOrdenComponent implements OnInit {
         this.informeDiario = res[0];
         console.log(this.informeDiario);
       }
-      this.informeDiario = this.calculosService.calcularInfoDiario(this.documentoFactura, this.informeDiario, anulado);
+      if (crearNota) {
+        this.informeDiario = this.calculosService.calcularInfoDiarioNota(factura, nota, this.informeDiario);
+      } else {
+        this.informeDiario = this.calculosService.calcularInfoDiario(this.documentoFactura, this.informeDiario, false);
+
+      }
+
+
       this.informeDiario.fecha_ingreso = new Date();
       this.informeDiario.fecha_informe = this.calculosService.formatDate(new Date(), false);
       if (this.informeDiario.informe_diario_id == null) {
@@ -755,6 +956,12 @@ export class GestionOrdenComponent implements OnInit {
       case 4:
         this.tituloFactura = "No. DE COTIZACIÓN";
         break;
+      case 12:
+        this.tituloFactura = "NOTA CRÉDITO";
+        break;
+      case 13:
+        this.tituloFactura = "NOTA DÉBITO";
+        break;
       default:
         break;
     }
@@ -788,17 +995,17 @@ export class GestionOrdenComponent implements OnInit {
       let empr: EmpresaModel[] = res;
       let con: number;
       let consecutivo: string;
-      let resolucion:ResolucionEmpresaModel=new ResolucionEmpresaModel();
+      let resolucion: ResolucionEmpresaModel = new ResolucionEmpresaModel();
       if (this.resolucionEmpresa.nativeElement.value != "") {
         console.log(this.resolucionEmpresa.nativeElement.value);
         resolucion = this.resolucionAll.find(reso => reso.nombre.trim() == this.resolucionEmpresa.nativeElement.value.toString().trim());
         console.log(resolucion.nombre);
-      }else {
+      } else {
         resolucion = this.resolucionAll[0];
       }
       console.log(resolucion);
       console.log(this.resolucionAll);
-      this.factura.resolucionEmpresa=resolucion;
+      this.factura.resolucionEmpresa = resolucion;
       switch (this.documentoFactura.tipo_documento_id) {
         case 9:
           con = resolucion.consecutivo;
@@ -808,6 +1015,7 @@ export class GestionOrdenComponent implements OnInit {
           this.tituloFactura = "FACTURA DE VENTA.";
           break;
         case 4:
+
           this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
           // consecutivo dian
           console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
@@ -822,10 +1030,42 @@ export class GestionOrdenComponent implements OnInit {
 
           });
           break;
+        case 12:
+
+          this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
+          // consecutivo dian
+          console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
+          this.tituloFactura = "NOTA CRÉDITO";
+          this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+            if (res.code != 200) {
+              alert("error creando documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+            this.imprimirFactura(numImpresiones, empr[0], tipoImpresion);
+            this.limpiarFactura();
+
+          });
+          break;
+        case 4:
+
+          this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
+          // consecutivo dian
+          console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
+          this.tituloFactura = "NOTA DÉBITO";
+          this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+            if (res.code != 200) {
+              alert("error creando documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+            this.imprimirFactura(numImpresiones, empr[0], tipoImpresion);
+            this.limpiarFactura();
+
+          });
+          break;
         default:
           // log
           console.log(resolucion.consecutivo);
-          con = Number(resolucion.consecutivo)+ 1;
+          con = Number(resolucion.consecutivo) + 1;
           // dentro de try se valida si faltan 500 facturas para
           // llegar hasta el tope
 
@@ -859,6 +1099,38 @@ export class GestionOrdenComponent implements OnInit {
           break;
       }
     });
+  }
+
+
+  detalleDocumento(documento: DocumentoModel) {
+    this.documentoSelect = documento;
+    this.documentoService.getOrdenesByDocumentoId(documento.documento_id).subscribe(res => {
+      this.ordenesBuscarListFacturaSelect = res;
+      let ids: string[] = [];
+      for (let d of this.ordenesBuscarListFacturaSelect) {
+        ids.unshift(d.documento_id);
+      }
+      if (ids.length > 0) {
+        this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+          this.itemsFactura2 = res;
+          console.log("detalles encontrados:" + res.length);
+        });
+      } else {
+        this.itemsFactura2 = [];
+      }
+
+    });
+  }
+
+  borrarItem(borrar) {
+    let id = borrar.id.toString().replace("d_", "");
+    for (let i = 0; i < this.itemsFactura2.length; i++) {
+      if (this.itemsFactura2[i].documento_detalle_id.toString() == id) {
+        this.itemsFactura2.splice(i, 1);
+        this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura2);
+        break;
+      }
+    }
   }
 
   imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel, tipoImpresion: number) {
@@ -951,7 +1223,7 @@ export class GestionOrdenComponent implements OnInit {
           this.detallesList = res;
           this.detalleSelect = new DocumentoDetalleModel();
           console.log("detalles encontrados:" + res.length);
-          this.documento = this.calculosService.calcularExcento(this.documento,this.detallesList);
+          this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
         });
       } else {
         alert("Error agregando repuesto: " + res.error);

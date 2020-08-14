@@ -14,6 +14,7 @@ export class DocumentoDetalleModel {
     public peso_producto:number;
     public descripcion:string;
     public url_foto:string;
+    public varios:number;
     
     
     constructor(){
@@ -32,5 +33,6 @@ export class DocumentoDetalleModel {
        this.peso_producto=0;
        this.descripcion="";
        this.url_foto="";
+       this.varios=0;
     }
 }

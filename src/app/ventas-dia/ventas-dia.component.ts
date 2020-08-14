@@ -65,6 +65,7 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDF80MM: number = 4;
   readonly TIPO_IMPRESION_PDF50MM: number = 5;
+  readonly TIPO_IMPRESION_TXTMEDIANABOR: number = 6;
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
 
@@ -134,7 +135,7 @@ export class VentasDiaComponent implements OnInit {
   public claveBorrado: boolean = false;
   public divGramera: boolean = false;
   public pesoGramera: number = 0.0;
-  public parcialGramera: number=0.0;
+  public parcialGramera: number = 0.0;
   public informeDiario: InformeDiarioModel;
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
@@ -199,6 +200,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("descuentoPV") descuentoPV: ElementRef;
   @ViewChild("descuentoLavel") descuentoLavel: ElementRef;
   @ViewChild("tipoPagoLavel") tipoPagoLavel: ElementRef;
+  @ViewChild("tipoPagoLavel2") tipoPagoLavel2: ElementRef;
   @ViewChild("tipoPagoPV") tipoPagoPV: ElementRef;
   @ViewChild("valorTipoPagoLavel") valorTipoPagoLavel: ElementRef;
   @ViewChild("valorTipoPagoPV") valorTipoPagoPV: ElementRef;
@@ -259,13 +261,20 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
     let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
-    if (this.clienteObligatorioActivo && cliente == undefined) {
-      alert("El cliente " + element.value + " no existe, presione la tecla lado derecho para crearlo");
-      return;
+    
+    if (!this.clienteObligatorioActivo && element.value != '') {
+      
     }
+    
     if (!this.clienteObligatorioActivo && element.value == '') {
       cliente = this.clientes.find(cliente => cliente.cliente_id == 1);//trae cliente varios por defecto
     }
+
+    if ( cliente == undefined) {
+      alert("El cliente " + element.value + " no existe, presione la tecla lado derecho para crearlo");
+      return;
+    }
+   
     console.log(cliente);
     this.clienteSelect = cliente.cliente_id;
     this.document.cliente_id = this.clienteSelect;
@@ -471,6 +480,9 @@ export class VentasDiaComponent implements OnInit {
         this.articuloPV.nativeElement.value = this.productoIdSelect.nombre;
         this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
         this.findByProducto();
+      }else{
+        console.log("entra a producto carne");
+        this.findProductoCarne(element);
       }
 
     }
@@ -508,8 +520,25 @@ export class VentasDiaComponent implements OnInit {
         this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
         this.findByProducto();
       }
+      
     }
   }
+
+  findProductoCarne(element){
+    let codTotal: string = element.value;
+    let productoCodigo= codTotal.substr(0, 6);
+    console.log(productoCodigo);
+      this.productoIdSelect = this.productosAll.find(product => product.codigo_barras == productoCodigo);
+      console.log(this.productoIdSelect);
+      if (this.productoIdSelect != undefined) {
+        let unidad=codTotal.substr(6, 2);
+        let milecimas=codTotal.substr(8, 11);
+        console.log(unidad+"."+milecimas);
+        this.cantidadPV.nativeElement.value=Number(unidad+"."+milecimas);
+        this.cantidadEnter(null);
+        
+      }
+    }
 
   async findByProducto() {
     this.unitarioPV.nativeElement.value = this.productoIdSelect.costo_publico;
@@ -559,7 +588,7 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
         this.pesoGramera = res;
-        this.parcialGramera=Number(this.productoIdSelect.costo_publico)*Number(this.pesoGramera);
+        this.parcialGramera = Number(this.productoIdSelect.costo_publico) * Number(this.pesoGramera);
       }
     });
   }
@@ -804,6 +833,7 @@ export class VentasDiaComponent implements OnInit {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(anterior.cantidad, element.value);
         console.log("cambio de precio:" + element.value);
+        //this.productos=this.calculosService.ordenar(this.productos);
       }
     });
 
@@ -995,6 +1025,10 @@ export class VentasDiaComponent implements OnInit {
           formato = ".txt";
           this.descargarArchivo(this.impresionService.imprimirFacturaTxt50(this.factura, this.configuracion), tituloDocumento + formato);
           break;
+        case this.TIPO_IMPRESION_TXTMEDIANABOR:
+          formato = ".txt";
+          this.descargarArchivo(this.impresionService.imprimirFacturaTxtMediaNabor(this.factura, this.configuracion), tituloDocumento + formato);
+          break;
         case this.TIPO_IMPRESION_PDF80MM:
           formato = ".pdf";
           this.impresionService.imprimirFacturaPdf80(this.factura, this.configuracion, false);
@@ -1029,11 +1063,11 @@ export class VentasDiaComponent implements OnInit {
       console.log(empr);
       let con: number;
       let consecutivo: string;
-         let resolucion:ResolucionEmpresaModel = this.resolucionAll[0];
-      this.factura.resolucionEmpresa=resolucion;
+      let resolucion: ResolucionEmpresaModel = this.resolucionAll[0];
+      this.factura.resolucionEmpresa = resolucion;
       switch (this.document.tipo_documento_id) {
         case 9:
-          con =resolucion.consecutivo;
+          con = resolucion.consecutivo;
           consecutivo = resolucion.letra_consecutivo + con;
           this.document.consecutivo_dian = consecutivo;
           console.log("consecutivo documentoId: " + consecutivo);
@@ -1266,26 +1300,26 @@ export class VentasDiaComponent implements OnInit {
             return;
           }
         });
-        this.updateCantidad(anterior,'suma');
+        this.updateCantidad(anterior, 'suma');
         this.siguientePV.nativeElement.focus();
         this.modificarFactura = false;
       }
     });
   }
 
-  updateCantidad(anterior:DocumentoDetalleModel,operacion:string){
+  updateCantidad(anterior: DocumentoDetalleModel, operacion: string) {
     let newCantidad: number = this.productoIdSelect.cantidad;
-    let product:ProductoModel=new ProductoModel();
+    let product: ProductoModel = new ProductoModel();
     product = this.productoIdSelect;
-    if(operacion=='suma'){
+    if (operacion == 'suma') {
       product.cantidad = Number(newCantidad) + Number(anterior.cantidad);
-    }else{
+    } else {
       product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
     }
     this.restarCantidadesSubProducto(anterior);
     this.productoService.updateCantidad(product).subscribe(res => {
       if (res.code == 200) {
-        this.productoIdSelect=product;
+        this.productoIdSelect = product;
         //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
       } else {
         alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
@@ -1334,7 +1368,7 @@ export class VentasDiaComponent implements OnInit {
       case "c_":
         cantidad = element.value;
         precio = anterior.unitario;
-        this.updateCantidad(anterior,'suma');
+        this.updateCantidad(anterior, 'suma');
         break;
       case "p_":
         cantidad = anterior.cantidad;
@@ -1361,13 +1395,12 @@ export class VentasDiaComponent implements OnInit {
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
-        
           this.document.fecha_registro = new Date(res.fecha_registro);
           let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
           documentoInvoice.documento_id = res.documento_id;
           documentoInvoice.fecha_registro = new Date();
           documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
-         // console.log(this.document);
+          // console.log(this.document);
           this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
             if (res.code == 200) {
               console.log("Se agrega estado para facturación electrónica");
@@ -1403,6 +1436,7 @@ export class VentasDiaComponent implements OnInit {
     docDetalle.costo_producto = this.productoIdSelect.costo;
     docDetalle.fecha_registro = this.calculosService.fechaActual();
     docDetalle.estado = 1;
+    docDetalle.varios=this.productoIdSelect.granel;
     //se valida promocion
     if (this.calculosService.validarPromo(this.productoIdSelect, cantidad)) {
       let precioPromo: number = this.productoIdSelect.pub_promo;
@@ -1447,7 +1481,7 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
       });
-      this.updateCantidad(docDetalle,'resta');
+      this.updateCantidad(docDetalle, 'resta');
 
     });
   }
@@ -1986,6 +2020,9 @@ export class VentasDiaComponent implements OnInit {
       this.valorTipoPagoLavel.nativeElement.classList.remove("d-none");
       this.valorTipoPagoLavel.nativeElement.classList.add("d-block");
 
+      this.tipoPagoLavel2.nativeElement.classList.remove("d-none");
+      this.tipoPagoLavel2.nativeElement.classList.add("d-block");
+
       this.tipoPagoLavel.nativeElement.classList.remove("d-none");
       this.tipoPagoLavel.nativeElement.classList.add("d-block");
 
@@ -1997,6 +2034,7 @@ export class VentasDiaComponent implements OnInit {
     } else {
       this.valorTipoPagoLavel.nativeElement.classList.add("d-none");
       this.tipoPagoLavel.nativeElement.classList.add("d-none");
+      this.tipoPagoLavel2.nativeElement.classList.add("d-none");
       this.valorTipoPagoPV.nativeElement.classList.add("d-none");
       this.tipoPagoPV.nativeElement.classList.add("d-none");
     }
@@ -2125,7 +2163,7 @@ export class VentasDiaComponent implements OnInit {
   getResolucion() {
     this.clienteService.getResolucion(this.empresaId).subscribe(res => {
       this.resolucionAll = res;
-      console.log("resoluciones:"+this.resolucionAll.length);
+      console.log("resoluciones:" + this.resolucionAll.length);
     });
   }
 

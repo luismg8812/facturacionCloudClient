@@ -310,12 +310,12 @@
                 </th>
                 <td>{{item.descripcion}}</td>
                 <td><input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control"
-                    id="c_{{item.documento_detalle_id}}" (keydown.enter)="cambioCantidad(cantidadNota)"
+                    id="c_{{item.documento_detalle_id}}" (blur)="cambioCantidad(cantidadNota)"
                     value="{{item.cantidad}}">
                 </td>
                 <td>
                   <input name="unitarioNota" #unitarioNota placeholder="Unitario" class="form-control"
-                    id="u_{{item.documento_detalle_id}}" (keydown.enter)="cambioUnitario(unitarioNota)"
+                    id="u_{{item.documento_detalle_id}}" (blur)="cambioUnitario(unitarioNota)"
                     value="{{item.unitario}}">
                 </td>
                 <td>{{formatearNumber(item.parcial)}}</td>
@@ -324,7 +324,7 @@
           </table>
         </div>
 
-      </div>
+      </div>  
     </div>
   </div>
 

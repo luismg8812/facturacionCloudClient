@@ -24,6 +24,7 @@ export class ProductoModel {
     public activo:string;
     public utilidad_sugerida:number;
     public sub_producto:number;
+    public granel:number;
     public porcentaje_venta:number;
     
 
@@ -53,6 +54,7 @@ export class ProductoModel {
         this. varios=0;
         this. utilidad_sugerida=0;
         this. sub_producto=0;
+        this. granel=0;
         this.porcentaje_venta=0;
     }
 }

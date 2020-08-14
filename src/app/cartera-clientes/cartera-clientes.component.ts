@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ClienteModel } from '../model/cliente.model';
 import { ClienteService } from '../services/cliente.service';
 import { DocumentoService } from '../services/documento.service';
@@ -23,6 +23,7 @@ export class CarteraClientesComponent implements OnInit {
   public cartera: any;
   public abonoNew: AbonoModel = new AbonoModel();
   public abonosDetalle: Array<AbonoModel> = [];
+  @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
   public tipoPagosAll: Array<TipoPagoModel>;
@@ -55,6 +56,16 @@ export class CarteraClientesComponent implements OnInit {
       this.impresionService.imprimirInformeDiarioPDFCarta(informeDiario);
     });*/
   } 
+
+  nombreClienteFun(id) {
+
+    let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
+    if (cliente == undefined) {
+      return ""; 
+    } else {
+      return cliente.nombre;
+    }
+  }
 
   crearAbono() {
     let valido: boolean = true;
@@ -98,8 +109,38 @@ export class CarteraClientesComponent implements OnInit {
     
   }
 
+  exportTableToExcel() {
+    let filename = "reporte_cartera";
+    var dataType = 'application/vnd.ms-excel';
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push("fecha registro;Cliente;N. interno;Consecutivo DIAN;Valor Factura;Valor Credito;Saldo\n");
+    for (let p of this.cartera) {
+      texto.push(p.fecha_registro + ";" + this.nombreClienteFun( p.cliente_id) + ";" + p.documento_id + ";" + p.consecutivo_dian + ";" + p.total + ";" + p.valor + ";" + p.saldo+'\n');
+    }
+    // Specify file name
+    filename = filename ? filename + '.csv' : 'reporte_cartera.csv';
+    var blob = new Blob(texto, {
+      type: dataType
+    });
+    this.descargarArchivo(blob, filename)
+
+  }
+
+  descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    const url = window.URL.createObjectURL(contenidoEnBlob);
+    const link = this.downloadZipLink.nativeElement;
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
   buscar(cliete, fechaIni, fechaFin) {
-    this.documentoService.getCarteraClientes(cliete.value, fechaIni.value, fechaFin.value, this.empresaId).subscribe(res => {
+    console.log(cliete);
+    let cliente1 = this.clientes.find(cliente => (cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento) == cliete.value);   
+    let id= (cliente1==undefined?"":cliente1.cliente_id);
+    this.documentoService.getCarteraClientes(id, fechaIni.value, fechaFin.value, this.empresaId).subscribe(res => {
       console.log(res);
       this.cartera = res;
     });

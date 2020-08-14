@@ -21,39 +21,59 @@
       </div>
     </div>
     <div class="form-group col-md-1 col-sm-12 "></div>
-    <div class="form-group col-md-5 col-sm-12 ">
-      <div class="form-row">
-        <b>Total Ventas: $</b> {{formatearNumber(totalVentas)}}
-      </div>
-      <div class="form-row">
-        <b>Total costos ventas: $</b>{{formatearNumber(totalVentasCostos)}}
-      </div>
-      <div class="form-row">
-        <b>Total remisiones: $</b>{{formatearNumber(totalRemisiones)}}
-      </div>
-     
-      <div class="form-row">
-        <b>Total costos Remisiones: $</b>{{formatearNumber(totalCostosRemisiones)}}
-      </div>
-      <div class="form-row">
-        <b>Total iva 5%: $</b>{{formatearNumber(totalIva5)}}
-      </div>
-      <div class="form-row">
-        <b>Total iva 19%: $</b>{{formatearNumber(totalIva19)}}
-      </div>
-      <div class="form-row">
-        <b>Total Exento: $</b>{{formatearNumber(totalExento)}}
-      </div>
-      <div class="form-row">
-        <b>Ganancia Ventas: $</b>{{formatearNumber(gananciaVentas)}}
-      </div>
-      <div class="form-row">
-        <b>Ganancia Remisiones: $</b>{{formatearNumber(gananciaRemisiones)}}
-      </div>
-      <div class="form-row">
-        <b>Ganancia Total: $</b>{{formatearNumber(gananciaTotal)}}
-      </div>
-    </div>
+  
   </div>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Ventas Totales</th>
+        <th scope="col">Ventas Grupos</th>
+        <th scope="col">...</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> 
+          <div class="form-row">
+            <b>Total Ventas: $</b> {{formatearNumber(totalVentas)}}
+          </div>
+          <div class="form-row">
+            <b>Total costos ventas: $</b>{{formatearNumber(totalVentasCostos)}}
+          </div>
+          <div class="form-row">
+            <b>Total remisiones: $</b>{{formatearNumber(totalRemisiones)}}
+          </div>
+         
+          <div class="form-row">
+            <b>Total costos Remisiones: $</b>{{formatearNumber(totalCostosRemisiones)}}
+          </div>
+          <div class="form-row">
+            <b>Total iva 5%: $</b>{{formatearNumber(totalIva5)}}
+          </div>
+          <div class="form-row">
+            <b>Total iva 19%: $</b>{{formatearNumber(totalIva19)}}
+          </div>
+          <div class="form-row">
+            <b>Total Exento: $</b>{{formatearNumber(totalExento)}}
+          </div>
+          <div class="form-row">
+            <b>Ganancia Ventas: $</b>{{formatearNumber(gananciaVentas)}}
+          </div>
+          <div class="form-row">
+            <b>Ganancia Remisiones: $</b>{{formatearNumber(gananciaRemisiones)}}
+          </div>
+          <div class="form-row">
+            <b>Ganancia Total: $</b>{{formatearNumber(gananciaTotal)}}
+          </div>
+        </td>
+        <td>
+          <div class="form-row" *ngFor="let grupo of grupos">
+            <b>{{grupo.nombre}}: $</b>{{formatearNumber(grupo.total)}}
+          </div>
+        </td>
+        <td>@mdo</td>
+      </tr>
+    </tbody>
+  </table>
  
 </div>
