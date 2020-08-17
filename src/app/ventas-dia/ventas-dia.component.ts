@@ -356,7 +356,8 @@ export class VentasDiaComponent implements OnInit {
     this.clienteNew.empresa_id = this.empresaId;
     this.clienteService.saveCliente(this.clienteNew).subscribe(async res => {
       if (res.code == 200) {
-        this.clienteSelect = this.clienteNew.cliente_id;
+        this.clienteNew.cliente_id=res.cliente_id;
+        this.clienteSelect = res.cliente_id;
         this.document.cliente_id = this.clienteSelect;
         this.factura.cliente = this.clienteNew;
         //this.clienteNew = new ClienteModel();
@@ -377,10 +378,11 @@ export class VentasDiaComponent implements OnInit {
             }
           }
         }
+        this.clientes.unshift(this.clienteNew);
         this.clientePV.nativeElement.value = this.clienteNew.nombre + " " + this.clienteNew.apellidos + " - " + this.clienteNew.documento;
 
 
-        this.clientes.unshift(this.clienteNew);
+       
         this.clienteNew = new ClienteModel();
       } else {
         alert("error creando cliente, por favor inicie nuevamente la creación del cliente, si persiste consulte a su proveedor");
