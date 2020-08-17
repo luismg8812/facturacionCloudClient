@@ -241,7 +241,8 @@ export class InventarioFisicoComponent implements OnInit {
         }else{
           this.texto.push("Error en la linea " + i + " El campo " + headerLength[17]  + " es obligatorio" + '\n');
           valido = false;
-        }
+          
+        } 
         if (valido) {
           producto.producto_id = Number(id);
           producto.estado=Number(estado);
