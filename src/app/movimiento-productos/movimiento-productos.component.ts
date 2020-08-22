@@ -25,6 +25,7 @@ export class MovimientoProductosComponent implements OnInit {
   public empleados: Array<EmpleadoModel>;
   public usuarios: Array<UsuarioModel>;
 
+  @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
   @ViewChild("fechaIni") fechaIni: ElementRef;
   @ViewChild("fechaFin") fechaFin: ElementRef;
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
@@ -42,11 +43,39 @@ export class MovimientoProductosComponent implements OnInit {
     return formato;
   }
 
-  calcular() {
-    if(this.empleadoPV.nativeElement.value==""){
-      alert("El empleado es obligatorio");
-      return;
+  exportTableToExcel() {
+    console.log();
+    let filename = "movimiento_productos";
+    var dataType = 'application/vnd.ms-excel';
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push("Vendedor;fecha;Factura #; producto;Cantidad;valor unitario;Total;% venta;ganancia\n");
+    for (let p of this.dias) {
+      texto.push(p.vendedor + ";" + p.fecha_registro + ";" + p.consecutivo_dian + ";" + p.nombre + ";" + p.cantidad + ";" + p.unitario + ";" + p.parcial + ";" + p.porcentaje_venta + ";" + p.gana+ '\n');
     }
+    // Specify file name
+    filename = filename ? filename + '.csv' : 'excel_data.csv';
+    var blob = new Blob(texto, {
+      type: dataType
+    });
+    this.descargarArchivo(blob, filename)
+
+  }
+
+  descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    const url = window.URL.createObjectURL(contenidoEnBlob);
+    const link = this.downloadZipLink.nativeElement;
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  calcular() {
+   // if(this.empleadoPV.nativeElement.value==""){
+   //   alert("El empleado es obligatorio");
+   //   return;
+   // }
     this.total = 0;
     this.ganancia = 0;
     let ini: string = this.fechaIni.nativeElement.value;

@@ -48,9 +48,11 @@
       
       </div>
     </div>
-    <div class="form-row">
-        <button type="button" class="btn btn-primary mb-2" (click)="calcular()">Buscar</button>
-      </div>
+    
+        <button type="button" class="btn btn-primary " (click)="calcular()">Buscar</button>
+        <button type="button" class="btn btn-primary ml-2"
+        (click)="exportTableToExcel()">Exportar </button>
+    
       <table class="table table-hover">
         <thead>
           <tr>
@@ -79,4 +81,8 @@
           </tr>
         </tbody>
       </table>
+      <div class="col col-ms-1">
+        <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+    
+        </a></div>
 </div>

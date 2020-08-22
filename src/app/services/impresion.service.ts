@@ -416,7 +416,10 @@ export class ImpresionService {
     texto.push("Valor Exento:             " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.excento), 14) + '\n');
     texto.push("Valor Gravado:            " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.gravado), 14) + '\n');
     texto.push("Iva:                      " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.iva), 14) + '\n');
-    texto.push("TOTAL A PAGAR:            " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
+    if(factura.saldo>0){
+      texto.push("Saldo anterior:           " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.saldo), 14) + '\n');
+    }
+    texto.push("TOTAL A PAGAR:            " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(Number(factura.documento.total)+Number(factura.saldo)), 14) + '\n');
     texto.push('----------------------------------------\n');
     texto.push("         **** FORMA DE PAGO****        \n");
     texto.push("Vr. Pago con Tarjeta:                  0" + '\n');
@@ -487,7 +490,10 @@ export class ImpresionService {
     texto.push("Valor Exento:     " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.excento), 14) + '\n');
     texto.push("Valor Gravado:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.gravado), 14) + '\n');
     texto.push("Iva:              " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.iva), 14) + '\n');
-    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
+    if(factura.saldo>0){
+      texto.push("Saldo Anterior: " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.saldo), 14) + '\n');
+    }
+    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(Number(factura.documento.total)+Number(factura.saldo)), 14) + '\n');
     texto.push('--------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("*FORMA DE PAGO*", tamanoMax) + "\n");
     texto.push("Vr. Pago con Tarjeta:          0" + '\n');
@@ -867,12 +873,17 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.text("Valor IVA: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP", ""), 10), x, y);
       y = y + inicio;
+      if(factura.saldo>0){
+        this.doc.text("Saldo anterior: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.saldo).replace("COP", ""), 10), x, y);
+        y = y + inicio;
+      }
+      
       this.doc.setFontSize(12);
       this.doc.text("-------------------------------------------------", x, y);
       y = y + inicio;
       this.doc.setFontType('bold');
       this.doc.setFontSize(12);
-      this.doc.text("TOTAL PAGAR: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP", ""), x, y);
+      this.doc.text("TOTAL PAGAR: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(factura.documento.total)+Number(factura.saldo)).replace("COP", ""), x, y);
       y = y + inicio;
       this.doc.setFontType('normal');
       this.doc.text("-------------------------------------------------", x, y);
@@ -1166,12 +1177,16 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.text("Valor IVA: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP", ""), 10), x, y);
       y = y + inicio;
+      if(factura.saldo>0){
+        this.doc.text("Saldo anterior: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.saldo).replace("COP", ""), 10), x, y);
+        y = y + inicio;
+      }
       this.doc.setFontSize(10);
       this.doc.text("--------------------------------", x, y);
       y = y + inicio;
       this.doc.setFontType('bold');
       this.doc.setFontSize(10);
-      this.doc.text("TOTAL PAGAR: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP", ""), x, y);
+      this.doc.text("TOTAL PAGAR: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(factura.documento.total)+Number(factura.saldo)).replace("COP", ""), x, y);
       y = y + inicio;
       this.doc.setFontType('normal');
       this.doc.text("--------------------------------", x, y);
@@ -1328,7 +1343,7 @@ export class ImpresionService {
         this.doc.text(codigo, 4, posy);
         this.doc.text(cantidad, 20, posy);
 
-        this.doc.text(iva, 145, posy);
+        this.doc.text(""+iva, 145, posy);
         this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario)).replace("COP", ""), 20), 115, posy);
         this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(parcial)).replace("COP", ""), 20), 182, posy);
 

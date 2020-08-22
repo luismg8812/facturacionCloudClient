@@ -16,7 +16,21 @@
                 </div>
             </div>
         </div>
-        <div class="form-group col-md-2 col-sm-2"><b>Fecha:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+        <div class="form-group col-md-2 col-sm-2">
+            <div class="form-row">
+                <div class="form-group col-md-12 col-sm-2">
+                    <b>Fecha:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 col-sm-2"  *ngIf="saldoClienteActivo">
+                    <h5 style="color:red;text-align: right; ">
+                        SALDO: 
+                        {{formatearNumber(saldoCliente)
+                            }}
+                    </h5>
+                </div>
+            </div>
         </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
@@ -333,13 +347,13 @@
                                 1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale.
                             </h6>
                         </div>
-                    </div>        
+                    </div>
                     <div class="form-row ">
                         <div class="col col-ms-6">
                             <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago:
                             </h6>
-                          
-            
+
+
                             <input name="tipoPagoPV" #tipoPagoPV class="form-control" id="tipoPagoPV"
                                 data-toggle="tooltip" title="" (keydown.enter)="enterTecla(tipoPagoPV)"
                                 (keydown.esc)="scapeTecla(tipoPagoPV)">
@@ -548,8 +562,8 @@
         <app-buscar-documentos></app-buscar-documentos>
     </div>
 
-    <button type="button" class="btn btn-primary d-none" id="editarProducto" #editarProducto
-        data-toggle="modal" data-target="#editarProduct">
+    <button type="button" class="btn btn-primary d-none" id="editarProducto" #editarProducto data-toggle="modal"
+        data-target="#editarProduct">
         Launch demo modal
     </button>
     <!-- info articulos -->
