@@ -25,6 +25,7 @@ export class CuadreCajaVoModel {
     public propina: number;
     public totalCaja: number;
     public diferencia: number;
+    public retiro_caja: number;
 
     constructor(){
         this.total_facturas=0;
@@ -51,5 +52,6 @@ export class CuadreCajaVoModel {
         this. propina=0;
         this.totalCaja=0;
         this.diferencia=0;
+        this.retiro_caja=0;
     }
 }
