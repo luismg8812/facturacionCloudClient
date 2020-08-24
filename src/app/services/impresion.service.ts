@@ -65,15 +65,16 @@ export class ImpresionService {
     let tarjetas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.tarjetas), 12);
     let varios: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.varios), 12);
     let vales: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.vales), 12);
-    let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.gastado), 12);
+   let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.gastado), 12);
     let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.propina), 12);
     let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cartera), 12);
+    let retirosCaja: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.retiro_caja), 12);
     let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
 
-    texto.push("Total Facturas:........:" + totalFacturas + "\n");
-    texto.push("Base:..................:" + base + "\n");
+    texto.push("Total Facturas:.........:" + totalFacturas + "\n");
+    texto.push("Base:...................:" + base + "\n");
     texto.push("Cheques Recogidos:.....: " + cheques + "\n");
-    texto.push("Otros:.................: " + otros + "\n");
+    texto.push("Otros:.................: " + otros + "\n"); 
     texto.push("Recargas:..............: " + recargas + "\n");
     texto.push("TOTAL MOV. DEL DIA:....: " + totalIngresos + "\n");
     texto.push('----------------------------------------\n');
@@ -81,17 +82,17 @@ export class ImpresionService {
     texto.push("MONEDA: ...............: " + monedas + "\n");
     texto.push("EFECTIVO:..............: " + efectivo + "\n");
     texto.push("CHEQUES:...............: " + cheques + "\n");
-    texto.push("DOC. ESPECIALES:.......:       0" + "\n");
+    texto.push("DOC. ESPECIALES:.......:           0" + "\n");
     texto.push("TARJET DEBIT Y CREDITO.: " + tarjetas + "\n");
     texto.push("VARIOS:................: " + varios + "\n");
     texto.push("VALES:.................: " + vales + "\n");
-    texto.push("NOMINA:................:       0" + "\n");
+    texto.push("NOMINA:................:           0" + "\n");
     texto.push("GASTOS:................: " + gastos + "\n");
     texto.push("PROPIAS:...............: " + propina + "\n");
     texto.push("VENTAS A CREDITO:......: " + credito + "\n");
-
+    texto.push("RETIROS DE CAJA:.......: " + retirosCaja + "\n");
     texto.push('----------------------------------------\n');
-    texto.push((Number(factura.diferencia) < 0.0 ? "SOBRANTE" : "FALTANTE") + "$..: " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.diferencia), 12) + "\n");
+    texto.push((Number(factura.diferencia) < 0.0 ? "SOBRANTE" : "FALTANTE") + "..: $" + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.diferencia), 12) + "\n");
     texto.push('----------------------------------------\n');
     console.log(factura.empleados);
     if (factura.empleados != undefined) {
@@ -162,7 +163,7 @@ export class ImpresionService {
     let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.propina).replace("COP", ""), 12);
     let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cartera).replace("COP", ""), 12);
     let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo).replace("COP", ""), 12);
-
+    let retirosCaja: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.retiro_caja), 12);
     texto.push("Total Facturas:...:" + totalFacturas + "\n");
     texto.push("Base:.............:" + base + "\n");
     texto.push("Cheques Recogidos.: " + cheques + "\n");
@@ -182,9 +183,9 @@ export class ImpresionService {
     texto.push("GASTOS:...........: " + gastos + "\n");
     texto.push("PROPIAS:..........: " + propina + "\n");
     texto.push("VENTAS A CREDITO:.: " + credito + "\n");
-
+    texto.push("RETIROS DE CAJA:..: " + retirosCaja + "\n");
     texto.push('--------------------------------\n');
-    texto.push((Number(factura.diferencia) < 0.0 ? "SOBRANTE" : "FALTANTE") + "$...: " + factura.diferencia + "\n");
+    texto.push((Number(factura.diferencia) < 0.0 ? "SOBRANTE" : "FALTANTE") + "...: $" + factura.diferencia + "\n");
     texto.push('--------------------------------\n');
     if (factura.empleados != undefined) {
       texto.push('Ventas por empleado\n');

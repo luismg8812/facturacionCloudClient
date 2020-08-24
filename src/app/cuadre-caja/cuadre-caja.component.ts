@@ -80,13 +80,14 @@ export class CuadreCajaComponent implements OnInit {
       alert("No existen impresoras configuradas para la empresa");
       return;
     }
+    let nombreUsuario = localStorage.getItem("nombreUsuario");
     console.log(tipoImpresion);
     let tituloDocumento: string = "";
-    tituloDocumento = "Cuadre_caja" + "_" + this.cuadreCajaVo.totalCaja + "_" + impresora.value + "_" + tipoImpresion;
+    tituloDocumento = "Cuadre_caja" + "_" + nombreUsuario + "_" + this.cuadreCajaVo.diferencia + "_" + tipoImpresion;
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       let empr = res;
 
-      let nombreUsuario = localStorage.getItem("nombreUsuario");
+     
       switch (tipoImpresion) {
         case this.TIPO_IMPRESION_TXT80MM:
           this.descargarArchivo(this.impresionService.imprimirCuadreTxt80(this.cuadreCajaVo, empr[0], nombreUsuario), tituloDocumento + '.txt');
@@ -195,6 +196,7 @@ export class CuadreCajaComponent implements OnInit {
     this.cuadreCajaVo.nomina = this.cuadreCajaVo.nomina == undefined ? 0 : this.cuadreCajaVo.nomina;
     this.cuadreCajaVo.descuento = this.cuadreCajaVo.descuento == undefined ? 0 : this.cuadreCajaVo.descuento;
     this.cuadreCajaVo.propina = this.cuadreCajaVo.propina == undefined ? 0 : this.cuadreCajaVo.propina;
+    this.cuadreCajaVo.retiro_caja = this.cuadreCajaVo.retiro_caja == undefined ? 0 : this.cuadreCajaVo.retiro_caja;
   }
 
   calcularTotalIngresos() {
@@ -222,6 +224,7 @@ export class CuadreCajaComponent implements OnInit {
       Number(this.cuadreCajaVo.nomina) +
       Number(this.cuadreCajaVo.descuento) +
       Number(this.cuadreCajaVo.propina) +
+      Number(this.cuadreCajaVo.retiro_caja) +
       Number(this.cuadreCajaVo.cartera);
     this.cuadreCajaVo.totalCaja = totalCaja;
     this.calcularDiferencia();
