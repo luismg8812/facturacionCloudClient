@@ -6,8 +6,9 @@ export class RetirosCajaModel {
     public valor:number;
     public cierre_diario:number;
     public fecha_registro:Date;
+    public descripcion:string;
 
-    constructor(){
+    constructor(){ 
         this.retiro_caja_id=null;
         this.usuario_hace_id=null;
         this.usuario_aplica_id=null;
@@ -15,5 +16,6 @@ export class RetirosCajaModel {
         this.valor=0;
         this.cierre_diario=0;
         this.empresa_id=null;
+        this.descripcion="";
     }
 }

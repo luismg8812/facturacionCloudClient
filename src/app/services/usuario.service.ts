@@ -10,6 +10,7 @@ import { ParametrosModel } from '../model/parametros.model';
 import { Observable } from 'rxjs';
 import { FotoOrdenVoModel } from '../model/fotoOrdenVo.model';
 import { ProporcionModel } from '../model/proporcion.model';
+import { ActivacionUsuarioModel } from '../model/activacionUsuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +45,10 @@ export class UsuarioService {
     return this.http.get<ProporcionModel[]>(this.server_api + '/usuario/getProporcion?empresaId=' + empresaId);
   }
 
+  public getLiberarCuadre(empresaId: number) {
+    return this.http.get<ProporcionModel[]>(this.server_api + '/usuario/getLiberarCuadre?empresaId=' + empresaId);
+  }
+  
   
 
   public usuarioByRol(rolId:string,empresaId:number,tipoDocumentoId:string,fechaInicial,fechaFinal) {
@@ -77,11 +82,20 @@ export class UsuarioService {
   }
 
   getByUsuario(usuario: UsuarioModel, empresaId: string, rolId: string) {
+    console.log(usuario);
     return this.http.get<UsuarioModel[]>(this.server_api + '/usuario/getByUsuario?usuario=' + usuario + '&empresaId=' + empresaId + '&rolId=' + rolId);
   }
 
   saveUsuario(usuario: UsuarioModel, rolId: Array<number>) {
     return this.http.post<any>(this.server_api + '/usuario/createUsuario?rolId=' + rolId, usuario);
+  }
+
+  saveActivacionUsuario(activacion: ActivacionUsuarioModel) {
+    return this.http.post<any>(this.server_api + '/usuario/saveActivacionUsuario', activacion);
+  }
+
+  deleteActivacionUsuario(activacion: ActivacionUsuarioModel) {
+    return this.http.post<any>(this.server_api + '/usuario/deleteActivacionUsuario', activacion);
   }
  
   saveUsuarioMasive(usuario: UsuarioModel){

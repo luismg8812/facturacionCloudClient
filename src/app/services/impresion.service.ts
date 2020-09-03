@@ -1272,7 +1272,7 @@ export class ImpresionService {
       let impuesto: number = Number(p.impuesto) / 100;
       let costo: string = this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(p.costo / (1 + impuesto)).replace("COP", ""), 10);
       let costoTotal: string = this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(p.costo) * Number(p.cantidad)).replace("COP", ""), 10);
-      let ivaTotal: string = this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(p.costo) * Number(p.cantidad) * 0.19).replace("COP", ""), 10);
+      let ivaTotal: string = this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(p.costo) * Number(p.cantidad) *impuesto).replace("COP", ""), 10);
       let total: string = this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(p.costo) * Number(p.cantidad)).replace("COP", ""), 10);
       this.doc.text(codigo, 5, y);
       this.doc.text(nombre, 22, y);

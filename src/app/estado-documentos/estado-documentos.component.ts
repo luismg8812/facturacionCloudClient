@@ -63,13 +63,13 @@ export class EstadoDocumentosComponent implements OnInit {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.invoiceList();
     this.getclientes(this.empresaId);
-    this.getDocumentos();
+    this.getDocumentos(this.INVOICE_ERROR);
     this.getConfiguracion(this.empresaId);
     
   }
 
   buscar(esdaDocu){
-    this.getDocumentos();
+    this.getDocumentos(esdaDocu.value);
   }
 
   
@@ -110,7 +110,7 @@ export class EstadoDocumentosComponent implements OnInit {
           if (this.enviados == this.documentoMap.length) {
             // alert("El proceso de envio ha terminado")
             $("#ok").prop("disabled", false);
-            this.getDocumentos();
+            this.getDocumentos(this.INVOICE_ERROR);
             this.enviando = false;
           }
           this.insertarEstado(res1, docu.documento);
@@ -370,10 +370,10 @@ export class EstadoDocumentosComponent implements OnInit {
         this.estadosDocumento = res;
       });
   }
-  getDocumentos() {
-    let tipoDocumento: Array<string> = ['10', '12', '13'];
-    this.documentoMap = [];
-    this.documentoService.getDocumentoForFacturacionElectronica("", "", tipoDocumento, "", "", this.INVOICE_ERROR, this.empresaId).subscribe(res => {
+  getDocumentos(invoice:number){
+    this.documentoMap=[];
+    this.documentoService.getDocumentoForFacturacionElectronica("", "", ['10','12','13'], "", "", invoice,  this.empresaId).subscribe(res => {
+      console.log(res);
       this.documentos = res;
     });
   }

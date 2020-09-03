@@ -305,6 +305,8 @@
                   <input class="form-control" id="placaBuscar" placeholder="Placa" name="placaBuscar" #placaBuscar
                     required>
                 </div>
+
+
               </div>
               <button type="button" class="btn btn-primary"
                 (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar</button>
@@ -325,10 +327,14 @@
                 <tbody>
                   <tr *ngFor="let ordenes of ordenesBuscarList">
                     <th scope="row">
-                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
+                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Editar"
                         (click)="editarOrden(ordenes)">
-                        Editar
+                        <i class="far fa-edit"></i>
                       </button>
+                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Duplicar orden"
+                      (click)="duplicarOrden(ordenes)">
+                      <i class="far fa-copy"></i>
+                    </button>
                     </th>
                     <td>{{ordenes.documento_id}}</td>
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>

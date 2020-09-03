@@ -1536,7 +1536,7 @@ export class MovimientoMesComponent implements OnInit {
       case 'e':
       case 'E': {
         this.document.tipo_documento_id = 2;
-        this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
+        this.factura.nombreTipoDocumento = "ENTRADA DE ALMACEN";
         console.log("Factura");
         break;
       }

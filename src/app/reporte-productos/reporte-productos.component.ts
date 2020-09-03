@@ -25,6 +25,10 @@ export class ReporteProductosComponent implements OnInit {
   public empresa: EmpresaModel;
   public productos: Array<ProductoModel>;
 
+  public agotados:boolean=false;
+  public stock:boolean=false;
+  public producto:boolean=false;
+
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
@@ -48,7 +52,7 @@ export class ReporteProductosComponent implements OnInit {
 
   buscar(grupo, proveedores) {
     console.log(grupo.value);
-    this.productoService.getProductosByGrupo(this.empresaId.toString(), grupo.value, proveedores.value).subscribe(res => {
+    this.productoService.getProductosByGrupo(this.empresaId.toString(), grupo.value, proveedores.value,this.agotados,this.stock,this.producto).subscribe(res => {
       this.productos = res;
     });
   }
@@ -56,6 +60,35 @@ export class ReporteProductosComponent implements OnInit {
   reporteCostos() {
     this.impresionService.reporteCostos(this.productos, this.empresa);
   }
+
+  estrella( element, event) {
+    if(element.id=="agotado"){
+      if (event.target.checked) {
+        this.agotados=true;
+      }else{
+        this.agotados=false;
+      }
+      console.log(this.agotados);
+    }
+    if(element.id=="stock"){
+      if (event.target.checked) {
+        this.stock=true;
+      }else{
+        this.stock=false;
+      }
+      console.log(this.agotados);
+    }
+    if(element.id=="producto"){
+      if (event.target.checked) {
+        this.producto=true;
+      }else{
+        this.producto=false;
+      }
+      console.log(this.agotados);
+    }
+    
+  }
+
 
 
   imprimirOrden(impresora) {
