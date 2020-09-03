@@ -48,6 +48,7 @@
         <th scope="col">Usuario Hace Retiro</th>
         <th scope="col">Usuario se le aplica Retiro</th>
         <th scope="col">Valor</th>
+        <th scope="col">Descripción</th>
         <th scope="col">Cerrado</th>
       </tr>
     </thead>
@@ -57,6 +58,7 @@
         <td>{{nombreUsuarioFun(ordenes.usuario_hace_id)}}</td>
         <td>{{nombreUsuarioFun(ordenes.usuario_aplica_id)}}</td>
         <td>{{formatearNumber(ordenes.valor)}}</td>
+        <td>{{ordenes.descripcion}}</td>
         <td>{{ordenes.cierre_diario==1?'Si':'No'}}</td>
       </tr>
     </tbody>
@@ -97,6 +99,11 @@
               Valor 
               <input class="form-control"  [(ngModel)]="retiroNew.valor"
               placeholder="Valor">
+            </div>
+            <div class="form-group col-md-6 col-sm-1">
+              Descripción 
+              <textarea class="form-control"  [(ngModel)]="retiroNew.descripcion"
+              placeholder="Descripción"></textarea>
             </div>
           </div>
           <div class="modal-footer">

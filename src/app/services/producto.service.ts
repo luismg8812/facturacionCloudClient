@@ -18,8 +18,8 @@ export class ProductoService {
     return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductosByEmpresa?empresaId='+empresaId);
   }
 
-  public getProductosByGrupo(empresaId:string,grupoId:string,proveedorId:string){
-    return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductosByGrupo?empresaId='+empresaId+'&grupoId='+grupoId+'&proveedorId='+proveedorId);
+  public getProductosByGrupo(empresaId:string,grupoId:string,proveedorId:string,agotado:boolean,stock:boolean,estrella:boolean){
+    return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductosByGrupo?empresaId='+empresaId+'&grupoId='+grupoId+'&proveedorId='+proveedorId+'&agotado='+agotado+'&stock='+stock+'&estrella='+estrella);
   }
 
   public getProductoById(productoId:string,empresaId:string){

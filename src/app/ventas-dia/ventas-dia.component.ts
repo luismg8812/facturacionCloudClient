@@ -99,7 +99,7 @@ export class VentasDiaComponent implements OnInit {
   public tipoPagosAll: Array<TipoPagoModel>;
   public clienteActivo: boolean = false;
   public crearClienteVisible: boolean = false;
-  public guiaTransporteActivo: boolean = false;
+  public guiaTransporteActivo: boolean = false;  
   public clienteObligatorioActivo: boolean = false;
   public empreadoActivo: boolean = false;
   public codigoBarrasActivo: boolean = false;

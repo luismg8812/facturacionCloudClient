@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ClienteService } from '../services/cliente.service';
 import { ClienteModel } from '../model/cliente.model';
 import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
+import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -15,6 +16,7 @@ export class ClienteComponent implements OnInit {
   public empresaId: number;
   public clientes: Array<ClienteModel>;
   public clienteNew: ClienteModel = new ClienteModel();
+  public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
   public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
 
   constructor(public clienteService:ClienteService) { }
@@ -22,6 +24,7 @@ export class ClienteComponent implements OnInit {
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getTipoIdentificacion();
+    this.getTipoEmpresa();
   }
 
   buscar() {
@@ -43,15 +46,39 @@ export class ClienteComponent implements OnInit {
       valido = false;
     }
     if (this.clienteNew.documento == "") {
-      mensageError += "documento\n";
+      mensageError += "Identificación\n";
       valido = false;
     }
     if (this.clienteNew.tipo_identificacion_id == null) {
       mensageError += "tipo documento\n";
       valido = false;
     }
+    if (this.clienteNew.fact_tipo_empresa_id == null) {
+      mensageError += "tipo empresa\n";
+      valido = false;
+    }
+    if (this.clienteNew.fijo == "" && this.clienteNew.celular == "") {
+      mensageError += "telefono fijo o Celular\n";
+      valido = false;
+    }
+    if (this.clienteNew.direccion == "") {
+      mensageError += "Dirección\n";
+      valido = false;
+    }
+    if (this.clienteNew.mail == "") {
+      mensageError += "Mail\n";
+      valido = false;
+    }
+
     if (valido == false) {
       alert(mensageError);
+      return;
+    } else {
+
+    }
+    let cliente = this.clientes.find(cliente => (cliente.documento) == this.clienteNew.documento);
+    if (cliente != undefined) {
+      alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + " " + cliente.apellidos + "\n" + "NIT: " + cliente.documento);
       return;
     }
     if(this.clienteNew.cliente_id==null){
@@ -87,6 +114,12 @@ export class ClienteComponent implements OnInit {
   getTipoIdentificacion() {
     this.clienteService.getTipoIdentificacionAll().subscribe(res => {
       this.tipoIdentificacionList = res;
+    });
+  }
+
+  getTipoEmpresa() {
+    this.clienteService.getTipoEmpresa().subscribe(res => {
+      this.tipoEmpresaList = res;
     });
   }
 

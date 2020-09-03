@@ -284,8 +284,8 @@ export class GestionOrdenComponent implements OnInit {
             }
           });
           for (let deta of this.itemsFactura2) {
-            let newdd:DocumentoDetalleModel=new DocumentoDetalleModel();
-            newdd=deta;
+            let newdd: DocumentoDetalleModel = new DocumentoDetalleModel();
+            newdd = deta;
             newdd.documento_id = newDocu.documento_id;
             this.documentoDetalleService.saveDocumentoDetalle(newdd).subscribe(res => {
               if (res.code != 200) {
@@ -652,7 +652,7 @@ export class GestionOrdenComponent implements OnInit {
     }
     console.log(docDetalle);
     this.itemsFactura.unshift(docDetalle);
-   // this.itemsFactura2.unshift(docDetalle);
+    // this.itemsFactura2.unshift(docDetalle);
     this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
     let newCantidad: number = this.productoIdSelect.cantidad;
     this.productoIdSelect.cantidad = newCantidad - docDetalle.cantidad;
@@ -1430,6 +1430,14 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
+  duplicarOrden(or: DocumentoModel) {
+    this.nuevaOrden();
+    this.duplicarValores(or);
+    $('#buscarModal').modal('hide');
+  }
+
+
+
   selectOrdenOne(or: DocumentoModel, event) {
     if (this.documentoFactura.documento_id == "") {
       alert("Debe crear un nuevo documento antes de realizar esta acción");
@@ -1493,6 +1501,118 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
       if (res.code != 200) {
         alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
+  }
+
+  duplicarValores(documento_id: DocumentoModel) {
+    console.log("nueva orden");
+    this.limpiar();
+    this.documento.tipo_documento_id = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;// SE AGREGA tipo documento =11 orden de trabajo
+    this.documento.fecha_registro = this.calculosService.fechaActual();
+    this.documento.fecha_entrega = null;
+    this.documento.usuario_id = this.usuarioId;
+    this.documento.empresa_id = this.empresaId;
+    this.clientePV.nativeElement.focus();
+    this.documentoService.saveDocumento(this.documento).subscribe(resD => {
+      if (resD.code == 200) {
+        this.documento.documento_id = resD.documento_id;
+        this.documento.detalle_entrada = documento_id.detalle_entrada;
+        this.placa.nativeElement.value = documento_id.detalle_entrada;
+        this.documento.cliente_id = documento_id.cliente_id;
+        this.documento.empresa_id = documento_id.empresa_id;
+        this.documento.empleado_id = documento_id.empleado_id;
+        this.documento.mac = documento_id.mac;
+        this.documento.linea_vehiculo = documento_id.linea_vehiculo;
+        let cliente = this.clientes.find(cliente => cliente.cliente_id == documento_id.cliente_id);
+        let nombre = "";
+        if (cliente != undefined) {
+          nombre = cliente.nombre;
+        }
+        let empleado = this.empleados.find(empleado => empleado.empleado_id == documento_id.empleado_id);
+        let nombreEmpleado = "";
+        if (empleado != undefined) {
+          nombreEmpleado = empleado.nombre;
+        }
+
+        let parametros: ParametrosModel = new ParametrosModel;
+        if (parametros.ambiente == 'cloud') {
+          this.downloadURL = (documento_id.mac == '' ? null : this.afStorage.ref(documento_id.mac).getDownloadURL());
+        } else {
+          if (documento_id.mac != '') {
+            this.usuarioService.getFile(documento_id.mac == '' ? null : documento_id.mac).subscribe(res => {
+
+              const imageBlob = this.dataURItoBlob(res);
+              var reader = new FileReader();
+              reader.readAsDataURL(imageBlob);
+              reader.onload = (_event) => {
+                this.downloadURLLocal = reader.result;
+              }
+            });
+          } else {
+            this.downloadURLLocal = null;
+          }
+        }
+
+        if (documento_id.linea_vehiculo != "") {
+          this.linea.nativeElement.value = this.documento.linea_vehiculo;
+        } else {
+          this.linea.nativeElement.value = "Seleccione Linea";
+        }
+        this.clientePV.nativeElement.value = nombre;
+        if (this.empleadoOrdenActivo) {
+          this.empleadoPV.nativeElement.value = nombreEmpleado;
+        }
+        this.documento.descripcion_cliente = documento_id.descripcion_cliente;
+        this.documento.descripcion_trabajador = documento_id.descripcion_trabajador;
+        this.documento.modelo_marca_id = documento_id.modelo_marca_id;
+        this.descripcionCliente.nativeElement.value = this.documento.descripcion_cliente;
+        this.observacion.nativeElement.value = this.documento.descripcion_trabajador;
+        if (this.documento.modelo_marca_id != null) {
+          this.marcasService.getModeloById(this.documento.modelo_marca_id).subscribe(res => {
+            let modelo = res[0];
+            this.marcasService.getModeloByMarca(modelo.marca_vehiculo_id).subscribe(modRes => {
+              this.modeloList = modRes;
+              let marcaId = this.marcaList.find(ma => ma.marca_vehiculo_id == modelo.marca_vehiculo_id);
+              this.marca.nativeElement.value = marcaId.nombre;
+              this.modelo.nativeElement.value = modelo.nombre;
+
+            });
+          });
+        } else {
+          this.marca.nativeElement.value = "";
+          this.modelo.nativeElement.value = "";
+          this.modeloList = [];
+        }
+        this.documentoDetalleService.getDocumentoDetalleByDocumento(documento_id.documento_id).subscribe(res => {
+          let lista: Array<DocumentoDetalleModel> = [];
+          for (let deta of res) {
+            let docuDeta: DocumentoDetalleModel = new DocumentoDetalleModel();
+            docuDeta = deta;
+            docuDeta.documento_detalle_id = null;
+            docuDeta.documento_id = this.documento.documento_id;
+            this.documentoDetalleService.saveDocumentoDetalle(docuDeta).subscribe(res => {
+              if (res.code != 200) {
+                alert("Error agregando producto: " + res.error);
+              } else {
+                lista.push(docuDeta);
+                this.detallesList = lista;
+                this.calcularTOtal();
+              }
+            });
+          }
+          console.log("detalles encontrados:" + res.length);
+        });
+        console.log(this.documento);
+        this.documentoService.updateDocumento(this.documento).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+      } else {
+        alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
         return;
       }
     });

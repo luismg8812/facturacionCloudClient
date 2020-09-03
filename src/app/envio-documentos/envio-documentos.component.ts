@@ -55,9 +55,10 @@ export class EnvioDocumentosComponent implements OnInit {
   public enviando: boolean = false;
   readonly INVOICE_SIN_ENVIAR: number = 1;
   readonly INVOICE_ENVIAR: number = 2;
+  readonly INVOICE_DESCARTAR: number = 3;
   readonly INVOICE_ERROR: number = 4;
   readonly INVOICE_OK: number = 5;
-  public ngxQrcode2:string = "123"
+  public ngxQrcode2: string = "123"
 
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
@@ -106,6 +107,19 @@ export class EnvioDocumentosComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  descartarDocumentos() {
+    let res1: any = {
+      status: "descartar",
+      mensaje: "Descartado"
+    }
+    for (let docu of this.documentosSelectEnviar) {
+
+      this.insertarEstado(res1, docu);
+    }
+    $('#descartarModal').modal('hide');
+    
+  }
+
   enviarDocumentos() {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
       this.enviados = 0;
@@ -116,7 +130,7 @@ export class EnvioDocumentosComponent implements OnInit {
       $('#enviardoModal').modal('show');
       for (let docu of this.documentoMap) {
         this.enviados++;
-       
+
         this.detalleDocumento(docu.documento);
         this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(empr[0], docu, this.clientes)).subscribe(async res1 => {
           console.log(res1);
@@ -200,11 +214,11 @@ export class EnvioDocumentosComponent implements OnInit {
   }
 
   getfacturaPDF(docu: DocumentoModel, empresa: EmpresaModel) {
-    
+
     var myimg64 = $("#qrcode1").find("img").attr("src");
     //console.log("base65");
     //console.log(myimg64);
-    docu.qrcode=myimg64;
+    docu.qrcode = myimg64;
     let tituloDocumento = "factura" + "_" + docu.consecutivo_dian + "_" + docu.impresora;
     this.factura.documento = docu;
     this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
@@ -233,7 +247,7 @@ export class EnvioDocumentosComponent implements OnInit {
 
     if (res.status == "OK") {
       docu.cufe = res.cufe;
-      this.ngxQrcode2=res.qrCode;
+      this.ngxQrcode2 = res.qrCode;
       docu.qrcode = res.qrCode;
       documentoInvoice.mensaje = res.mensaje;
       documentoInvoice.invoice_id = this.INVOICE_OK;
@@ -244,6 +258,11 @@ export class EnvioDocumentosComponent implements OnInit {
       documentoInvoice.mensaje = res.mensaje + " " + documentoInvoice.mensaje + res.mensajeError;
       documentoInvoice.invoice_id = this.INVOICE_ERROR;
       docu.invoice_id = this.INVOICE_ERROR;
+    }
+    if (res.status == "descartar") {
+      documentoInvoice.mensaje = res.mensaje;
+      documentoInvoice.invoice_id = this.INVOICE_DESCARTAR;
+      docu.invoice_id = this.INVOICE_DESCARTAR;
     }
 
     if (res.status == "") {
@@ -256,6 +275,7 @@ export class EnvioDocumentosComponent implements OnInit {
         alert("error creando documento, por favor inicie nuevamente la creación del documento");
         return;
       }
+      this.getDocumentos();
     });
     this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
       if (res.code == 200) {
@@ -275,6 +295,14 @@ export class EnvioDocumentosComponent implements OnInit {
       return;
     }
     $('#envioModal').modal('show');
+  }
+
+  validarDescartar() {
+    if (this.documentosSelectEnviar.length == 0) {
+      alert("Debe seleccionar almenos 1 documento para ser descartado");
+      return;
+    }
+    $('#descartarModal').modal('show');
   }
 
   selectAll(event) {

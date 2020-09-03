@@ -22,9 +22,7 @@ export class UsuarioComponent implements OnInit {
     this.usuarioBuscar = new UsuarioModel();
     this.usuarioCrear = new UsuarioModel();
     this.rolListSelect = [];
-    this.roles();
-    this.submenus();
-    this.activaciones();
+ 
 
   }
 
@@ -55,6 +53,9 @@ export class UsuarioComponent implements OnInit {
 
 
   ngOnInit() {
+    this.roles();
+    this.submenus();
+    this.activaciones();
   }
 
   crearUsuario() {
@@ -160,7 +161,7 @@ export class UsuarioComponent implements OnInit {
     let empresaId: string = localStorage.getItem('empresa_id');
     this.usuarioService.getByUsuario(this.usuarioBuscar, empresaId, this.rolSelectBuscar).subscribe(res => {
       //TODO hacer el rool en la busqueda para mandarlo por parametro
-
+  
       this.usuarioList = res;
     });
   }
@@ -280,11 +281,13 @@ export class UsuarioComponent implements OnInit {
   }
 
   activacionPorUsuario(user: UsuarioModel) {
-    console.log("aqui llega");
+    
     this.activacionUnSelect = [];
     this.usuarioSelect = user;
     this.usuarioService.getActivacionByUsuario(user.usuario_id.toString()).subscribe(res1 => {
       this.activacionSelect = res1;
+      console.log(res1);
+      console.log(this.activacionAll);
       for (var e = 0; e < this.activacionAll.length; e++) {
         var esta = false;
         for (var i = 0; i < res1.length; i++) {
