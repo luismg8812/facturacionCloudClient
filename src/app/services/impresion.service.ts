@@ -814,19 +814,9 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.text("TEL: " + factura.empresa.cel + " - " + factura.empresa.telefono_fijo, x, y);
       y = y + inicio;
-      let titulo;
-      if (factura.documento.tipo_documento_id == 10) {
-        titulo = "FACTURA VENTA";
-      } else {
-        if (factura.documento.tipo_documento_id == 9) {
-          titulo = "FACTURA VENTA.";
-        } else {
-          titulo = "CONTIZACIÓN";
-        }
-      }
       this.doc.setFontType('bold');
       this.doc.setFontSize(11);
-      this.doc.text(titulo + ": " + factura.resolucionEmpresa.letra_consecutivo + factura.documento.consecutivo_dian, x, y);
+      this.doc.text(factura.nombreTipoDocumento + ": " + factura.resolucionEmpresa.letra_consecutivo + factura.documento.consecutivo_dian, x, y);
       y = y + inicio;
       this.doc.setFontType('normal');
       this.doc.setFontSize(9);

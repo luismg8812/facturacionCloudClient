@@ -57,6 +57,7 @@ export class VentasDiaComponent implements OnInit {
   readonly EMPLEADOS: string = '18';
   readonly CLIENTE_FACTURACION: string = '19';
   readonly TIPOS_PAGOS: string = '20';
+  readonly MULTIPLE_RESOLUCION: string = '23';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_REMISION: number = 9;
@@ -109,6 +110,7 @@ export class VentasDiaComponent implements OnInit {
   public proporcionActivo: boolean = false;
   public impresionPantallaActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
+  public multipleResolucionActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
   public saldoClienteActivo: boolean = false;
   public saldoCliente: number = 0;
@@ -201,6 +203,8 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
   @ViewChild("impresoraLavel") impresoraLavel: ElementRef;
   @ViewChild("impresoraPV") impresoraPV: ElementRef; // controla la impresora que se desea imprimir
+  @ViewChild("resolucionLavel") resolucionLavel: ElementRef;
+  @ViewChild("resolucionPV") resolucionPV: ElementRef; // controla la resolucion del rango de facturacion de la impresion
   @ViewChild("descuentoPV") descuentoPV: ElementRef;
   @ViewChild("descuentoLavel") descuentoLavel: ElementRef;
   @ViewChild("tipoPagoLavel") tipoPagoLavel: ElementRef;
@@ -671,6 +675,17 @@ export class VentasDiaComponent implements OnInit {
       this.calcularTiposPagos(element);
 
     }
+    if (element.id == "resolucionPV") {
+      if(this.resolucionEnter()!=null){
+        if (this.impresionPantallaActivo) {
+          this.enPantallaPV.nativeElement.focus();
+          this.enPantallaPV.nativeElement.select();
+        } else {
+          this.continuaImpresionPV.nativeElement.focus();
+        }
+      }
+
+    }
     if (element.id == "enPantallaPV") {
       this.continuaImpresionPV.nativeElement.focus();
     }
@@ -735,6 +750,25 @@ export class VentasDiaComponent implements OnInit {
     this.valorTipoPagoPV.nativeElement.select();
   }
 
+  resolucionEnter(){
+    let resolucion :ResolucionEmpresaModel=null;
+    if(this.resolucionPV.nativeElement.value==''){
+      resolucion = this.resolucionAll[0];
+    }
+    for (var i = 0; i < this.resolucionAll.length; i++) {
+      if (this.resolucionPV.nativeElement.value == this.resolucionAll[i].resolucion_empresa_id) {
+        resolucion = this.resolucionAll[i];
+      }
+    }
+    if(resolucion==null){ 
+      alert("resolución no valida");
+      return null;
+    }else{
+      return resolucion;
+    }
+    
+  }
+
   calcularTiposPagos(element) {
     // aqui voy toca verificar si el tipo de pago esta en la lista sino retorna con un mensaje  y va agregando tipos de pago hasta que se concrete el finally, hacer validaciones de topes maximos y minimos
     let tipoId = this.tipoPagoPV.nativeElement.value;
@@ -762,12 +796,16 @@ export class VentasDiaComponent implements OnInit {
       this.tipoPagoPV.nativeElement.focus();
       this.tipoPagoPV.nativeElement.select();
     } else {
-      if (this.impresionPantallaActivo) {
-        this.enPantallaPV.nativeElement.focus();
-      } else {
-        this.continuaImpresionPV.nativeElement.focus();
+      if(this.multipleResolucionActivo){
+        this.resolucionPV.nativeElement.focus();
+      }else{
+        if (this.impresionPantallaActivo) {
+          this.enPantallaPV.nativeElement.focus();
+          this.enPantallaPV.nativeElement.select();
+        } else {
+          this.continuaImpresionPV.nativeElement.focus();
+        }
       }
-
     }
   }
 
@@ -1056,7 +1094,7 @@ export class VentasDiaComponent implements OnInit {
         case this.TIPO_IMPRESION_PDFCARTA:
           this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
         break;
-        default:
+        default: 
           alert("no tiene un tipo impresion");
           //return;
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
@@ -1082,7 +1120,12 @@ export class VentasDiaComponent implements OnInit {
       console.log(empr);
       let con: number;
       let consecutivo: string;
-      let resolucion: ResolucionEmpresaModel = this.resolucionAll[0];
+      let resolucion: ResolucionEmpresaModel ;
+      if( this.resolucionEnter()==null){
+        resolucion = this.resolucionAll[0];
+      }else{
+        resolucion = this.resolucionEnter();
+      }
       this.factura.resolucionEmpresa = resolucion;
       switch (this.document.tipo_documento_id) {
         case 9:
@@ -1926,6 +1969,7 @@ export class VentasDiaComponent implements OnInit {
     this.modificarFactura = false;
     this.saldoClienteActivo=false;
     this.saldoCliente=0;
+    this.resolucionPV.nativeElement.value="";
   }
 
   teclaAnteriorSiguiente(apcion: string) {
@@ -2034,6 +2078,13 @@ export class VentasDiaComponent implements OnInit {
       this.impresoraPV.nativeElement.classList.remove("d-none");
       this.impresoraPV.nativeElement.classList.add("d-block");
     }
+    if (this.multipleResolucionActivo) {
+      this.resolucionLavel.nativeElement.classList.remove("d-none");
+      this.resolucionLavel.nativeElement.classList.add("d-block");
+      this.resolucionPV.nativeElement.classList.remove("d-none");
+      this.resolucionPV.nativeElement.classList.add("d-block");
+    }
+    
     if (this.impresionPantallaActivo) {
       this.enPantallaLavel.nativeElement.classList.remove("d-none");
       this.enPantallaLavel.nativeElement.classList.add("d-block");
@@ -2122,6 +2173,10 @@ export class VentasDiaComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.MULTIPLE_IMPRESORA) {
           console.log("multiple impresora activos ");
           this.multipleImpresoraActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.MULTIPLE_RESOLUCION) {
+          console.log("multiple impresora activos ");
+          this.multipleResolucionActivo = true;
         }
         if (this.activaciones[e].activacion_id == this.TIPOS_PAGOS) {
           console.log("tipos pagos activos ");

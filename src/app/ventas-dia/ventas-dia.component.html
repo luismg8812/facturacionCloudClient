@@ -325,6 +325,11 @@
                 <div class="modal-body">
                     <div class="form-row ">
                         <div class="col col-ms-12 ">
+                            <h6>Total a pagar: {{formatearNumber(document.total)}}</h6>
+                        </div>
+                    </div>
+                    <div class="form-row "> 
+                        <div class="col col-ms-12 ">
                             <h6 #descuentoLavel name="descuentoLavel" id="descuentoLavel" class="d-none">Descuento:
                             </h6>
                             <input name="descuentoPV" #descuentoPV placeholder="Descuento" class="form-control d-none"
@@ -375,8 +380,17 @@
                         </div>
                         <div class="col col-ms-6">
                             <h6>Valor pago: {{tipos.valor }} </h6>
-
                         </div>
+                    </div>
+                    <div class="form-row ">
+                        <h6 class="d-none" #resolucionLavel name="resolucionLavel" id="resolucionLavel">Resolucion:
+                        </h6>
+                        <input name="resolucionPV" #resolucionPV placeholder="Resolución" class="form-control d-none"
+                            id="resolucionPV" (keydown.enter)="enterTecla(resolucionPV)"
+                            (keydown.esc)="scapeTecla(resolucionPV)">
+                            <div  *ngFor="let res of resolucionAll">
+                                {{res.resolucion_empresa_id}}.{{res.nombre}} 
+                            </div>
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-3">
