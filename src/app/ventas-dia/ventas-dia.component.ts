@@ -1981,7 +1981,7 @@ export class VentasDiaComponent implements OnInit {
         console.log("lista de docuemntos cargados: " + this.documentosList.length);
         if (this.documentosList.length == 0) {
           alert("No existen documentos");
-          return;
+          return; 
         }
         console.log(apcion + ":" + this.documentosList.length);
         this.document = this.documentosList[this.documentosList.length - 1];
