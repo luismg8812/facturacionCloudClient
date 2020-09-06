@@ -8,8 +8,8 @@
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link active" data-toggle="tab" href="#orden">Gestión Orden</a>
-    </li>
-    <li class="nav-item">
+    </li> 
+    <li class="nav-item" *ngIf="facturaOrdenActivo">
       <a class="nav-link" data-toggle="tab" href="#factura">Gestión Factura</a>
     </li>
   </ul>
