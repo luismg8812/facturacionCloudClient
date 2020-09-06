@@ -50,6 +50,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly PRODUCTOS_FIJOS: string = '21';
   readonly CLIENTE_OBLIGATORIO: string = '14';
   readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
+  readonly ACTIVAR_FACTURACION_ORDEN: string = '24';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
@@ -93,6 +94,7 @@ export class GestionOrdenComponent implements OnInit {
   public factura: FacturaModel;
   public empleados: Array<EmpleadoModel>;
   public empleadoOrdenActivo: boolean = false;
+  public facturaOrdenActivo: boolean = false;
 
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
@@ -1764,6 +1766,10 @@ export class GestionOrdenComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.ACTIVAR_EMPLEADOS_ORDEN) {
           console.log("empleados en orden activo");
           this.empleadoOrdenActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.ACTIVAR_FACTURACION_ORDEN) {
+          console.log("facturacion en orden activo");
+          this.facturaOrdenActivo = true;
         }
       }
     });
