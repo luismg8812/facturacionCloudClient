@@ -29,6 +29,20 @@
   </div>
   <div class="form-row">
     <div class="form-group col-md-6 col-sm-6">
+      Sub Grupo
+      <select id="grupo" name="subgrupoPV" #subgrupoPV placeholder=""
+         class="form-control">
+        <option value="">Seleccione</option>
+        <option *ngFor="let grupo of subGrupoList" [value]="grupo.sub_grupo_id">
+           {{grupo.nombre}}
+        </option>
+      </select> 
+    </div>
+    <div class="form-group col-md-6 col-sm-6">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6 col-sm-6">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" name="inlineRadioOptions" id="agotado" #agotado value="option1"  (change)="estrella(agotado,$event)">
         <label class="form-check-label" for="inlineRadio1">Agotados </label>
@@ -45,7 +59,7 @@
   </div>
   <div class="form-row">
     <button type="button" class="btn btn-primary ml-2"
-    (click)="buscar(grupoPV,proveedorPV)">Buscar </button>
+    (click)="buscar(grupoPV,proveedorPV,subgrupoPV)">Buscar </button>
     <button type="button" class="btn btn-primary ml-2"
     (click)="exportTableToExcel(tblData)">Exportar </button>
     <button type="button" class="btn btn-primary ml-2" data-toggle="modal"

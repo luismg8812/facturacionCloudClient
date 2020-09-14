@@ -29,24 +29,24 @@ export class CalculosService {
 
 	constructor() { }
 
-	public calcularInfoDiarioNota(documento: DocumentoModel,nota:DocumentoModel, infoDiario: InformeDiarioModel) {
-				infoDiario.base_19 = Number(infoDiario.base_19) - Number(documento.base_19);
-				infoDiario.base_5 = Number(infoDiario.base_5) - Number(documento.base_5);
-				infoDiario.iva_5 = Number(infoDiario.iva_5) - Number(documento.iva_5);
-				infoDiario.iva_19 = Number(infoDiario.iva_19) - Number(documento.iva_19);
-				infoDiario.total_ventas = Number(infoDiario.total_ventas) - Number(documento.total);
-				infoDiario.iva_ventas = Number(infoDiario.iva_ventas) - Number(documento.iva);
-				infoDiario.excento = Number(infoDiario.excento) - Number(documento.excento);
-				infoDiario.costo_ventas = Number(infoDiario.costo_ventas) - Number(documento.total_costo);
-				
-				infoDiario.base_19 = Number(infoDiario.base_19) + Number(nota.base_19);
-				infoDiario.base_5 = Number(infoDiario.base_5) + Number(nota.base_5);
-				infoDiario.iva_5 = Number(infoDiario.iva_5) + Number(nota.iva_5);
-				infoDiario.iva_19 = Number(infoDiario.iva_19) + Number(nota.iva_19);
-				infoDiario.total_ventas = Number(infoDiario.total_ventas) + Number(nota.total);
-				infoDiario.iva_ventas = Number(infoDiario.iva_ventas) + Number(nota.iva);
-				infoDiario.excento = Number(infoDiario.excento) + Number(nota.excento);
-				infoDiario.costo_ventas = Number(infoDiario.costo_ventas) + Number(nota.total_costo);
+	public calcularInfoDiarioNota(documento: DocumentoModel, nota: DocumentoModel, infoDiario: InformeDiarioModel) {
+		infoDiario.base_19 = Number(infoDiario.base_19) - Number(documento.base_19);
+		infoDiario.base_5 = Number(infoDiario.base_5) - Number(documento.base_5);
+		infoDiario.iva_5 = Number(infoDiario.iva_5) - Number(documento.iva_5);
+		infoDiario.iva_19 = Number(infoDiario.iva_19) - Number(documento.iva_19);
+		infoDiario.total_ventas = Number(infoDiario.total_ventas) - Number(documento.total);
+		infoDiario.iva_ventas = Number(infoDiario.iva_ventas) - Number(documento.iva);
+		infoDiario.excento = Number(infoDiario.excento) - Number(documento.excento);
+		infoDiario.costo_ventas = Number(infoDiario.costo_ventas) - Number(documento.total_costo);
+
+		infoDiario.base_19 = Number(infoDiario.base_19) + Number(nota.base_19);
+		infoDiario.base_5 = Number(infoDiario.base_5) + Number(nota.base_5);
+		infoDiario.iva_5 = Number(infoDiario.iva_5) + Number(nota.iva_5);
+		infoDiario.iva_19 = Number(infoDiario.iva_19) + Number(nota.iva_19);
+		infoDiario.total_ventas = Number(infoDiario.total_ventas) + Number(nota.total);
+		infoDiario.iva_ventas = Number(infoDiario.iva_ventas) + Number(nota.iva);
+		infoDiario.excento = Number(infoDiario.excento) + Number(nota.excento);
+		infoDiario.costo_ventas = Number(infoDiario.costo_ventas) + Number(nota.total_costo);
 		return infoDiario;
 	}
 
@@ -167,42 +167,50 @@ export class CalculosService {
 		return hoy;
 	}
 
-	public fechaIniBusqueda(fecha:string){
+	public fechaIniBusqueda(fecha: string) {
 		let date = fecha.split("-")
-		let ano=date[0];
-		let mes=date[1];
-		let dia=date[2];
-		fecha= [ano, mes, dia].join('-')+ " 0:00:00";
+		let ano = date[0];
+		let mes = date[1];
+		let dia = date[2];
+		fecha = [ano, mes, dia].join('-') + " 0:00:00";
 		console.log(fecha);
 		return fecha;
 	}
 
-	public fechaFinBusqueda(fecha:string){
+	public fechaFinBusqueda(fecha: string) {
 		let date = fecha.split("-")
-		let ano=date[0];
-		let mes=date[1];
-		let dia=date[2];
-		fecha= [ano, mes, dia].join('-')+ " 23:59:59";
+		let ano = date[0];
+		let mes = date[1];
+		let dia = date[2];
+		fecha = [ano, mes, dia].join('-') + " 23:59:59";
 		console.log(fecha);
 		return fecha;
 	}
 
-	public fechaIniBusquedaDate(d2:Date){
-		let d= new Date(d2);
+	public fechaIniBusquedaDate(d2: Date) {
+		let d = new Date(d2);
 		let month = '' + (d.getMonth() + 1);
 		let day = '' + (d.getDate());
-		let	year = ""+d.getFullYear();
-		let fecha= [year, month, day].join('-')+ " 0:00:00";
+		let year = "" + d.getFullYear();
+		if (month.length < 2)
+			month = '0' + month;
+		if (day.length < 2)
+			day = '0' + day;
+		let fecha = [year, month, day].join('-') + " 0:00:00";
 		console.log(fecha);
 		return fecha;
 	}
 
-	public fechaFinBusquedaDate(d2:Date){
-		let d= new Date(d2);
+	public fechaFinBusquedaDate(d2: Date) {
+		let d = new Date(d2);
 		let month = '' + (d.getMonth() + 1);
 		let day = '' + (d.getDate());
-		let	year = ""+d.getFullYear();
-		let fecha= [year, month, day].join('-')+ " 23:59:59";
+		let year = "" + d.getFullYear();
+		if (month.length < 2)
+			month = '0' + month;
+		if (day.length < 2)
+			day = '0' + day;
+		let fecha = [year, month, day].join('-') + " 23:59:59";
 		console.log(fecha);
 		return fecha;
 	}
@@ -259,16 +267,16 @@ export class CalculosService {
 		return valido;
 	}
 
-	public ordenar(productos:Array<DocumentoDetalleModel>) {
-		let temp:Array<DocumentoDetalleModel> = [];
+	public ordenar(productos: Array<DocumentoDetalleModel>) {
+		let temp: Array<DocumentoDetalleModel> = [];
 		for (let ddV of productos) {
-			if (ddV.varios  == 1) {
+			if (ddV.varios == 1) {
 				temp.push(ddV);
 			}
 		}
 		for (let ddV of productos) {
 			let existe1 = temp.find(existe => existe.documento_detalle_id == ddV.documento_detalle_id);
-			if (existe1==undefined) {
+			if (existe1 == undefined) {
 				temp.push(ddV);
 			}
 		}
@@ -487,7 +495,7 @@ export class CalculosService {
 		dataFacturaTotales.descuentos = "" + docu.documento.descuento;
 		dataFacturaTotales.subtotal = "" + (Number(docu.documento.base_19) + Number(docu.documento.base_5) + Number(docu.documento.excento));
 		dataFacturaTotales.totalApagar = "" + docu.documento.total;
-		dataFacturaTotales.totalImpuestos = "" + (docu.documento.iva==null?(Number(docu.documento.iva_5) + Number(docu.documento.iva_19)):docu.documento.iva);
+		dataFacturaTotales.totalImpuestos = "" + (docu.documento.iva == null ? (Number(docu.documento.iva_5) + Number(docu.documento.iva_19)) : docu.documento.iva);
 		return dataFacturaTotales;
 	}
 
@@ -503,15 +511,15 @@ export class CalculosService {
 				break;
 			case 12:
 				dataFactura.invoiceTypeCode = "91";
-				dataFactura.tipoCorreccion="3";
-				dataFactura.codigoNota=docu.documento.documento_id;
-				dataFactura.descripcionCorrecion=docu.documento.descripcion_trabajador;
+				dataFactura.tipoCorreccion = "3";
+				dataFactura.codigoNota = docu.documento.documento_id;
+				dataFactura.descripcionCorrecion = docu.documento.descripcion_trabajador;
 				break;
 			case 13:
 				dataFactura.invoiceTypeCode = "92";
-				dataFactura.tipoCorreccion="3";
-				dataFactura.codigoNota=docu.documento.documento_id;
-				dataFactura.descripcionCorrecion=docu.documento.descripcion_trabajador;
+				dataFactura.tipoCorreccion = "3";
+				dataFactura.codigoNota = docu.documento.documento_id;
+				dataFactura.descripcionCorrecion = docu.documento.descripcion_trabajador;
 				break;
 			default:
 				break;
@@ -525,10 +533,10 @@ export class CalculosService {
 	asignarDataCliente(docu: DocumentoMapModel, clientes: Array<ClienteModel>) {
 		let datacliente: DataClienteModel = new DataClienteModel();
 		let cliente = clientes.find(client => client.cliente_id === docu.documento.cliente_id);
-		datacliente.additionalAccountIDCliente = ""+cliente.fact_tipo_empresa_id;//+ cliente.cliente_id; //tipo empresa juridica
+		datacliente.additionalAccountIDCliente = "" + cliente.fact_tipo_empresa_id;//+ cliente.cliente_id; //tipo empresa juridica
 		datacliente.codigoTipoIdentificacionCliete = "13"; //TO DO cambiar por los valores que de ever
 		datacliente.identificacionCliente = cliente.documento;
-		datacliente.nombreCliente = cliente.nombre + " " + cliente.apellidos ;
+		datacliente.nombreCliente = cliente.nombre + " " + cliente.apellidos;
 		datacliente.codigoMunicipioCliente = "11001";
 		datacliente.direccionCliente = cliente.direccion;
 		datacliente.telefonoCliente = cliente.celular == "" ? cliente.fijo : cliente.celular;

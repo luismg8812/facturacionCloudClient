@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ProductoService } from '../services/producto.service';
 import { ProductoModel } from '../model/producto.model';
 import { GrupoModel } from '../model/grupo.model';
+import { SubGrupoModel } from '../model/subGrupo.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -16,12 +17,15 @@ export class InventarioFisicoComponent implements OnInit {
   public productosAll: Array<ProductoModel>;
   public productosCargar: Array<ProductoModel> = [];
   public grupoList: Array<GrupoModel>;
+  public subGrupoList: Array<SubGrupoModel>;
+  
   public proveedorList: Array<any>;
   public marcaList: Array<any>;
   public indexModificarSelect: number = 0;
   public productoEliminar: ProductoModel;
   public productoNew: ProductoModel = new ProductoModel();
   public grupoNew: GrupoModel = new GrupoModel();
+  public subGrupoNew: SubGrupoModel = new SubGrupoModel();
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
   public totalRegistros: number = 0;
@@ -40,11 +44,56 @@ export class InventarioFisicoComponent implements OnInit {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getProductosByEmpresa(this.empresaId);
     this.getGrupos();
+    this.getSubGrupos();
 
   }
 
   editarGrupo(grupo: GrupoModel) {
     this.grupoNew = grupo;
+  }
+
+  editarSubGrupo(grupo: SubGrupoModel) {
+    this.subGrupoNew = grupo;
+  }
+
+  
+
+  CrearSubGrupo() {
+    console.log(this.subGrupoNew);
+    let valido: boolean = true;
+    let mensageError: string = "Son obligatorios:\n ";
+    if (this.subGrupoNew.nombre == "") {
+      mensageError += "nombre\n";
+      valido = false;
+    }
+    if (valido == false) {
+      alert(mensageError);
+      return;
+    }
+    if (this.subGrupoNew.sub_grupo_id == null) {
+      this.subGrupoNew.empresa_id = this.empresaId;
+      this.productoService.saveSubGrupo(this.subGrupoNew).subscribe(res => {
+        if (res.code == 200) {
+          this.subGrupoNew = new SubGrupoModel();
+          $('#crearSubGrupoNewModal').modal('hide');
+          this.getSubGrupos();
+        } else {
+          alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+          return;
+        }
+      });
+    } else {
+      this.productoService.updateSubGrupo(this.subGrupoNew).subscribe(res => {
+        if (res.code == 200) {
+          this.subGrupoNew = new SubGrupoModel();
+          $('#crearSubGrupoNewModal').modal('hide');
+          this.getSubGrupos();
+        } else {
+          alert("error creando grupo, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+          return;
+        }
+      });
+    }
   }
 
   CrearGrupo() {
@@ -366,9 +415,20 @@ export class InventarioFisicoComponent implements OnInit {
     this.grupoNew = new GrupoModel();
   }
 
+  limpiarSubGrupo() {
+    this.subGrupoNew = new SubGrupoModel();
+  }
+
+
   getGrupos() {
     this.productoService.getGruposByEmpresa(this.empresaId.toString()).subscribe(async res => {
       this.grupoList = res;
+    });
+  }
+
+  getSubGrupos() {
+    this.productoService.getSubGruposByEmpresa(this.empresaId.toString()).subscribe(async res => {
+      this.subGrupoList = res;
     });
   }
 
