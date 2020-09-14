@@ -4,6 +4,7 @@ import { ProductoService } from '../services/producto.service';
 import { ProveedorModel } from '../model/proveedor.model';
 import { ProveedorService } from '../services/proveedor.service';
 import { GrupoModel } from '../model/grupo.model';
+import { SubGrupoModel } from '../model/subGrupo.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -19,6 +20,7 @@ export class EditarProductoComponent implements OnInit {
   public proveedores: Array<ProveedorModel>;
   public marcaList: Array<any>;
   public grupoList: Array<GrupoModel>;
+  public subGrupoList: Array<SubGrupoModel>;
   @ViewChild("articuloPV1") articuloPV1: ElementRef;
 
   constructor(public productoService:ProductoService,
@@ -29,6 +31,7 @@ export class EditarProductoComponent implements OnInit {
     this.getProductosByEmpresa(this.empresaId);
     this.getProveedores(this.empresaId);
     this.getGrupos(this.empresaId);
+    this.getSubGrupos(this.empresaId);
   }
 
   CrearProducto() {
@@ -76,6 +79,13 @@ export class EditarProductoComponent implements OnInit {
     this.productoService.getGruposByEmpresa(empresaId.toString()).subscribe(res => {
       this.grupoList = res;
       console.log("lista de grupos cargados: " + this.grupoList.length);
+    });
+  }
+
+  getSubGrupos(empresaId: number) {
+    this.productoService.getSubGruposByEmpresa(empresaId.toString()).subscribe(res => {
+      this.subGrupoList = res;
+      console.log("lista de grupos cargados: " + this.subGrupoList.length);
     });
   }
 

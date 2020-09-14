@@ -9,10 +9,12 @@ export class ResolucionEmpresaModel {
     public fecha_resolucion:Date;
     public consecutivo:number;
     public t_factura:string; 
+    public tipo_resolucion_id:number;
 
     constructor(){
         this.empresa_id=1;
         this.resolucion_empresa_id=null;
+        this.tipo_resolucion_id=null;
         this.resolucion_dian="";
         this.nombre="";
         this.letra_consecutivo="";

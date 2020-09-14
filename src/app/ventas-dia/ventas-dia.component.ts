@@ -1125,6 +1125,22 @@ export class VentasDiaComponent implements OnInit {
         resolucion = this.resolucionAll[0];
       }else{
         resolucion = this.resolucionEnter();
+        //si es igual a resolucion electronica
+        if(this.document.tipo_documento_id==this.TIPO_DOCUMENTO_FACTURA && resolucion.tipo_resolucion_id==3){ //se alistan documentos para la dian cuando son facturas
+          let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
+          documentoInvoice.documento_id = Number(this.document.documento_id);
+          documentoInvoice.fecha_registro = new Date();
+          documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+          this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+            if (res.code == 200) {
+              console.log("Se agrega estado para facturación electrónica");
+            } else {
+              alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+              return;
+            }
+          });
+          this.document.invoice_id=this.INVOICE_SIN_ENVIAR;
+        }
       }
       this.factura.resolucionEmpresa = resolucion;
       switch (this.document.tipo_documento_id) {
@@ -1457,26 +1473,12 @@ export class VentasDiaComponent implements OnInit {
       this.document.fecha_registro = this.calculosService.fechaActual();
       this.document.usuario_id = this.usuarioId;
       this.document.empresa_id = this.empresaId;
-      this.document.invoice_id = this.INVOICE_SIN_ENVIAR;
       this.documentoService.saveDocumento(this.document).subscribe(res => {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
           this.document.fecha_registro = new Date(res.fecha_registro);
         
-          if(this.document.tipo_documento_id==this.TIPO_DOCUMENTO_FACTURA){ //se alistan documentos para la dian cuando son facturas
-            let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
-            documentoInvoice.documento_id = res.documento_id;
-            documentoInvoice.fecha_registro = new Date();
-            documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
-            this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
-              if (res.code == 200) {
-                console.log("Se agrega estado para facturación electrónica");
-              } else {
-                alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
-                return;
-              }
-            });
-          }
+       
       
           this.asignarDocumentoDetalle(cantidad, this.productoIdSelect.costo_publico);
         } else {

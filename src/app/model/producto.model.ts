@@ -2,6 +2,7 @@ export class ProductoModel {
     public producto_id:number;
     public empresa_id:number;
     public grupo_id:string;
+    public sub_grupo_id:string;
     public proveedor_id:string;
     public marca_id:string;
     public fecha_registro:Date;
@@ -33,6 +34,7 @@ export class ProductoModel {
         this.producto_id=null;
         this.empresa_id=null;
         this. grupo_id=null;
+        this. sub_grupo_id=null;
         this. proveedor_id=null;
         this. marca_id=null;
         this. fecha_registro=new Date();

@@ -7,6 +7,7 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { EmpresaService } from '../services/empresa.service';
 import { ImpresionService } from '../services/impresion.service';
 import { EmpresaModel } from '../model/empresa.model';
+import { SubGrupoModel } from '../model/subGrupo.model';
 
 declare var jquery: any;
 declare var $: any;
@@ -19,6 +20,7 @@ declare var $: any;
 export class ReporteProductosComponent implements OnInit {
 
   public grupoList: Array<any>;
+  public subGrupoList: Array<SubGrupoModel>;
   public proveedorList: Array<any>;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public empresaId: number;
@@ -45,14 +47,15 @@ export class ReporteProductosComponent implements OnInit {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getProveedores(this.empresaId);
     this.getGrupos(this.empresaId);
+    this.getSubGrupos(this.empresaId);
     this.getproductos();
     this.getImpresorasEmpresa(this.empresaId);
     this.getEmpresa();
   }
 
-  buscar(grupo, proveedores) {
+  buscar(grupo, proveedores,subgrupo) {
     console.log(grupo.value);
-    this.productoService.getProductosByGrupo(this.empresaId.toString(), grupo.value, proveedores.value,this.agotados,this.stock,this.producto).subscribe(res => {
+    this.productoService.getProductosByGrupo(this.empresaId.toString(), grupo.value, proveedores.value,this.agotados,this.stock,this.producto,subgrupo.value).subscribe(res => {
       this.productos = res;
     });
   }
@@ -184,6 +187,13 @@ export class ReporteProductosComponent implements OnInit {
   getGrupos(empresaId: number) {
     this.productoService.getGruposByEmpresa(empresaId.toString()).subscribe(res => {
       this.grupoList = res;
+      console.log("lista de grupos cargados: " + this.grupoList.length);
+    });
+  }
+
+  getSubGrupos(empresaId: number) {
+    this.productoService.getSubGruposByEmpresa(empresaId.toString()).subscribe(res => {
+      this.subGrupoList = res;
       console.log("lista de grupos cargados: " + this.grupoList.length);
     });
   }

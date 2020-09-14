@@ -22,9 +22,16 @@
             <button type="button" class="btn btn-primary mr-2" (click)="getInformeDiario()">Buscar</button>
           </div>
         </div>
-        <div class="form-group col-md-6 col-sm-1">
+        <div class="form-group col-md-4 col-sm-1">
           <div class="form-row">
             <button type="button" class="btn btn-primary mb-2" >Ralación Entradas/Salidas</button>
+          </div>
+        </div>
+        <div class="form-group col-md-4 col-sm-1">  
+          <div class="form-row">
+            <button type="button" class="btn btn-primary" data-toggle="modal" (click)="ventaGrupos()" data-target="#gruposModal">
+              Grupos y subgrupos
+            </button>
           </div>
         </div>
       </div> 
@@ -93,5 +100,41 @@
     <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
 
     </a>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="gruposModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-12 ">
+            <div class="form-row">
+              <div class="form-row" *ngFor="let grupo of grupos">
+                <b>{{grupo.nombre}}: $</b>{{formatearNumber(grupo.total)}}
+              </div>
+            </div>
+          </div>
+             <div class="form-group col-md-6 col-sm-12 ">
+            <div class="form-row">
+              <div class="form-row" *ngFor="let subgrupo of subGrupos">
+                <b>{{subgrupo.nombre}}: $</b>{{formatearNumber(subgrupo.total)}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+       
+      </div>
+    </div>
+  </div>
 </div>
 </div>

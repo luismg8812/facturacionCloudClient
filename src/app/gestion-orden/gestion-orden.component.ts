@@ -35,6 +35,7 @@ import { InformeDiarioModel } from '../model/informeDiario.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 import { DocumentoNotaModel } from '../model/documentoNota.model';
 import { DocumentoDetalleVoModel } from '../model/documentoDetalleVo.model';
+import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 
 
 declare var jquery: any;
@@ -84,6 +85,7 @@ export class GestionOrdenComponent implements OnInit {
   public marcaList: Array<MarcaVehiculoModel> = [];
   public modeloList: Array<ModeloMarcaModel> = [];
   public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
+  public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
   public productosAll: Array<ProductoModel>;
   public activaciones: Array<ActivacionModel> = [];
   public productoFijoActivo: boolean = false;
@@ -165,6 +167,7 @@ export class GestionOrdenComponent implements OnInit {
     this.getResolucion();
     this.getEmpleados();
     this.getTipoIdentificacion();
+    this.getTipoEmpresa();
     this.factura = new FacturaModel();
   }
 
@@ -1826,7 +1829,11 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-
+  getTipoEmpresa() {
+    this.clienteService.getTipoEmpresa().subscribe(res => {
+      this.tipoEmpresaList = res;
+    });
+  }
 
   formatearNumber(number: number) {
     let formato: string = "";
