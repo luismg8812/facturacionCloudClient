@@ -26,6 +26,7 @@ import { SubMenuModel } from '../model/submenu.model';
 import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
 import { GrupoModel } from '../model/grupo.model';
+import { SubGrupoModel } from '../model/subGrupo.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -44,6 +45,8 @@ export class MovimientoMesComponent implements OnInit {
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public opciones: Array<SubMenuModel>;
   public grupoList: Array<GrupoModel>;
+  public subGrupoList: Array<SubGrupoModel>;
+  
   public marcaList: Array<any>;
 
   public document: DocumentoModel;
@@ -185,6 +188,7 @@ export class MovimientoMesComponent implements OnInit {
     this.getImpresorasEmpresa(this.empresaId);
     this.opcionesSubmenu();
     this.getGrupos(this.empresaId);
+    this.getSubGrupos(this.empresaId);
     this.guiaTransporteActivo = false;
     this.documentosList = [];
     this.modificarFactura = false;
@@ -1610,6 +1614,14 @@ export class MovimientoMesComponent implements OnInit {
       console.log("lista de grupos cargados: " + this.grupoList.length);
     });
   }
+
+  getSubGrupos(empresaId: number) {
+    this.productoService.getSubGruposByEmpresa(empresaId.toString()).subscribe(res => {
+      this.subGrupoList = res;
+      console.log("lista de subgrupos cargados: " + this.subGrupoList.length);
+    });
+  }
+
 
   getProveedores(empresaId: number) {
     this.proveedorService.getProveedoresByEmpresa(empresaId.toString()).subscribe(res => {

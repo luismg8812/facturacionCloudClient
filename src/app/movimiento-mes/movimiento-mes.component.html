@@ -382,15 +382,16 @@
           </div>
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
-              Proveedor
-              <select id="proveedorCrear" name="proveedorCrear" #proveedorCrear placeholder=""
-                [(ngModel)]="productoNew.proveedor_id" class="form-control">
-                <option value="">Seleccione</option>
-                <option *ngFor="let proveedor of proveedores" [value]="proveedor.proveedor_id">
-                  {{proveedor.nombre}}
-               </option>
-              </select>
-            </div>
+                SUBGrupo
+                <select id="subgrupo" name="subgrupo" #subgrupo placeholder="" [(ngModel)]="productoNew.sub_grupo_id"
+                  class="form-control">
+                  <option value="">Seleccione</option>
+                  <option *ngFor="let grupo of subGrupoList" [value]="grupo.sub_grupo_id">
+                    {{grupo.nombre}}
+                  </option>
+                </select>
+              </div>
+           
             <div class="form-group col-md-6 col-sm-6">
               Marca
               <select id="marca" name="marcaPV" #marcaPV placeholder=""
@@ -458,8 +459,15 @@
                 name="peso" #peso required [(ngModel)]="productoNew.peso">
             </div>
             <div class="form-group col-md-6 col-sm-6">
-
-            </div>
+                Proveedor
+                <select id="proveedorCrear" name="proveedorCrear" #proveedorCrear placeholder=""
+                  [(ngModel)]="productoNew.proveedor_id" class="form-control">
+                  <option value="">Seleccione</option>
+                  <option *ngFor="let proveedor of proveedores" [value]="proveedor.proveedor_id">
+                    {{proveedor.nombre}}
+                 </option>
+                </select>
+              </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-3 col-sm-6">

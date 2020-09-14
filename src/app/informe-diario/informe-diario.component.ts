@@ -5,6 +5,7 @@ import { CalculosService } from '../services/calculos.service';
 import { InformeDiarioVOModel } from '../model/informeDiarioVO.model';
 import { ImpresionService } from '../services/impresion.service';
 import { EmpresaService } from '../services/empresa.service';
+import { DocumentoService } from '../services/documento.service';
 
 @Component({
   selector: 'app-informe-diario',
@@ -24,11 +25,14 @@ export class InformeDiarioComponent implements OnInit {
   public iva_5:number=0;
   public iva_19:number=0;
   public exento:number=0;
+  public grupos:any;
+  public subGrupos:any;
   
 
   constructor(public cierreService:CierreService,
     public impresionService: ImpresionService,
     public empresaService: EmpresaService,
+    public documentoService:DocumentoService,
     public calculosService: CalculosService
     ) { }
 
@@ -36,6 +40,34 @@ export class InformeDiarioComponent implements OnInit {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getInformeDiario();
   }
+
+  ventaGrupos() {
+    let ini: string = this.fechaIni.nativeElement.value;
+    let fin: string = this.fechaFin.nativeElement.value;
+    if (ini != '' && fin != '') {
+      
+      ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
+      fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
+      console.log(ini);
+    } else {
+      let date: Date = new Date();
+      date.setDate(1);
+      ini = date.toLocaleString();
+      date.setDate(30);
+      fin = date.toLocaleString();
+    }
+    this.documentoService.getVentasPorGrupos("",ini,fin,false).subscribe(res => {
+      console.log(res);
+      this.grupos = res;
+    });
+    this.documentoService.getVentasPorSubGrupos("",ini,fin,false).subscribe(res => {
+      console.log(res);
+      this.subGrupos = res;
+    });
+  }
+ 
+ 
+
 
   imprimirInforme(informe:InformeDiarioModel) {
     let informeDiario:InformeDiarioVOModel= new InformeDiarioVOModel();

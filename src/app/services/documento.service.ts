@@ -119,6 +119,10 @@ export class DocumentoService {
     return this.http.get<any>(this.server_api + '/documento/getVentasPorGrupos?usuarioId=' + usuarioId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+ '&conCierre=' + conCierre);
   }
 
+  getVentasPorSubGrupos(usuarioId,fechaInicial,fechaFinal,conCierre:boolean) {
+    return this.http.get<any>(this.server_api + '/documento/getVentasPorSubGrupos?usuarioId=' + usuarioId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+ '&conCierre=' + conCierre);
+  }
+
   getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
     return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
   }
@@ -146,8 +150,8 @@ export class DocumentoService {
     return this.http.get<any>(this.server_api + '/documento/getDocumentosByTipoPago?empresaId=' + empresaId+ '&tipoDocumentoId=' + tipoDocumentoId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
   }
 
-  public getCarteraClientes(clienteId,fechaInicial,fechaFinal,empresaId) {
-    return this.http.get<any>(this.server_api + '/documento/getCarteraClientes?empresaId=' + empresaId+ '&clienteId=' + clienteId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
+  public getCarteraClientes(clienteId,fechaInicial,fechaFinal,empresaId,tipoDocumentoId:number) {
+    return this.http.get<any>(this.server_api + '/documento/getCarteraClientes?empresaId=' + empresaId+ '&clienteId=' + clienteId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal+ '&tipoDocumentoId=' + tipoDocumentoId);
   }
 
   

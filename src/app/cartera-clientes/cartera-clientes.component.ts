@@ -141,7 +141,7 @@ export class CarteraClientesComponent implements OnInit {
     let cliente1 = this.clientes.find(cliente => (cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento) == cliete.value);   
     console.log(cliente1);
     let id= (cliente1==undefined?"":cliente1.cliente_id);
-    this.documentoService.getCarteraClientes(id, fechaIni.value, fechaFin.value, this.empresaId).subscribe(res => {
+    this.documentoService.getCarteraClientes(id, fechaIni.value, fechaFin.value, this.empresaId,10).subscribe(res => {
       console.log(res);
       this.cartera = res;
     });
