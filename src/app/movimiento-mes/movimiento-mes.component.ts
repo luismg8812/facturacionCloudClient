@@ -58,7 +58,7 @@ export class MovimientoMesComponent implements OnInit {
   public configuracion: ConfiguracionModel;
   public productoNew: ProductoModel = new ProductoModel();
 
-  public factura: FacturaModel;
+  public factura: FacturaModel=new FacturaModel();
   public guiaTransporteActivo: boolean = false;
   public codigoBarrasActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
@@ -73,7 +73,8 @@ export class MovimientoMesComponent implements OnInit {
   public pesoGramera: number = 0.0;
   public indexModificarSelect: number = 0;
   public informeDiario: InformeDiarioModel;
-
+  public tipoPagosAll: Array<TipoPagoModel>;
+  public tiposPagosDocumento: TipoPagoDocumentoModel[] = [];
 
   @ViewChild("tipoDocumentoPV") tipoDocumentoPV: ElementRef;
   @ViewChild("detalleEntrada") detalleEntrada: ElementRef;
@@ -189,6 +190,7 @@ export class MovimientoMesComponent implements OnInit {
     this.opcionesSubmenu();
     this.getGrupos(this.empresaId);
     this.getSubGrupos(this.empresaId);
+    this.getTipoPago();
     this.guiaTransporteActivo = false;
     this.documentosList = [];
     this.modificarFactura = false;
@@ -788,6 +790,10 @@ export class MovimientoMesComponent implements OnInit {
     if (element.id == "descuentoPV") {
       this.descuentoEnter();
     }
+    if (element.id == "tipoPagoPV") {
+      this.tipoPagoEnter(element);
+
+    }
     if (element.id == "grameraPV") {
       this.precioGrameraEnter(element);
     }
@@ -799,7 +805,8 @@ export class MovimientoMesComponent implements OnInit {
 
     }
     if (element.id == "valorTipoPagoPV") {
-      this.efectovoPV.nativeElement.focus();
+      this.calcularTiposPagos(element);
+
     }
     if (element.id == "efectovoPV") {
       this.efectivoEnter(element);
@@ -832,9 +839,54 @@ export class MovimientoMesComponent implements OnInit {
       console.log("fin");
       this.facturacionPV.nativeElement.focus();
     }
+  }
 
+  calcularTiposPagos(element) {
+    // aqui voy toca verificar si el tipo de pago esta en la lista sino retorna con un mensaje  y va agregando tipos de pago hasta que se concrete el finally, hacer validaciones de topes maximos y minimos
+    let tipoId = this.tipoPagoPV.nativeElement.value;
+    let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
+    if (tipoId != "") {
+      if (element.value <= 0 || element.value == "" || isNaN(element.value)) {
+        alert("cantidad invalida");
+        return;
+      }
+      tipoPagoDocumento.tipo_pago_id = tipoId;
+    } else {
+      tipoPagoDocumento.tipo_pago_id = 1;//efectivo por defecto
+    }
+    //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
+    tipoPagoDocumento.documento_id = this.document.documento_id;
+    tipoPagoDocumento.fecha_registro = new Date;
+    tipoPagoDocumento.valor = element.value;
+    this.tiposPagosDocumento.unshift(tipoPagoDocumento);
+    let suma: number = 0;
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
+    }
+    this.document.cambio = Number(suma) - Number(this.document.total);
+    if(tipoPagoDocumento.tipo_pago_id ==1){
+      this.efectovoPV.nativeElement.focus();
+      this.efectovoPV.nativeElement.select();
+    }else{
+       
+          this.enPantallaPV.nativeElement.focus();
+          this.enPantallaPV.nativeElement.select();
+       
+      }
+  }
 
-
+  tipoPagoEnter(element) {
+    if (element.value != "") {
+      let tipoPago = this.tipoPagosAll.find(usua => usua.tipo_pago_id == element.value);
+      if (tipoPago == undefined) {
+        alert("Tipo de pago no valido")
+        this.tipoPagoPV.nativeElement.focus();
+        this.tipoPagoPV.nativeElement.select();
+        return;
+      }
+    }
+    this.valorTipoPagoPV.nativeElement.focus();
+    this.valorTipoPagoPV.nativeElement.select();
   }
 
   precioGrameraEnter(element) {
@@ -927,16 +979,11 @@ export class MovimientoMesComponent implements OnInit {
   asignarTipoPago() {
     let des1 = this.descuentoPV.nativeElement.value;
     let tiposPagosList: TipoPagoModel[] = [];
-    if (des1 == "") {
+    if (des1 == "") { //no se por que tiene que ver con el descuento... validar esta parte
       //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
-      let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
-      tipoPagoDocumento.documento_id = this.document.documento_id;
-      tipoPagoDocumento.fecha_registro = new Date;
-      tipoPagoDocumento.tipo_pago_id = 1;//efectivo por defecto
-      tipoPagoDocumento.valor = this.document.total;
-      this.documentoService.saveTipoPagoDocumento(tipoPagoDocumento).subscribe(res => {
-
-      });
+      for (let tipo of this.tiposPagosDocumento) {
+        this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
+      }
     } else {
 
     }
@@ -1718,4 +1765,9 @@ export class MovimientoMesComponent implements OnInit {
     return formato;
   }
 
+  getTipoPago() {
+    this.clienteService.getTipoPago().subscribe(res => {
+      this.tipoPagosAll = res;
+    });
+  }
 }
