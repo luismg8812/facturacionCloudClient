@@ -282,14 +282,14 @@ export class VentasDiaComponent implements OnInit {
       alert("El cliente " + element.value + " no existe, presione la tecla lado derecho para crearlo");
       return;
     }
-    this.documentoService.getCarteraClientes(cliente.cliente_id, "","", this.empresaId).subscribe(res => {
+    this.documentoService.getCarteraClientes(cliente.cliente_id,"", "","", this.empresaId,10).subscribe(res => {
       console.log(res);
-      if(res.length>0){
+      if(res.length>0){ 
         for(let con of res){
           this.saldoCliente= con.saldo;  
         }
         this.saldoClienteActivo=true;
-      }
+      } 
       
     });
     console.log(cliente);

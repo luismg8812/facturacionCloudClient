@@ -24,6 +24,7 @@ import { ReporteProductosComponent } from './reporte-productos/reporte-productos
 import { CarteraClientesComponent } from './cartera-clientes/cartera-clientes.component';
 import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
+import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -48,6 +49,7 @@ const routes: Routes = [
    { path: 'infoganancia', component: InfoGananciaComponent },
    { path: 'reporteProductos', component: ReporteProductosComponent },
    { path: 'carteraClientes', component: CarteraClientesComponent },
+   { path: 'carteraProveedores', component: CarteraProveedoresComponent },
    { path: 'retirosCaja', component: RetirosCajaComponent },
    { path: 'liberarCuadre', component: LiberarCuadreComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
