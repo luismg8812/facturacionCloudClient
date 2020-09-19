@@ -826,9 +826,19 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.text("CAJA: " + factura.documento.mac, x, y);
       y = y + inicio;
-      this.doc.text("CLIENTE: " + factura.cliente.nombre + " " + factura.cliente.apellidos, x, y);
-      y = y + inicio;
-      this.doc.text("CC/NIT: " + factura.cliente.documento, x, y);
+      if (factura.cliente != undefined) {
+        this.doc.text("CLIENTE: " + factura.cliente.nombre , x, y);
+        y = y + inicio;
+        this.doc.text("NIT/CC: " + factura.cliente.documento, x, y);
+        y = y + inicio;
+        this.doc.text("DIRECCIÓN: " + factura.cliente.direccion , x, y);
+      } else {
+        this.doc.text("CLIENTE: Varios" , x, y);
+        y = y + inicio;
+        this.doc.text("NIT/CC:  0" , x, y);
+        y = y + inicio;
+        this.doc.text("DIRECCIÓN: 0" , x, y);
+      }
       y = y + inicio;
       this.doc.setFontSize(12);
       this.doc.text("-------------------------------------------------", x, y);
@@ -860,7 +870,7 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.text("Valor Exento: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.excento).replace("COP", ""), 10), x, y);
       y = y + inicio;
-      this.doc.text("Valor Gravado: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP", ""), 10), x, y);
+      this.doc.text("Valor Gravado: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP", ""), 13), x, y);
       y = y + inicio;
       this.doc.text("Valor IVA: " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP", ""), 10), x, y);
       y = y + inicio;
