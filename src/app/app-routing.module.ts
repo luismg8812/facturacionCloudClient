@@ -25,6 +25,7 @@ import { CarteraClientesComponent } from './cartera-clientes/cartera-clientes.co
 import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
+import { TutorialesComponent } from './tutoriales/tutoriales.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -53,6 +54,7 @@ const routes: Routes = [
    { path: 'retirosCaja', component: RetirosCajaComponent },
    { path: 'liberarCuadre', component: LiberarCuadreComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
+   { path: 'tutoriales', component: TutorialesComponent },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];
 
