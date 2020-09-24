@@ -705,7 +705,7 @@ export class ImpresionService {
 
     this.doc.setFontSize(6);
     this.doc.text(this.calculosService.centrarDescripcion("SOMOS " + factura.empresa.regimen, 77), 90, 13);
-    this.doc.text(this.calculosService.centrarDescripcion("RESOLUCION DIAN N° " + factura.resolucionEmpresa.resolucion_dian + " DE " + factura.resolucionEmpresa.fecha_resolucion, 77), 90, 16);
+    this.doc.text(this.calculosService.centrarDescripcion("RESOLUCION DIAN N° " + factura.resolucionEmpresa.resolucion_dian + " DE " + this.calculosService.formatDate(factura.resolucionEmpresa.fecha_resolucion,false), 77), 90, 16);
     this.doc.text(this.calculosService.centrarDescripcion("Actividad económica CIIU " + factura.empresa.actividad_economica, 77), 90, 19);
     this.doc.text(this.calculosService.centrarDescripcion("Representante Legal: " + factura.empresa.represente, 77), 90, 22);
     this.doc.text(this.calculosService.centrarDescripcion("Dirección: " + factura.empresa.direccion, 77), 90, 25);
@@ -893,6 +893,8 @@ export class ImpresionService {
       this.doc.text("         **** FORMA DE PAGO****        ", x, y);
       y = y + inicio;
       //hacer un metodo para ir a traer los tipos de pago de este dococumento
+      this.doc.text("PAGA CON:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.pagaCon).replace("COP", ""), x, y);
+      y = y + inicio;
       this.doc.text("Vr. Pago con Efectivo:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP", ""), x, y);
       y = y + inicio;
       this.doc.text("Cambio:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.cambio).replace("COP", ""), x, y);
@@ -1345,7 +1347,8 @@ export class ImpresionService {
         this.doc.text(cantidad, 20, posy);
 
         this.doc.text(""+iva, 145, posy);
-        this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario)).replace("COP", ""), 20), 115, posy);
+        this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario)).replace("COP", ""), 20), 113, posy);
+        this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario+(unitario*(Number(contadorP.impuesto_producto) / 100))  )).replace("COP", ""), 20), 156, posy);
         this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(parcial)).replace("COP", ""), 20), 182, posy);
 
         let linea: number = descripcion.length / topeLinea;
