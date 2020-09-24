@@ -158,12 +158,12 @@
         <tbody>
           <tr *ngFor="let ordenes of detallesList">
             <th scope="row">
-              <button type="button" (click)="editarItem(ordenes)" [disabled]="documento.impreso==1"
+              <button type="button" (click)="editarItem(ordenes)" 
                 class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal">
                 Editar
               </button>
               <!-- Button trigger modal -->
-              <button type="button" (click)="eliminarItem(ordenes)" [disabled]="documento.impreso==1"
+              <button type="button" (click)="eliminarItem(ordenes)" 
                 class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#eliminarModal">
                 Eliminar
               </button>
@@ -546,6 +546,9 @@
               </div>
               <div class="form-row">
                 <b>Consecutivo DIAN: </b> {{documentoFactura.consecutivo_dian}}
+              </div>
+              <div class="form-row">
+                <b>Tipo documento: </b> {{documentoFactura.consecutivo_dian}}
               </div>
             </div>
           </div>

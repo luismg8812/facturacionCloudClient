@@ -17,6 +17,7 @@ export class FacturaModel {
     public nombreEmpleado:string;
     public resolucionEmpresa:ResolucionEmpresaModel;
     public saldo:number;
+    public pagaCon:number;
     
     
     constructor(){
@@ -31,6 +32,7 @@ export class FacturaModel {
         this.cliente=null;
         this.proveedor=null;
         this.saldo=0;
+        this.pagaCon=0;
     }
 }
 
