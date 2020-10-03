@@ -133,6 +133,7 @@ export class VentasDiaComponent implements OnInit {
   public tipoIdentificacionList: Array<TipoIdentificacionModel> = [];
   public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
   public proporcion: ProporcionModel;
+  public empresa: EmpresaModel;
   public tiposPagosDocumento: TipoPagoDocumentoModel[] = [];
   public resolucionAll: Array<ResolucionEmpresaModel>;
 
@@ -259,6 +260,7 @@ export class VentasDiaComponent implements OnInit {
     this.getTipoEmpresa();
     this.getTipoPago();
     this.getResolucion();
+    this.getEmpresa();
   }
 
 
@@ -289,7 +291,7 @@ export class VentasDiaComponent implements OnInit {
           this.saldoCliente = con.saldo;
         }
         this.saldoClienteActivo = true;
-      }
+      }   
 
     });
     console.log(cliente);
@@ -1068,7 +1070,7 @@ export class VentasDiaComponent implements OnInit {
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
     this.factura.saldo = this.saldoCliente;
-    if (this.valorTipoPagoPV.nativeElement.value!="") {
+    if (this.valorTipoPagoPV.nativeElement.value != "") {
       this.factura.pagaCon = this.valorTipoPagoPV.nativeElement.value;
     }
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
@@ -1118,34 +1120,37 @@ export class VentasDiaComponent implements OnInit {
   }
 
   asignarConsecutivo(numImpresiones: number, cancelado: boolean) {
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
-      let empr = res;
-      console.log(empr);
-      let con: number;
-      let consecutivo: string;
-      let resolucion: ResolucionEmpresaModel;
-      if (this.resolucionEnter() == null) {
-        resolucion = this.resolucionAll[0];
-      } else {
-        resolucion = this.resolucionEnter();
-        //si es igual a resolucion electronica
-        if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA && resolucion.tipo_resolucion_id == 3) { //se alistan documentos para la dian cuando son facturas
-          let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
-          documentoInvoice.documento_id = Number(this.document.documento_id);
-          documentoInvoice.fecha_registro = new Date();
-          documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
-          this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
-            if (res.code == 200) {
-              console.log("Se agrega estado para facturación electrónica");
-            } else {
-              alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
-              return;
-            }
-          });
-          this.document.invoice_id = this.INVOICE_SIN_ENVIAR;
-        }
+
+    let empr = this.empresa;
+    console.log(empr);
+    let con: number;
+    let consecutivo: string;
+    let resolucion: ResolucionEmpresaModel;
+
+    if (this.resolucionEnter() == null) {
+      resolucion = this.resolucionAll[0];
+    } else {
+      resolucion = this.resolucionEnter();
+      //si es igual a resolucion electronica
+      if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA && resolucion.tipo_resolucion_id == 3) { //se alistan documentos para la dian cuando son facturas
+        let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
+        documentoInvoice.documento_id = Number(this.document.documento_id);
+        documentoInvoice.fecha_registro = new Date();
+        documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+        this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+          if (res.code == 200) {
+            console.log("Se agrega estado para facturación electrónica");
+          } else {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+            return;
+          }
+        });
+        this.document.invoice_id = this.INVOICE_SIN_ENVIAR;
       }
-      this.factura.resolucionEmpresa = resolucion;
+    }
+    this.factura.resolucionEmpresa = resolucion;
+    this.clienteService.getResolucionById(resolucion.resolucion_empresa_id).subscribe(reso => {
+      resolucion = reso[0];
       switch (this.document.tipo_documento_id) {
         case 9:
           con = resolucion.consecutivo;
@@ -1180,7 +1185,6 @@ export class VentasDiaComponent implements OnInit {
           resolucion.consecutivo = con;
           break;
       }
-      this.calcularInfoDiario(cancelado);
       this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
         console.log("consecutivo actualizado");
         console.log(this.document);
@@ -1189,14 +1193,12 @@ export class VentasDiaComponent implements OnInit {
             alert("error creando documento, por favor inicie nuevamente la creación del documento");
             return;
           }
-          this.imprimirFactura(numImpresiones, empr[0]);
+          this.imprimirFactura(numImpresiones, empr);
+          this.calcularInfoDiario(cancelado);
           this.limpiar();
           this.scapeTecla(null);
         });
       });
-
-
-
     });
   }
 
@@ -2289,6 +2291,12 @@ export class VentasDiaComponent implements OnInit {
   getproporcion() {
     this.usuarioService.getProporcion(this.empresaId).subscribe(res => {
       this.proporcion = res[0];
+    });
+  }
+
+  getEmpresa() {
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      this.empresa = res[0];
     });
   }
 

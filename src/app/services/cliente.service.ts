@@ -7,6 +7,8 @@ import { ParametrosModel } from '../model/parametros.model';
 import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
+import { ResponsabilidadFiscalModel } from '../model/responsabilidadFiscal.model';
+import { ResponsabilidadFiscalClienteModelModel } from '../model/responsabilidadFiscalCliente.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +40,10 @@ export class ClienteService {
     return this.http.get<ResolucionEmpresaModel[]>(this.server_api+'/cliente/getResolucion?empresaId='+empresaId);
   }
 
-  
+  public getResolucionById(resolucionEmpresaId:number){
+    return this.http.get<ResolucionEmpresaModel[]>(this.server_api+'/cliente/getResolucionById?resolucionEmpresaId='+resolucionEmpresaId);
+  }
+
 
   public getTipoIdentificacionAll(){
     return this.http.get<TipoIdentificacionModel[]>(this.server_api+'/cliente/getTipoIdentificacionAll');
@@ -47,10 +52,25 @@ export class ClienteService {
   public getTipoEmpresa(){
     return this.http.get<FactTipoEmpresaModel[]>(this.server_api+'/cliente/getTipoEmpresa');
   }
+
+  public getResponsabilidades(){
+    return this.http.get<ResponsabilidadFiscalModel[]>(this.server_api+'/cliente/getResponsabilidades');
+  }
+
+  public getResponsabilidadesByCliente(clienteId:number){
+    return this.http.get<ResponsabilidadFiscalModel[]>(this.server_api+'/cliente/getResponsabilidadesByCliente?clienteId='+clienteId);
+  }
+  
   
   saveCliente(clienteId: ClienteModel) {
     return this.http.post<any>(this.server_api + '/cliente/saveCliente', clienteId);
   }
+
+  saveResponsabilidadFiscalCliente(clienteId: ResponsabilidadFiscalClienteModelModel) {
+    return this.http.post<any>(this.server_api + '/cliente/saveResponsabilidadFiscalCliente', clienteId);
+  }
+
+  
 
   updateCliente(clienteId: ClienteModel) {
     return this.http.post<any>(this.server_api + '/cliente/updateCliente', clienteId);

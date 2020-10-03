@@ -15,8 +15,9 @@
 
 
       <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle"  id="facturacionPV" #facturacionPV type="button"
-          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,facturacionPV)">
+        <button class="btn btn-primary dropdown-toggle" id="facturacionPV" #facturacionPV type="button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+          (keyup)="controlTeclas($event,facturacionPV)">
           Facturación
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
@@ -26,7 +27,8 @@
       </div>
       <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" id="electronicaPV" #electronicaPV type="button"
-          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,electronicaPV)">
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+          (keyup)="controlTeclas($event,electronicaPV)">
           Facturación Electrónica
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
@@ -55,18 +57,28 @@
         </div>
       </div>
       <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" id="contabilidadPV" #contabilidadPV type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,contabilidadPV)">
+          Contabilidad
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <button class="dropdown-item" type="button" *ngFor="let opListados of contabilidad"
+            routerLink="{{opListados.url}}">{{opListados.nombre}}</button>
+        </div>
+      </div>
+      <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" id="listadosPV" #listadosPV type="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,listadosPV)">
           Listados
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-          <button class="dropdown-item" type="button" *ngFor="let opListados of listados" 
+          <button class="dropdown-item" type="button" *ngFor="let opListados of listados"
             routerLink="{{opListados.url}}">{{opListados.nombre}}</button>
         </div>
       </div>
       <button class="btn btn-primary " type="button" routerLink="/login" (click)="cerrarSesision()" id="cerrar" #cerrar
         aria-haspopup="true" aria-expanded="false" (keyup)="controlTeclas($event,cerrar)">
-        Cerrar Sesión<i class="fas fa-sign-out-alt"></i>
+        <i class="fas fa-sign-out-alt"></i>
       </button>
     </ul>
   </div>

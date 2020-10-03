@@ -35,37 +35,6 @@
     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
     crossorigin="anonymous"></script>
   <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
-  <script>
-    $(document).ready(function () {
-      $('[data-toggle="tooltip"]').tooltip();
-    }); 
-    var time = 6000000;
-    // se llamará a la función que confirmar Cierre después de 10 segundos
-    var temp = setTimeout(confirmarCierre, time);
- 
-    // hacemos que al pulsar en los botones de Alertify no se propaguen los eventos
-    $("body").on("click", ".ajs-button", function (e) {
-      e.stopPropagation();
-    });
-
-    
-    // cuando se detecte actividad en cualquier parte de la app
-    $(document).on('click keyup keypress keydown blur change', function (e) {
-      // borrar el temporizador de la funcion confirmarCierre
-      clearTimeout(temp);  
-      // y volver a iniciarlo con 10segs
-      temp = setTimeout(confirmarCierre, time);
-    //  console.log('actividad detectada');
-    });
-
-    function confirmarCierre() {
-      //le doy un tiempo a la funcion cerrar sesion para que el usuario tenga un tiempo para confirmar, sino lo hizo en el tiempo se cerrara la sesion automaticamente
-      //var cerrar = setTimeout(cerrarSesion,5000);//5 segs de prueba
-      localStorage.clear();
-      location.reload();
-    }
-  </script>
-
   <app-root></app-root>
 </body>
 

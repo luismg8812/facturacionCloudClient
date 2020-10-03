@@ -23,13 +23,15 @@ export class MenuComponent implements OnInit {
   readonly MENU_FUNCIONES: string = '3';
   readonly MENU_USUARIOS: string = '4';
   readonly MENU_LISTADOS: string = '5';
+  readonly MENU_CONTABILIDAD: string = '6';
   public nombreUsuario: string;
   public facturacion: Array<SubMenuModel>;
   public electronica: Array<SubMenuModel>;
   public funciones: Array<SubMenuModel>;
   public usuarios: Array<SubMenuModel>;
   public listados: Array<SubMenuModel>;
- 
+  public contabilidad: Array<SubMenuModel>;
+  
   constructor(public afauth: AngularFireAuth, private router: Router,private usuarioService:UsuarioService) { }
 
   ngOnInit() {
@@ -99,6 +101,7 @@ export class MenuComponent implements OnInit {
     let menuFuncionesId=this.MENU_FUNCIONES;
     let menuListadosId=this.MENU_LISTADOS;
     let menuElectronicaId=this.MENU_ELECTRONICA;
+    let menuContabilidadId=this.MENU_CONTABILIDAD;
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuFacturacionId).subscribe((res) => {
       this.facturacion=res;
     });
@@ -113,6 +116,9 @@ export class MenuComponent implements OnInit {
     });
     this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuElectronicaId).subscribe((res) => {
       this.electronica=res;
+    });
+    this.usuarioService.opcionUsuarioByUsuario(usuario_id,menuContabilidadId).subscribe((res) => {
+      this.contabilidad=res;
     });
   }
 

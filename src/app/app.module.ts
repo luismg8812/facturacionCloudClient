@@ -45,6 +45,7 @@ import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
 import { TutorialesComponent } from './tutoriales/tutoriales.component';
+import { CuentasContablesComponent } from './cuentas-contables/cuentas-contables.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -81,7 +82,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     RetirosCajaComponent,
     LiberarCuadreComponent,
     CarteraProveedoresComponent,
-    TutorialesComponent
+    TutorialesComponent,
+    CuentasContablesComponent
   ],
   imports: [
     BrowserModule,

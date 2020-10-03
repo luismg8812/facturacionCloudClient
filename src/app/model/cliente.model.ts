@@ -4,10 +4,12 @@ export class ClienteModel {
     public tipo_identificacion_id: number;
     public fact_tipo_empresa_id: number;
     public nombre: string;
+    public razon_social: string;
     public segundo_nombre: string;
     public apellidos: string;
     public segundo_apellido: string;
     public documento: string;
+    public digito_verificacion: string;
     public ciudad_id: string;
     public barrio: string;
     public direccion: string;
@@ -24,10 +26,12 @@ export class ClienteModel {
         this.tipo_identificacion_id = null;
         this.fact_tipo_empresa_id = null;
         this.nombre = "";
+        this.razon_social = "";
         this.segundo_nombre = "";
         this.apellidos = "";
         this.segundo_apellido = "";
         this.documento = "";
+        this.digito_verificacion="";
         this.barrio = "";
         this.direccion = "";
         this.celular = "";
