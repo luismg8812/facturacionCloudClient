@@ -34,6 +34,7 @@ import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 import { ProporcionModel } from '../model/proporcion.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
+import { ProductoPreciosModel } from '../model/productoPrecios.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -58,6 +59,7 @@ export class VentasDiaComponent implements OnInit {
   readonly CLIENTE_FACTURACION: string = '19';
   readonly TIPOS_PAGOS: string = '20';
   readonly MULTIPLE_RESOLUCION: string = '23';
+  readonly PRODUCTOS_PRECIOS: string = '25';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_REMISION: number = 9;
@@ -85,8 +87,11 @@ export class VentasDiaComponent implements OnInit {
     public empleadoService: EmpleadoService,
     public socketService: SocketService,
     public cierreService: CierreService,
-    public documentoService: DocumentoService, public calculosService: CalculosService, public documentoDetalleService: DocumentoDetalleService,
-    private router: Router, public empresaService: EmpresaService, public impresionService: ImpresionService) { }
+    public documentoService: DocumentoService, 
+    public calculosService: CalculosService, 
+    public documentoDetalleService: DocumentoDetalleService,
+    private router: Router, public empresaService: EmpresaService, 
+    public impresionService: ImpresionService) { }
 
   public document: DocumentoModel;
   public tiposDocumento: Array<TipoDocumentoModel>;
@@ -109,6 +114,7 @@ export class VentasDiaComponent implements OnInit {
   public claveBorradoActivo: boolean = false;
   public proporcionActivo: boolean = false;
   public impresionPantallaActivo: boolean = false;
+  public productoPreciosActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
   public multipleResolucionActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
@@ -144,6 +150,7 @@ export class VentasDiaComponent implements OnInit {
   public pesoGramera: number = 0.0;
   public parcialGramera: number = 0.0;
   public informeDiario: InformeDiarioModel;
+  public productoPreciosSelect:ProductoPreciosModel=new ProductoPreciosModel();
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -188,7 +195,7 @@ export class VentasDiaComponent implements OnInit {
   @ViewChild("imprimirBtn") imprimirBtn: ElementRef;
 
 
-  @ViewChild("divImprimirModal") divImprimirModal: ElementRef;
+  //@ViewChild("divImprimirModal") divImprimirModal: ElementRef;
   @ViewChild("divCantidad") divCantidad: ElementRef; // div de donde se busca  la cantidad
   @ViewChild("divCodigo") divCodigo: ElementRef; // div de donde se busca el codigo del producto
   @ViewChild("divArticulo") divArticulo: ElementRef; // div de donde se busca el articulo
@@ -580,6 +587,14 @@ export class VentasDiaComponent implements OnInit {
         this.cantidadPV.nativeElement.value = 1;
         this.cantidadPV.nativeElement.focus();
         this.cantidadPV.nativeElement.select();
+        this.productoService.getProductoPreciosById(this.productoIdSelect.producto_id).subscribe(res => {
+          if(res.length>0){
+            this.productoPreciosSelect=res[0];
+          }else{
+            this.productoPreciosSelect=new ProductoPreciosModel();
+          }
+          
+        });
       }
     }
   }
@@ -1255,8 +1270,8 @@ export class VentasDiaComponent implements OnInit {
 
   cancelarImpresion() {
     console.log("presiona cancelar impresion");
-    this.divImprimirModal.nativeElement.classList.remove("d-block");
-    this.divImprimirModal.nativeElement.classList.add("d-none");
+    //this.divImprimirModal.nativeElement.classList.remove("d-block");
+    //this.divImprimirModal.nativeElement.classList.add("d-none");
     this.scapeTecla(null);
   }
 
@@ -1469,6 +1484,8 @@ export class VentasDiaComponent implements OnInit {
         this.asignarDocumentoDetalle(cantidad, precio);
         this.siguientePV.nativeElement.focus();
         this.modificarFactura = false;
+      }else{
+        console.error("error actualizando documento detalle");
       }
     });
   }
@@ -1592,8 +1609,8 @@ export class VentasDiaComponent implements OnInit {
 
     this.estadoDivBotones("d-block");
     this.estadoDivProducto("d-none") // se muestra el div de producto
-    this.divImprimirModal.nativeElement.classList.remove("d-block");
-    this.divImprimirModal.nativeElement.classList.add("d-none");
+    //this.divImprimirModal.nativeElement.classList.remove("d-block");
+    //this.divImprimirModal.nativeElement.classList.add("d-none");
     this.siguientePV.nativeElement.focus();
     this.modificarFactura = false;
     this.claveBorrado = false;
@@ -2070,8 +2087,8 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
     $('#imprimirModal').modal('show');
-    this.divImprimirModal.nativeElement.classList.remove("d-none");
-    this.divImprimirModal.nativeElement.classList.add("d-block");
+   // this.divImprimirModal.nativeElement.classList.remove("d-none");
+   // this.divImprimirModal.nativeElement.classList.add("d-block");
     let contador = 0;
     if (this.descuentosActivo) {
       this.descuentoLavel.nativeElement.classList.remove("d-none");
@@ -2204,6 +2221,10 @@ export class VentasDiaComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.IMPRESION_PANTALLA) {
           console.log("impresion en pantalla activo ");
           this.impresionPantallaActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.PRODUCTOS_PRECIOS) {
+          console.log("multiples precios de droductos activo ");
+          this.productoPreciosActivo = true;
         }
       }
     });

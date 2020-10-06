@@ -133,7 +133,8 @@ export class MenuComponent implements OnInit {
   }
 
   public observador() {
-    var user = localStorage.getItem('userLogin');
+    var user = localStorage.getItem('empresa_id');
+    console.log(user);
     if (user) {
       // this.router.navigate(['/menu']);
     } else {

@@ -862,8 +862,8 @@ export class ImpresionService {
         let ini = 0;
         let fin = topeLinea;
         for (let e = 0; e <= numlineas; e++) {
-          let lineaParcial = i.descripcion.substring(ini, fin);
-          this.doc.text(lineaParcial, x + 10, y);
+          let lineaParcial:string = i.descripcion.substring(ini, fin);
+          this.doc.text(lineaParcial.toLowerCase(), x + 10, y);
           y = y + inicio;
           ini = ini + topeLinea;
           fin = fin + topeLinea;
@@ -873,6 +873,11 @@ export class ImpresionService {
             this.doc.addPage();
           }
         }
+      }
+      if (y >= 221) {
+        y = 2;
+        //console.log("posy: " + y);
+        this.doc.addPage();
       }
       this.doc.setFontSize(12);
       this.doc.text("-------------------------------------------------", x, y);
