@@ -3,6 +3,7 @@ import { ProductoService } from '../services/producto.service';
 import { ProductoModel } from '../model/producto.model';
 import { GrupoModel } from '../model/grupo.model';
 import { SubGrupoModel } from '../model/subGrupo.model';
+import { ProductoPreciosModel } from '../model/productoPrecios.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -24,6 +25,7 @@ export class InventarioFisicoComponent implements OnInit {
   public indexModificarSelect: number = 0;
   public productoEliminar: ProductoModel;
   public productoNew: ProductoModel = new ProductoModel();
+  public productoPrecioNew:ProductoPreciosModel=new ProductoPreciosModel();
   public grupoNew: GrupoModel = new GrupoModel();
   public subGrupoNew: SubGrupoModel = new SubGrupoModel();
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
@@ -399,6 +401,8 @@ export class InventarioFisicoComponent implements OnInit {
           await this.delay(100);
           this.posInicial();
         });
+        this.productoPrecioNew.producto_id=res.producto_id;
+        this.productoService.saveProductoPrecios(this.productoPrecioNew).subscribe();
       } else {
         alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
         return;

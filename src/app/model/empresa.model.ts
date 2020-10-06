@@ -5,6 +5,7 @@ export class EmpresaModel {
     public nombre:string;
     public represente:string;
     public nit:string;
+    public digito_verificacion:string;
     public regimen:string;
     public direccion:string;
     public barrio:string;

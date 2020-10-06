@@ -259,7 +259,8 @@ export class CalculosService {
 			return valido;
 		} else {
 			let can = cantidad == null ? 0.0 : cantidad;
-			if (ps.kg_promo > can) {
+			console.log(ps.kg_promo+":"+Number(can));
+			if (ps.kg_promo > Number(can)) {
 				valido = false;
 				return valido;
 			}
