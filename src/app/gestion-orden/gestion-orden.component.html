@@ -8,7 +8,7 @@
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link active" data-toggle="tab" href="#orden">Gestión Orden</a>
-    </li> 
+    </li>
     <li class="nav-item" *ngIf="facturaOrdenActivo">
       <a class="nav-link" data-toggle="tab" href="#factura">Gestión Factura</a>
     </li>
@@ -62,8 +62,9 @@
           <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1"
             class="form-control" id="clientePV" (change)="clienteSelectFun(clientePV)">
           <datalist id="browsers">
-            <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
-              Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
+            <option *ngFor="let cliente of clientes"
+              [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
+              Cod. interno: {{cliente.cliente_id}}
             </option>
           </datalist>
         </div>
@@ -158,13 +159,13 @@
         <tbody>
           <tr *ngFor="let ordenes of detallesList">
             <th scope="row">
-              <button type="button" (click)="editarItem(ordenes)" 
-                class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal">
+              <button type="button" (click)="editarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                data-target="#exampleModal">
                 Editar
               </button>
               <!-- Button trigger modal -->
-              <button type="button" (click)="eliminarItem(ordenes)" 
-                class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#eliminarModal">
+              <button type="button" (click)="eliminarItem(ordenes)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                data-target="#eliminarModal">
                 Eliminar
               </button>
             </th>
@@ -284,22 +285,18 @@
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Inicial
-                  <input class="form-control" type="date" value="2020-01-01" id="fechaIni" #fechaIni>
+                  <input class="form-control" type="date"  id="fechaIni" #fechaIni>
                 </div>
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Final
-                  <input class="form-control" type="date" value="2020-12-31" id="fechaFin" #fechaFin>
+                  <input class="form-control" type="date" id="fechaFin" #fechaFin>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2">
-                  <input list="browsers2" name="clienteBuscarPV" #clienteBuscarPV placeholder="Cliente"
+                  <input list="browsers" name="clienteBuscarPV" #clienteBuscarPV placeholder="Cliente"
                     class="form-control" id="clienteBuscarPV">
-                  <datalist id="browsers2">
-                    <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
-                      Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
-                    </option>
-                  </datalist>
+                 
                 </div>
                 <div class="form-group col-md-6 col-sm-2">
                   <input class="form-control" id="placaBuscar" placeholder="Placa" name="placaBuscar" #placaBuscar
@@ -332,9 +329,9 @@
                         <i class="far fa-edit"></i>
                       </button>
                       <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Duplicar orden"
-                      (click)="duplicarOrden(ordenes)">
-                      <i class="far fa-copy"></i>
-                    </button>
+                        (click)="duplicarOrden(ordenes)">
+                        <i class="far fa-copy"></i>
+                      </button>
                     </th>
                     <td>{{ordenes.documento_id}}</td>
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
@@ -382,14 +379,15 @@
               </button>
             </div>
             <div class="modal-body">
-            
+
               <div class="form-row">
                 <div class="form-group col-md-12 col-sm-12">
                   Digite el número de impresora:
                 </div>
                 <div class="form-group col-md-12 col-sm-12">
                   <select class="form-control" #impresoraOrden id="impresoraOrden">
-                    <option *ngFor="let imp of impresoraEmpresa" value="{{imp.numero_impresora}}">{{imp.nombre_impresora}}</option>
+                    <option *ngFor="let imp of impresoraEmpresa" value="{{imp.numero_impresora}}">
+                      {{imp.nombre_impresora}}</option>
                   </select>
                 </div>
               </div>
@@ -477,13 +475,13 @@
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
                   * Tipo Empresa
-                  <select id="tipoEmpresa" name="tipoEmpresa" #tipoEmpresa
-                      [(ngModel)]="clienteNew.fact_tipo_empresa_id" class="form-control">
-                      <option *ngFor="let pago of tipoEmpresaList" [value]="pago.fact_tipo_empresa_id">
-                          {{pago.nombre}}
-                      </option> 
+                  <select id="tipoEmpresa" name="tipoEmpresa" #tipoEmpresa [(ngModel)]="clienteNew.fact_tipo_empresa_id"
+                    class="form-control">
+                    <option *ngFor="let pago of tipoEmpresaList" [value]="pago.fact_tipo_empresa_id">
+                      {{pago.nombre}}
+                    </option>
                   </select>
-              </div>
+                </div>
               </div>
             </div>
 
@@ -602,10 +600,10 @@
                 <th scope="col">Orden</th>
                 <th scope="col">Cantidad</th>
                 <th scope="col">Unitario</th>
-                <th scope="col"> % Impuesto  <select class="form-control" value="0"
-                     (change)="calcularIvaAll(impuestoAll) " #impuestoAll>
+                <th scope="col"> % Impuesto <select class="form-control" value="0"
+                    (change)="calcularIvaAll(impuestoAll) " #impuestoAll>
                     <option>0</option>
-                    <option>0.4</option> 
+                    <option>0.4</option>
                     <option>4</option>
                     <option>5</option>
                     <option>8</option>
@@ -759,7 +757,7 @@
               </button>
             </div>
             <div class="modal-body">
-           
+
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-6">
                   Tipo de pago:
@@ -789,7 +787,8 @@
                 </div>
                 <div class="form-group col-md-12 col-sm-12">
                   <select class="form-control" #impresora id="impresora">
-                    <option *ngFor="let imp of impresoraEmpresa" value="{{imp.numero_impresora}}">{{imp.nombre_impresora}}</option>
+                    <option *ngFor="let imp of impresoraEmpresa" value="{{imp.numero_impresora}}">
+                      {{imp.nombre_impresora}}</option>
                   </select>
                 </div>
               </div>
@@ -866,14 +865,15 @@
                         (click)="cargarFactura(ordenes)" title="Ver">
                         <i class="fas fa-search"></i>
                       </button>
-                      <button type="button" class="btn btn-secondary btn-sm"  data-toggle="modal"
+                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
                         (click)="imprimirCopia(ordenes)" title="Imprimir Copia">
                         <i class="fas fa-print"></i>
                       </button>
-                      <button type="button" class="btn btn-secondary btn-sm"  data-toggle="modal" data-target="#notaModal"
-                      (click)="detalleDocumento(ordenes)"  title="Crear nota crédito/débito" [disabled]="ordenes.impreso!=1">
-                      <i class="far fa-trash-alt"></i>
-                    </button>
+                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
+                        data-target="#notaModal" (click)="detalleDocumento(ordenes)" title="Crear nota crédito/débito"
+                        [disabled]="ordenes.impreso!=1">
+                        <i class="far fa-trash-alt"></i>
+                      </button>
                     </th>
                     <td>{{ordenes.documento_id}}</td>
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
@@ -888,111 +888,112 @@
       </div>
 
 
-       <!-- Modal nota credito -->
-  <div class="modal fade" id="notaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Crear Nota Crédito/Débito</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="form-group col-md-8 col-sm-1">
-            <b>Factura relacionada: </b>
-          </div>
-          <div class="form-group col-md-4 col-sm-1">
-            {{documentoSelect.consecutivo_dian}}
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-8 col-sm-1">
-            <b># Interno Factura relacionada: </b>
-          </div>
-          <div class="form-group col-md-4 col-sm-1">
-            {{documentoSelect.documento_id}}
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-8 col-sm-1">
-            <b>Total Nota: </b>
-          </div>
-          <div class="form-group col-md-4 col-sm-1">
-            {{formatearNumber(documentoSelect.total)}}
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12 col-sm-1">
-            Descripción corrección: 
-          </div>
-          <div class="form-group col-md-12 col-sm-1">
-            <textarea class="form-control " id="observacion" #observacion
-              placeholder="Descripción corrección"></textarea>
-          </div>
-        </div>
-        <div class="form-row">
-         
-          <div class="form-group col-sm-8" >
-            Articulo
-            <input list="articulos" name="articuloBuscar" #articuloBuscar placeholder="Articulo" class="form-control"
-              id="articuloBuscar" (change)="articuloSelect(articuloBuscar) ">
-          </div>
-          <div class="form-group col-md-3 col-sm-1">
-            Cantidad
-            <input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control">
-          </div>
-          <div class="form-group col-md-1 col-sm-1">
-            <button type="button" class="btn btn-primary mt-4" title="Adjuntar producto"
-            (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6 col-sm-1">
-          
-            <button type="button" class="btn btn-primary mr-1" (click)="confirmarNota(observacion)">Confirmar</button>
-            <button type="button" class="btn btn-secondary" (click)="cerrarNota()">Salir</button>
-          </div>
-        </div>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Opciones</th>
-              <th scope="col">Producto</th>
-              <th scope="col">Cantidad</th>
-              <th scope="col">Valor Uni.</th>
-              <th scope="col">Valor Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of itemsFactura2">
-              <th scope="row">
-                <button type="button" id="d_{{item.documento_detalle_id}}" #borraR class="btn btn-secondary btn-sm" title="Eliminar Producto" 
-                  (click)="borrarItem(borraR)">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </th>
-              <td>{{item.descripcion}}</td>
-              <td><input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control"
-                  id="c_{{item.documento_detalle_id}}" (blur)="cambioCantidad(cantidadNota)"
-                  value="{{item.cantidad}}">
-              </td>
-              <td>
-                <input name="unitarioNota" #unitarioNota placeholder="Unitario" class="form-control"
-                  id="u_{{item.documento_detalle_id}}" (blur)="cambioUnitario(unitarioNota)"
-                  value="{{item.unitario}}">
-              </td>
-              <td>{{formatearNumber(item.parcial)}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Modal nota credito -->
+      <div class="modal fade" id="notaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Crear Nota Crédito/Débito</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group col-md-8 col-sm-1">
+                  <b>Factura relacionada: </b>
+                </div>
+                <div class="form-group col-md-4 col-sm-1">
+                  {{documentoSelect.consecutivo_dian}}
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-8 col-sm-1">
+                  <b># Interno Factura relacionada: </b>
+                </div>
+                <div class="form-group col-md-4 col-sm-1">
+                  {{documentoSelect.documento_id}}
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-8 col-sm-1">
+                  <b>Total Nota: </b>
+                </div>
+                <div class="form-group col-md-4 col-sm-1">
+                  {{formatearNumber(documentoSelect.total)}}
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-12 col-sm-1">
+                  Descripción corrección:
+                </div>
+                <div class="form-group col-md-12 col-sm-1">
+                  <textarea class="form-control " id="observacion" #observacion
+                    placeholder="Descripción corrección"></textarea>
+                </div>
+              </div>
+              <div class="form-row">
 
-    </div>
-  </div>
-</div>
+                <div class="form-group col-sm-8">
+                  Articulo
+                  <input list="articulos" name="articuloBuscar" #articuloBuscar placeholder="Articulo"
+                    class="form-control" id="articuloBuscar" (change)="articuloSelect(articuloBuscar) ">
+                </div>
+                <div class="form-group col-md-3 col-sm-1">
+                  Cantidad
+                  <input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control">
+                </div>
+                <div class="form-group col-md-1 col-sm-1">
+                  <button type="button" class="btn btn-primary mt-4" title="Adjuntar producto"
+                    (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-1">
+
+                  <button type="button" class="btn btn-primary mr-1"
+                    (click)="confirmarNota(observacion)">Confirmar</button>
+                  <button type="button" class="btn btn-secondary" (click)="cerrarNota()">Salir</button>
+                </div>
+              </div>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Opciones</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Valor Uni.</th>
+                    <th scope="col">Valor Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of itemsFactura2">
+                    <th scope="row">
+                      <button type="button" id="d_{{item.documento_detalle_id}}" #borraR
+                        class="btn btn-secondary btn-sm" title="Eliminar Producto" (click)="borrarItem(borraR)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </th>
+                    <td>{{item.descripcion}}</td>
+                    <td><input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control"
+                        id="c_{{item.documento_detalle_id}}" (blur)="cambioCantidad(cantidadNota)"
+                        value="{{item.cantidad}}">
+                    </td>
+                    <td>
+                      <input name="unitarioNota" #unitarioNota placeholder="Unitario" class="form-control"
+                        id="u_{{item.documento_detalle_id}}" (blur)="cambioUnitario(unitarioNota)"
+                        value="{{item.unitario}}">
+                    </td>
+                    <td>{{formatearNumber(item.parcial)}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>

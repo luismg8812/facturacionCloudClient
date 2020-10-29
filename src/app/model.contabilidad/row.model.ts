@@ -1,14 +1,14 @@
 import { GrupoModel } from './grupo.model';
 
-export class ClaseModel {
+export class RowModel {
     codigo: string;
     nombre: string;
-    clase_id:number;
-    empresa_id:number;
+    tipo:string;
+    id:number;
     contructor() {
         this.codigo = "";
         this.nombre="";
-        this.clase_id=null;
-        this.empresa_id=null;
+        this.tipo="";
+        this.id=null;
     }
 }
