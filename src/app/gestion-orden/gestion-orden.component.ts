@@ -113,6 +113,8 @@ export class GestionOrdenComponent implements OnInit {
   public resolucionAll: Array<ResolucionEmpresaModel>;
   public tituloFactura: string = "";
   public informeDiario: InformeDiarioModel;
+  public fechaI:string ="";
+  public fechaF:string ="";
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
 
@@ -170,6 +172,19 @@ export class GestionOrdenComponent implements OnInit {
     this.getTipoIdentificacion();
     this.getTipoEmpresa();
     this.factura = new FacturaModel();
+    this.fechasBusqueda();
+  }
+
+  fechasBusqueda(){
+    let date: Date = new Date();
+    let mes:string=""+ (date.getMonth()+1);
+    if(mes.length==1){
+      mes='0'+mes;
+    }
+    let ano = date.getFullYear();
+    this.fechaI=ano+"-"+mes+"-"+'01';
+    this.fechaF=ano+"-"+mes+"-"+'30';
+    console.log(this.fechaI);
   }
 
   getProductosByEmpresa(empresaId: number) {
@@ -1255,11 +1270,12 @@ export class GestionOrdenComponent implements OnInit {
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;
     let ini: string = fechaInicial.value;
     let fin: string = fechaFinal.value;
+    console.log(fechaInicial.value);
     if (ini != '' && fin != '') {
       
       ini = this.calculosService.fechaIniBusqueda(fechaInicial.value);
       fin = this.calculosService.fechaFinBusqueda(fechaFinal.value);
-      console.log(ini);
+     
     } else {
       let date: Date = new Date();
       date.setDate(1);
