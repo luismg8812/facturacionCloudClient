@@ -313,7 +313,7 @@
     </div>
   </div>
 
-  -crear sub Modal -->
+  Espere un momento por favor
   <div class="modal fade" id="crearSubGrupoNewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
@@ -327,8 +327,8 @@
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group col-md-7 col-sm-12 ">
-              <input class="form-control" id="nombreSubGrupo" placeholder="* Nombres Grupo" name="nombreSubGrupo" #nombreSubGrupo
-                required [(ngModel)]="subGrupoNew.nombre">
+              <input class="form-control" id="nombreSubGrupo" placeholder="* Nombres Grupo" name="nombreSubGrupo"
+                #nombreSubGrupo required [(ngModel)]="subGrupoNew.nombre">
             </div>
           </div>
         </div>
@@ -479,20 +479,91 @@
                 [(ngModel)]="productoNew.granel">
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" (click)="CrearProducto()">Crear</button>
+          <div class="form-row">
+            <div class="form-group col-md-12 ">
+              <p>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+                  aria-expanded="false" aria-controls="collapseExample">
+                  Precios por productos
+                </button>
+              </p>
+              <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                  <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 2
+                      <input class="form-control" id="precio_2" name="precio_2" #precio_2 required
+                        [(ngModel)]="productoPrecioNew.precio_2">
+                    </div>
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 3
+                      <input class="form-control" id="precio_3" name="precio_3" #precio_3 required
+                        [(ngModel)]="productoPrecioNew.precio_3">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 4
+                      <input class="form-control" id="precio_2" name="precio_2" #precio_2 required
+                        [(ngModel)]="productoPrecioNew.precio_4">
+                    </div>
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 5
+                      <input class="form-control" id="precio_5" name="precio_5" #precio_5 required
+                        [(ngModel)]="productoPrecioNew.precio_5">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 6
+                      <input class="form-control" id="precio_6" name="precio_6" #precio_6 required
+                        [(ngModel)]="productoPrecioNew.precio_6">
+                    </div>
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 7
+                      <input class="form-control" id="precio_7" name="precio_7" #precio_7 required
+                        [(ngModel)]="productoPrecioNew.precio_7">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 8
+                      <input class="form-control" id="precio_8" name="precio_8" #precio_8 required
+                        [(ngModel)]="productoPrecioNew.precio_8">
+                    </div>
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 9
+                      <input class="form-control" id="precio_9" name="precio_9" #precio_9 required
+                        [(ngModel)]="productoPrecioNew.precio_9">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-6">
+                      Precio 10
+                      <input class="form-control" id="precio_10" name="precio_10" #precio_10 required
+                        [(ngModel)]="productoPrecioNew.precio_10">
+                    </div>
+                    <div class="form-group col-md-6 col-sm-6">
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="CrearProducto()">Crear</button>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="col col-ms-1">
+      <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+      </a>
+    </div>
+
+
   </div>
-
-  <div class="col col-ms-1">
-    <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
-
-    </a>
-  </div>
-
-
-</div>

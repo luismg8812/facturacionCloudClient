@@ -5,6 +5,7 @@ import { ProveedorModel } from '../model/proveedor.model';
 import { ProveedorService } from '../services/proveedor.service';
 import { GrupoModel } from '../model/grupo.model';
 import { SubGrupoModel } from '../model/subGrupo.model';
+import { ProductoPreciosModel } from '../model/productoPrecios.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -15,6 +16,7 @@ declare var $: any;
 })
 export class EditarProductoComponent implements OnInit {
   public productoNew: ProductoModel = new ProductoModel();
+  public productoPrecioNew:ProductoPreciosModel=new ProductoPreciosModel();
   public productosAll: Array<ProductoModel>;
   public empresaId: number;
   public proveedores: Array<ProveedorModel>;
@@ -59,6 +61,7 @@ export class EditarProductoComponent implements OnInit {
        this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(async res => {
          this.productosAll = res;
        });
+       this.productoService.updateProductoPrecios(this.productoPrecioNew).subscribe();
      } else {
        alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
        return;
@@ -99,6 +102,14 @@ export class EditarProductoComponent implements OnInit {
     console.log("articulo select:" + element.value);
     let productoNombre: string = element.value;
     this.productoNew = this.productosAll.find(product => product.nombre === productoNombre);
+    this.productoService.getProductoPreciosById(this.productoNew.producto_id).subscribe(res => {
+      if(res.length>0){
+        this.productoPrecioNew=res[0];
+      }else{
+        this.productoPrecioNew=new ProductoPreciosModel();
+      }
+      
+    });
     console.log(this.productoNew);
   }
 

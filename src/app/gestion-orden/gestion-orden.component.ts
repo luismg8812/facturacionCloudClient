@@ -122,6 +122,7 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
   @ViewChild("observacion") observacion: ElementRef;
   @ViewChild("item") item: ElementRef;
+  @ViewChild("articuloC") articuloC: ElementRef;
   @ViewChild("modelo") modelo: ElementRef;
   @ViewChild("marca") marca: ElementRef;
   @ViewChild("linea") linea: ElementRef;
@@ -418,7 +419,7 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
-    let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
+    let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
     if (cliente == undefined) {
       this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
@@ -473,6 +474,11 @@ export class GestionOrdenComponent implements OnInit {
     if (this.clienteNew.tipo_identificacion_id == null) {
       mensageError += "tipo documento\n";
       valido = false;
+    }
+    let cliente = this.clientes.find(cliente => (cliente.documento) == this.clienteNew.documento);
+    if (cliente != undefined) {
+      alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + " " + cliente.apellidos + "\n" + "NIT: " + cliente.documento);
+      return;
     }
     if (valido == false) {
       alert(mensageError);
@@ -669,6 +675,10 @@ export class GestionOrdenComponent implements OnInit {
     let productoNombre: string = element.value;
     this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
     console.log(this.productoIdSelect);
+    this.cantidad.nativeElement.value=  1;
+    this.cantidad.nativeElement.select();
+    this.pCompra.nativeElement.value=   this.productoIdSelect.costo;
+    this.pVenta.nativeElement.value= this.productoIdSelect.costo_publico;
   }
 
   agregardetalle() {
@@ -765,6 +775,9 @@ export class GestionOrdenComponent implements OnInit {
     this.articuloPV = "";
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
+    }else{
+      this.articuloC.nativeElement.value = "";
+      
     }
     this.articuloPV = "";
     this.cantidad.nativeElement.value = "";
@@ -871,7 +884,7 @@ export class GestionOrdenComponent implements OnInit {
       this.documentoFactura.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
     }
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
-    this.documentoFactura.impreso = 1;
+    
     let impresora = this.impresora.nativeElement.value;
     if (impresora == "") {
       impresora = 1;
@@ -1020,7 +1033,7 @@ export class GestionOrdenComponent implements OnInit {
           this.tituloFactura = "FACTURA DE VENTA.";
           break;
         case 4:
-
+          this.documentoFactura.impreso = 0;
           this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
           // consecutivo dian
           console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
@@ -1051,7 +1064,7 @@ export class GestionOrdenComponent implements OnInit {
 
           });
           break;
-        case 4:
+        case 12:
 
           this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
           // consecutivo dian
@@ -1073,7 +1086,7 @@ export class GestionOrdenComponent implements OnInit {
           con = Number(resolucion.consecutivo) + 1;
           // dentro de try se valida si faltan 500 facturas para
           // llegar hasta el tope
-
+          this.documentoFactura.impreso = 1;
           let topeConsecutivo = resolucion.autorizacion_hasta;
           let consegutivo = con;
           if (consegutivo + 200 > topeConsecutivo) {
@@ -1240,11 +1253,25 @@ export class GestionOrdenComponent implements OnInit {
   buscarOrdenes(placa, clien, fechaInicial, fechaFinal) {
     let idCliente = "";
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;
+    let ini: string = fechaInicial.value;
+    let fin: string = fechaFinal.value;
+    if (ini != '' && fin != '') {
+      
+      ini = this.calculosService.fechaIniBusqueda(fechaInicial.value);
+      fin = this.calculosService.fechaFinBusqueda(fechaFinal.value);
+      console.log(ini);
+    } else {
+      let date: Date = new Date();
+      date.setDate(1);
+      ini = date.toLocaleString();
+      date.setDate(30);
+      fin = date.toLocaleString();
+    }
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, ini, fin, tipoDocumentoId).subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -1300,6 +1327,8 @@ export class GestionOrdenComponent implements OnInit {
 
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
+    }else{
+      this.articuloC.nativeElement.value = "";
     }
     this.indexSelect = 0;
     this.valorTotal = 0;
@@ -1476,7 +1505,7 @@ export class GestionOrdenComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre;
+      return cliente.nombre + " " + cliente.apellidos ;
     }
   }
 
@@ -1629,7 +1658,7 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       let nombre = "";
       if (cliente != undefined) {
-        nombre = cliente.nombre;
+        nombre = cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento;
       }
       let empleado = this.empleados.find(empleado => empleado.empleado_id == this.documento.empleado_id);
       let nombreEmpleado = "";

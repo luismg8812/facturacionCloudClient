@@ -23,9 +23,9 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-12 col-sm-2"  *ngIf="saldoClienteActivo">
+                <div class="form-group col-md-12 col-sm-2" *ngIf="saldoClienteActivo">
                     <h5 style="color:red;text-align: right; ">
-                        SALDO: 
+                        SALDO:
                         {{formatearNumber(saldoCliente)
                             }}
                     </h5>
@@ -178,138 +178,144 @@
             <button type="button" class="btn btn-primary btn-sm" id="finPV" #finPV (keyup)="controlTeclas($event,finPV)"
                 routerLink="/menu" (keyup.enter)="enterTecla(finPV)">Fin</button>
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-8 col-sm-2">
-                <input name="CodigoBarrasPV" #CodigoBarrasPV placeholder="Cod. Barras" class="form-control"
-                    id="CodigoBarrasPV" (keydown.enter)="enterTecla(CodigoBarrasPV)" (blur)="ocultarCodigoBarras()"
-                    (keydown.esc)="scapeTecla(clientePV)">
-            </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 col-sm-2">
+            <input name="CodigoBarrasPV" #CodigoBarrasPV placeholder="Cod. Barras" class="form-control"
+                id="CodigoBarrasPV" (keydown.enter)="enterTecla(CodigoBarrasPV)" (blur)="ocultarCodigoBarras()"
+                (keydown.esc)="scapeTecla(clientePV)">
         </div>
-        <div class="form-row">
-            <div class="form-group col-sm-2 d-none" id="divCodigo" #divCodigo>
-                <input name="codigoPV" #codigoPV placeholder="Código Prod." class="form-control" id="codigoPV"
-                    (keydown.enter)="enterTecla(codigoPV)" (keydown.esc)="scapeTecla(clientePV)">
-            </div>
-            <div class="form-group col-sm-4 d-none" id="divArticulo" #divArticulo>
-                <input list="articulos" name="articuloPV" #articuloPV placeholder="Articulo" class="form-control"
-                    id="articuloPV" (keydown.enter)="enterTecla(articuloPV)" (change)="articuloSelect(articuloPV)"
-                    (keydown.esc)="scapeTecla(clientePV)">
-                <datalist id="articulos">
-                    <option *ngFor="let producto of productosAll" [value]="producto.nombre">
-                        Venta: {{producto.costo_publico}} Cantidad:{{producto.cantidad}}
-                        id:{{producto.producto_id}}
-                    </option>
-                </datalist>
-            </div>
-            <div class="form-group col-sm-2 d-none" id="divCantidad" #divCantidad>
-                <input name="cantidadPV" #cantidadPV placeholder="Cantidad" class="form-control" id="cantidadPV"
-                    (keydown.enter)="enterTecla(cantidadPV)" (keydown.esc)="scapeTecla(cantidadPV)">
-                <input name="precioPV" #precioPV placeholder="$ Precio" class="form-control d-none" id="precioPV"
-                    (keydown.enter)="enterTecla(precioPV)" (keydown.esc)="scapeTecla(precioPV)"
-                    (blur)="ocultarPrecio()">
-
-            </div>
-            <div class="form-group col-sm-2 d-none" id="divUnitario" #divUnitario>
-                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="$ Unitario" id="unitarioPV"
-                    name="unitarioPV" #unitarioPV [disabled]="!cambioPrecioActivo"
-                    (keydown.enter)="enterTecla(unitarioPV)" (keydown.esc)="scapeTecla(unitarioPV)">
-            </div>
-            <div class="form-group col-sm-2 d-none" id="divParcial" #divParcial>
-                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Parcial">
-            </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-sm-2 d-none" id="divCodigo" #divCodigo>
+            <input name="codigoPV" #codigoPV placeholder="Código Prod." class="form-control" id="codigoPV"
+                (keydown.enter)="enterTecla(codigoPV)" (keydown.esc)="scapeTecla(clientePV)">
         </div>
-        <div class="form-row">
-            <div class="form-group col-sm-6 col-md-12 d-none" id="divImprimirModal" #divImprimirModal>
-
-            </div>
+        <div class="form-group col-sm-4 d-none" id="divArticulo" #divArticulo>
+            <input list="articulos" name="articuloPV" #articuloPV placeholder="Articulo" class="form-control"
+                id="articuloPV" (keydown.enter)="enterTecla(articuloPV)" (change)="articuloSelect(articuloPV)"
+                (keydown.esc)="scapeTecla(clientePV)">
+            <datalist id="articulos">
+                <option *ngFor="let producto of productosAll" [value]="producto.nombre">
+                    Venta: {{producto.costo_publico}} Cantidad:{{producto.cantidad}}
+                    id:{{producto.producto_id}}
+                </option>
+            </datalist>
         </div>
-        <div class="form-row col-md-12 ">
-            <div class="form-group col-md-9 col-sm-6 border border-primary ">
-                <table class="table table-hover letra_tabla">
-                    <thead>
-                        <tr>
-                            <th scope="col col-md-2 col-sm-1">op</th>
-                            <th scope="col col-md-2 col-sm-1">Cod</th>
-                            <th scope="col col-md-4 col-sm-4">Artículo</th>
-                            <th scope="col col-md-2 col-sm-2">Cantidad</th>
-                            <th scope="col col-md-2 col-sm-2">Unitario</th>
-                            <th scope="col col-md-2 col-sm-2">Parcial</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let producto of productos">
-                            <td>
-                                <button type="button" class="btn btn-secondary" #borrar
-                                    id="b_{{producto.documento_detalle_id}}" (keydown.esc)="enterTecla(borrar)"
-                                    (keyup)="controlTeclas($event,borrar)"
-                                    (click)="borrarLista(producto,borrar)">Borrar</button>
-                            </td>
-                            <td>{{producto.producto_id}}</td>
-                            <td>{{producto.descripcion}}</td>
-                            <td>
-                                <input class="form-control " #canti id="c_{{producto.documento_detalle_id}}"
-                                    value="{{producto.cantidad}}" (keydown.enter)="cambioPrecioLista(producto,canti)"
-                                    (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,canti)">
-                            </td>
-                            <td>
-                                <input class="form-control " #box id="p_{{producto.documento_detalle_id}}"
-                                    value="{{formatearNumber(producto.unitario)}}" [disabled]="!cambioPrecioActivo"
-                                    (keydown.enter)="cambioPrecioLista(producto,box)" (keydown.esc)="scapeTecla(this)"
-                                    (keyup)="controlTeclas($event,box)">
+        <div class="form-group col-sm-2 d-none" id="divCantidad" #divCantidad>
+            <input name="cantidadPV" #cantidadPV placeholder="Cantidad" class="form-control" id="cantidadPV"
+                (keydown.enter)="enterTecla(cantidadPV)" (keydown.esc)="scapeTecla(cantidadPV)">
+            <input name="precioPV" #precioPV placeholder="$ Precio" class="form-control d-none" id="precioPV"
+                (keydown.enter)="enterTecla(precioPV)" (keydown.esc)="scapeTecla(precioPV)" (blur)="ocultarPrecio()">
 
-                            </td>
-                            <td>{{formatearNumber(producto.parcial)}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+        </div>
+        <div class="form-group col-sm-2 d-none" id="divUnitario" #divUnitario>
+            <input type="text" class="form-control mb-2 mr-sm-2" placeholder="$ Unitario" id="unitarioPV"
+                name="unitarioPV" #unitarioPV [disabled]="!cambioPrecioActivo" (keydown.enter)="enterTecla(unitarioPV)"
+                (keydown.esc)="scapeTecla(unitarioPV)">
+        </div>
+        <div class="form-group col-sm-2 d-none" id="divParcial" #divParcial>
+            <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Parcial">
+        </div>
+    </div>
+    <div class="form-row" *ngIf="productoPreciosActivo">
+        <div class=" col-sm-1 col-md-1 "  >Precio 2: {{formatearNumber(productoPreciosSelect.precio_2)}}</div>
+        <div class="col-sm-1 col-md-1 "  >Precio 3: {{formatearNumber(productoPreciosSelect.precio_3)}}</div>
+        <div class="col-sm-1 col-md-1 "  >Precio 4: {{formatearNumber(productoPreciosSelect.precio_4)}}</div>
+        <div class="col-sm-1 col-md-1 "  >Precio 5: {{formatearNumber(productoPreciosSelect.precio_5)}}</div>
+        <div class="col-sm-1 col-md-1 "  >Precio 6: {{formatearNumber(productoPreciosSelect.precio_6)}}</div>
+        <div class="col-sm-1 col-md-1 "  >Precio 7: {{formatearNumber(productoPreciosSelect.precio_7)}}</div>
+        <div class="col-sm-1 col-md-1 "  >Precio 8: {{formatearNumber(productoPreciosSelect.precio_8)}}</div>
+        <div class="col-sm-1 col-md-1 "  >Precio 9: {{formatearNumber(productoPreciosSelect.precio_9)}}</div>
+        <div class="col-sm-1 col-md-2 "  >Precio 10: {{formatearNumber(productoPreciosSelect.precio_10)}}</div>
+    </div>
+    <div class="form-row col-md-12 ">
+        <div class="form-group col-md-9 col-sm-6 border border-primary ">
+            <table class="table table-hover letra_tabla">
+                <thead>
+                    <tr>
+                        <th scope="col col-md-2 col-sm-1">op</th>
+                        <th scope="col col-md-2 col-sm-1">Cod</th>
+                        <th scope="col col-md-4 col-sm-4">Artículo</th>
+                        <th scope="col col-md-2 col-sm-2">Cantidad</th>
+                        <th scope="col col-md-2 col-sm-2">Unitario</th>
+                        <th scope="col col-md-2 col-sm-2">Parcial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let producto of productos">
+                        <td>
+                            <button type="button" class="btn btn-secondary" #borrar
+                                id="b_{{producto.documento_detalle_id}}" (keydown.esc)="enterTecla(borrar)"
+                                (keyup)="controlTeclas($event,borrar)"
+                                (click)="borrarLista(producto,borrar)">Borrar</button>
+                        </td>
+                        <td>{{producto.producto_id}}</td>
+                        <td>{{producto.descripcion}}</td>
+                        <td>
+                            <input class="form-control " #canti id="c_{{producto.documento_detalle_id}}"
+                                value="{{producto.cantidad}}" (keydown.enter)="cambioPrecioLista(producto,canti)"
+                                (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,canti)">
+                        </td>
+                        <td>
+                            <input class="form-control " #box id="p_{{producto.documento_detalle_id}}"
+                                value="{{formatearNumber(producto.unitario)}}" [disabled]="!cambioPrecioActivo"
+                                (keydown.enter)="cambioPrecioLista(producto,box)" (keydown.esc)="scapeTecla(this)"
+                                (keyup)="controlTeclas($event,box)">
+
+                        </td>
+                        <td>{{formatearNumber(producto.parcial)}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group col-md-3 col-sm-6 border border-primary ">
+            <div class="form-row ">
+                <div class="form-group col-md-4">
+                    Peso kg:
+                </div>
+                <div class="form-group col-md-8">
+                    <h3 style="text-align: right;"> {{formatearNumber(document.peso_total)}}</h3>
+                </div>
             </div>
-            <div class="form-group col-md-3 col-sm-6 border border-primary ">
-                <div class="form-row ">
-                    <div class="form-group col-md-4">
-                        Peso kg:
-                    </div>
-                    <div class="form-group col-md-8">
-                        <h3 style="text-align: right;"> {{formatearNumber(document.peso_total)}}</h3>
-                    </div>
+            <div class="form-row ">
+                <div class="form-group col-md-4">
+                    Vr Exento:
                 </div>
-                <div class="form-row ">
-                    <div class="form-group col-md-4">
-                        Vr Exento:
-                    </div>
-                    <div class="form-group col-md-8">
-                        <h2 style="text-align: right;">{{formatearNumber(document.excento)}}</h2>
-                    </div>
+                <div class="form-group col-md-8">
+                    <h2 style="text-align: right;">{{formatearNumber(document.excento)}}</h2>
                 </div>
-                <div class="form-row ">
-                    <div class="form-group col-md-4">
-                        Vr Gravado:
-                    </div>
-                    <div class="form-group col-md-8">
-                        <h2 style="text-align: right; ">{{formatearNumber(document.gravado)}}</h2>
-                    </div>
+            </div>
+            <div class="form-row ">
+                <div class="form-group col-md-4">
+                    Vr Gravado:
                 </div>
-                <div class="form-row ">
-                    <div class="form-group col-md-4">
-                        Vr Iva:
-                    </div>
-                    <div class="form-group col-md-8">
-                        <h2 style="text-align: right; ">{{formatearNumber(document.iva)}}</h2>
-                    </div>
+                <div class="form-group col-md-8">
+                    <h2 style="text-align: right; ">{{formatearNumber(document.gravado)}}</h2>
                 </div>
-                <div class="form-row ">
-                    <div class="form-group col-md-4">
-                        Total:
-                    </div>
-                    <div class="form-group col-md-8">
-                        <h2 style="color:red;text-align: right; ">
-                            {{formatearNumber(document.total)
+            </div>
+            <div class="form-row ">
+                <div class="form-group col-md-4">
+                    Vr Iva:
+                </div>
+                <div class="form-group col-md-8">
+                    <h2 style="text-align: right; ">{{formatearNumber(document.iva)}}</h2>
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="form-group col-md-4">
+                    Total:
+                </div>
+                <div class="form-group col-md-8">
+                    <h2 style="color:red;text-align: right; ">
+                        {{formatearNumber(document.total)
                                 }}
-                        </h2>
-                    </div>
+                    </h2>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- imprimir Modal -->
     <div class="modal fade" id="imprimirModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -328,7 +334,7 @@
                             <h6>Total a pagar: {{formatearNumber(document.total)}}</h6>
                         </div>
                     </div>
-                    <div class="form-row "> 
+                    <div class="form-row ">
                         <div class="col col-ms-12 ">
                             <h6 #descuentoLavel name="descuentoLavel" id="descuentoLavel" class="d-none">Descuento:
                             </h6>
@@ -388,9 +394,9 @@
                         <input name="resolucionPV" #resolucionPV placeholder="Resolución" class="form-control d-none"
                             id="resolucionPV" (keydown.enter)="enterTecla(resolucionPV)"
                             (keydown.esc)="scapeTecla(resolucionPV)">
-                            <div  *ngFor="let res of resolucionAll">
-                                {{res.resolucion_empresa_id}}.{{res.nombre}} 
-                            </div>
+                        <div *ngFor="let res of resolucionAll">
+                            {{res.resolucion_empresa_id}}.{{res.nombre}}
+                        </div>
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-3">

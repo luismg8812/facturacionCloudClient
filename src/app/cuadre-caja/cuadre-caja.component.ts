@@ -56,7 +56,9 @@ export class CuadreCajaComponent implements OnInit {
   public activaciones: Array<ActivacionModel> = [];
 
   ngOnInit() {
+
     this.usuarioId = Number(localStorage.getItem("usuario_id"));
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.getImpresorasEmpresa(this.empresaId);
     this.getEmpleados(this.empresaId);
     this.getGrupos();
