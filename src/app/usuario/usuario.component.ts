@@ -8,6 +8,7 @@ import { ActivacionModel } from '../model/activacion';
 import { AngularFireAuth } from '@angular/fire/auth/auth';
 import { ParametrosModel } from '../model/parametros.model';
 import { ImpresionService } from '../services/impresion.service';
+import { CampoInventarioModel } from '../model/campoInventario.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -43,7 +44,9 @@ export class UsuarioComponent implements OnInit {
   public activacionSelect: Array<ActivacionModel>;
   public activacionUnSelect: Array<ActivacionModel>;
   public activacionAll: Array<ActivacionModel>;
-
+  public camposIntarioAll: Array<CampoInventarioModel>;
+  public camposInventarioSelect: Array<CampoInventarioModel>;
+  public camposInventarioUnSelect: Array<CampoInventarioModel>;
 
   public registros: any;
   public totalRegistros:number = 0;
@@ -56,6 +59,7 @@ export class UsuarioComponent implements OnInit {
     this.roles();
     this.submenus();
     this.activaciones();
+    this.campoInventarios();
   }
 
   crearUsuario() {
@@ -184,6 +188,12 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
+  campoInventarios() {
+    this.usuarioService.getCampoInventarioAll().subscribe(res => {
+      this.camposIntarioAll = res;
+    });
+  }
+
   aplicarActivacion(activacion: ActivacionModel) {
     for (var i = 0; i < this.activacionSelect.length; i++) {
       if (this.activacionSelect[i].activacion_id == activacion.activacion_id) {
@@ -202,6 +212,26 @@ export class UsuarioComponent implements OnInit {
       }
     }
     this.activacionSelect.push(activacion);
+  }
+
+  aplicarCampoInventario(campoInventario: CampoInventarioModel) {
+    for (var i = 0; i < this.camposInventarioSelect.length; i++) {
+      if (this.camposInventarioSelect[i].campo_inventario_id == campoInventario.campo_inventario_id) {
+        this.camposInventarioSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.camposInventarioUnSelect.push(campoInventario);
+  }
+
+  desaplicarCampoInventario(campoInventario: CampoInventarioModel) {
+    for (var i = 0; i < this.camposInventarioUnSelect.length; i++) {
+      if (this.camposInventarioUnSelect[i].campo_inventario_id == campoInventario.campo_inventario_id) {
+        this.camposInventarioUnSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.camposInventarioSelect.push(campoInventario);
   }
 
   nameRol(usuarioId: string) {
@@ -254,6 +284,7 @@ export class UsuarioComponent implements OnInit {
 
   opcionesPorUsuario(user: UsuarioModel) {
     this.activacionPorUsuario(user);
+    this.campoInventarioPorUsuario(user);
     this.opusuarioUnSelect = [];
     this.usuarioSelect = user;
     this.usuarioService.opcionUsuarioByUsuarioSinMenu(user.usuario_id.toString()).subscribe(res1 => {
@@ -278,6 +309,27 @@ export class UsuarioComponent implements OnInit {
 
 
 
+  }
+  campoInventarioPorUsuario(user: UsuarioModel) {  
+    this.camposInventarioUnSelect = [];
+    this.usuarioSelect = user;
+    this.usuarioService.getCamposInventarioByUsuario(user.usuario_id.toString()).subscribe(res1 => {
+      this.camposInventarioSelect = res1;
+      console.log(res1);
+      console.log(this.camposIntarioAll);
+      for (var e = 0; e < this.camposIntarioAll.length; e++) {
+        var esta = false;
+        for (var i = 0; i < res1.length; i++) {
+          if (this.camposIntarioAll[e].campo_inventario_id == res1[i].campo_inventario_id) {
+            esta = true;
+            break;
+          }
+        }
+        if (!esta) {
+          this.camposInventarioUnSelect.push(this.camposIntarioAll[e]);
+        }
+      }
+    });
   }
 
   activacionPorUsuario(user: UsuarioModel) {
@@ -308,18 +360,29 @@ export class UsuarioComponent implements OnInit {
   guardarRutas() {
     let idSubmenu: Array<string> = [];
     let idActivacion: Array<string> = [];
+    let idCamposInventario: Array<string> = [];
     for (var i = 0; i < this.submenuSelect.length; i++) {
       idSubmenu.push(this.submenuSelect[i].sub_menu_id.toString());
     }
     for (var i = 0; i < this.activacionSelect.length; i++) {
       idActivacion.push(this.activacionSelect[i].activacion_id);
     }
+    for (var i = 0; i < this.camposInventarioSelect.length; i++) {
+      idCamposInventario.push(this.camposInventarioSelect[i].campo_inventario_id.toString());
+    }
     this.usuarioService.guardarActivaciones(this.usuarioSelect, idActivacion).subscribe(res => {
-
       if (res.code == 200) {
         console.log("Activaciones guardadas");
       } else {
         alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
+        return;
+      }
+    });
+    this.usuarioService.guardarCamposInventario(this.usuarioSelect, idCamposInventario).subscribe(res => {
+      if (res.code == 200) {
+        console.log("campos inventario guardadas");
+      } else {
+        alert("Algo salio mal Creando campos inventarios " + res.message + "\nComunicate con soporte");
         return;
       }
     });

@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { FotoOrdenVoModel } from '../model/fotoOrdenVo.model';
 import { ProporcionModel } from '../model/proporcion.model';
 import { ActivacionUsuarioModel } from '../model/activacionUsuario.model';
+import { CampoInventarioModel } from '../model/campoInventario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -74,7 +75,9 @@ export class UsuarioService {
     return this.http.get<ActivacionModel[]>(this.server_api + '/usuario/getActivacionByUsuario?usuarioId=' + usuarioId);
   }
 
-
+  getCamposInventarioByUsuario(usuarioId: string) {
+    return this.http.get<CampoInventarioModel[]>(this.server_api + '/usuario/getCamposInventarioByUsuario?usuarioId=' + usuarioId);
+  }
 
   public getRolByIds(ids: string[]) {
     console.log(this.server_api + '/usuario/getRolByIds?ids=' + ids);
@@ -122,8 +125,16 @@ export class UsuarioService {
     return this.http.get<ActivacionModel[]>(this.server_api + '/usuario/getActivacionAll');
   }
 
+  getCampoInventarioAll() {
+    return this.http.get<CampoInventarioModel[]>(this.server_api + '/usuario/getCampoInventarioAll');
+  }
+
   guardarActivaciones(usuarioId: UsuarioModel, activacionId: Array<string>) {
     return this.http.get<any>(this.server_api + '/usuario/guardarActivaciones?activacionId=' + activacionId + '&usuarioId=' + usuarioId.usuario_id);
+  }
+
+  guardarCamposInventario(usuarioId: UsuarioModel, activacionId: Array<string>) {
+    return this.http.get<any>(this.server_api + '/usuario/guardarCamposInventario?activacionId=' + activacionId + '&usuarioId=' + usuarioId.usuario_id);
   }
 
   guardarRutas(usuarioId: UsuarioModel, subMenuId: Array<string>) {
