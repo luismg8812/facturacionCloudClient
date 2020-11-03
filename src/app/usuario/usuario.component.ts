@@ -9,6 +9,8 @@ import { AngularFireAuth } from '@angular/fire/auth/auth';
 import { ParametrosModel } from '../model/parametros.model';
 import { ImpresionService } from '../services/impresion.service';
 import { CampoInventarioModel } from '../model/campoInventario.model';
+import { EmpleadoService } from '../services/empleado.service';
+import { EmpleadoModel } from '../model/empleado.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -19,7 +21,10 @@ declare var $: any;
 })
 export class UsuarioComponent implements OnInit {
 
-  constructor(private usuarioService: UsuarioService, public afauth: AngularFireAuth, public impresionService: ImpresionService ) {
+  constructor(private usuarioService: UsuarioService, 
+    public afauth: AngularFireAuth,
+    public empleadoService:EmpleadoService,
+     public impresionService: ImpresionService ) {
     this.usuarioBuscar = new UsuarioModel();
     this.usuarioCrear = new UsuarioModel();
     this.rolListSelect = [];
@@ -47,6 +52,10 @@ export class UsuarioComponent implements OnInit {
   public camposIntarioAll: Array<CampoInventarioModel>;
   public camposInventarioSelect: Array<CampoInventarioModel>;
   public camposInventarioUnSelect: Array<CampoInventarioModel>;
+  public empleadosAll: Array<EmpleadoModel>;
+  public empleadoSelect: Array<EmpleadoModel>;
+  public empleadoUnSelect: Array<EmpleadoModel>;
+  public empresaId: number;
 
   public registros: any;
   public totalRegistros:number = 0;
@@ -56,10 +65,27 @@ export class UsuarioComponent implements OnInit {
 
 
   ngOnInit() {
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.roles();
     this.submenus();
     this.activaciones();
     this.campoInventarios();
+    this.empleados();
+  }
+
+  crearUsuarioEmpleado(){
+    let idEmpleados: Array<string> = [];
+    for (var i = 0; i < this.empleadoSelect.length; i++) {
+      idEmpleados.push(this.empleadoSelect[i].empleado_id.toString());
+    }
+    this.usuarioService.saveEmpleadoUsuario(this.usuarioSelect, idEmpleados).subscribe(res => {
+      if (res.code == 200) {
+        $('#empleadoModal').modal('hide');
+      } else {
+        alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
+        return;
+      }
+    });
   }
 
   crearUsuario() {
@@ -162,8 +188,7 @@ export class UsuarioComponent implements OnInit {
 
 
   buscarUsuarios() {
-    let empresaId: string = localStorage.getItem('empresa_id');
-    this.usuarioService.getByUsuario(this.usuarioBuscar, empresaId, this.rolSelectBuscar).subscribe(res => {
+    this.usuarioService.getByUsuario(this.usuarioBuscar, this.empresaId.toString(), this.rolSelectBuscar).subscribe(res => {
       //TODO hacer el rool en la busqueda para mandarlo por parametro
   
       this.usuarioList = res;
@@ -185,6 +210,12 @@ export class UsuarioComponent implements OnInit {
   activaciones() {
     this.usuarioService.getActivacioAll().subscribe(res => {
       this.activacionAll = res;
+    });
+  }
+
+  empleados() {
+    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+      this.empleadosAll = res;
     });
   }
 
@@ -282,6 +313,26 @@ export class UsuarioComponent implements OnInit {
     this.submenuSelect.push(submenu1);
   }
 
+  desactivarEmpleado(submenu1: EmpleadoModel) {
+    for (var i = 0; i < this.empleadoSelect.length; i++) {
+      if (this.empleadoSelect[i].empleado_id == submenu1.empleado_id) {
+        this.empleadoSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.empleadoUnSelect.push(submenu1);
+  }
+
+  activarEmpleado(submenu1: EmpleadoModel) {
+    for (var i = 0; i < this.empleadoUnSelect.length; i++) {
+      if (this.empleadoUnSelect[i].empleado_id == submenu1.empleado_id) {
+        this.empleadoUnSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.empleadoSelect.push(submenu1);
+  }
+
   opcionesPorUsuario(user: UsuarioModel) {
     this.activacionPorUsuario(user);
     this.campoInventarioPorUsuario(user);
@@ -355,6 +406,28 @@ export class UsuarioComponent implements OnInit {
     });
 
 
+  }
+
+  empleadosByUsuario(user: UsuarioModel){
+    this.empleadoUnSelect = [];
+    this.usuarioSelect = user;
+    this.usuarioService.getEmpleadoByUsuario(user.usuario_id.toString()).subscribe(res1 => {
+      this.empleadoSelect = res1;
+      console.log(res1);
+      console.log(this.empleadosAll);
+      for (var e = 0; e < this.empleadosAll.length; e++) {
+        var esta = false;
+        for (var i = 0; i < res1.length; i++) {
+          if (this.empleadosAll[e].empleado_id == res1[i].empleado_id) {
+            esta = true;
+            break;
+          }
+        }
+        if (!esta) {
+          this.empleadoUnSelect.push(this.empleadosAll[e]);
+        }
+      }
+    });
   }
 
   guardarRutas() {

@@ -1863,7 +1863,7 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   getEmpleados() {
-    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+    this.usuarioService.getEmpleadoByUsuario(this.usuarioId.toString()).subscribe(res => {
       this.empleados = res;
     });
   }
