@@ -52,6 +52,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly CLIENTE_OBLIGATORIO: string = '14';
   readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
   readonly ACTIVAR_FACTURACION_ORDEN: string = '24';
+  readonly ACTIVAR_REABRIR_ORDEN: string = '26';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
@@ -97,6 +98,7 @@ export class GestionOrdenComponent implements OnInit {
   public empleados: Array<EmpleadoModel>;
   public empleadoOrdenActivo: boolean = false;
   public facturaOrdenActivo: boolean = false;
+  public reabirOrdenActivo: boolean = false;
 
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
@@ -113,8 +115,8 @@ export class GestionOrdenComponent implements OnInit {
   public resolucionAll: Array<ResolucionEmpresaModel>;
   public tituloFactura: string = "";
   public informeDiario: InformeDiarioModel;
-  public fechaI:string ="";
-  public fechaF:string ="";
+  public fechaI: string = "";
+  public fechaF: string = "";
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
 
@@ -175,15 +177,15 @@ export class GestionOrdenComponent implements OnInit {
     this.fechasBusqueda();
   }
 
-  fechasBusqueda(){
+  fechasBusqueda() {
     let date: Date = new Date();
-    let mes:string=""+ (date.getMonth()+1);
-    if(mes.length==1){
-      mes='0'+mes;
+    let mes: string = "" + (date.getMonth() + 1);
+    if (mes.length == 1) {
+      mes = '0' + mes;
     }
     let ano = date.getFullYear();
-    this.fechaI=ano+"-"+mes+"-"+'01';
-    this.fechaF=ano+"-"+mes+"-"+'30';
+    this.fechaI = ano + "-" + mes + "-" + '01';
+    this.fechaF = ano + "-" + mes + "-" + '30';
     console.log(this.fechaI);
   }
 
@@ -575,6 +577,24 @@ export class GestionOrdenComponent implements OnInit {
     $('#entregarModal').modal('hide');
   }
 
+  reabrir() {
+    if (this.documento.documento_id == '') {
+      alert("Debe pulsar el boton nuevo documento");
+      return;
+    }
+    if (this.reabirOrdenActivo) {
+      this.documento.impreso = 0;
+      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    } else {
+      alert("No tiene permisos para reapertura de ordenes");
+    }
+  }
+
   teclaAnteriorSiguiente(apcion: string) {
     if (this.ordenesList.length == 0) {
       let tipoDocumentoId: Array<number> = [this.TIPO_DOCUMENTO_ORDEN_TRABAJO];
@@ -690,10 +710,10 @@ export class GestionOrdenComponent implements OnInit {
     let productoNombre: string = element.value;
     this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
     console.log(this.productoIdSelect);
-    this.cantidad.nativeElement.value=  1;
+    this.cantidad.nativeElement.value = 1;
     this.cantidad.nativeElement.select();
-    this.pCompra.nativeElement.value=   this.productoIdSelect.costo;
-    this.pVenta.nativeElement.value= this.productoIdSelect.costo_publico;
+    this.pCompra.nativeElement.value = this.productoIdSelect.costo;
+    this.pVenta.nativeElement.value = this.productoIdSelect.costo_publico;
   }
 
   agregardetalle() {
@@ -790,9 +810,9 @@ export class GestionOrdenComponent implements OnInit {
     this.articuloPV = "";
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
-    }else{
+    } else {
       this.articuloC.nativeElement.value = "";
-      
+
     }
     this.articuloPV = "";
     this.cantidad.nativeElement.value = "";
@@ -899,7 +919,7 @@ export class GestionOrdenComponent implements OnInit {
       this.documentoFactura.tipo_documento_id = this.TIPO_DOCUMENTO_FACTURA;
     }
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
-    
+
     let impresora = this.impresora.nativeElement.value;
     if (impresora == "") {
       impresora = 1;
@@ -1272,10 +1292,10 @@ export class GestionOrdenComponent implements OnInit {
     let fin: string = fechaFinal.value;
     console.log(fechaInicial.value);
     if (ini != '' && fin != '') {
-      
+
       ini = this.calculosService.fechaIniBusqueda(fechaInicial.value);
       fin = this.calculosService.fechaFinBusqueda(fechaFinal.value);
-     
+
     } else {
       let date: Date = new Date();
       date.setDate(1);
@@ -1343,7 +1363,7 @@ export class GestionOrdenComponent implements OnInit {
 
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
-    }else{
+    } else {
       this.articuloC.nativeElement.value = "";
     }
     this.indexSelect = 0;
@@ -1521,7 +1541,7 @@ export class GestionOrdenComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre + " " + cliente.apellidos ;
+      return cliente.nombre + " " + cliente.apellidos;
     }
   }
 
@@ -1818,6 +1838,10 @@ export class GestionOrdenComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.ACTIVAR_FACTURACION_ORDEN) {
           console.log("facturacion en orden activo");
           this.facturaOrdenActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.ACTIVAR_REABRIR_ORDEN) {
+          console.log("reabir orden activo");
+          this.reabirOrdenActivo = true;
         }
       }
     });

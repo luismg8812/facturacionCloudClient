@@ -78,11 +78,11 @@ export class LoginComponent implements OnInit {
           alert("usuario no valido");
           return;
         }
-        if(clave!=res1[0].clave){
+        if(clave!=res1[0].clave){ 
           alert("clave no valida");
           return;
         }
-        
+         
         this.nombreUsuario = res1[0];
         let empresa_id = "" + this.nombreUsuario.empresa_id;
         localStorage.setItem("nombreUsuario", this.nombreUsuario.nombre);
