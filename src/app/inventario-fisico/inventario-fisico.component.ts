@@ -4,6 +4,8 @@ import { ProductoModel } from '../model/producto.model';
 import { GrupoModel } from '../model/grupo.model';
 import { SubGrupoModel } from '../model/subGrupo.model';
 import { ProductoPreciosModel } from '../model/productoPrecios.model';
+import { UsuarioService } from '../services/usuario.service';
+import { CampoInventarioModel } from '../model/campoInventario.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -19,13 +21,13 @@ export class InventarioFisicoComponent implements OnInit {
   public productosCargar: Array<ProductoModel> = [];
   public grupoList: Array<GrupoModel>;
   public subGrupoList: Array<SubGrupoModel>;
-  
+
   public proveedorList: Array<any>;
   public marcaList: Array<any>;
   public indexModificarSelect: number = 0;
   public productoEliminar: ProductoModel;
   public productoNew: ProductoModel = new ProductoModel();
-  public productoPrecioNew:ProductoPreciosModel=new ProductoPreciosModel();
+  public productoPrecioNew: ProductoPreciosModel = new ProductoPreciosModel();
   public grupoNew: GrupoModel = new GrupoModel();
   public subGrupoNew: SubGrupoModel = new SubGrupoModel();
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
@@ -39,15 +41,39 @@ export class InventarioFisicoComponent implements OnInit {
 
   public mensaje: string = "";
   public texto = [];
+  public usuarioId: number;
 
-  constructor(public productoService: ProductoService) { }
+  public campos: Array<CampoInventarioModel>;
+  readonly CANTIDAD: number = 1;
+  readonly COSTO: number = 2;
+  readonly COSTO_PUBLICO: number = 3;
+  readonly IVA: number = 4;
+  readonly PESADO: number = 5;
+  readonly COD_BARRAS: number = 6;
+  readonly PROMOCIONES: number = 7;
+  readonly UTILIDAD: number = 8;
+  readonly DIFERENCIA: number = 9;
+
+  public cantidadActivo: boolean = false;
+  public costoActivo: boolean = false;
+  public costoPublicoActivo: boolean = false;
+  public IVAActivo: boolean = false;
+  public pesadoActivo: boolean = false;
+  public codigoBarrasActivo: boolean = false;
+  public promocionesActivo: boolean = false;
+  public utilidadActivo: boolean = false;
+  public diferenciaActivo: boolean = false;
+
+
+  constructor(public productoService: ProductoService, public usuarioService: UsuarioService) { }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.getProductosByEmpresa(this.empresaId);
     this.getGrupos();
     this.getSubGrupos();
-
+    this.getActivaciones(this.usuarioId);
   }
 
   editarGrupo(grupo: GrupoModel) {
@@ -58,7 +84,7 @@ export class InventarioFisicoComponent implements OnInit {
     this.subGrupoNew = grupo;
   }
 
-  
+
 
   CrearSubGrupo() {
     console.log(this.subGrupoNew);
@@ -223,8 +249,8 @@ export class InventarioFisicoComponent implements OnInit {
         //validacion id
         console.log("aqui entra");
         let id = curruntRecord[0].trim()
-        let grupo= curruntRecord[1].trim();
-        let estado= curruntRecord[6].trim();
+        let grupo = curruntRecord[1].trim();
+        let estado = curruntRecord[6].trim();
         let nombre = curruntRecord[7].trim();
         let costo = curruntRecord[9].trim();
         let costoPublico = curruntRecord[10].trim();
@@ -239,31 +265,31 @@ export class InventarioFisicoComponent implements OnInit {
             this.texto.push("Error en la linea " + i + " El campo " + headerLength[0] + " no es numerico" + '\n');
             valido = false;
           }
-          let produc = this.productosAll.find(productof => productof.producto_id.toString()  == id);
-          if(produc==undefined){
-            this.texto.push("Error en la linea " + i + " El id " + id  + ' no existe\n');
+          let produc = this.productosAll.find(productof => productof.producto_id.toString() == id);
+          if (produc == undefined) {
+            this.texto.push("Error en la linea " + i + " El id " + id + ' no existe\n');
             valido = false;
-          }else{
-            producto=produc;
+          } else {
+            producto = produc;
           }
         }
 
-        let grup = this.grupoList.find(grupos => grupos.grupo_id.toString()  == grupo);
-        if(grup==undefined){
-          this.texto.push("Error en la linea " + i + " El grupo '" + grupo  + "' no existe\n");
+        let grup = this.grupoList.find(grupos => grupos.grupo_id.toString() == grupo);
+        if (grup == undefined) {
+          this.texto.push("Error en la linea " + i + " El grupo '" + grupo + "' no existe\n");
           valido = false;
         }
-        if(estado==""){
-          this.texto.push("Error en la linea " + i + " El campo " + headerLength[6]  + " es obligatorio" + '\n');
+        if (estado == "") {
+          this.texto.push("Error en la linea " + i + " El campo " + headerLength[6] + " es obligatorio" + '\n');
           valido = false;
-        }else{
-          if(!(estado=="1" || estado=="0")){
-            this.texto.push("Error en la linea " + i + " El campo " + headerLength[6]  + " debe ser '1' o '0'" + '\n');
+        } else {
+          if (!(estado == "1" || estado == "0")) {
+            this.texto.push("Error en la linea " + i + " El campo " + headerLength[6] + " debe ser '1' o '0'" + '\n');
             valido = false;
           }
         }
-        if(nombre==""){
-          this.texto.push("Error en la linea " + i + " El campo " + headerLength[7]  + " es obligatorio" + '\n');
+        if (nombre == "") {
+          this.texto.push("Error en la linea " + i + " El campo " + headerLength[7] + " es obligatorio" + '\n');
           valido = false;
         }
         if (costo != "") {
@@ -289,24 +315,24 @@ export class InventarioFisicoComponent implements OnInit {
             this.texto.push("Error en la linea " + i + " El campo " + headerLength[17] + " no es numerico" + '\n');
             valido = false;
           }
-        }else{
-          this.texto.push("Error en la linea " + i + " El campo " + headerLength[17]  + " es obligatorio" + '\n');
+        } else {
+          this.texto.push("Error en la linea " + i + " El campo " + headerLength[17] + " es obligatorio" + '\n');
           valido = false;
-          
-        } 
+
+        }
         if (valido) {
           producto.producto_id = Number(id);
-          producto.estado=Number(estado);
-          producto.grupo_id=grupo;
+          producto.estado = Number(estado);
+          producto.grupo_id = grupo;
           producto.nombre = nombre;
           producto.costo = Number(costo);
           producto.costo_publico = Number(costoPublico);
           producto.impuesto = Number(impuesto);
           producto.codigo_barras = codigoBarras;
-          producto.peso=peso==""?0:Number(peso);
-          producto.granel=granel==""?0:Number(granel);
-          producto.balanza=balanza==""?0:Number(balanza);
-          
+          producto.peso = peso == "" ? 0 : Number(peso);
+          producto.granel = granel == "" ? 0 : Number(granel);
+          producto.balanza = balanza == "" ? 0 : Number(balanza);
+
           //csvRecord.firstName = curruntRecord[1].trim();  
           //csvRecord.lastName = curruntRecord[2].trim();  
           //csvRecord.age = curruntRecord[3].trim();  
@@ -348,31 +374,31 @@ export class InventarioFisicoComponent implements OnInit {
     }
     $('#cargueMasivoModal').modal('hide');
     for (let pro of this.productosCargar) {
-      if(pro.producto_id==0){
+      if (pro.producto_id == 0) {
         pro.empresa_id = this.empresaId;
-      this.productoService.saveProducto(pro).subscribe(res => {
-        if (res.code == 200) {
-          this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(async res => {
-            this.productosAll = res;
-            await this.delay(100);
-            this.posInicial();
-          });
-        } else {
-          alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
-          return;
-        }
-      });
-      }else{
+        this.productoService.saveProducto(pro).subscribe(res => {
+          if (res.code == 200) {
+            this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(async res => {
+              this.productosAll = res;
+              await this.delay(100);
+              this.posInicial();
+            });
+          } else {
+            alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
+            return;
+          }
+        });
+      } else {
         this.productoService.updateProducto(pro).subscribe(async res => {
           if (res.code == 200) {
-    
+
           } else {
             alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
             return;
           }
         });
       }
-      
+
     }
     console.log(this.productosCargar);
 
@@ -401,7 +427,7 @@ export class InventarioFisicoComponent implements OnInit {
           await this.delay(100);
           this.posInicial();
         });
-        this.productoPrecioNew.producto_id=res.producto_id;
+        this.productoPrecioNew.producto_id = res.producto_id;
         this.productoService.saveProductoPrecios(this.productoPrecioNew).subscribe();
       } else {
         alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
@@ -754,6 +780,41 @@ export class InventarioFisicoComponent implements OnInit {
       }
     }
 
+  }
+
+  getActivaciones(user: number) {
+    this.usuarioService.getCamposInventarioByUsuario(user.toString()).subscribe(res => {
+      this.campos = res;
+      for (var e = 0; e < this.campos.length; e++) {
+        if (this.campos[e].campo_inventario_id == this.CANTIDAD) {
+          this.cantidadActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.COSTO) {
+          this.costoActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.COSTO_PUBLICO) {
+          this.costoPublicoActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.IVA) {
+          this.IVAActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.PESADO) {
+          this.pesadoActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.COD_BARRAS) {
+          this.codigoBarrasActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.PROMOCIONES) {
+          this.promocionesActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.UTILIDAD) {
+          this.utilidadActivo = true;
+        }
+        if (this.campos[e].campo_inventario_id == this.DIFERENCIA) {
+          this.diferenciaActivo = true;
+        }
+      }
+    });
   }
 
 }

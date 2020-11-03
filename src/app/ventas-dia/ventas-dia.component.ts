@@ -1193,7 +1193,7 @@ export class VentasDiaComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-          consecutivo = con.toString();
+          consecutivo = resolucion.letra_consecutivo+con;
           console.log("consecutivo Dian: " + consecutivo);
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";

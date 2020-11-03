@@ -11,6 +11,7 @@ import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
 import { ClienteService } from '../services/cliente.service';
 import { ImpresionService } from '../services/impresion.service';
 import { DetalleNominaModel } from '../model/detalleNomina.model';
+import { UsuarioService } from '../services/usuario.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -71,6 +72,7 @@ export class NominaComponent implements OnInit {
     public calculosService: CalculosService,
     public documentoService: DocumentoService,
     public clienteService: ClienteService,
+    public usuarioService:UsuarioService,
     public impresionService: ImpresionService) { }
 
   ngOnInit() {
@@ -200,7 +202,7 @@ export class NominaComponent implements OnInit {
   }
 
   nominaDefaul() {
-    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+    this.usuarioService.getEmpleadoByUsuario(this.usuarioId.toString()).subscribe(res => {
       this.empleados = res;
     let idEmpleados: number[] = [];
     for (let id of this.empleados) {
@@ -397,7 +399,7 @@ export class NominaComponent implements OnInit {
   }
 
   getEmpleados() {
-    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+    this.usuarioService.getEmpleadoByUsuario(this.usuarioId.toString()).subscribe(res => {
       this.empleados = res;
     });
   }

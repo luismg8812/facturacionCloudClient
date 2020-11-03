@@ -25,7 +25,15 @@ export class ProductoService {
   }
 
   public getProductoById(productoId:string,empresaId:string){
-    return this.http.get<ProductoModel>(this.server_api+'/producto/getProductoById?empresaId='+empresaId+'&productoId='+productoId);
+    return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductoById?empresaId='+empresaId+'&productoId='+productoId);
+  }
+
+  getProductoByCodBarras(codBarras:string,empresaId:string){
+    return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductoByCodBarras?empresaId='+empresaId+'&codBarras='+codBarras);
+  } 
+
+  getProductoByNombre(nombre:string,empresaId:string){
+    return this.http.get<ProductoModel[]>(this.server_api+'/producto/getProductoByNombre?empresaId='+empresaId+'&nombre='+nombre);
   }
 
   public getProductoPreciosById(productoId:number){

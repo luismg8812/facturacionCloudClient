@@ -30,11 +30,11 @@
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-1">
           Fecha Inicial
-          <input class="form-control" type="date" id="fechaIniBuscar" #fechaIniBuscar>
+          <input class="form-control" type="date" id="fechaIniBuscar" [value]="fechaI" #fechaIniBuscar>
         </div>
         <div class="form-group col-md-6 col-sm-1">
           Fecha Final
-          <input class="form-control" type="date" id="fechaFinBuscar" #fechaFinBuscar>
+          <input class="form-control" type="date" id="fechaFinBuscar" value="2021-12-31" #fechaFinBuscar>
         </div>
       </div>
       <div class="form-row">
@@ -53,13 +53,8 @@
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-6">
           Cliente
-          <input list="browsers" name="clientePV1" #clientePV placeholder="Cliente" class="form-control"
+          <input list="browsers" name="clientePV1" #clientePV1 placeholder="Cliente" class="form-control"
             id="clientePV1">
-          <datalist id="browsers">
-            <option *ngFor="let cliente of clientes" [value]="cliente.nombre">
-              Identificación: {{cliente.documento}} id:{{cliente.cliente_id}}
-            </option>
-          </datalist>
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Proveedor

@@ -8,6 +8,9 @@ import { ActivacionModel } from '../model/activacion';
 import { AngularFireAuth } from '@angular/fire/auth/auth';
 import { ParametrosModel } from '../model/parametros.model';
 import { ImpresionService } from '../services/impresion.service';
+import { CampoInventarioModel } from '../model/campoInventario.model';
+import { EmpleadoService } from '../services/empleado.service';
+import { EmpleadoModel } from '../model/empleado.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -18,7 +21,10 @@ declare var $: any;
 })
 export class UsuarioComponent implements OnInit {
 
-  constructor(private usuarioService: UsuarioService, public afauth: AngularFireAuth, public impresionService: ImpresionService ) {
+  constructor(private usuarioService: UsuarioService, 
+    public afauth: AngularFireAuth,
+    public empleadoService:EmpleadoService,
+     public impresionService: ImpresionService ) {
     this.usuarioBuscar = new UsuarioModel();
     this.usuarioCrear = new UsuarioModel();
     this.rolListSelect = [];
@@ -43,7 +49,13 @@ export class UsuarioComponent implements OnInit {
   public activacionSelect: Array<ActivacionModel>;
   public activacionUnSelect: Array<ActivacionModel>;
   public activacionAll: Array<ActivacionModel>;
-
+  public camposIntarioAll: Array<CampoInventarioModel>;
+  public camposInventarioSelect: Array<CampoInventarioModel>;
+  public camposInventarioUnSelect: Array<CampoInventarioModel>;
+  public empleadosAll: Array<EmpleadoModel>;
+  public empleadoSelect: Array<EmpleadoModel>;
+  public empleadoUnSelect: Array<EmpleadoModel>;
+  public empresaId: number;
 
   public registros: any;
   public totalRegistros:number = 0;
@@ -53,9 +65,27 @@ export class UsuarioComponent implements OnInit {
 
 
   ngOnInit() {
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
     this.roles();
     this.submenus();
     this.activaciones();
+    this.campoInventarios();
+    this.empleados();
+  }
+
+  crearUsuarioEmpleado(){
+    let idEmpleados: Array<string> = [];
+    for (var i = 0; i < this.empleadoSelect.length; i++) {
+      idEmpleados.push(this.empleadoSelect[i].empleado_id.toString());
+    }
+    this.usuarioService.saveEmpleadoUsuario(this.usuarioSelect, idEmpleados).subscribe(res => {
+      if (res.code == 200) {
+        $('#empleadoModal').modal('hide');
+      } else {
+        alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
+        return;
+      }
+    });
   }
 
   crearUsuario() {
@@ -158,8 +188,7 @@ export class UsuarioComponent implements OnInit {
 
 
   buscarUsuarios() {
-    let empresaId: string = localStorage.getItem('empresa_id');
-    this.usuarioService.getByUsuario(this.usuarioBuscar, empresaId, this.rolSelectBuscar).subscribe(res => {
+    this.usuarioService.getByUsuario(this.usuarioBuscar, this.empresaId.toString(), this.rolSelectBuscar).subscribe(res => {
       //TODO hacer el rool en la busqueda para mandarlo por parametro
   
       this.usuarioList = res;
@@ -184,6 +213,18 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
+  empleados() {
+    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+      this.empleadosAll = res;
+    });
+  }
+
+  campoInventarios() {
+    this.usuarioService.getCampoInventarioAll().subscribe(res => {
+      this.camposIntarioAll = res;
+    });
+  }
+
   aplicarActivacion(activacion: ActivacionModel) {
     for (var i = 0; i < this.activacionSelect.length; i++) {
       if (this.activacionSelect[i].activacion_id == activacion.activacion_id) {
@@ -202,6 +243,26 @@ export class UsuarioComponent implements OnInit {
       }
     }
     this.activacionSelect.push(activacion);
+  }
+
+  aplicarCampoInventario(campoInventario: CampoInventarioModel) {
+    for (var i = 0; i < this.camposInventarioSelect.length; i++) {
+      if (this.camposInventarioSelect[i].campo_inventario_id == campoInventario.campo_inventario_id) {
+        this.camposInventarioSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.camposInventarioUnSelect.push(campoInventario);
+  }
+
+  desaplicarCampoInventario(campoInventario: CampoInventarioModel) {
+    for (var i = 0; i < this.camposInventarioUnSelect.length; i++) {
+      if (this.camposInventarioUnSelect[i].campo_inventario_id == campoInventario.campo_inventario_id) {
+        this.camposInventarioUnSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.camposInventarioSelect.push(campoInventario);
   }
 
   nameRol(usuarioId: string) {
@@ -252,8 +313,29 @@ export class UsuarioComponent implements OnInit {
     this.submenuSelect.push(submenu1);
   }
 
+  desactivarEmpleado(submenu1: EmpleadoModel) {
+    for (var i = 0; i < this.empleadoSelect.length; i++) {
+      if (this.empleadoSelect[i].empleado_id == submenu1.empleado_id) {
+        this.empleadoSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.empleadoUnSelect.push(submenu1);
+  }
+
+  activarEmpleado(submenu1: EmpleadoModel) {
+    for (var i = 0; i < this.empleadoUnSelect.length; i++) {
+      if (this.empleadoUnSelect[i].empleado_id == submenu1.empleado_id) {
+        this.empleadoUnSelect.splice(i, 1);
+        break;
+      }
+    }
+    this.empleadoSelect.push(submenu1);
+  }
+
   opcionesPorUsuario(user: UsuarioModel) {
     this.activacionPorUsuario(user);
+    this.campoInventarioPorUsuario(user);
     this.opusuarioUnSelect = [];
     this.usuarioSelect = user;
     this.usuarioService.opcionUsuarioByUsuarioSinMenu(user.usuario_id.toString()).subscribe(res1 => {
@@ -278,6 +360,27 @@ export class UsuarioComponent implements OnInit {
 
 
 
+  }
+  campoInventarioPorUsuario(user: UsuarioModel) {  
+    this.camposInventarioUnSelect = [];
+    this.usuarioSelect = user;
+    this.usuarioService.getCamposInventarioByUsuario(user.usuario_id.toString()).subscribe(res1 => {
+      this.camposInventarioSelect = res1;
+      console.log(res1);
+      console.log(this.camposIntarioAll);
+      for (var e = 0; e < this.camposIntarioAll.length; e++) {
+        var esta = false;
+        for (var i = 0; i < res1.length; i++) {
+          if (this.camposIntarioAll[e].campo_inventario_id == res1[i].campo_inventario_id) {
+            esta = true;
+            break;
+          }
+        }
+        if (!esta) {
+          this.camposInventarioUnSelect.push(this.camposIntarioAll[e]);
+        }
+      }
+    });
   }
 
   activacionPorUsuario(user: UsuarioModel) {
@@ -305,21 +408,54 @@ export class UsuarioComponent implements OnInit {
 
   }
 
+  empleadosByUsuario(user: UsuarioModel){
+    this.empleadoUnSelect = [];
+    this.usuarioSelect = user;
+    this.usuarioService.getEmpleadoByUsuario(user.usuario_id.toString()).subscribe(res1 => {
+      this.empleadoSelect = res1;
+      console.log(res1);
+      console.log(this.empleadosAll);
+      for (var e = 0; e < this.empleadosAll.length; e++) {
+        var esta = false;
+        for (var i = 0; i < res1.length; i++) {
+          if (this.empleadosAll[e].empleado_id == res1[i].empleado_id) {
+            esta = true;
+            break;
+          }
+        }
+        if (!esta) {
+          this.empleadoUnSelect.push(this.empleadosAll[e]);
+        }
+      }
+    });
+  }
+
   guardarRutas() {
     let idSubmenu: Array<string> = [];
     let idActivacion: Array<string> = [];
+    let idCamposInventario: Array<string> = [];
     for (var i = 0; i < this.submenuSelect.length; i++) {
       idSubmenu.push(this.submenuSelect[i].sub_menu_id.toString());
     }
     for (var i = 0; i < this.activacionSelect.length; i++) {
       idActivacion.push(this.activacionSelect[i].activacion_id);
     }
+    for (var i = 0; i < this.camposInventarioSelect.length; i++) {
+      idCamposInventario.push(this.camposInventarioSelect[i].campo_inventario_id.toString());
+    }
     this.usuarioService.guardarActivaciones(this.usuarioSelect, idActivacion).subscribe(res => {
-
       if (res.code == 200) {
         console.log("Activaciones guardadas");
       } else {
         alert("Algo salio mal Creando activa... " + res.message + "\nComunicate con soporte");
+        return;
+      }
+    });
+    this.usuarioService.guardarCamposInventario(this.usuarioSelect, idCamposInventario).subscribe(res => {
+      if (res.code == 200) {
+        console.log("campos inventario guardadas");
+      } else {
+        alert("Algo salio mal Creando campos inventarios " + res.message + "\nComunicate con soporte");
         return;
       }
     });
