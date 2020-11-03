@@ -34,19 +34,18 @@
     <thead>
       <tr>
         <th scope="col">Ops</th>
-        <th scope="col" class="w-25">Producto</th>
-        <th scope="col">Cant.</th>
-        <th scope="col">Costo</th>
-        <th scope="col">Publico</th>
-        <th scope="col">IVA</th>
-        <th scope="col" class="w-1">Pesado</th>
-        <th scope="col">Cod. Barras</th>
-        <th scope="col">Prom</th>
-        <th scope="col">Pub. Promo</th>
-        <th scope="col">Kg. promo</th>
-        <th scope="col">Utilidad</th>
-        <th scope="col">Diferencia</th>
-
+        <th scope="col" >Producto</th>
+        <th scope="col"  *ngIf="cantidadActivo">Cant.</th>
+        <th scope="col"  *ngIf="costoActivo">Costo</th>
+        <th scope="col"  *ngIf="costoPublicoActivo">Publico</th>
+        <th scope="col"  *ngIf="IVAActivo">IVA</th>
+        <th scope="col"  *ngIf="pesadoActivo" class="w-1">Pesado</th>
+        <th scope="col"  *ngIf="codigoBarrasActivo">Cod. Barras</th>
+        <th scope="col"  *ngIf="promocionesActivo">Prom</th>
+        <th scope="col"  *ngIf="promocionesActivo">Pub. Promo</th>
+        <th scope="col"  *ngIf="promocionesActivo">Kg. promo</th>
+        <th scope="col"  *ngIf="utilidadActivo">Utilidad</th>
+        <th scope="col"  *ngIf="diferenciaActivo">Diferencia</th>
       </tr>
     </thead>
     <tbody>
@@ -65,53 +64,53 @@
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,nombre)">
 
         </td>
-        <td> <input class="form-control " #canti id="cantidad_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
+        <td  *ngIf="cantidadActivo"> <input class="form-control " #canti id="cantidad_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.cantidad}}" (keydown.enter)="cambioPrecioLista(ordenes,canti)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,canti)">
         </td>
-        <td>
+        <td  *ngIf="costoActivo">
           <input class="form-control " #costo id="costo_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.costo}}" (keydown.enter)="cambioPrecioLista(ordenes,costo)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,costo)">
         </td>
-        <td>
+        <td *ngIf="costoPublicoActivo">
           <input class="form-control " #publico id="publico_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.costo_publico}}" (keydown.enter)="cambioPrecioLista(ordenes,publico)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,publico)">
         </td>
-        <td>
+        <td *ngIf="IVAActivo">
           <input class="form-control " #impuesto id="impuesto_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.impuesto}}" (keydown.enter)="cambioPrecioLista(ordenes,impuesto)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,impuesto)">
         </td>
-        <td>
+        <td *ngIf="pesadoActivo">
           <input class="form-control " #balanza id="balanza_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.balanza}}" (keydown.enter)="cambioPrecioLista(ordenes,balanza)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,balanza)">
         </td>
-        <td>
+        <td *ngIf="codigoBarrasActivo">
           <input class="form-control " #barras id="barras_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.codigo_barras}}" (keydown.enter)="cambioPrecioLista(ordenes,barras)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,barras)">
         </td>
-        <td>
+        <td *ngIf="promocionesActivo">
           <input class="form-control " #promo id="promo_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.promo}}" (keydown.enter)="cambioPrecioLista(ordenes,promo)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,promo)">
         </td>
-        <td>
+        <td *ngIf="promocionesActivo">
           <input class="form-control " #publico_promo id="public_promo_{{ordenes.producto_id}}"
             (focus)="indexFocus(ordenes)" value="{{ordenes.pub_promo}}"
             (keydown.enter)="cambioPrecioLista(ordenes,publico_promo)" (keydown.esc)="scapeTecla(this)"
             (keyup)="controlTeclas($event,publico_promo)">
         </td>
-        <td>
+        <td *ngIf="promocionesActivo">
           <input class="form-control " #kg_promo id="kg_promo{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.kg_promo}}" (keydown.enter)="cambioPrecioLista(ordenes,kg_promo)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,kg_promo)">
         </td>
-        <td></td>
-        <td></td>
+        <td *ngIf="utilidadActivo"></td>
+        <td *ngIf="diferenciaActivo"></td>
       </tr>
     </tbody>
   </table>

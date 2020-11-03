@@ -4,29 +4,46 @@
     <h4 class="mt-3">Cuentas contables</h4>
   </div>
   <br />
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">...</th>
-        <th scope="col">Opciones</th>
-        <th scope="col">Codigo</th>
-        <th scope="col">Nombre</th>
-        <th scope="col">Tipo</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of itemsFactura">
-    
-        <td>
-        
-        </td>
-        <td> </td>
-        <td>
-        
-        </td>
-        <td></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="form-row">
+    <div class="col col-md-6">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">...</th>
+            <th scope="col">Opciones</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Codigo</th>
+            <th scope="col">Nombre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows">
+            <td>
+              <div class="form-row">
+                <button type="button" class="btn btn-secondary btn-sm ml-{{row.codigo.length}}" id="{{row.codigo}}"
+                  title="Desplegar grupo" (click)="clickPlus(row)">
+                  <i class="fas fa-folder-plus"></i>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm d-none ml-{{row.codigo.length}}" id="n_{{row.codigo}}" title="Repre grupo"
+                  (click)="clickMinus(row)">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </td>
+            <td> <button type="button" class="btn btn-secondary btn-sm " title="Crear" (click)="clickPlus(row)">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+            <td>{{row.tipo}}</td>
+            <td>{{row.codigo}} </td>
+            <td>{{row.nombre}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col col-md-6">
+
+    </div>
+  </div>
+
 </div>

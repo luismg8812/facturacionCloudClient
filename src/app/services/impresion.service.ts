@@ -956,7 +956,7 @@ export class ImpresionService {
     if (factura.cliente != undefined) {
       texto.push("CLIENTE: " + factura.cliente.nombre + '\n');
       texto.push("NIT/CC: " + factura.cliente.documento + '\n');
-      texto.push("TELEFONO: " + factura.cliente.fijo + '\n');
+      texto.push("TELEFONO: " + factura.cliente.fijo +' - '+ factura.cliente.celular + '\n');
     }
     texto.push("VEHICULO: " + factura.documento.detalle_entrada + '\n');
     texto.push("LINEA: " + factura.documento.linea_vehiculo + '\n');

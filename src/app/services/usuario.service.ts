@@ -11,6 +11,8 @@ import { Observable } from 'rxjs';
 import { FotoOrdenVoModel } from '../model/fotoOrdenVo.model';
 import { ProporcionModel } from '../model/proporcion.model';
 import { ActivacionUsuarioModel } from '../model/activacionUsuario.model';
+import { CampoInventarioModel } from '../model/campoInventario.model';
+import { EmpleadoModel } from '../model/empleado.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +37,7 @@ export class UsuarioService {
     });
   }
 
-  
+
 
   public usuarioByMail(mail: string) {
     return this.http.get<UsuarioModel[]>(this.server_api + '/usuario/usuarioByMail?mail=' + mail);
@@ -48,11 +50,11 @@ export class UsuarioService {
   public getLiberarCuadre(empresaId: number) {
     return this.http.get<ProporcionModel[]>(this.server_api + '/usuario/getLiberarCuadre?empresaId=' + empresaId);
   }
-  
-  
 
-  public usuarioByRol(rolId:string,empresaId:number,tipoDocumentoId:string,fechaInicial,fechaFinal) {
-    return this.http.get<any>(this.server_api + '/usuario/usuarioByRol?rolId=' + rolId+ '&empresaId=' + empresaId+ '&tipoDocumentoId=' + tipoDocumentoId+ '&fechaInicial=' + fechaInicial+ '&fechaFinal=' + fechaFinal);
+
+
+  public usuarioByRol(rolId: string, empresaId: number, tipoDocumentoId: string, fechaInicial, fechaFinal) {
+    return this.http.get<any>(this.server_api + '/usuario/usuarioByRol?rolId=' + rolId + '&empresaId=' + empresaId + '&tipoDocumentoId=' + tipoDocumentoId + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal);
   }
 
   public opcionUsuarioByUsuario(usuarioId: string, menuId: string) {
@@ -74,7 +76,13 @@ export class UsuarioService {
     return this.http.get<ActivacionModel[]>(this.server_api + '/usuario/getActivacionByUsuario?usuarioId=' + usuarioId);
   }
 
+  public getEmpleadoByUsuario(usuarioId: string) {
+    return this.http.get<EmpleadoModel[]>(this.server_api + '/usuario/getEmpleadoByUsuario?usuarioId=' + usuarioId);
+  }
 
+  getCamposInventarioByUsuario(usuarioId: string) {
+    return this.http.get<CampoInventarioModel[]>(this.server_api + '/usuario/getCamposInventarioByUsuario?usuarioId=' + usuarioId);
+  }
 
   public getRolByIds(ids: string[]) {
     console.log(this.server_api + '/usuario/getRolByIds?ids=' + ids);
@@ -94,11 +102,16 @@ export class UsuarioService {
     return this.http.post<any>(this.server_api + '/usuario/saveActivacionUsuario', activacion);
   }
 
+
+  saveEmpleadoUsuario(usuarioId: UsuarioModel, empleadoId: Array<string>) {
+    return this.http.get<any>(this.server_api + '/usuario/saveEmpleadoUsuario?empleadoId=' + empleadoId + '&usuarioId=' + usuarioId.usuario_id);
+  }
+
   deleteActivacionUsuario(activacion: ActivacionUsuarioModel) {
     return this.http.post<any>(this.server_api + '/usuario/deleteActivacionUsuario', activacion);
   }
- 
-  saveUsuarioMasive(usuario: UsuarioModel){
+
+  saveUsuarioMasive(usuario: UsuarioModel) {
     return this.http.post<any>(this.server_api + '/usuario/createUsuarioMasivo', usuario);
   }
 
@@ -122,8 +135,16 @@ export class UsuarioService {
     return this.http.get<ActivacionModel[]>(this.server_api + '/usuario/getActivacionAll');
   }
 
+  getCampoInventarioAll() {
+    return this.http.get<CampoInventarioModel[]>(this.server_api + '/usuario/getCampoInventarioAll');
+  }
+
   guardarActivaciones(usuarioId: UsuarioModel, activacionId: Array<string>) {
     return this.http.get<any>(this.server_api + '/usuario/guardarActivaciones?activacionId=' + activacionId + '&usuarioId=' + usuarioId.usuario_id);
+  }
+
+  guardarCamposInventario(usuarioId: UsuarioModel, activacionId: Array<string>) {
+    return this.http.get<any>(this.server_api + '/usuario/guardarCamposInventario?activacionId=' + activacionId + '&usuarioId=' + usuarioId.usuario_id);
   }
 
   guardarRutas(usuarioId: UsuarioModel, subMenuId: Array<string>) {
@@ -139,11 +160,11 @@ export class UsuarioService {
 
   }
 
-  getFile(nombre:string){
-    return this.http.get<any>(this.server_api + '/usuario/getFile?nombre=' + nombre );
+  getFile(nombre: string) {
+    return this.http.get<any>(this.server_api + '/usuario/getFile?nombre=' + nombre);
   }
 
-  getPrincipalImage(nombre:string){
+  getPrincipalImage(nombre: string) {
     return this.http.get<any>('assets/images/logoempresa.jpg');
   }
 
