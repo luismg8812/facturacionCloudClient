@@ -21,10 +21,8 @@ import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
 import { OtComponent } from './ot/ot.component';
 import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
-import { NominaComponent } from './nomina/nomina.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
-import { ClienteComponent } from './cliente/cliente.component';
 import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { SocketService } from './services/socket.service';
 import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos.component';
@@ -46,6 +44,8 @@ import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.componen
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
 import { TutorialesComponent } from './tutoriales/tutoriales.component';
 import { CuentasContablesComponent } from './cuentas-contables/cuentas-contables.component';
+import { NominaComponent } from './components/nomina/nomina.component';
+import { ClienteComponent } from './components/cliente/cliente.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();

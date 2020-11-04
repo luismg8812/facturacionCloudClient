@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ClienteService } from '../services/cliente.service';
-import { ClienteModel } from '../model/cliente.model';
-import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
-import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
-import { ResponsabilidadFiscalModel } from '../model/responsabilidadFiscal.model';
-import { ResponsabilidadFiscalClienteModelModel } from '../model/responsabilidadFiscalCliente.model';
+import { ClienteModel } from 'src/app/model/cliente.model';
+import { FactTipoEmpresaModel } from 'src/app/model/factTipoEmpresa.model';
+import { ResponsabilidadFiscalModel } from 'src/app/model/responsabilidadFiscal.model';
+import { ResponsabilidadFiscalClienteModelModel } from 'src/app/model/responsabilidadFiscalCliente.model';
+import { TipoIdentificacionModel } from 'src/app/model/tipoIdentificacion.model';
+import { ClienteService } from 'src/app/services/cliente.service';
 declare var jquery: any;
 declare var $: any;
 

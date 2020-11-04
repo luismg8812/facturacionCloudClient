@@ -1,17 +1,18 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { EmpleadoModel } from '../model/empleado.model';
-import { EmpleadoService } from '../services/empleado.service';
-import { DocumentoModel } from '../model/documento.model';
-import { CalculosService } from '../services/calculos.service';
-import { DocumentoService } from '../services/documento.service';
-import { ProductoEmpleadoModel } from '../model/productoEmpleado.model';
-import { PagosEmpleadoModel } from '../model/pagosEmpleado.model';
-import { NominaModel } from '../model/nomina.model';
-import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
-import { ClienteService } from '../services/cliente.service';
-import { ImpresionService } from '../services/impresion.service';
-import { DetalleNominaModel } from '../model/detalleNomina.model';
-import { UsuarioService } from '../services/usuario.service';
+import { DetalleNominaModel } from 'src/app/model/detalleNomina.model';
+import { DocumentoModel } from 'src/app/model/documento.model';
+import { EmpleadoModel } from 'src/app/model/empleado.model';
+import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
+import { NominaModel } from 'src/app/model/nomina.model';
+import { PagosEmpleadoModel } from 'src/app/model/pagosEmpleado.model';
+import { ProductoEmpleadoModel } from 'src/app/model/productoEmpleado.model';
+import { CalculosService } from 'src/app/services/calculos.service';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { DocumentoService } from 'src/app/services/documento.service';
+import { EmpleadoService } from 'src/app/services/empleado.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
+
 declare var jquery: any;
 declare var $: any;
 
@@ -34,6 +35,7 @@ export class NominaComponent implements OnInit {
   public vales: number = 0;
   public productos: number = 0;
   public total: number = 0;
+  public totalordenes: number = 0;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   //detalle
   public empleadoSelect: EmpleadoModel = new EmpleadoModel();
@@ -72,7 +74,7 @@ export class NominaComponent implements OnInit {
     public calculosService: CalculosService,
     public documentoService: DocumentoService,
     public clienteService: ClienteService,
-    public usuarioService:UsuarioService,
+    public usuarioService: UsuarioService,
     public impresionService: ImpresionService) { }
 
   ngOnInit() {
@@ -82,7 +84,33 @@ export class NominaComponent implements OnInit {
     this.getPagos();
     this.getImpresorasEmpresa(this.empresaId);
     this.nominaDefaul();
-    
+
+
+  }
+
+  totalOrdenes() {
+    this.totalordenes = 0;
+    let tipo_docu = 11;// se trae las ordenes de los empleados
+    let ini: string = this.fechaIni.nativeElement.value;
+    let fin: string = this.fechaFin.nativeElement.value;
+    if (ini != '' && fin != '') {
+      ini = this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString();
+      fin = this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString();
+    } else {
+      ini = "";
+      fin = "";
+    }
+    let idEmpleados: number[] = [];
+    for (let id of this.empleados) {
+      idEmpleados.push(id.empleado_id);
+    }
+
+    this.documentoService.getOrdenesByEmpleados(idEmpleados, ini, fin, tipo_docu).subscribe(res => {
+      this.ordenesSelect = res;
+      console.log(this.ordenesSelect.length);
+      this.totalordenes = this.ordenesSelect.length;
+    });
+
 
   }
 
@@ -141,6 +169,8 @@ export class NominaComponent implements OnInit {
 
   }
 
+
+
   buscarporFecha() {
     if (this.fechaIni.nativeElement.value == "" || this.fechaFin.nativeElement.value == "") {
       alert("La fecha inicial y la final son obligatorias");
@@ -155,14 +185,16 @@ export class NominaComponent implements OnInit {
     this.vales = 0;
     this.productos = 0;
     this.total = 0;
+    this.totalordenes = 0;
     let ini: string = this.fechaIni.nativeElement.value;
     let fin: string = this.fechaFin.nativeElement.value;
     if (ini != '' && fin != '') {
       ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
       fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
-    } 
-    this.documentoService.getNominaByEmpleado(ini,fin, idEmpleados,"11").subscribe(res => {
+    }
+    this.documentoService.getNominaByEmpleado(ini, fin, idEmpleados, "11").subscribe(res => {
       this.nomimas = res;
+      this.totalOrdenes();
       for (let nomi of this.nomimas) {
         this.subtotal = Number(this.subtotal) + Number(nomi.subtotal);
         this.vales = Number(this.vales) + Number(nomi.vales);
@@ -187,7 +219,7 @@ export class NominaComponent implements OnInit {
       ini = "";
       fin = "";
     }
-
+    console.log(nomina.empleado_id);
     this.documentoService.getOrdenesByEmpleado(nomina.empleado_id, ini, fin, tipo_docu).subscribe(res => {
       this.ordenesSelect = res;
     });
@@ -204,25 +236,26 @@ export class NominaComponent implements OnInit {
   nominaDefaul() {
     this.usuarioService.getEmpleadoByUsuario(this.usuarioId.toString()).subscribe(res => {
       this.empleados = res;
-    let idEmpleados: number[] = [];
-    for (let id of this.empleados) {
-      idEmpleados.push(id.empleado_id);
-    }
-    this.nomimas = [];
-    this.subtotal = 0;
-    this.vales = 0;
-    this.productos = 0;
-    this.total = 0;
-    this.documentoService.getNominaByEmpleado("", "", idEmpleados,"11").subscribe(res => {
-      this.nomimas = res;
-      for (let nomi of this.nomimas) {
-        this.subtotal = Number(this.subtotal) + Number(nomi.subtotal);
-        this.vales = Number(this.vales) + Number(nomi.vales);
-        this.productos = Number(this.productos) + Number(nomi.productos);
-        this.total = Number(this.total) + Number(nomi.total)
+      let idEmpleados: number[] = [];
+      for (let id of this.empleados) {
+        idEmpleados.push(id.empleado_id);
       }
+      this.nomimas = [];
+      this.subtotal = 0;
+      this.vales = 0;
+      this.productos = 0;
+      this.total = 0;
+      this.documentoService.getNominaByEmpleado("", "", idEmpleados, "11").subscribe(res => {
+        this.nomimas = res;
+        this.totalOrdenes();
+        for (let nomi of this.nomimas) {
+          this.subtotal = Number(this.subtotal) + Number(nomi.subtotal);
+          this.vales = Number(this.vales) + Number(nomi.vales);
+          this.productos = Number(this.productos) + Number(nomi.productos);
+          this.total = Number(this.total) + Number(nomi.total)
+        }
+      });
     });
-  });
   }
 
   guardarConfiguracion() {

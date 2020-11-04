@@ -67,6 +67,9 @@
       <div class="form-row">
         <b> Total: $</b>{{formatearNumber(total)}}
       </div>
+      <div class="form-row">
+        <b> Cantidad de ordenes: </b> {{totalordenes}}
+      </div>
     </div>
   </div>
   <br />
@@ -81,7 +84,7 @@
         <th scope="col">Ahorro</th>
         <th scope="col">Admon</th>
         <th scope="col">Total</th>
-      </tr>
+      </tr> 
     </thead>
     <tbody>
       <tr *ngFor="let ordenes of nomimas">
@@ -355,7 +358,8 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th scope="col">Vehículo</th>
+               
+                <th scope="col">Orden</th>
                 <th scope="col">Placa</th>
                 <th scope="col">Valor</th>
                 <th scope="col">Fecha</th>
@@ -364,7 +368,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let ordenes of ordenesSelect">           
-                <td>{{ordenes.detalle_entrada}}</td>
+                <td>{{ordenes.documento_id}}</td>
                 <td>{{ordenes.detalle_entrada}}</td>
                 <td>{{formatearNumber(ordenes.total)}}</td>
                 <td>{{ordenes.fecha_registro| date: 'dd/MM/yyyy, h:mm a'}}</td>
