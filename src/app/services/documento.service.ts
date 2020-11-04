@@ -142,6 +142,10 @@ export class DocumentoService {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByEmpleado?empleadoId='+empleadoId+ '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);
   }
 
+  getOrdenesByEmpleados(empleadoId: number[],fechaInicial,fechaFinal,tipoDocumentoId:number) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByEmpleados?empleadoId='+empleadoId+ '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);
+  }
+
   getDocumentoByTipoAndFecha(tipoDocumentoId: string,usuarioId: string,empleadoId: string, fechaInicial,fechaFinal, consecutivoDian:string,documentoId:string,clienteId: string,proveedorId:string,empresaId: number  ) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getDocumentoByTipoAndFecha?tipoDocumentoId='+tipoDocumentoId+'&empresaId=' + empresaId + '&usuarioId=' + usuarioId + '&empleadoId=' + empleadoId+'&consecutivoDian=' + consecutivoDian+'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+ '&documentoId=' + documentoId+ '&clienteId=' + clienteId+ '&proveedorId=' + proveedorId);
   }
