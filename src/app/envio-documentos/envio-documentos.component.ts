@@ -384,7 +384,7 @@ export class EnvioDocumentosComponent implements OnInit {
   getclientes(empresaId: number) {
     this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
       this.clientes = res;
-      console.log("lista de clientes cargados: " + this.clientes.length);
+      console.log( this.clientes);
     });
   }
 

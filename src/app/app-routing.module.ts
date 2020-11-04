@@ -6,10 +6,8 @@ import { UsuarioComponent } from './usuario/usuario.component';
 import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { OtComponent } from './ot/ot.component';
 import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
-import { NominaComponent } from './nomina/nomina.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
-import { ClienteComponent } from './cliente/cliente.component';
 import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
@@ -27,6 +25,8 @@ import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.componen
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
 import { TutorialesComponent } from './tutoriales/tutoriales.component';
 import { CuentasContablesComponent } from './cuentas-contables/cuentas-contables.component';
+import { NominaComponent } from './components/nomina/nomina.component';
+import { ClienteComponent } from './components/cliente/cliente.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -37,7 +37,7 @@ const routes: Routes = [
    { path: 'gestionOrden', component: GestionOrdenComponent },
    { path: 'nomima', component: NominaComponent },
    { path: 'empleado', component: EmpleadoComponent },
-   { path: 'cliente', component: ClienteComponent },
+   { path: 'cliente', component: ClienteComponent },  
    { path: 'infoMovimiento', component: InfoMovimientoComponent },
    { path: 'inventarioFisico', component: InventarioFisicoComponent },
    { path: 'entradasAlmacen', component: MovimientoMesComponent },
