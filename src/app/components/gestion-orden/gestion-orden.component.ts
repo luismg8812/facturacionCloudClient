@@ -460,12 +460,12 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nueva Factura");
       return;
     }
-    let cliente = this.clientes.find(cliente => cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento == element.value);
+    let cliente = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' - ' + cliente.documento == element.value);
     if (cliente == undefined) {
       this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
       return;
-    } else { 
+    } else {
       console.log(cliente);
       this.documentoFactura.cliente_id = cliente.cliente_id;
       this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
@@ -1518,15 +1518,13 @@ export class GestionOrdenComponent implements OnInit {
     if (event.target.checked) {
       this.documentoService.getDocumentoOrdenById(or.documento_id).subscribe(res => {
         if (res.length > 0) {
-          this.documentoService.getByDocumentoId(res[0].documento_id).subscribe(res2 => {
-            if (this.documentoFactura.tipo_documento_id != this.TIPO_DOCUMENTO_COTIZACION) {
-              alert("La orden Seleccionada ya se encuentra asociada a la factura número: " + res[0].documento_id);
-              event.target.checked = false;
-              return;
-            } else {
-              this.ordenesBuscarListFacturaSelect.unshift(or);
-            }
-          });
+          if (this.documentoFactura.tipo_documento_id != this.TIPO_DOCUMENTO_COTIZACION) {
+            alert("La orden Seleccionada ya se encuentra asociada a la factura número: " + res[0].documento_id);
+            event.target.checked = false;
+            return;
+          } else {
+            this.ordenesBuscarListFacturaSelect.unshift(or);
+          }
         } else {
           this.ordenesBuscarListFacturaSelect.unshift(or);
         }
