@@ -465,7 +465,7 @@ export class GestionOrdenComponent implements OnInit {
       this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
       return;
-    } else {
+    } else { 
       console.log(cliente);
       this.documentoFactura.cliente_id = cliente.cliente_id;
       this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
@@ -1519,7 +1519,7 @@ export class GestionOrdenComponent implements OnInit {
       this.documentoService.getDocumentoOrdenById(or.documento_id).subscribe(res => {
         if (res.length > 0) {
           this.documentoService.getByDocumentoId(res[0].documento_id).subscribe(res2 => {
-            if (res2[0].tipo_documento_id != this.TIPO_DOCUMENTO_COTIZACION) {
+            if (this.documentoFactura.tipo_documento_id != this.TIPO_DOCUMENTO_COTIZACION) {
               alert("La orden Seleccionada ya se encuentra asociada a la factura número: " + res[0].documento_id);
               event.target.checked = false;
               return;
