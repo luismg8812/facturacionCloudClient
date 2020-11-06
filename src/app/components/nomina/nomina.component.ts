@@ -96,6 +96,9 @@ export class NominaComponent implements OnInit {
     if (ini != '' && fin != '') {
       ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
       fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
+    }else{
+      ini="";
+      fin="";
     }
     let idEmpleados: number[] = [];
     for (let id of this.empleados) {

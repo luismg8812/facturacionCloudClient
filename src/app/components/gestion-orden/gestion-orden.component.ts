@@ -768,7 +768,12 @@ export class GestionOrdenComponent implements OnInit {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
           this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
-          //this.calcularTOtal();
+          this.documentoService.updateDocumento(this.documento).subscribe(res => {
+            if (res.code != 200) {
+              alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+          });
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
