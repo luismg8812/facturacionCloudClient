@@ -94,11 +94,8 @@ export class NominaComponent implements OnInit {
     let ini: string = this.fechaIni.nativeElement.value;
     let fin: string = this.fechaFin.nativeElement.value;
     if (ini != '' && fin != '') {
-      ini = this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString();
-      fin = this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString();
-    } else {
-      ini = "";
-      fin = "";
+      ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
+      fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
     }
     let idEmpleados: number[] = [];
     for (let id of this.empleados) {
@@ -213,15 +210,13 @@ export class NominaComponent implements OnInit {
     let ini: string = this.fechaIni.nativeElement.value;
     let fin: string = this.fechaFin.nativeElement.value;
     if (ini != '' && fin != '') {
-      ini = this.calculosService.fechaInicial1(this.fechaIni.nativeElement.value).toLocaleString();
-      fin = this.calculosService.fechaFinal1(this.fechaFin.nativeElement.value).toLocaleString();
-    } else {
-      ini = "";
-      fin = "";
+      ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
+      fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
     }
     console.log(nomina.empleado_id);
     this.documentoService.getOrdenesByEmpleado(nomina.empleado_id, ini, fin, tipo_docu).subscribe(res => {
       this.ordenesSelect = res;
+      this.totalOrdenes();
     });
     tipo_docu = 8;// se trae las vales de los empleados
     this.documentoService.getOrdenesByEmpleado(nomina.empleado_id, ini, fin, tipo_docu).subscribe(res => {
