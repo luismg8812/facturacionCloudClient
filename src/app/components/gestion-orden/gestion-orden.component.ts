@@ -1,41 +1,42 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { DocumentoModel } from '../model/documento.model';
-import { CalculosService } from '../services/calculos.service';
-import { DocumentoService } from '../services/documento.service';
-import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
-import { UsuarioModel } from '../model/usuario.model';
-import { UsuarioService } from '../services/usuario.service';
-import { ClienteModel } from '../model/cliente.model';
-import { ClienteService } from '../services/cliente.service';
+
 import { Observable } from 'rxjs';
-import { ParametrosModel } from '../model/parametros.model';
+
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
-import { DocumentoDetalleService } from '../services/documento-detalle.service';
-import { MarcaVehiculoModel } from '../model/marcaVehiculo.model';
-import { MarcasService } from '../services/marcas.service';
-import { ModeloMarcaModel } from '../model/modeloMarca.model';
-import { ProductoService } from '../services/producto.service';
-import { ProductoModel } from '../model/producto.model';
-import { ActivacionModel } from '../model/activacion';
-import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
-import { EmpresaService } from '../services/empresa.service';
-import { FacturaModel } from '../vo/factura.model';
-import { ImpresionService } from '../services/impresion.service';
-import { DocumentoOrdenModel } from '../model/documentoOrden.model';
-import { ConfiguracionModel } from '../model/configuracion.model';
-import { TipoPagoModel } from '../model/tipoPago.model';
-import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
-import { EmpresaModel } from '../model/empresa.model';
-import { EmpleadoModel } from '../model/empleado.model';
-import { EmpleadoService } from '../services/empleado.service';
-import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
-import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
-import { CierreService } from '../services/cierre.service';
-import { InformeDiarioModel } from '../model/informeDiario.model';
-import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
-import { DocumentoNotaModel } from '../model/documentoNota.model';
-import { DocumentoDetalleVoModel } from '../model/documentoDetalleVo.model';
-import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
+import { ActivacionModel } from 'src/app/model/activacion';
+import { ClienteModel } from 'src/app/model/cliente.model';
+import { ConfiguracionModel } from 'src/app/model/configuracion.model';
+import { DocumentoModel } from 'src/app/model/documento.model';
+import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
+import { DocumentoInvoiceModel } from 'src/app/model/documentoInvoice.model';
+import { DocumentoNotaModel } from 'src/app/model/documentoNota.model';
+import { DocumentoOrdenModel } from 'src/app/model/documentoOrden.model';
+import { EmpleadoModel } from 'src/app/model/empleado.model';
+import { EmpresaModel } from 'src/app/model/empresa.model';
+import { FactTipoEmpresaModel } from 'src/app/model/factTipoEmpresa.model';
+import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
+import { InformeDiarioModel } from 'src/app/model/informeDiario.model';
+import { MarcaVehiculoModel } from 'src/app/model/marcaVehiculo.model';
+import { ModeloMarcaModel } from 'src/app/model/modeloMarca.model';
+import { ParametrosModel } from 'src/app/model/parametros.model';
+import { ProductoModel } from 'src/app/model/producto.model';
+import { ResolucionEmpresaModel } from 'src/app/model/resolucionEmpresa.model';
+import { TipoIdentificacionModel } from 'src/app/model/tipoIdentificacion.model';
+import { TipoPagoModel } from 'src/app/model/tipoPago.model';
+import { TipoPagoDocumentoModel } from 'src/app/model/tipoPagoDocumento.model';
+import { UsuarioModel } from 'src/app/model/usuario.model';
+import { CalculosService } from 'src/app/services/calculos.service';
+import { CierreService } from 'src/app/services/cierre.service';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
+import { DocumentoService } from 'src/app/services/documento.service';
+import { EmpleadoService } from 'src/app/services/empleado.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
+import { MarcasService } from 'src/app/services/marcas.service';
+import { ProductoService } from 'src/app/services/producto.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
+import { FacturaModel } from 'src/app/vo/factura.model';
 
 
 declare var jquery: any;
@@ -459,7 +460,7 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nueva Factura");
       return;
     }
-    let cliente = this.clientes.find(cliente => cliente.nombre == element.value);
+    let cliente = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' - ' + cliente.documento == element.value);
     if (cliente == undefined) {
       this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
@@ -767,7 +768,12 @@ export class GestionOrdenComponent implements OnInit {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
           this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
-          //this.calcularTOtal();
+          this.documentoService.updateDocumento(this.documento).subscribe(res => {
+            if (res.code != 200) {
+              alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+          });
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
@@ -1517,9 +1523,13 @@ export class GestionOrdenComponent implements OnInit {
     if (event.target.checked) {
       this.documentoService.getDocumentoOrdenById(or.documento_id).subscribe(res => {
         if (res.length > 0) {
-          alert("La orden Seleccionada ya se encuentra asociada a la factura número: " + res[0].documento_id);
-          event.target.checked = false;
-          return;
+          if (this.documentoFactura.tipo_documento_id != this.TIPO_DOCUMENTO_COTIZACION) {
+            alert("La orden Seleccionada ya se encuentra asociada a la factura número: " + res[0].documento_id);
+            event.target.checked = false;
+            return;
+          } else {
+            this.ordenesBuscarListFacturaSelect.unshift(or);
+          }
         } else {
           this.ordenesBuscarListFacturaSelect.unshift(or);
         }
