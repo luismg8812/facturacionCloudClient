@@ -17,7 +17,7 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div class="tab-pane container-fluid active" id="orden">
-      <br />
+      <br />  
       <div class="form-row">
         <div class="form-group col-md-2 col-sm-12 ">
           <button type="button" class="btn btn-primary " id="anterior"
@@ -47,8 +47,11 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-8">
           <b>Usuario Que crea:</b> {{nombreUsuario()}}
+        </div>
+        <div class="form-group col-md-4">
+          <b>Telefono Cliente:</b> {{numeroCliente}}
         </div>
         <div class="form-group col-md-4">
           <b># Orden de pedido:</b> {{documento.documento_id}}
@@ -61,6 +64,10 @@
         <div class="form-group col-md-4 col-sm-2">
           <b>Fecha entrega:</b> {{documento.fecha_entrega | date: 'dd/MM/yyyy, h:mm a'}}
         </div>
+        <div class="form-group col-md-4 col-sm-2 upper">
+          <input class="form-control upper" id="placa" placeholder="* Placa" [disabled]="documento.impreso==1"
+            name="placa" #placa required (blur)="agregarPlaca(placa)">
+        </div>
         <div class="form-group col-md-4 col-sm-2">
           <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1"
             class="form-control" id="clientePV" (change)="clienteSelectFun(clientePV)">
@@ -71,10 +78,7 @@
             </option>
           </datalist>
         </div>
-        <div class="form-group col-md-4 col-sm-2 upper">
-          <input class="form-control upper" id="placa" placeholder="* Placa" [disabled]="documento.impreso==1"
-            name="placa" #placa required (blur)="agregarPlaca(placa)">
-        </div>
+      
       </div>
 
       <div class="form-row">
@@ -127,7 +131,7 @@
           <input list="browsersEmpreados" name="empleadoPV" #empleadoPV [disabled]="documento.impreso==1"
             placeholder="Empleado" class="form-control" id="empleadoPV" (change)="empleadoSelectFun(empleadoPV)">
           <datalist id="browsersEmpreados">
-            <option *ngFor="let empleado of empleados" [value]="empleado.nombre">
+            <option *ngFor="let empleado of empleados" [value]="empleado.apellido+' '+empleado.nombre">
               {{empleado.apellido}}
             </option>
           </datalist>
@@ -153,9 +157,9 @@
             <th scope="col">Opciones</th>
             <th scope="col">Nombre</th>
             <th scope="col">Cant.</th>
-            <th scope="col" class="d-none d-sm-block">Precio Compra</th>
-            <th scope="col">Total</th>
             <th scope="col" class="d-none d-sm-block">Precio Venta</th>
+            <th scope="col">Total</th>
+          
 
           </tr>
         </thead>
@@ -176,7 +180,6 @@
             <td>{{ordenes.cantidad}}</td>
             <td class="d-none d-sm-block">${{formatearNumber(ordenes.unitario)}}</td>
             <td>${{formatearNumber(ordenes.parcial)}}</td>
-            <td class="d-none d-sm-block">${{formatearNumber(ordenes.impreso_comanda)}}</td>
 
           </tr>
         </tbody>
@@ -250,6 +253,39 @@
           </div>
         </div>
       </div>
+
+         <!-- crear producto Modal -->
+<div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Crear Producto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group col-md-12 col-sm-1">
+            <input class="form-control" id="crearProductoNombre" type="text" placeholder="* Nombre del producto" name="crearProductoNombre"
+            #crearProductoNombre [(ngModel)]="productoNew.nombre">
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 col-sm-1">
+              <input class="form-control" id="precioProductoNombre" type="number" placeholder="* precio" name="precioProductoNombre"
+              #precioProductoNombre [(ngModel)]="productoNew.costo_publico" >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarCrearProducto()">Cancelar</button>
+        <button type="button" class="btn btn-primary"  (click)="crearProducto(crearProductoNombre,precioProductoNombre)">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
       <!-- Eliminar Modal -->
       <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

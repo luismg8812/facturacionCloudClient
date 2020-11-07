@@ -958,16 +958,17 @@ export class ImpresionService {
       texto.push("NIT/CC: " + factura.cliente.documento + '\n');
       texto.push("TELEFONO: " + factura.cliente.fijo +' - '+ factura.cliente.celular + '\n');
     }
+    texto.push("EMPLEADO: " + factura.nombreEmpleado + '\n');
     texto.push("VEHICULO: " + factura.documento.detalle_entrada + '\n');
     texto.push("LINEA: " + factura.documento.linea_vehiculo + '\n');
     texto.push("DESCRIPCION CLIENTE: " + factura.documento.descripcion_cliente + '\n');
     texto.push("DIAGNOSTICO: " + factura.documento.descripcion_trabajador + '\n');
-    texto.push('--------------------------------\n');
+    texto.push('--------------------------------\n');  
     texto.push('DESCRIPCION                TOTAL\n');
     texto.push('--------------------------------\n');
-    for (var i = 0; i < factura.detalle.length; i++) {
+    for (var i = 0; i < factura.detalle.length; i++) { 
       let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 20);
-      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.detalle[i].parcial).replace("COP", ""), 10);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial).replace("COP", ""), 10);
       texto.push(nombreProducto + "  " + totalProducto + "\n");
     }
     texto.push('--------------------------------\n');
