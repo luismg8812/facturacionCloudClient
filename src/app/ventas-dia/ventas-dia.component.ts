@@ -1170,6 +1170,7 @@ export class VentasDiaComponent implements OnInit {
         case 9:
           con = resolucion.consecutivo;
           consecutivo = resolucion.letra_consecutivo + con;
+          this.document.letra_consecutivo = resolucion.letra_consecutivo;
           this.document.consecutivo_dian = consecutivo;
           console.log("consecutivo documentoId: " + consecutivo);
           this.tituloFactura = "FACTURA DE VENTA.";
@@ -1193,7 +1194,8 @@ export class VentasDiaComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-          consecutivo = resolucion.letra_consecutivo+con;
+          consecutivo = ""+con;
+          this.document.letra_consecutivo = resolucion.letra_consecutivo;
           console.log("consecutivo Dian: " + consecutivo);
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
@@ -1370,6 +1372,12 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
     if (cantidad == null || cantidad <= 0) {
+      if (this.codigoBarrasActivo) {
+        this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+        this.CodigoBarrasPV.nativeElement.focus();
+      } else {
+        this.articuloPV.nativeElement.focus();
+      }
       return;
     }
 

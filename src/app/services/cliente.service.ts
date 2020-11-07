@@ -9,6 +9,7 @@ import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 import { ResponsabilidadFiscalModel } from '../model/responsabilidadFiscal.model';
 import { ResponsabilidadFiscalClienteModelModel } from '../model/responsabilidadFiscalCliente.model';
+import { VehiculoModel } from '../model/vehiculo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,10 @@ export class ClienteService {
 
   public getImpresorasEmpresa(empresaId:string){
     return this.http.get<ImpresoraEmpresaModel[]>(this.server_api+'/cliente/getImpresorasEmpresa?empresaId='+empresaId);
+  }
+
+  public getVehiculos(){
+    return this.http.get<VehiculoModel[]>(this.server_api+'/cliente/getVehiculos');
   }
 
   
@@ -66,6 +71,10 @@ export class ClienteService {
     return this.http.post<any>(this.server_api + '/cliente/saveCliente', clienteId);
   }
 
+  saveVehiculo(vehiculoId: VehiculoModel) {
+    return this.http.post<any>(this.server_api + '/cliente/saveVehiculo', vehiculoId);
+  }
+
   saveResponsabilidadFiscalCliente(clienteId: ResponsabilidadFiscalClienteModelModel) {
     return this.http.post<any>(this.server_api + '/cliente/saveResponsabilidadFiscalCliente', clienteId);
   }
@@ -75,6 +84,9 @@ export class ClienteService {
   updateCliente(clienteId: ClienteModel) {
     return this.http.post<any>(this.server_api + '/cliente/updateCliente', clienteId);
   }
-  
+
+  updateVehiculo(vehiculoId: VehiculoModel) {
+    return this.http.post<any>(this.server_api + '/cliente/updateVehiculo', vehiculoId);
+  }
   
 }
