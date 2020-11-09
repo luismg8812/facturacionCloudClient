@@ -578,33 +578,30 @@ export class GestionOrdenComponent implements OnInit {
     this.documento.detalle_entrada = element.value;
     this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase();
     element.value = this.documento.detalle_entrada.toUpperCase();
-    this.documentoService.updateDocumento(this.documento).subscribe(res => {
-      if (res.code != 200) {
-        alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
-        return;
-      }
-    });
+  
     this.vehiculo=this.vehiculosEmpresa.find(product => product.placa === this.documento.detalle_entrada.toUpperCase().trim());
     if(this.vehiculo!=undefined){
       let cliente = this.clientes.find(client => client.cliente_id == this.vehiculo.cliente_id);
       if (cliente != undefined) {
         this.clientePV.nativeElement.value = cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento;
         this.numeroCliente=cliente.celular + (cliente.fijo!=""?"-"+cliente.fijo:"");
+        this.documento.cliente_id=cliente.cliente_id;
       }
       if (this.vehiculo.linea_vehiculo != "") {
         this.linea.nativeElement.value = this.vehiculo.linea_vehiculo;
+        this.documento.linea_vehiculo=this.vehiculo.linea_vehiculo;
       } else {
         this.linea.nativeElement.value = "Seleccione Linea";
       }
       if (this.vehiculo.modelo_marca_id != null) {
         this.marcasService.getModeloById(this.vehiculo.modelo_marca_id).subscribe(res => {
           let modelo = res[0];
+          this.documento.modelo_marca_id=modelo.modelo_marca_id;
           this.marcasService.getModeloByMarca(modelo.marca_vehiculo_id).subscribe(modRes => {
             this.modeloList = modRes;
             let marcaId = this.marcaList.find(ma => ma.marca_vehiculo_id == modelo.marca_vehiculo_id);
             this.marca.nativeElement.value = marcaId.nombre;
             this.modelo.nativeElement.value = modelo.nombre;
-
           });
         });
       } else {
@@ -617,10 +614,16 @@ export class GestionOrdenComponent implements OnInit {
       this.vehiculo.placa=this.documento.detalle_entrada.toUpperCase().trim();
       this.clienteService.saveVehiculo(this.vehiculo).subscribe(res => {
         this.vehiculo.vehiculo_id=res.vehiculo_id;
-        //this.vehiculosEmpresa.push(this.vehiculo);
+        this.vehiculosEmpresa.push(this.vehiculo);
         this.vehiculos();
       });
     }
+    this.documentoService.updateDocumento(this.documento).subscribe(res => {
+      if (res.code != 200) {
+        alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
   }
 
   agregarObservacion(element) {
