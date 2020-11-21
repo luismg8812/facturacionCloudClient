@@ -38,6 +38,9 @@ import { ProductoService } from 'src/app/services/producto.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { FacturaModel } from 'src/app/vo/factura.model';
 import { VehiculoModel } from 'src/app/model/vehiculo.model';
+import { SubMenuModel } from 'src/app/model/submenu.model';
+import { BonoModel } from 'src/app/model/bono.model';
+import { BonoService } from 'src/app/services/bono.service';
 
 
 declare var jquery: any;
@@ -126,7 +129,8 @@ export class GestionOrdenComponent implements OnInit {
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
 
-
+  public opciones: Array<SubMenuModel>;
+  
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
@@ -149,6 +153,8 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("resolucionEmpresa") resolucionEmpresa: ElementRef;
   @ViewChild("impresora") impresora: ElementRef;
 
+ //opciones
+  @ViewChild("abonoModal") abonoModal: ElementRef;
 
 
   constructor(public productoService: ProductoService,
@@ -182,6 +188,7 @@ export class GestionOrdenComponent implements OnInit {
     this.factura = new FacturaModel();
     this.fechasBusqueda();
     this.vehiculos();
+    this.opcionesSubmenu();
   }
 
   fechasBusqueda() {
@@ -195,6 +202,7 @@ export class GestionOrdenComponent implements OnInit {
     this.fechaF = ano + "-" + mes + "-" + '30';
     console.log(this.fechaI);
   }
+
 
   getProductosByEmpresa(empresaId: number) {
     this.productoService.getProductosByEmpresa(empresaId.toString()).subscribe(res => {
@@ -461,7 +469,7 @@ export class GestionOrdenComponent implements OnInit {
   clienteSelectFun(element) {
     console.log(this.clientes);
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
@@ -557,7 +565,7 @@ export class GestionOrdenComponent implements OnInit {
 
   agregarDescripcionCliente(element) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     this.documento.descripcion_cliente = element.value;
@@ -571,7 +579,7 @@ export class GestionOrdenComponent implements OnInit {
 
   agregarPlaca(element) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     console.log(element.value);
@@ -606,7 +614,7 @@ export class GestionOrdenComponent implements OnInit {
         });
       } else {
         this.marca.nativeElement.value = "";
-        this.modelo.nativeElement.value = "";
+        this.modelo.nativeElement.value = ""; 
         this.modeloList = [];
       }
     }else{
@@ -628,7 +636,7 @@ export class GestionOrdenComponent implements OnInit {
 
   agregarObservacion(element) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     this.documento.descripcion_trabajador = element.value;
@@ -642,7 +650,7 @@ export class GestionOrdenComponent implements OnInit {
 
   entregar() {
     if (this.documento.documento_id == '') {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     this.documento.fecha_entrega = this.calculosService.fechaActual();
@@ -658,7 +666,7 @@ export class GestionOrdenComponent implements OnInit {
 
   reabrir() {
     if (this.documento.documento_id == '') {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     if (this.reabirOrdenActivo) {
@@ -840,7 +848,7 @@ export class GestionOrdenComponent implements OnInit {
   agregardetalle() {
 
     if (this.documento.documento_id == '') {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     if (!this.productoFijoActivo) {
@@ -967,7 +975,7 @@ export class GestionOrdenComponent implements OnInit {
 
   imprimirOrden(impresora) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     if (this.impresoraEmpresa.length == 0) {
@@ -1008,7 +1016,7 @@ export class GestionOrdenComponent implements OnInit {
       if(this.documento.empleado_id!=null){
         let empleado = this.empleados.find(empleado => empleado.empleado_id == this.documento.empleado_id);
         if (empleado != undefined) {
-          this.factura.nombreEmpleado= empleado.nombre;
+          this.factura.nombreEmpleado= empleado.apellido+" "+empleado.nombre;
         }else{
           this.factura.nombreEmpleado="";
         }
@@ -1898,6 +1906,12 @@ export class GestionOrdenComponent implements OnInit {
     }
   }
 
+  enterTecla(element) {
+    if (element.id == "bonos") {
+      this.abonoModal.nativeElement.click();
+    }
+  }
+
   asignarValoresFactura(documento_id: string) {
     if (documento_id != '') {
 
@@ -1951,7 +1965,7 @@ export class GestionOrdenComponent implements OnInit {
       console.log(empleado);
       this.documento.empleado_id = empleado.empleado_id;
       if (this.documento.documento_id == "") {
-        alert("Debe pulsar el boton nuevo documento");
+        alert("Debe pulsar el boton nueva orden");
         return;
       }
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
@@ -2060,5 +2074,14 @@ export class GestionOrdenComponent implements OnInit {
       console.log("vehiculos:" + res.length);
     });
   }
+
+  public opcionesSubmenu() {
+    let usuario_id = localStorage.getItem('usuario_id');
+    this.usuarioService.opcionPuntoVentaByUsuario(usuario_id).subscribe((res) => {
+      this.opciones = res;
+      console.log(this.opciones);
+    });
+  }
+
 
 }

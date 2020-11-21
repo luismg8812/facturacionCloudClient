@@ -4,9 +4,12 @@ import { EmpresaModel } from '../model/empresa.model';
 import { ClienteModel } from '../model/cliente.model';
 import { ProveedorModel } from '../model/proveedor.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
+import { BonoModel } from '../model/bono.model';
+import { BonoVOModel } from './bonoVO.model';
 
 export class FacturaModel {
     public documento:DocumentoModel;
+    public bono:BonoVOModel;
     public detalle:DocumentoDetalleModel[];
     public empresa:EmpresaModel
     public cliente:ClienteModel;
@@ -22,6 +25,7 @@ export class FacturaModel {
     
     constructor(){
         this.documento=new DocumentoModel();
+        this.bono=new BonoVOModel();
         this.resolucionEmpresa=new ResolucionEmpresaModel();
         this.detalle=[];
         this.titulo="";

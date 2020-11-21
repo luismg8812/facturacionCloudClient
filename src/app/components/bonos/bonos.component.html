@@ -1,0 +1,231 @@
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Bonos</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-1">
+          Fecha Inicial
+          <input class="form-control" type="date" [value]="fechaI" id="fechaIniBono" #fechaIniBono>
+        </div>
+        <div class="form-group col-md-6 col-sm-1">
+          Fecha Final
+          <input class="form-control" type="date" value="2021-12-31" id="fechaFinBono" #fechaFinBono>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-2">
+          Cliente
+          <input list="browsers" name="clienteBuscarBonoPV" #clienteBuscarBonoPV placeholder="Cliente"
+            class="form-control" id="clienteBuscarBonoPV">
+        </div>
+        <div class="form-group col-md-6 col-sm-2">
+          Placa
+          <input class="form-control" id="placaBonoBuscar" placeholder="Placa" name="placaBonoBuscar" #placaBonoBuscar
+            required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-2">
+          # Bono
+          <input class="form-control" id="BonoBuscar" placeholder="# Bono" name="BonoBuscar" #BonoBuscar required>
+        </div>
+        <div class="form-group col-md-6 col-sm-2">
+          Estado
+          <select id="estadoBuscar" name="estadoBuscar" #estadoBuscar class="form-control">
+            <option value="">Seleccione</option>
+            <option value="0">Sin Consumir</option>
+            <option value="1">Consumido</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6 col-sm-2">
+          <button type="button" class="btn btn-primary mr-2"
+            (click)="buscarBonos(placaBonoBuscar,clienteBuscarBonoPV,fechaIniBono,fechaFinBono,BonoBuscar,estadoBuscar)">Buscar</button>
+
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#crearBonoModal">
+            Crear bono
+          </button>
+
+          <button type="button" class="btn btn-primary" (click)="cerrar()">
+            Salir
+          </button>
+
+        </div>
+      </div>
+
+
+
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Opciones</th>
+            <th scope="col">Placa</th>
+            <th scope="col">Observación</th>
+            <th scope="col"># Bono</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Fecha Creación</th>
+            <th scope="col">Fecha uso</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bono of bonosList">
+            <th scope="row">
+              <button type="button" (click)="editarBono(bono)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                data-target="#crearBonoModal" [disabled]="bono.estado=='1'">
+                Editar
+              </button>
+              <button type="button" (click)="imprimirDetalleBono(bono)" class="btn btn-secondary btn-sm"
+                data-toggle="modal" [disabled]="bono.estado=='1'">
+                Imprimir
+              </button>
+              <!-- Button trigger modal -->
+              <button type="button" (click)="preConsumirBono(bono)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                data-target="#consumirModal" [disabled]="bono.estado=='1'" >
+                Consumir
+              </button>
+            </th>
+            <td>{{bono.placa}}</td>
+            <td>{{bono.observacion}}</td>
+            <td>{{bono.bono_id}}</td>
+            <td>{{bono.estado}}</td>
+            <td>{{bono.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
+            <td>{{bono.fecha_uso | date: 'dd/MM/yyyy, h:mm a'}}</td>
+            <td>${{formatearNumber(bono.total)}}</td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+     <!-- consumir Modal -->
+     <div class="modal fade" id="consumirModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+     <div class="modal-dialog" role="document">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title" id="exampleModalLabel">Consumir Bono</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+           </button>
+         </div>
+         <div class="modal-body">
+           Esta seguro de consumir este bono?
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+           <button type="button" class="btn btn-primary" (click)="consumirBono()">Consumir</button>
+         </div>
+       </div>
+     </div>
+   </div>
+
+  <!-- Modal imprimir-->
+  <div class="modal fade bd-example-modal-sm" id="imprimirModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Imprimir Orden de trabajo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="form-group col-md-12 col-sm-12">
+              Digite el número de impresora:
+            </div>
+            <div class="form-group col-md-12 col-sm-12">
+              <select class="form-control" #impresoraBono id="impresoraBono">
+                <option *ngFor="let imp of impresoraEmpresa" value="{{imp.numero_impresora}}">
+                  {{imp.nombre_impresora}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" (click)="imprimirBono(impresoraBono)">Imprimir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal crear bono-->
+  <div class="modal fade" id="crearBonoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Crear bono</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-6">
+              <b>Fecha Creación:</b> {{bonoNew.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+            </div>
+            <div class="form-group col-md-6">
+              <b>Usuario Que crea:</b> {{nombreUsuario()}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-6">
+              * Placa
+              <input class="form-control" id="placaCrearBono" placeholder="* Placa" name="placaCrearBono"
+                #placaCrearBono>
+            </div>
+            <div class="form-group col-md-6 col-sm-6">
+              Linea
+              <select class="form-control" id="lineaCrearBono" placeholder="lineaCrearBono" #lineaCrearBono>
+                <option>Automovil</option>
+                <option>Camioneta - Campero</option>
+                <option>Moto</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-sm-6">
+              Tipo de bono
+              <select class="form-control" id="tipoCrearBono" placeholder="tipoCrearBono" #tipoCrearBono>
+                <option *ngFor="let grupo of tipoBonoList" [value]="grupo.tipo_bono_id">
+                  {{grupo.nombre}}
+                </option>
+              </select>
+            </div>
+            <div class="form-group col-md-6 col-sm-6">
+              * Total
+              <input class="form-control" id="totalCrearBono" type="number" placeholder="* Total" name="totalCrearBono"
+                #totalCrearBono>
+            </div>
+            <div class="form-group col-md-12 ">
+              * Observación
+              <textarea class="form-control " id="observacionCrearBono" maxlength="299" #observacionCrearBono
+                placeholder="Observación"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarCrearBono()">Cerrar</button>
+          <button type="button" class="btn btn-primary" (click)="guardarBono()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col col-ms-1">
+    <a href="#" name="downloadZipLink" #downloadZipLink id="downloadZipLink" download>
+
+    </a>
+  </div>
+</div>
