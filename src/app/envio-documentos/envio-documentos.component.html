@@ -64,7 +64,7 @@
             (change)="selectOrdenOne(ordenes,$event)">
         </th>
         <td>{{ordenes.documento_id}}</td>
-        <td>{{ordenes.consecutivo_dian}}</td>
+        <td>{{ordenes.letra_consecutivo}} {{ordenes.consecutivo_dian}}</td>
         <td>${{formatearNumber(ordenes.total)}}</td>
         <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
         <td>{{nombreTipoDocumentoFun(ordenes.tipo_documento_id)}}</td>

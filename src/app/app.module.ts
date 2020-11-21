@@ -46,6 +46,7 @@ import { CuentasContablesComponent } from './cuentas-contables/cuentas-contables
 import { NominaComponent } from './components/nomina/nomina.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { GestionOrdenComponent } from './components/gestion-orden/gestion-orden.component';
+import { BonosComponent } from './components/bonos/bonos.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -83,7 +84,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     LiberarCuadreComponent,
     CarteraProveedoresComponent,
     TutorialesComponent,
-    CuentasContablesComponent
+    CuentasContablesComponent,
+    BonosComponent
   ],
   imports: [
     BrowserModule,

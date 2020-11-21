@@ -68,7 +68,7 @@ export class BuscarDocumentosComponent implements OnInit {
   readonly NOTA_DEBITO: number = 13;
   readonly INVOICE_SIN_ENVIAR: number = 1;
 
-  public fechaI:string ="";
+  public fechaI: string = "";
 
 
   @ViewChild("tipoDocumento") tipoDocumento: ElementRef;
@@ -108,14 +108,14 @@ export class BuscarDocumentosComponent implements OnInit {
 
   }
 
-  fechasBusqueda(){
+  fechasBusqueda() {
     let date: Date = new Date();
-    let mes:string=""+ (date.getMonth()+1);
-    if(mes.length==1){
-      mes='0'+mes;
+    let mes: string = "" + (date.getMonth() + 1);
+    if (mes.length == 1) {
+      mes = '0' + mes;
     }
     let ano = date.getFullYear();
-    this.fechaI=ano+"-"+mes+"-"+'01';
+    this.fechaI = ano + "-" + mes + "-" + '01';
     console.log(this.fechaI);
   }
 
@@ -360,7 +360,7 @@ export class BuscarDocumentosComponent implements OnInit {
         tipoImpresion = this.impresoraEmpresa[i].tipo_impresion_id;
       }
     }
-   
+
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       this.documentoDetalleService.getDocumentoDetalleByDocumento(this.documentoSelect.documento_id).subscribe(res1 => {
         this.itemsFactura = res1;
@@ -388,6 +388,10 @@ export class BuscarDocumentosComponent implements OnInit {
           case 4:
             this.tituloFactura = "No. DE COTIZACIÓN";
             break;
+          case 9:
+            this.tituloFactura = "FACTURA DE VENTA.";
+            break;
+
           default:
             break;
         }
@@ -484,13 +488,13 @@ export class BuscarDocumentosComponent implements OnInit {
     if (tipoDocumento == "") {
       tipoDocumento = "10";
     }
-   
-      fechaIniBuscar = this.calculosService.fechaIniBusqueda(this.fechaIniBuscar.nativeElement.value);
-  
-   
-      fechaFinBuscar = this.calculosService.fechaFinBusqueda(this.fechaFinBuscar.nativeElement.value);
-    
-    let cliente1 = this.clientes.find(cliente => cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento == clientePV);
+
+    fechaIniBuscar = this.calculosService.fechaIniBusqueda(this.fechaIniBuscar.nativeElement.value);
+
+
+    fechaFinBuscar = this.calculosService.fechaFinBusqueda(this.fechaFinBuscar.nativeElement.value);
+
+    let cliente1 = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' - ' + cliente.documento == clientePV);
     let cliente_id = "";
     if (cliente1 != undefined) {
       cliente_id = cliente1.cliente_id.toString();

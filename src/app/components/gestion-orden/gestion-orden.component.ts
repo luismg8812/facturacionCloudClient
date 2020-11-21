@@ -37,6 +37,10 @@ import { MarcasService } from 'src/app/services/marcas.service';
 import { ProductoService } from 'src/app/services/producto.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { FacturaModel } from 'src/app/vo/factura.model';
+import { VehiculoModel } from 'src/app/model/vehiculo.model';
+import { SubMenuModel } from 'src/app/model/submenu.model';
+import { BonoModel } from 'src/app/model/bono.model';
+import { BonoService } from 'src/app/services/bono.service';
 
 
 declare var jquery: any;
@@ -68,17 +72,20 @@ export class GestionOrdenComponent implements OnInit {
   readonly NOTA_DEBITO: number = 13;
 
   public documento: DocumentoModel = new DocumentoModel();
+  public vehiculo:VehiculoModel=new VehiculoModel();
   public usuarioId: number;
   public empresaId: number;
   public detallesList: Array<DocumentoDetalleModel> = [];
   public usuarioList: Array<UsuarioModel> = [];
   public indexSelect: number = 0;
+  public numeroCliente:string="";
   public clientes: Array<ClienteModel>;
   public ref: AngularFireStorageReference;
   public task: AngularFireUploadTask;
   public downloadURL: Observable<string>;
   public downloadURLLocal: any;
   public downloadURL2: Observable<string>;
+  public productoNew:ProductoModel=new ProductoModel();
   public detalleSelect: DocumentoDetalleModel = new DocumentoDetalleModel();
   public valorTotal: number = 0;
   public ordenesBuscarList: Array<DocumentoModel> = [];
@@ -95,6 +102,7 @@ export class GestionOrdenComponent implements OnInit {
   public articuloPV: string = "";
   public productoIdSelect: ProductoModel = null;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
+  public vehiculosEmpresa: Array<VehiculoModel>;
   public factura: FacturaModel;
   public empleados: Array<EmpleadoModel>;
   public empleadoOrdenActivo: boolean = false;
@@ -121,7 +129,8 @@ export class GestionOrdenComponent implements OnInit {
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
 
-
+  public opciones: Array<SubMenuModel>;
+  
   @ViewChild("clientePV") clientePV: ElementRef;
   @ViewChild("placa") placa: ElementRef;
   @ViewChild("descripcionCliente") descripcionCliente: ElementRef;
@@ -144,6 +153,8 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("resolucionEmpresa") resolucionEmpresa: ElementRef;
   @ViewChild("impresora") impresora: ElementRef;
 
+ //opciones
+  @ViewChild("abonoModal") abonoModal: ElementRef;
 
 
   constructor(public productoService: ProductoService,
@@ -176,6 +187,8 @@ export class GestionOrdenComponent implements OnInit {
     this.getTipoEmpresa();
     this.factura = new FacturaModel();
     this.fechasBusqueda();
+    this.vehiculos();
+    this.opcionesSubmenu();
   }
 
   fechasBusqueda() {
@@ -189,6 +202,7 @@ export class GestionOrdenComponent implements OnInit {
     this.fechaF = ano + "-" + mes + "-" + '30';
     console.log(this.fechaI);
   }
+
 
   getProductosByEmpresa(empresaId: number) {
     this.productoService.getProductosByEmpresa(empresaId.toString()).subscribe(res => {
@@ -249,6 +263,15 @@ export class GestionOrdenComponent implements OnInit {
         return;
       }
     });
+    if(this.vehiculo.vehiculo_id!=null){
+      this.vehiculo.modelo_marca_id=modeloId.modelo_marca_id;
+      this.clienteService.updateVehiculo(this.vehiculo).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    }
   }
 
   asignarLinea(linea) {
@@ -260,6 +283,15 @@ export class GestionOrdenComponent implements OnInit {
           return;
         }
       });
+      if(this.vehiculo.vehiculo_id!=null){
+        this.vehiculo.linea_vehiculo=linea.value;
+        this.clienteService.updateVehiculo(this.vehiculo).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+      }
     }
   }
 
@@ -372,7 +404,10 @@ export class GestionOrdenComponent implements OnInit {
     this.documento.fecha_entrega = null;
     this.documento.usuario_id = this.usuarioId;
     this.documento.empresa_id = this.empresaId;
-    this.clientePV.nativeElement.focus();
+    this.placa.nativeElement.focus();
+    this.clientePV.nativeElement.value="";
+    this.modelo.nativeElement.value="";
+    this.marca.nativeElement.value="";
     this.documentoService.saveDocumento(this.documento).subscribe(res => {
       if (res.code == 200) {
         this.documento.documento_id = res.documento_id;
@@ -434,7 +469,7 @@ export class GestionOrdenComponent implements OnInit {
   clienteSelectFun(element) {
     console.log(this.clientes);
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
@@ -445,13 +480,24 @@ export class GestionOrdenComponent implements OnInit {
     } else {
       console.log(cliente);
       this.documento.cliente_id = cliente.cliente_id;
-
+      this.numeroCliente=cliente.celular + (cliente.fijo!=""?"-"+cliente.fijo:"");
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
         if (res.code != 200) {
           alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
           return;
         }
       });
+      console.log(this.vehiculo);
+      if(this.vehiculo.vehiculo_id!=null){
+        this.vehiculo.cliente_id=cliente.cliente_id;
+        this.clienteService.updateVehiculo(this.vehiculo).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+      }
+      
     }
   }
 
@@ -519,7 +565,7 @@ export class GestionOrdenComponent implements OnInit {
 
   agregarDescripcionCliente(element) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     this.documento.descripcion_cliente = element.value;
@@ -533,13 +579,53 @@ export class GestionOrdenComponent implements OnInit {
 
   agregarPlaca(element) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     console.log(element.value);
     this.documento.detalle_entrada = element.value;
     this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase();
     element.value = this.documento.detalle_entrada.toUpperCase();
+  
+    this.vehiculo=this.vehiculosEmpresa.find(product => product.placa === this.documento.detalle_entrada.toUpperCase().trim());
+    if(this.vehiculo!=undefined){
+      let cliente = this.clientes.find(client => client.cliente_id == this.vehiculo.cliente_id);
+      if (cliente != undefined) {
+        this.clientePV.nativeElement.value = cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento;
+        this.numeroCliente=cliente.celular + (cliente.fijo!=""?"-"+cliente.fijo:"");
+        this.documento.cliente_id=cliente.cliente_id;
+      }
+      if (this.vehiculo.linea_vehiculo != "") {
+        this.linea.nativeElement.value = this.vehiculo.linea_vehiculo;
+        this.documento.linea_vehiculo=this.vehiculo.linea_vehiculo;
+      } else {
+        this.linea.nativeElement.value = "Seleccione Linea";
+      }
+      if (this.vehiculo.modelo_marca_id != null) {
+        this.marcasService.getModeloById(this.vehiculo.modelo_marca_id).subscribe(res => {
+          let modelo = res[0];
+          this.documento.modelo_marca_id=modelo.modelo_marca_id;
+          this.marcasService.getModeloByMarca(modelo.marca_vehiculo_id).subscribe(modRes => {
+            this.modeloList = modRes;
+            let marcaId = this.marcaList.find(ma => ma.marca_vehiculo_id == modelo.marca_vehiculo_id);
+            this.marca.nativeElement.value = marcaId.nombre;
+            this.modelo.nativeElement.value = modelo.nombre;
+          });
+        });
+      } else {
+        this.marca.nativeElement.value = "";
+        this.modelo.nativeElement.value = ""; 
+        this.modeloList = [];
+      }
+    }else{
+      this.vehiculo=new VehiculoModel();
+      this.vehiculo.placa=this.documento.detalle_entrada.toUpperCase().trim();
+      this.clienteService.saveVehiculo(this.vehiculo).subscribe(res => {
+        this.vehiculo.vehiculo_id=res.vehiculo_id;
+        this.vehiculosEmpresa.push(this.vehiculo);
+        this.vehiculos();
+      });
+    }
     this.documentoService.updateDocumento(this.documento).subscribe(res => {
       if (res.code != 200) {
         alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
@@ -550,7 +636,7 @@ export class GestionOrdenComponent implements OnInit {
 
   agregarObservacion(element) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     this.documento.descripcion_trabajador = element.value;
@@ -564,7 +650,7 @@ export class GestionOrdenComponent implements OnInit {
 
   entregar() {
     if (this.documento.documento_id == '') {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     this.documento.fecha_entrega = this.calculosService.fechaActual();
@@ -580,7 +666,7 @@ export class GestionOrdenComponent implements OnInit {
 
   reabrir() {
     if (this.documento.documento_id == '') {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     if (this.reabirOrdenActivo) {
@@ -710,17 +796,59 @@ export class GestionOrdenComponent implements OnInit {
     console.log("articulo select:" + element.value);
     let productoNombre: string = element.value;
     this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
-    console.log(this.productoIdSelect);
-    this.cantidad.nativeElement.value = 1;
-    this.cantidad.nativeElement.select();
-    this.pCompra.nativeElement.value = this.productoIdSelect.costo;
-    this.pVenta.nativeElement.value = this.productoIdSelect.costo_publico;
+    if(this.productoIdSelect==undefined){
+      $('#crearProductoModal').modal('show');
+      this.productoNew=new ProductoModel();
+      this.productoNew.nombre=productoNombre;
+    }else{
+      console.log(this.productoIdSelect);
+      this.cantidad.nativeElement.value = 1;
+      this.cantidad.nativeElement.select();
+      this.pCompra.nativeElement.value = this.productoIdSelect.costo;
+      this.pVenta.nativeElement.value = this.productoIdSelect.costo_publico;
+    }
+      
+  }
+
+  cerrarCrearProducto(){
+    $('#crearProductoModal').modal('hide');
+  }
+
+  crearProducto(){
+    let valido: boolean = true;
+    let mensageError: string = "Son obligatorios:\n ";
+    if (this.productoNew.nombre == "") {
+      mensageError += "nombre\n";
+      valido = false;
+    }
+    if (valido == false) {
+      alert(mensageError);
+      return;
+    }
+    this.productoNew.empresa_id = this.empresaId;
+    this.productoService.saveProducto(this.productoNew).subscribe(res => {
+      if (res.code == 200) {
+        $('#crearProductoModal').modal('hide');
+        this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(res => {
+          this.productosAll = res;
+          this.productoIdSelect = this.productosAll.find(product => product.nombre === this.productoNew.nombre);
+          console.log(this.productoIdSelect);
+          this.cantidad.nativeElement.value = 1;
+          this.cantidad.nativeElement.select();
+          this.pCompra.nativeElement.value = this.productoIdSelect.costo;
+          this.pVenta.nativeElement.value = this.productoIdSelect.costo_publico;
+        });
+      } else {
+        alert("error creando producto, verifique que los valores de los precios y las cantidades no tengas ',/_' u otro caracter especial, si persiste consulte a su proveedor");
+        return;
+      }
+    });
   }
 
   agregardetalle() {
 
     if (this.documento.documento_id == '') {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     if (!this.productoFijoActivo) {
@@ -847,7 +975,7 @@ export class GestionOrdenComponent implements OnInit {
 
   imprimirOrden(impresora) {
     if (this.documento.documento_id == "") {
-      alert("Debe pulsar el boton nuevo documento");
+      alert("Debe pulsar el boton nueva orden");
       return;
     }
     if (this.impresoraEmpresa.length == 0) {
@@ -885,6 +1013,14 @@ export class GestionOrdenComponent implements OnInit {
       this.factura.titulo = tituloDocumento;
       this.factura.empresa = empr[0];
       this.factura.nombreTipoDocumento = tituloDocumento;
+      if(this.documento.empleado_id!=null){
+        let empleado = this.empleados.find(empleado => empleado.empleado_id == this.documento.empleado_id);
+        if (empleado != undefined) {
+          this.factura.nombreEmpleado= empleado.apellido+" "+empleado.nombre;
+        }else{
+          this.factura.nombreEmpleado="";
+        }
+      }
       this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
       this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       switch (tipoImpresion) {
@@ -1375,6 +1511,7 @@ export class GestionOrdenComponent implements OnInit {
     this.indexSelect = 0;
     this.valorTotal = 0;
     this.articuloPV = "";
+    this.vehiculo=new VehiculoModel();
   }
 
   limpiarFactura() {
@@ -1705,11 +1842,12 @@ export class GestionOrdenComponent implements OnInit {
       let nombre = "";
       if (cliente != undefined) {
         nombre = cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento;
+        this.numeroCliente=cliente.celular + (cliente.fijo!=""?"-"+cliente.fijo:"");
       }
       let empleado = this.empleados.find(empleado => empleado.empleado_id == this.documento.empleado_id);
       let nombreEmpleado = "";
       if (empleado != undefined) {
-        nombreEmpleado = empleado.nombre;
+        nombreEmpleado = empleado.apellido+' '+empleado.nombre;
       }
       let parametros: ParametrosModel = new ParametrosModel;
       if (parametros.ambiente == 'cloud') {
@@ -1761,6 +1899,16 @@ export class GestionOrdenComponent implements OnInit {
         this.calcularTOtal();
         console.log("detalles encontrados:" + res.length);
       });
+      this.vehiculo=this.vehiculosEmpresa.find(product => product.placa === this.documento.detalle_entrada.toUpperCase().trim());
+      if(this.vehiculo==undefined){
+        this.vehiculo=new VehiculoModel();
+      }
+    }
+  }
+
+  enterTecla(element) {
+    if (element.id == "bonos") {
+      this.abonoModal.nativeElement.click();
     }
   }
 
@@ -1809,7 +1957,7 @@ export class GestionOrdenComponent implements OnInit {
 
   empleadoSelectFun(element) {
     console.log(this.empleados);
-    let empleado = this.empleados.find(empleado => empleado.nombre == element.value);
+    let empleado = this.empleados.find(empleado => empleado.apellido+' '+empleado.nombre == element.value);
     if (empleado == undefined) {
       alert("El Empleado no existe");
       return;
@@ -1817,7 +1965,7 @@ export class GestionOrdenComponent implements OnInit {
       console.log(empleado);
       this.documento.empleado_id = empleado.empleado_id;
       if (this.documento.documento_id == "") {
-        alert("Debe pulsar el boton nuevo documento");
+        alert("Debe pulsar el boton nueva orden");
         return;
       }
       this.documentoService.updateDocumento(this.documento).subscribe(res => {
@@ -1919,5 +2067,21 @@ export class GestionOrdenComponent implements OnInit {
     formato = new Intl.NumberFormat().format(number);
     return formato;
   }
+
+  vehiculos(){
+    this.clienteService.getVehiculos().subscribe(res => {
+      this.vehiculosEmpresa = res;
+      console.log("vehiculos:" + res.length);
+    });
+  }
+
+  public opcionesSubmenu() {
+    let usuario_id = localStorage.getItem('usuario_id');
+    this.usuarioService.opcionPuntoVentaByUsuario(usuario_id).subscribe((res) => {
+      this.opciones = res;
+      console.log(this.opciones);
+    });
+  }
+
 
 }
