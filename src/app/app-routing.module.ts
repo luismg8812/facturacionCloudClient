@@ -27,6 +27,7 @@ import { CuentasContablesComponent } from './cuentas-contables/cuentas-contables
 import { NominaComponent } from './components/nomina/nomina.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { GestionOrdenComponent } from './components/gestion-orden/gestion-orden.component';
+import { BonosComponent } from './components/bonos/bonos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -55,6 +56,7 @@ const routes: Routes = [
    { path: 'retirosCaja', component: RetirosCajaComponent },
    { path: 'liberarCuadre', component: LiberarCuadreComponent },
    { path: 'cuentasContables', component: CuentasContablesComponent },
+   { path: 'bonos', component: BonosComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
   { path: '**', redirectTo: '/', pathMatch: 'full' },

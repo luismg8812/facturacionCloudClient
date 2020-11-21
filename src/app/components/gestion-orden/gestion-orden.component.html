@@ -16,8 +16,8 @@
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div class="tab-pane container-fluid active" id="orden">
-      <br />  
+    <div class="tab-pane  active" id="orden">
+      <br />
       <div class="form-row">
         <div class="form-group col-md-2 col-sm-12 ">
           <button type="button" class="btn btn-primary " id="anterior"
@@ -35,15 +35,27 @@
             Imprimir
           </button>
         </div>
-        <div class="form-group col-md-6 col-sm-12 ">
+        <div class="form-group col-md-5 col-sm-12 ">
           <button type="button" class="btn btn-primary " id="Nueva" (click)="nuevaOrden()">Nueva Orden de
             trabajo</button>
           <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#entregarModal">
             Cerrar orden
           </button>
-          <button type="button" class="btn btn-primary ml-2" (click)="reabrir()" >
+          <button type="button" class="btn btn-primary ml-2" (click)="reabrir()">
             Reapertura de orden
           </button>
+        </div>
+        <div class="form-group col-md-1 col-sm-12 ">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="opcionPV" #opcionPV type="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Opciones
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+              <button class="dropdown-item" type="button" *ngFor="let opcion of opciones" #bonos id="{{opcion.url}}"
+                (click)="enterTecla(bonos)">{{opcion.nombre}}</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="form-row">
@@ -78,13 +90,13 @@
             </option>
           </datalist>
         </div>
-      
+
       </div>
 
       <div class="form-row">
         <div class="form-group col-md-4 col-sm-2">
-          <input list="marcas" name="marca" #marca placeholder="Marca" class="form-control" id="marca" [disabled]="documento.impreso==1"
-            (change)="marcaSelect(marca)">
+          <input list="marcas" name="marca" #marca placeholder="Marca" class="form-control" id="marca"
+            [disabled]="documento.impreso==1" (change)="marcaSelect(marca)">
           <datalist id="marcas">
             <option *ngFor="let mar of marcaList" [value]="mar.nombre">
             </option>
@@ -159,7 +171,7 @@
             <th scope="col">Cant.</th>
             <th scope="col" class="d-none d-sm-block">Precio Venta</th>
             <th scope="col">Total</th>
-          
+
 
           </tr>
         </thead>
@@ -254,37 +266,50 @@
         </div>
       </div>
 
-         <!-- crear producto Modal -->
-<div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Crear Producto</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+
+      <!-- Button trigger modal .d-none se repete esta parte para todos las pantallas de opciones de punto de venta dia -->
+      <button type="button" class="btn btn-primary d-none" id="abonoModal" #abonoModal data-toggle="modal"
+        data-target="#abonoModa">
+        Launch demo modal
+      </button>
+      <!-- Modal cuadre de caja -->
+      <div class="modal fade" id="abonoModa" tabindex="-1" role="dialog" aria-labelledby="abonoModalLabel"
+        aria-hidden="true">
+        <app-bonos></app-bonos>
       </div>
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="form-group col-md-12 col-sm-1">
-            <input class="form-control" id="crearProductoNombre" type="text" placeholder="* Nombre del producto" name="crearProductoNombre"
-            #crearProductoNombre [(ngModel)]="productoNew.nombre">
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-12 col-sm-1">
-              <input class="form-control" id="precioProductoNombre" type="number" placeholder="* precio" name="precioProductoNombre"
-              #precioProductoNombre [(ngModel)]="productoNew.costo_publico" >
+
+      <!-- crear producto Modal -->
+      <div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Crear Producto</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group col-md-12 col-sm-1">
+                  <input class="form-control" id="crearProductoNombre" type="text" placeholder="* Nombre del producto"
+                    name="crearProductoNombre" #crearProductoNombre [(ngModel)]="productoNew.nombre">
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-12 col-sm-1">
+                    <input class="form-control" id="precioProductoNombre" type="number" placeholder="* precio"
+                      name="precioProductoNombre" #precioProductoNombre [(ngModel)]="productoNew.costo_publico">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="cerrarCrearProducto()">Cancelar</button>
+              <button type="button" class="btn btn-primary" (click)="crearProducto()">Crear</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cerrarCrearProducto()">Cancelar</button>
-        <button type="button" class="btn btn-primary"  (click)="crearProducto()">Crear</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
       <!-- Eliminar Modal -->
@@ -335,7 +360,7 @@
                 <div class="form-group col-md-6 col-sm-2">
                   <input list="browsers" name="clienteBuscarPV" #clienteBuscarPV placeholder="Cliente"
                     class="form-control" id="clienteBuscarPV">
-                 
+
                 </div>
                 <div class="form-group col-md-6 col-sm-2">
                   <input class="form-control" id="placaBuscar" placeholder="Placa" name="placaBuscar" #placaBuscar
@@ -357,6 +382,7 @@
                     <th scope="col">Nombre Cliente</th>
                     <th scope="col">Placa</th>
                     <th scope="col">Encargado</th>
+                    <th scope="col">Total</th>
                     <th scope="col" class="d-none d-sm-block">Fecha</th>
                   </tr>
                 </thead>
@@ -376,6 +402,7 @@
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
                     <td>{{ordenes.detalle_entrada}}</td>
                     <td>{{nombreUsuarioFiltro(ordenes.usuario_id)}}</td>
+                    <td>${{formatearNumber(ordenes.total)}}</td>
                     <td class="d-none d-sm-block">{{ordenes.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
                   </tr>
                 </tbody>
@@ -763,6 +790,7 @@
                     <th scope="col"># Orden</th>
                     <th scope="col">Nombre Cliente</th>
                     <th scope="col">Placa</th>
+                    <th scope="col">Total</th>
                     <th scope="col">Cerrada</th>
                   </tr>
                 </thead>
@@ -775,6 +803,7 @@
                     <td>{{ordenes.documento_id}}</td>
                     <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
                     <td>{{ordenes.detalle_entrada}}</td>
+                    <td>${{formatearNumber(ordenes.total)}}</td>
                     <td>{{ordenes.cierre_diario==0?'No':'Si'}}</td>
                   </tr>
                 </tbody>
