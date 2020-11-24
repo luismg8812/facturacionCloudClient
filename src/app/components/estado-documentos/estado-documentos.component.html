@@ -53,6 +53,7 @@
         <th scope="col">Consecutivo</th>
         <th scope="col">Estado final</th>
         <th scope="col">Total Factura</th>
+        <th scope="col">Cliente</th>
         <th scope="col">Tipo Documento</th>
         <th scope="col">Fecha de generación</th>
       </tr>
@@ -82,6 +83,7 @@
         <td>{{(ordenes.consecutivo_dian)}}</td>
         <td> {{nombreEstado(ordenes.invoice_id)}}</td>
         <td>${{formatearNumber(ordenes.total)}}</td>
+        <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
         <td>{{(ordenes.tipo_documento_id)}}</td>
         <td>{{ordenes.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
       </tr>

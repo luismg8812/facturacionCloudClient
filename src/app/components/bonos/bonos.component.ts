@@ -129,7 +129,7 @@ export class BonosComponent implements OnInit {
           alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");
         return;
       }
-      $('#imprimirModal').modal('hide');
+      $('#imprimirBonoModal').modal('hide');
   }
 
   
@@ -217,7 +217,7 @@ export class BonosComponent implements OnInit {
             this.bonoSelect.bono_id=res.bono_id;
            this. vehiculos();
             $('#crearBonoModal').modal('hide');
-            $('#imprimirModal').modal('show');
+            $('#imprimirBonoModal').modal('show');
           }
         });
       });
@@ -229,7 +229,7 @@ export class BonosComponent implements OnInit {
           this.bonoSelect.bono_id=res.bono_id;
          this. vehiculos();
           $('#crearBonoModal').modal('hide');
-          $('#imprimirModal').modal('show');
+          $('#imprimirBonoModal').modal('show');
         }
       });
     }

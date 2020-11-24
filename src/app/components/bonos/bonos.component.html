@@ -81,7 +81,7 @@
                 data-target="#crearBonoModal" [disabled]="bono.estado=='1'">
                 Editar
               </button>
-              <button type="button" (click)="imprimirDetalleBono(bono)" class="btn btn-secondary btn-sm"
+              <button type="button" (click)="imprimirDetalleBono(bono)" class="btn btn-secondary btn-sm"  data-target="#imprimirBonoModal"
                 data-toggle="modal" [disabled]="bono.estado=='1'">
                 Imprimir
               </button>
@@ -128,7 +128,7 @@
    </div>
 
   <!-- Modal imprimir-->
-  <div class="modal fade bd-example-modal-sm" id="imprimirModal" tabindex="-1" role="dialog"
+  <div class="modal fade bd-example-modal-sm" id="imprimirBonoModal" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
       <div class="modal-content">

@@ -1,23 +1,25 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { InvoiceModel } from '../model/invoice.model';
-import { DocumentoService } from '../services/documento.service';
-import { DocumentoModel } from '../model/documento.model';
-import { DocumentoMapModel } from '../facturacion.cloud.model/documentoMap.model';
-import { DocumentoDetalleService } from '../services/documento-detalle.service';
-import { EmpresaService } from '../services/empresa.service';
-import { FacturacionElectronicaService } from '../services/facturacion-electronica.service';
-import { CalculosService } from '../services/calculos.service';
-import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
-import { ClienteModel } from '../model/cliente.model';
-import { ClienteService } from '../services/cliente.service';
-import { GetFileModel } from '../facturacion.cloud.model/getFile.model';
-import { AppConfigService } from '../services/app-config.service';
-import { MailModel } from '../facturacion.cloud.model/mail.model';
-import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
-import { EmpresaModel } from '../model/empresa.model';
-import { FacturaModel } from '../vo/factura.model';
-import { ImpresionService } from '../services/impresion.service';
-import { ConfiguracionModel } from '../model/configuracion.model';
+
+import * as e from 'express';
+import { DocumentoMapModel } from 'src/app/facturacion.cloud.model/documentoMap.model';
+import { GetFileModel } from 'src/app/facturacion.cloud.model/getFile.model';
+import { MailModel } from 'src/app/facturacion.cloud.model/mail.model';
+import { ClienteModel } from 'src/app/model/cliente.model';
+import { ConfiguracionModel } from 'src/app/model/configuracion.model';
+import { DocumentoModel } from 'src/app/model/documento.model';
+import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
+import { DocumentoInvoiceModel } from 'src/app/model/documentoInvoice.model';
+import { EmpresaModel } from 'src/app/model/empresa.model';
+import { InvoiceModel } from 'src/app/model/invoice.model';
+import { AppConfigService } from 'src/app/services/app-config.service';
+import { CalculosService } from 'src/app/services/calculos.service';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
+import { DocumentoService } from 'src/app/services/documento.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
+import { FacturacionElectronicaService } from 'src/app/services/facturacion-electronica.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
+import { FacturaModel } from 'src/app/vo/factura.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -32,17 +34,18 @@ export class EstadoDocumentosComponent implements OnInit {
   public documentoMap: Array<DocumentoMapModel> = [];
   public itemsFactura: Array<DocumentoDetalleModel> = [];
   public factura: FacturaModel = new FacturaModel();;
-  public estadosDocumento:Array<InvoiceModel>;
+  public estadosDocumento: Array<InvoiceModel>;
   public clientes: Array<ClienteModel>;
   public configuracion: ConfiguracionModel;
+  public empresa: EmpresaModel;
   public documentos: Array<DocumentoModel>;
   public empresaId: number;
   public enviados: number;
   public exitosos: number;
   public erroneos: number;
-  public enviando:boolean=false;
-  public invoicesDocumento:Array<DocumentoInvoiceModel>;
-  public ngxQrcode2:string = "123"
+  public enviando: boolean = false;
+  public invoicesDocumento: Array<DocumentoInvoiceModel>;
+  public ngxQrcode2: string = "123"
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
   readonly INVOICE_ENVIAR: number = 2;
@@ -51,13 +54,13 @@ export class EstadoDocumentosComponent implements OnInit {
 
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
-  constructor(public documentoService:DocumentoService,
+  constructor(public documentoService: DocumentoService,
     public documentoDetalleService: DocumentoDetalleService,
     public calculosService: CalculosService,
     public clienteService: ClienteService,
-    public facturacionElectronicaService:FacturacionElectronicaService,
-    public impresionService:ImpresionService,
-    public empresaService:EmpresaService) { }
+    public facturacionElectronicaService: FacturacionElectronicaService,
+    public impresionService: ImpresionService,
+    public empresaService: EmpresaService) { }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
@@ -65,14 +68,14 @@ export class EstadoDocumentosComponent implements OnInit {
     this.getclientes(this.empresaId);
     this.getDocumentos(this.INVOICE_ERROR);
     this.getConfiguracion(this.empresaId);
-    
+    this.getEmpresa();
   }
 
-  buscar(esdaDocu){
+  buscar(esdaDocu) {
     this.getDocumentos(esdaDocu.value);
   }
 
-  
+
 
 
   delay(ms: number) {
@@ -96,7 +99,7 @@ export class EstadoDocumentosComponent implements OnInit {
       $('#enviardoModal').modal('show');
       for (let docu of this.documentoMap) {
         this.enviados++;
-       
+
         this.detalleDocumento(docu.documento);
         this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(empr[0], docu, this.clientes)).subscribe(async res1 => {
           console.log(res1);
@@ -132,7 +135,7 @@ export class EstadoDocumentosComponent implements OnInit {
     });
   }
 
-  
+
 
   sendMail(res, docu: DocumentoModel) {
     let mail: MailModel = new MailModel();
@@ -182,11 +185,11 @@ export class EstadoDocumentosComponent implements OnInit {
   }
 
   getfacturaPDF(docu: DocumentoModel, empresa: EmpresaModel) {
-    
+
     var myimg64 = $("#qrcode1").find("img").attr("src");
     //console.log("base65");
     //console.log(myimg64);
-    docu.qrcode=myimg64;
+    docu.qrcode = myimg64;
     let tituloDocumento = "factura" + "_" + docu.consecutivo_dian + "_" + docu.impresora;
     this.factura.documento = docu;
     this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
@@ -208,7 +211,7 @@ export class EstadoDocumentosComponent implements OnInit {
 
     if (res.status == "OK") {
       docu.cufe = res.cufe;
-      this.ngxQrcode2=res.qrCode;
+      this.ngxQrcode2 = res.qrCode;
       docu.qrcode = res.qrCode;
       documentoInvoice.mensaje = res.mensaje;
       documentoInvoice.invoice_id = this.INVOICE_OK;
@@ -242,58 +245,59 @@ export class EstadoDocumentosComponent implements OnInit {
     });
   }
 
-   b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+  b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
     const byteCharacters = atob(b64Data);
     const byteArrays = [];
-  
+
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
       const slice = byteCharacters.slice(offset, offset + sliceSize);
-  
+
       const byteNumbers = new Array(slice.length);
       for (let i = 0; i < slice.length; i++) {
         byteNumbers[i] = slice.charCodeAt(i);
       }
-  
+
       const byteArray = new Uint8Array(byteNumbers);
       byteArrays.push(byteArray);
     }
-  
-    const blob = new Blob(byteArrays, {type: contentType});
+
+    const blob = new Blob(byteArrays, { type: contentType });
     return blob;
   }
 
-  descargarPDF(docu:DocumentoModel){
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
+  descargarPDF(docu: DocumentoModel) {
+    this.clienteService.getById(this.empresaId.toString()).subscribe(clien => {
       this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento_id).subscribe(res => {
-      //this.ngxQrcode2=docu.qrCode;
-      //var myimg64 = $("#qrcode1").find("img").attr("src");
-      //console.log("base65");
-    //console.log(myimg64);
-    //docu.qrcode=myimg64;
-    let tituloDocumento = "factura" + "_" + docu.consecutivo_dian + "_" + docu.impresora;
-    this.factura.documento = docu;
-    this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
-    this.factura.detalle = res;
-    this.factura.titulo = tituloDocumento;
-    this.factura.empresa =empr[0];
-    this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
-    let stri: string = this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion,false);
+        //this.ngxQrcode2=docu.qrCode;
+        //var myimg64 = $("#qrcode1").find("img").attr("src");
+        //console.log("base65");
+        //console.log(myimg64);
+        //docu.qrcode=myimg64;
+        let tituloDocumento = "factura" + "_" + docu.consecutivo_dian + "_" + docu.impresora;
+        this.factura.documento = docu;
+        this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
+        this.factura.detalle = res;
+        this.factura.titulo = tituloDocumento;
+        this.factura.empresa = this.empresa;
+        this.factura.cliente = clien[0];
+        this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
+        let stri: string = this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
+      });
     });
-  });
   }
 
-  descargarXML(documento:DocumentoModel){
-    let getFile:GetFileModel=new GetFileModel();
-    getFile.cufe=documento.cufe;
-    getFile.key=AppConfigService.key_invoice;
+  descargarXML(documento: DocumentoModel) {
+    let getFile: GetFileModel = new GetFileModel();
+    getFile.cufe = documento.cufe;
+    getFile.key = AppConfigService.key_invoice;
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
-      getFile.nitEmpresa=empr[0].nit;
+      getFile.nitEmpresa = empr[0].nit;
       this.facturacionElectronicaService.getXML(getFile).subscribe(async res1 => {
-          console.log(res1);
-          this.descargarArchivo(this.b64toBlob(res1.mensaje, 'text/xml'), "f_"+documento.consecutivo_dian + '.xml');
-        
+        console.log(res1);
+        this.descargarArchivo(this.b64toBlob(res1.mensaje, 'text/xml'), "f_" + documento.consecutivo_dian + '.xml');
+
       });
-    });  
+    });
   }
 
   descargarArchivo(contenidoEnBlob, nombreArchivo) {
@@ -316,17 +320,17 @@ export class EstadoDocumentosComponent implements OnInit {
     return blob;
   }
 
-  invoiceDocumento(docu:DocumentoModel){
+  invoiceDocumento(docu: DocumentoModel) {
     this.documentoService.getDocumentoInvoiceByDocumento(docu.documento_id).subscribe(res => {
-      this.invoicesDocumento=res;
+      this.invoicesDocumento = res;
     });
   }
 
-  limpiar(){
-    this.documentoMap=[];
+  limpiar() {
+    this.documentoMap = [];
   }
 
-  enviarUno(or:DocumentoModel){
+  enviarUno(or: DocumentoModel) {
     let docu: DocumentoMapModel = new DocumentoMapModel();
     docu.documento = or;
     this.documentoDetalleService.getDocumentoDetalleByDocumento(or.documento_id).subscribe(detalle => {
@@ -334,7 +338,7 @@ export class EstadoDocumentosComponent implements OnInit {
       this.documentoMap.unshift(docu);
     });
     $('#envioModal').modal('show');
-    
+
   }
 
   validarEnviar() {
@@ -364,15 +368,15 @@ export class EstadoDocumentosComponent implements OnInit {
     $('.allti').attr("checked", event.target.checked);
   }
 
-  invoiceList(){ 
-      this.documentoService.getInvoice().subscribe(res => {
-        console.log(res);
-        this.estadosDocumento = res;
-      });
+  invoiceList() {
+    this.documentoService.getInvoice().subscribe(res => {
+      console.log(res);
+      this.estadosDocumento = res;
+    });
   }
-  getDocumentos(invoice:number){
-    this.documentoMap=[];
-    this.documentoService.getDocumentoForFacturacionElectronica("", "", ['10','12','13'], "", "", invoice,  this.empresaId).subscribe(res => {
+  getDocumentos(invoice: number) {
+    this.documentoMap = [];
+    this.documentoService.getDocumentoForFacturacionElectronica("", "", ['10', '12', '13'], "", "", invoice, this.empresaId).subscribe(res => {
       console.log(res);
       this.documentos = res;
     });
@@ -390,6 +394,15 @@ export class EstadoDocumentosComponent implements OnInit {
       return "";
     } else {
       return invoice.nombre;
+    }
+  }
+
+  nombreClienteFun(id) {
+    let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
+    if (cliente == undefined) {
+      return "";
+    } else {
+      return cliente.nombre + " " + cliente.apellidos;
     }
   }
 
@@ -429,6 +442,11 @@ export class EstadoDocumentosComponent implements OnInit {
       this.configuracion = res[0];
     });
   }
-  
+
+  getEmpresa() {
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      this.empresa = res[0];
+    });
+  }
 
 }

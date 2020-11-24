@@ -1362,7 +1362,6 @@ export class VentasDiaComponent implements OnInit {
         this.articuloPV.nativeElement.focus();
       }
     }
-
     this.articuloPV.nativeElement.value = "";
     this.CodigoBarrasPV.nativeElement.value = "";
     this.cantidadPV.nativeElement.value = "";

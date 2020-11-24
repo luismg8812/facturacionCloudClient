@@ -27,6 +27,11 @@ export class ClienteService {
     return this.http.get<ImpresoraEmpresaModel[]>(this.server_api+'/cliente/getImpresorasEmpresa?empresaId='+empresaId);
   }
 
+  
+  public getById(clienteId:string){
+    return this.http.get<ClienteModel[]>(this.server_api+'/cliente/getById?getById='+clienteId);
+  }
+
   public getVehiculos(){
     return this.http.get<VehiculoModel[]>(this.server_api+'/cliente/getVehiculos');
   }
