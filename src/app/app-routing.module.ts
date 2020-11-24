@@ -13,7 +13,6 @@ import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
-import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
@@ -28,6 +27,7 @@ import { NominaComponent } from './components/nomina/nomina.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { GestionOrdenComponent } from './components/gestion-orden/gestion-orden.component';
 import { BonosComponent } from './components/bonos/bonos.component';
+import { EstadoDocumentosComponent } from './components/estado-documentos/estado-documentos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },

@@ -31,7 +31,6 @@ import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 import { AppConfigService } from './services/app-config.service';
-import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
@@ -47,6 +46,7 @@ import { NominaComponent } from './components/nomina/nomina.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { GestionOrdenComponent } from './components/gestion-orden/gestion-orden.component';
 import { BonosComponent } from './components/bonos/bonos.component';
+import { EstadoDocumentosComponent } from './components/estado-documentos/estado-documentos.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
