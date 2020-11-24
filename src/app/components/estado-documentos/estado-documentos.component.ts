@@ -397,6 +397,15 @@ export class EstadoDocumentosComponent implements OnInit {
     }
   }
 
+  nombreClienteFun(id) {
+    let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
+    if (cliente == undefined) {
+      return "";
+    } else {
+      return cliente.nombre + " " + cliente.apellidos;
+    }
+  }
+
   selectOrdenOne(or: DocumentoModel, event) {
     if (event.target.checked) {
       this.documentosSelectEnviar.unshift(or);

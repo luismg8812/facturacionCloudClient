@@ -5,9 +5,9 @@ export class ParametrosModel {
     public ambiente:string;
     
     constructor(){
-        this. serverUrl='https://facturacioncloud2019.herokuapp.com';
-        //this. serverUrl=AppConfigService.ip+':'+AppConfigService.port;
-        //this.ambiente = 'local';
-        this.ambiente = 'cloud';
+        //this. serverUrl='https://facturacioncloud2019.herokuapp.com';
+        this. serverUrl=AppConfigService.ip+':'+AppConfigService.port;
+        this.ambiente = 'local';
+        //this.ambiente = 'cloud';
     } 
 }
