@@ -28,7 +28,7 @@ export class ClienteService {
   }
 
   
-  public getById(clienteId:string){
+  public getById(clienteId:number){
     return this.http.get<ClienteModel[]>(this.server_api+'/cliente/getById?getById='+clienteId);
   }
 
