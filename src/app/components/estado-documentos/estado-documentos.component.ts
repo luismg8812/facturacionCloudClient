@@ -11,6 +11,7 @@ import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
 import { DocumentoInvoiceModel } from 'src/app/model/documentoInvoice.model';
 import { EmpresaModel } from 'src/app/model/empresa.model';
 import { InvoiceModel } from 'src/app/model/invoice.model';
+import { ResolucionEmpresaModel } from 'src/app/model/resolucionEmpresa.model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { CalculosService } from 'src/app/services/calculos.service';
 import { ClienteService } from 'src/app/services/cliente.service';
@@ -38,6 +39,7 @@ export class EstadoDocumentosComponent implements OnInit {
   public clientes: Array<ClienteModel>;
   public configuracion: ConfiguracionModel;
   public empresa: EmpresaModel;
+  public resolucionAll: Array<ResolucionEmpresaModel>;
   public documentos: Array<DocumentoModel>;
   public empresaId: number;
   public enviados: number;
@@ -69,6 +71,7 @@ export class EstadoDocumentosComponent implements OnInit {
     this.getDocumentos(this.INVOICE_ERROR);
     this.getConfiguracion(this.empresaId);
     this.getEmpresa();
+    this.getResolucion();
   }
 
   buscar(esdaDocu) {
@@ -264,9 +267,9 @@ export class EstadoDocumentosComponent implements OnInit {
     const blob = new Blob(byteArrays, { type: contentType });
     return blob;
   }
-
+ 
   descargarPDF(docu: DocumentoModel) {
-    this.clienteService.getById(this.empresaId.toString()).subscribe(clien => {
+    this.clienteService.getById(docu.cliente_id).subscribe(clien => {
       this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento_id).subscribe(res => {
         //this.ngxQrcode2=docu.qrCode;
         //var myimg64 = $("#qrcode1").find("img").attr("src");
@@ -280,6 +283,7 @@ export class EstadoDocumentosComponent implements OnInit {
         this.factura.titulo = tituloDocumento;
         this.factura.empresa = this.empresa;
         this.factura.cliente = clien[0];
+        this.factura.resolucionEmpresa=this.resolucionAll[1];
         this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
         let stri: string = this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
       });
@@ -446,6 +450,13 @@ export class EstadoDocumentosComponent implements OnInit {
   getEmpresa() {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       this.empresa = res[0];
+    });
+  }
+
+  getResolucion() {
+    this.clienteService.getResolucion(this.empresaId).subscribe(res => {
+      this.resolucionAll = res;
+      console.log("resoluciones:" + this.resolucionAll.length);
     });
   }
 
