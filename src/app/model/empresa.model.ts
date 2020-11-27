@@ -17,4 +17,5 @@ export class EmpresaModel {
     public impuesto:string;
     public actividad_economica:string;
     public url_logo:string;
+    public correo:string;
 }

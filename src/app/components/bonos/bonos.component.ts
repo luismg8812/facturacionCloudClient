@@ -123,7 +123,7 @@ export class BonosComponent implements OnInit {
           this.descargarArchivo(this.impresionService.imprimirBonoTxt80(this.factura), tituloDocumento + '.txt');
           break;
         case this.TIPO_IMPRESION_TXT50MM:
-          this.descargarArchivo(this.impresionService.imprimirOrdenTxt50(this.factura), tituloDocumento + '.txt');
+          this.descargarArchivo(this.impresionService.imprimirBonoTxt80(this.factura), tituloDocumento + '.txt');
           break;
         default:
           alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");

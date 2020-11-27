@@ -686,7 +686,7 @@ export class ImpresionService {
       this.doc.text("CUFE: " + factura.documento.cufe, 4, 269);
     }
     this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);
-    this.doc.text(this.calculosService.centrarDescripcion("NIT: " + factura.empresa.nit, 77), 80, 10);
+    this.doc.text(this.calculosService.centrarDescripcion("NIT: " + factura.empresa.nit+"-"+factura.empresa.digito_verificacion, 77), 80, 10);
 
     this.doc.text(factura.nombreTipoDocumento, 165, 10);
     this.doc.text("FECHA DE EXPEDICIÓN", 163, 28);
@@ -747,11 +747,12 @@ export class ImpresionService {
 
     this.doc.setFontSize(6);
     this.doc.text(this.calculosService.centrarDescripcion("SOMOS " + factura.empresa.regimen, 77), 90, 13);
-    this.doc.text(this.calculosService.centrarDescripcion("RESOLUCION DIAN N° " + factura.resolucionEmpresa.resolucion_dian + " DE " + this.calculosService.formatDate(factura.resolucionEmpresa.fecha_resolucion, false), 77), 90, 16);
+    this.doc.text(this.calculosService.centrarDescripcion("AUTORIZACION DIAN N° " + factura.resolucionEmpresa.resolucion_dian + " DE " + this.calculosService.formatDate(factura.resolucionEmpresa.fecha_resolucion, false), 77), 90, 16);
     this.doc.text(this.calculosService.centrarDescripcion("Actividad económica CIIU " + factura.empresa.actividad_economica, 77), 90, 19);
     this.doc.text(this.calculosService.centrarDescripcion("Representante Legal: " + factura.empresa.represente, 77), 90, 22);
     this.doc.text(this.calculosService.centrarDescripcion("Dirección: " + factura.empresa.direccion, 77), 90, 25);
     this.doc.text(this.calculosService.centrarDescripcion("Telefono: " + factura.empresa.telefono_fijo, 77), 90, 28);
+    this.doc.text(this.calculosService.centrarDescripcion("Mail: " + factura.empresa.correo, 77), 90, 31);
     this.doc.text("RECIBÍ CONFORME: ", 4, 281);
     this.doc.text("NIT: ", 4, 286);
     this.doc.text("VENDEDOR: ADMINISTRADOR DEL SISTEMA ", 82, 288);
