@@ -34,9 +34,9 @@ export class BonosComponent implements OnInit {
   public tipoBonoList: Array<TipoBonoModel>;
   public vehiculosEmpresa: Array<VehiculoModel>;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
-  public empresa:EmpresaModel;
-  public factura: FacturaModel=new FacturaModel();
-  public bonoSelect:BonoModel=new BonoModel();
+  public empresa: EmpresaModel;
+  public factura: FacturaModel = new FacturaModel();
+  public bonoSelect: BonoModel = new BonoModel();
 
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
@@ -52,8 +52,8 @@ export class BonosComponent implements OnInit {
   constructor(public bonoService: BonoService,
     public calculosService: CalculosService,
     public usuarioService: UsuarioService,
-    public empresaService:EmpresaService,
-    public impresionService:ImpresionService,
+    public empresaService: EmpresaService,
+    public impresionService: ImpresionService,
     public clienteService: ClienteService) { }
 
   ngOnInit() {
@@ -63,21 +63,21 @@ export class BonosComponent implements OnInit {
     this.buscarUsuarios();
     this.tiposBono();
     this.vehiculos();
-    this. getImpresorasEmpresa() ;
+    this.getImpresorasEmpresa();
     this.getEmpresa();
   }
 
-  imprimirDetalleBono(bono){
+  imprimirDetalleBono(bono) {
     this.bonoService.getBonoById(bono.bono_id).subscribe(res => {
-      this.bonoSelect=res[0];
-     
+      this.bonoSelect = res[0];
+
     });
-    
+
   }
 
-  cerrar(){
+  cerrar() {
     $('#abonoModa').modal('hide');
-    
+
   }
 
   imprimirBono(impresora) {
@@ -88,7 +88,7 @@ export class BonosComponent implements OnInit {
     if (impresora.value == "") {
       impresora.value = 1;
     }
-    
+
     let tipoImpresion = 0;
 
     for (var i = 0; i < this.impresoraEmpresa.length; i++) {
@@ -105,34 +105,34 @@ export class BonosComponent implements OnInit {
     }
     console.log(tipoImpresion);
     let tituloDocumento: string = "";
-    tituloDocumento = "Bono" +  "_" + impresora.value + "_" + tipoImpresion;
-    let vo:BonoVOModel= new BonoVOModel();
-    vo.bono=this.bonoSelect;
-    let vehitemp:VehiculoModel= this.vehiculosEmpresa.find(t => t.vehiculo_id == this.bonoSelect.vehiculo_id);
-    vo.placa=vehitemp.linea_vehiculo;
+    tituloDocumento = "Bono" + "_" + impresora.value + "_" + tipoImpresion;
+    let vo: BonoVOModel = new BonoVOModel();
+    vo.bono = this.bonoSelect;
+    let vehitemp: VehiculoModel = this.vehiculosEmpresa.find(t => t.vehiculo_id == this.bonoSelect.vehiculo_id);
+    vo.placa = vehitemp.placa;
+    vo.linea = vehitemp.linea_vehiculo
+    this.factura.bono = vo;
+    this.factura.titulo = tituloDocumento;
+    this.factura.empresa = this.empresa;
+    this.factura.nombreTipoDocumento = "BONO " + this.tipoBonoList.find(t => t.tipo_bono_id == this.bonoSelect.tipo_bono_id).nombre;
 
-      this.factura.bono = vo;
-      this.factura.titulo = tituloDocumento;
-      this.factura.empresa = this.empresa;
-      this.factura.nombreTipoDocumento = "BONO " + this.tipoBonoList.find(t => t.tipo_bono_id == this.bonoSelect.tipo_bono_id).nombre; 
-      
-      this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
-      //this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
-      switch (tipoImpresion) {
-        case this.TIPO_IMPRESION_TXT80MM:
-          this.descargarArchivo(this.impresionService.imprimirBonoTxt80(this.factura), tituloDocumento + '.txt');
-          break;
-        case this.TIPO_IMPRESION_TXT50MM:
-          this.descargarArchivo(this.impresionService.imprimirBonoTxt80(this.factura), tituloDocumento + '.txt');
-          break;
-        default:
-          alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");
+    this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
+    //this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
+    switch (tipoImpresion) {
+      case this.TIPO_IMPRESION_TXT80MM:
+        this.descargarArchivo(this.impresionService.imprimirBonoTxt80(this.factura), tituloDocumento + '.txt');
+        break;
+      case this.TIPO_IMPRESION_TXT50MM:
+        this.descargarArchivo(this.impresionService.imprimirBonoTxt80(this.factura), tituloDocumento + '.txt');
+        break;
+      default:
+        alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");
         return;
-      }
-      $('#imprimirBonoModal').modal('hide');
+    }
+    $('#imprimirBonoModal').modal('hide');
   }
 
-  
+
 
   descargarArchivo(contenidoEnBlob, nombreArchivo) {
     const url = window.URL.createObjectURL(contenidoEnBlob);
@@ -154,21 +154,21 @@ export class BonosComponent implements OnInit {
     console.log(this.fechaI);
   }
 
-  editarBono(bono){
+  editarBono(bono) {
     this.bonoService.getBonoById(bono.bono_id).subscribe(res => {
-      this.bonoNew=res[0];
-      
+      this.bonoNew = res[0];
+
     });
   }
 
-  preConsumirBono(bono){
+  preConsumirBono(bono) {
     this.bonoService.getBonoById(bono.bono_id).subscribe(res => {
-      this.bonoSelect=res[0];
+      this.bonoSelect = res[0];
     });
   }
 
-  consumirBono(){
-    this.bonoSelect.estado='1';
+  consumirBono() {
+    this.bonoSelect.estado = '1';
     this.bonoService.updateBono(this.bonoSelect).subscribe(res => {
       $('#consumirModal').modal('hide');
     });
@@ -196,26 +196,26 @@ export class BonosComponent implements OnInit {
       alert(mensageError);
       return;
     }
-    let bono: BonoModel = (this.bonoNew.bono_id==null?new BonoModel():this.bonoNew);
+    let bono: BonoModel = (this.bonoNew.bono_id == null ? new BonoModel() : this.bonoNew);
     bono.empresa_id = this.empresaId;
     bono.fecha_registro = new Date();
     bono.estado = '0';
     bono.observacion = observacionCrearBono;
     bono.usuario_id = this.usuarioId;
     bono.tipo_bono_id = tipoCrearBono;
-    bono.total=totalCrearBono;
+    bono.total = totalCrearBono;
     let vehiculo = this.vehiculosEmpresa.find(v => v.placa.toUpperCase() == placa.toUpperCase());
     if (vehiculo == undefined) {
       vehiculo = new VehiculoModel();
       vehiculo.placa = placa.toUpperCase();
-      vehiculo.linea_vehiculo= lineaCrearBono;
+      vehiculo.linea_vehiculo = lineaCrearBono;
       this.clienteService.saveVehiculo(vehiculo).subscribe(res => {
         bono.vehiculo_id = res.vehiculo_id;
         this.bonoService.saveBono(bono).subscribe(res => {
           if (res.code == "200") {
-            this.bonoSelect=bono;
-            this.bonoSelect.bono_id=res.bono_id;
-           this. vehiculos();
+            this.bonoSelect = bono;
+            this.bonoSelect.bono_id = res.bono_id;
+            this.vehiculos();
             $('#crearBonoModal').modal('hide');
             $('#imprimirBonoModal').modal('show');
           }
@@ -225,9 +225,9 @@ export class BonosComponent implements OnInit {
       bono.vehiculo_id = vehiculo.vehiculo_id;
       this.bonoService.saveBono(bono).subscribe(res => {
         if (res.code == "200") {
-          this.bonoSelect=bono;
-          this.bonoSelect.bono_id=res.bono_id;
-         this. vehiculos();
+          this.bonoSelect = bono;
+          this.bonoSelect.bono_id = res.bono_id;
+          this.vehiculos();
           $('#crearBonoModal').modal('hide');
           $('#imprimirBonoModal').modal('show');
         }
