@@ -15,6 +15,7 @@ export class DocumentoDetalleModel {
     public descripcion:string;
     public url_foto:string;
     public varios:number;
+    public saldo:number;
     
     
     constructor(){
@@ -34,5 +35,6 @@ export class DocumentoDetalleModel {
        this.descripcion="";
        this.url_foto="";
        this.varios=0;
+       this.saldo=0;
     }
 }

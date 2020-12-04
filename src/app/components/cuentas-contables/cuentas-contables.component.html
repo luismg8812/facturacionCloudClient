@@ -20,11 +20,11 @@
           <tr *ngFor="let row of rows">
             <td>
               <div class="form-row">
-                <button type="button" class="btn btn-secondary btn-sm ml-{{row.codigo.length}}" id="{{row.codigo}}"
+                <button type="button" class="btn btn-secondary btn-sm ml-{{espacio(row.codigo.length)}}" id="{{row.codigo}}"
                   title="Desplegar grupo" (click)="clickPlus(row)">
                   <i class="fas fa-folder-plus"></i>
                 </button>
-                <button type="button" class="btn btn-secondary btn-sm d-none ml-{{row.codigo.length}}" id="n_{{row.codigo}}" title="Repre grupo"
+                <button type="button" class="btn btn-secondary btn-sm d-none ml-{{espacio(row.codigo.length)}}" id="n_{{row.codigo}}" title="Repre grupo"
                   (click)="clickMinus(row)">
                   <i class="fas fa-minus"></i>
                 </button>

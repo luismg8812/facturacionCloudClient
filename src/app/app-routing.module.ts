@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 import { UsuarioComponent } from './usuario/usuario.component';
-import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
@@ -22,12 +21,14 @@ import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
 import { TutorialesComponent } from './tutoriales/tutoriales.component';
-import { CuentasContablesComponent } from './cuentas-contables/cuentas-contables.component';
 import { NominaComponent } from './components/nomina/nomina.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { GestionOrdenComponent } from './components/gestion-orden/gestion-orden.component';
 import { BonosComponent } from './components/bonos/bonos.component';
 import { EstadoDocumentosComponent } from './components/estado-documentos/estado-documentos.component';
+import { CuentasContablesComponent } from './components/cuentas-contables/cuentas-contables.component';
+import { VentasDiaComponent } from './components/ventas-dia/ventas-dia.component';
+import { KardexComponent } from './components/kardex/kardex.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -57,6 +58,7 @@ const routes: Routes = [
    { path: 'liberarCuadre', component: LiberarCuadreComponent },
    { path: 'cuentasContables', component: CuentasContablesComponent },
    { path: 'bonos', component: BonosComponent },
+   { path: 'kardex', component: KardexComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
