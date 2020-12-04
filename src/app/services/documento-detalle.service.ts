@@ -31,5 +31,9 @@ export class DocumentoDetalleService {
   getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,usuarioId:string,empresaId:number) {
     return this.http.get<any[]>(this.server_api + '/documentoDetalle/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
   }
+
+  getKardex(fechaInicial,fechaFinal,productoId:string,nombreParcial:string, empresaId:number) {
+    return this.http.get<any[]>(this.server_api + '/documentoDetalle/getKardex?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&productoId="+productoId+"&nombreParcial="+nombreParcial+"&empresaId="+empresaId);
+  }
   
 }

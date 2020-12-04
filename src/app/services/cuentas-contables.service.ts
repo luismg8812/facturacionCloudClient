@@ -4,6 +4,8 @@ import { ParametrosModel } from '../model/parametros.model';
 import { ClaseModel } from '../model.contabilidad/clase.model';
 import { GrupoModel } from '../model.contabilidad/grupo.model';
 import { CuentaModel } from '../model.contabilidad/cuenta.model';
+import { SubCuentaModel } from '../model.contabilidad/subCuenta.model';
+import { AuxiliarModel } from '../model.contabilidad/auxiliar.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +28,14 @@ export class CuentasContablesService {
   public getCuentaByGrupo(grupoId:number){
     return this.http.get<CuentaModel[]>(this.server_api+'/cuentasContables/getCuentaByGrupo?grupoId='+grupoId);
   }
+
+  public getSubCuentaByCuenta(cuentaId:number){
+    return this.http.get<SubCuentaModel[]>(this.server_api+'/cuentasContables/getSubCuentaByCuenta?cuentaId='+cuentaId);
+  }
+
+  public getAuxiliarBySubCuenta(subCuentaId:number){
+    return this.http.get<AuxiliarModel[]>(this.server_api+'/cuentasContables/getAuxiliarBySubCuenta?subCuentaId='+subCuentaId);
+  }
+  
   
 }

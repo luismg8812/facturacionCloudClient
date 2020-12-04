@@ -868,7 +868,8 @@ export class ImpresionService {
       this.doc.text("CAJA: " + factura.documento.mac, x, y);
       y = y + inicio;
       if (factura.cliente != undefined) {
-        this.doc.text("CLIENTE: " + factura.cliente.nombre, x, y);
+        let nombreCliente:string = factura.cliente.nombre==""?factura.cliente.razon_social:factura.cliente.nombre;
+        this.doc.text("CLIENTE: " + nombreCliente, x, y);
         y = y + inicio;
         this.doc.text("NIT/CC: " + factura.cliente.documento, x, y);
         y = y + inicio;
