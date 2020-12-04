@@ -28,6 +28,7 @@ import { BonosComponent } from './components/bonos/bonos.component';
 import { EstadoDocumentosComponent } from './components/estado-documentos/estado-documentos.component';
 import { CuentasContablesComponent } from './components/cuentas-contables/cuentas-contables.component';
 import { VentasDiaComponent } from './components/ventas-dia/ventas-dia.component';
+import { KardexComponent } from './components/kardex/kardex.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -57,6 +58,7 @@ const routes: Routes = [
    { path: 'liberarCuadre', component: LiberarCuadreComponent },
    { path: 'cuentasContables', component: CuentasContablesComponent },
    { path: 'bonos', component: BonosComponent },
+   { path: 'kardex', component: KardexComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
   { path: '**', redirectTo: '/', pathMatch: 'full' },

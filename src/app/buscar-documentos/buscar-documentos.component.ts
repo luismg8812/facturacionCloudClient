@@ -312,6 +312,7 @@ export class BuscarDocumentosComponent implements OnInit {
   private asignarDocumentoDetalle(cantidad: number, costo_publico: number) {
     let docDetalle = new DocumentoDetalleModel();
     docDetalle.cantidad = cantidad;
+    docDetalle.saldo=Number(this.productoIdSelect.cantidad);
     docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
     docDetalle.peso_producto = Number(this.productoIdSelect.peso);
     docDetalle.producto_id = this.productoIdSelect.producto_id;

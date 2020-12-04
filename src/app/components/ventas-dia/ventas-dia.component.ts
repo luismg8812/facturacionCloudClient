@@ -1507,9 +1507,6 @@ export class VentasDiaComponent implements OnInit {
         if (res.code == 200) {
           this.document.documento_id = res.documento_id;
           this.document.fecha_registro = new Date(res.fecha_registro);
-
-
-
           this.asignarDocumentoDetalle(cantidad, this.productoIdSelect.costo_publico);
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
@@ -1523,12 +1520,10 @@ export class VentasDiaComponent implements OnInit {
     }
   }
 
-
-
-
   private asignarDocumentoDetalle(cantidad: number, costo_publico: number) {
     let docDetalle = new DocumentoDetalleModel();
     docDetalle.cantidad = cantidad;
+    docDetalle.saldo=Number(this.productoIdSelect.cantidad)
     docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
     docDetalle.peso_producto = Number(this.productoIdSelect.peso);
     docDetalle.producto_id = this.productoIdSelect.producto_id;

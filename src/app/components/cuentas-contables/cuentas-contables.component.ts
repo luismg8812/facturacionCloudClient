@@ -170,7 +170,6 @@ export class CuentasContablesComponent implements OnInit {
           this.rows.splice(index + 1, 0, row)
           index++;
         }
-
       }
       console.log("lista de subcuetas cargadas: " + res.length);
     });

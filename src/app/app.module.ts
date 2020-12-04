@@ -47,6 +47,7 @@ import { BonosComponent } from './components/bonos/bonos.component';
 import { EstadoDocumentosComponent } from './components/estado-documentos/estado-documentos.component';
 import { CuentasContablesComponent } from './components/cuentas-contables/cuentas-contables.component';
 import { VentasDiaComponent } from './components/ventas-dia/ventas-dia.component';
+import { KardexComponent } from './components/kardex/kardex.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -85,7 +86,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     CarteraProveedoresComponent,
     TutorialesComponent,
     CuentasContablesComponent,
-    BonosComponent
+    BonosComponent,
+    KardexComponent
   ],
   imports: [
     BrowserModule,
