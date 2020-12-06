@@ -6,6 +6,7 @@ import { ProveedorService } from '../services/proveedor.service';
 import { GrupoModel } from '../model/grupo.model';
 import { SubGrupoModel } from '../model/subGrupo.model';
 import { ProductoPreciosModel } from '../model/productoPrecios.model';
+import { SubProductoModel } from '../model/subProducto.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -23,6 +24,8 @@ export class EditarProductoComponent implements OnInit {
   public marcaList: Array<any>;
   public grupoList: Array<GrupoModel>;
   public subGrupoList: Array<SubGrupoModel>;
+  public subProductoList:Array<SubProductoModel>=[];
+  
   @ViewChild("articuloPV1") articuloPV1: ElementRef;
 
   constructor(public productoService:ProductoService,
@@ -78,6 +81,66 @@ export class EditarProductoComponent implements OnInit {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+agregarSubProducto(articulo,cantidad){
+  let producto:ProductoModel = this.productosAll.find(product => product.nombre === articulo.value);
+  if(this.productoNew.producto_id==null){
+    alert("Debe seleccionar un producto padre");
+    return;
+  }
+  if(producto==undefined){
+    alert("El sub producto es obligatorio");
+    return;
+  }
+  if(cantidad.value==""){
+    alert("La cantidad es obligatoria");
+    return;
+  }
+  else{
+    if (isNaN(Number(cantidad.value))) {
+      alert("La cantidad no es numérica");
+      return;
+    }
+  }
+  for(let s of this.subProductoList){
+    if(this.productoNew.producto_id==producto.producto_id){
+      alert("No se puede agregar el mismo producto");
+      return;
+    }
+    if(s.producto_hijo==producto.producto_id){
+      alert("El producto ya se encuentra en la lista");
+    }
+  }
+  let subProducto:SubProductoModel=new SubProductoModel();
+  subProducto.producto_padre=this.productoNew.producto_id;
+  subProducto.producto_hijo=producto.producto_id;
+  subProducto.cantidad=cantidad.value;
+  subProducto.estado=1;
+  this.productoService.saveSubProducto(subProducto).subscribe(res => {
+    subProducto.sub_producto_id = res.sub_producto_id;
+    this.subProductoList.push(subProducto);
+  });
+
+
+}
+
+nombreClienteFun(id) {
+  let p = this.productosAll.find(productos => productos.producto_id == id);
+  if (p == undefined) {
+    return "";
+  } else {
+    return p.nombre;
+  }
+} 
+
+eliminarSubProducto(subProducto:SubProductoModel){
+  for (var i = 0; i < this.subProductoList.length; i++) {
+    if (this.subProductoList[i].producto_hijo == subProducto.producto_hijo) {
+      this.subProductoList.splice(i, 1);
+      this.productoService.deleteSubProducto(subProducto).subscribe();
+    }
+  }
+}
+
   getGrupos(empresaId: number) {
     this.productoService.getGruposByEmpresa(empresaId.toString()).subscribe(res => {
       this.grupoList = res;
@@ -108,7 +171,9 @@ export class EditarProductoComponent implements OnInit {
       }else{
         this.productoPrecioNew=new ProductoPreciosModel();
       }
-      
+    });
+    this.productoService.getSubProductoByProductoId(this.productoNew.producto_id).subscribe(res => {
+     this.subProductoList=res;
     });
     console.log(this.productoNew);
   }
