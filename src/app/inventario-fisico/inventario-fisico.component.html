@@ -34,18 +34,18 @@
     <thead>
       <tr>
         <th scope="col">Ops</th>
-        <th scope="col" >Producto</th>
-        <th scope="col"  *ngIf="cantidadActivo">Cant.</th>
-        <th scope="col"  *ngIf="costoActivo">Costo</th>
-        <th scope="col"  *ngIf="costoPublicoActivo">Publico</th>
-        <th scope="col"  *ngIf="IVAActivo">IVA</th>
-        <th scope="col"  *ngIf="pesadoActivo" class="w-1">Pesado</th>
-        <th scope="col"  *ngIf="codigoBarrasActivo">Cod. Barras</th>
-        <th scope="col"  *ngIf="promocionesActivo">Prom</th>
-        <th scope="col"  *ngIf="promocionesActivo">Pub. Promo</th>
-        <th scope="col"  *ngIf="promocionesActivo">Kg. promo</th>
-        <th scope="col"  *ngIf="utilidadActivo">Utilidad</th>
-        <th scope="col"  *ngIf="diferenciaActivo">Diferencia</th>
+        <th scope="col">Producto</th>
+        <th scope="col" *ngIf="cantidadActivo">Cant.</th>
+        <th scope="col" *ngIf="costoActivo">Costo</th>
+        <th scope="col" *ngIf="costoPublicoActivo">Publico</th>
+        <th scope="col" *ngIf="IVAActivo">IVA</th>
+        <th scope="col" *ngIf="pesadoActivo" class="w-1">Pesado</th>
+        <th scope="col" *ngIf="codigoBarrasActivo">Cod. Barras</th>
+        <th scope="col" *ngIf="promocionesActivo">Prom</th>
+        <th scope="col" *ngIf="promocionesActivo">Pub. Promo</th>
+        <th scope="col" *ngIf="promocionesActivo">Kg. promo</th>
+        <th scope="col" *ngIf="utilidadActivo">Utilidad</th>
+        <th scope="col" *ngIf="diferenciaActivo">Diferencia</th>
       </tr>
     </thead>
     <tbody>
@@ -64,11 +64,12 @@
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,nombre)">
 
         </td>
-        <td  *ngIf="cantidadActivo"> <input class="form-control " #canti id="cantidad_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
-            value="{{ordenes.cantidad}}" (keydown.enter)="cambioPrecioLista(ordenes,canti)"
-            (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,canti)">
+        <td *ngIf="cantidadActivo"> <input class="form-control " #canti id="cantidad_{{ordenes.producto_id}}"
+            (focus)="indexFocus(ordenes)" value="{{ordenes.cantidad}}"
+            (keydown.enter)="cambioPrecioLista(ordenes,canti)" (keydown.esc)="scapeTecla(this)"
+            (keyup)="controlTeclas($event,canti)">
         </td>
-        <td  *ngIf="costoActivo">
+        <td *ngIf="costoActivo">
           <input class="form-control " #costo id="costo_{{ordenes.producto_id}}" (focus)="indexFocus(ordenes)"
             value="{{ordenes.costo}}" (keydown.enter)="cambioPrecioLista(ordenes,costo)"
             (keydown.esc)="scapeTecla(this)" (keyup)="controlTeclas($event,costo)">
@@ -474,7 +475,7 @@
             </div>
             <div class="form-group col-md-3 col-sm-6">
               Granel
-              <input class="form-control" id="subproducto" placeholder="1 o 0" name="granel" #granel required
+              <input class="form-control" id="granel" placeholder="1 o 0" name="granel" #granel required
                 [(ngModel)]="productoNew.granel">
             </div>
           </div>
@@ -503,7 +504,7 @@
                   <div class="form-row">
                     <div class="form-group col-md-6 col-sm-6">
                       Precio 4
-                      <input class="form-control" id="precio_2" name="precio_4" #precio_4 required
+                      <input class="form-control" id="precio_4" name="precio_4" #precio_4 required
                         [(ngModel)]="productoPrecioNew.precio_4">
                     </div>
                     <div class="form-group col-md-6 col-sm-6">
@@ -543,7 +544,7 @@
                         [(ngModel)]="productoPrecioNew.precio_10">
                     </div>
                     <div class="form-group col-md-6 col-sm-6">
-                      
+
                     </div>
                   </div>
                 </div>
