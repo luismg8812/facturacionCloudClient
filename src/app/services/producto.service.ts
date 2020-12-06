@@ -5,6 +5,7 @@ import { ParametrosModel } from '../model/parametros.model';
 import { GrupoModel } from '../model/grupo.model';
 import { SubGrupoModel } from '../model/subGrupo.model';
 import { ProductoPreciosModel } from '../model/productoPrecios.model';
+import { SubProductoModel } from '../model/subProducto.model';
 
 
 @Injectable({
@@ -39,7 +40,10 @@ export class ProductoService {
   public getProductoPreciosById(productoId:number){
     return this.http.get<ProductoPreciosModel[]>(this.server_api+'/producto/getProductoPreciosById?productoId='+productoId);
   }
-  
+
+  public getSubProductoByProductoId(productoId:number){
+    return this.http.get<SubProductoModel[]>(this.server_api+'/producto/getSubProductoByProductoId?productoId='+productoId);
+  }
 
   public getGruposByEmpresa(empresaId:string){
     return this.http.get<GrupoModel[]>(this.server_api+'/producto/getGruposByEmpresa?empresaId='+empresaId);
@@ -69,6 +73,15 @@ export class ProductoService {
   public saveProducto(productoId:ProductoModel){
     return this.http.put<any>(this.server_api+'/producto/saveProducto',productoId);
   }
+
+  public saveSubProducto(subProductoId:SubProductoModel){
+    return this.http.put<any>(this.server_api+'/producto/saveSubProducto',subProductoId); 
+  }
+
+  deleteSubProducto(subProducto: SubProductoModel) {
+    return this.http.put<any>(this.server_api + '/producto/deleteSubProducto', subProducto);
+  }
+
   
   public saveProductoPrecios(productoId:ProductoPreciosModel){
     return this.http.put<any>(this.server_api+'/producto/saveProductoPrecios',productoId);

@@ -3,7 +3,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivacionModel } from 'src/app/model/activacion';
 import { ClienteModel } from 'src/app/model/cliente.model';
-import { ConfiguracionModel } from 'src/app/model/configuracion.model'; 
+import { ConfiguracionModel } from 'src/app/model/configuracion.model';
 import { DocumentoModel } from 'src/app/model/documento.model';
 import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
 import { DocumentoInvoiceModel } from 'src/app/model/documentoInvoice.model';
@@ -18,6 +18,7 @@ import { ProporcionModel } from 'src/app/model/proporcion.model';
 import { ResolucionEmpresaModel } from 'src/app/model/resolucionEmpresa.model';
 import { RolUsuarioModel } from 'src/app/model/rolUsuario.model';
 import { SubMenuModel } from 'src/app/model/submenu.model';
+import { SubProductoModel } from 'src/app/model/subProducto.model';
 import { TipoDocumentoModel } from 'src/app/model/tipoDocumento.model';
 import { TipoIdentificacionModel } from 'src/app/model/tipoIdentificacion.model';
 import { TipoPagoModel } from 'src/app/model/tipoPago.model';
@@ -88,10 +89,10 @@ export class VentasDiaComponent implements OnInit {
     public empleadoService: EmpleadoService,
     public socketService: SocketService,
     public cierreService: CierreService,
-    public documentoService: DocumentoService, 
-    public calculosService: CalculosService, 
+    public documentoService: DocumentoService,
+    public calculosService: CalculosService,
     public documentoDetalleService: DocumentoDetalleService,
-    private router: Router, public empresaService: EmpresaService, 
+    private router: Router, public empresaService: EmpresaService,
     public impresionService: ImpresionService) { }
 
   public document: DocumentoModel;
@@ -151,7 +152,7 @@ export class VentasDiaComponent implements OnInit {
   public pesoGramera: number = 0.0;
   public parcialGramera: number = 0.0;
   public informeDiario: InformeDiarioModel;
-  public productoPreciosSelect:ProductoPreciosModel=new ProductoPreciosModel();
+  public productoPreciosSelect: ProductoPreciosModel = new ProductoPreciosModel();
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -299,7 +300,7 @@ export class VentasDiaComponent implements OnInit {
           this.saldoCliente = con.saldo;
         }
         this.saldoClienteActivo = true;
-      }   
+      }
 
     });
     console.log(cliente);
@@ -589,12 +590,12 @@ export class VentasDiaComponent implements OnInit {
         this.cantidadPV.nativeElement.focus();
         this.cantidadPV.nativeElement.select();
         this.productoService.getProductoPreciosById(this.productoIdSelect.producto_id).subscribe(res => {
-          if(res.length>0){
-            this.productoPreciosSelect=res[0];
-          }else{
-            this.productoPreciosSelect=new ProductoPreciosModel();
+          if (res.length > 0) {
+            this.productoPreciosSelect = res[0];
+          } else {
+            this.productoPreciosSelect = new ProductoPreciosModel();
           }
-          
+
         });
       }
     }
@@ -1195,7 +1196,7 @@ export class VentasDiaComponent implements OnInit {
             alert("Se agotó el consecutivo DIAN");
             return;
           }
-          consecutivo = ""+con;
+          consecutivo = "" + con;
           this.document.letra_consecutivo = resolucion.letra_consecutivo;
           console.log("consecutivo Dian: " + consecutivo);
           this.document.consecutivo_dian = consecutivo;
@@ -1424,7 +1425,7 @@ export class VentasDiaComponent implements OnInit {
     } else {
       product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
     }
-    this.restarCantidadesSubProducto(anterior);
+    this.restarCantidadesSubProducto(anterior, operacion);
     this.productoService.updateCantidad(product).subscribe(res => {
       if (res.code == 200) {
         this.productoIdSelect = product;
@@ -1492,7 +1493,7 @@ export class VentasDiaComponent implements OnInit {
         this.asignarDocumentoDetalle(cantidad, precio);
         this.siguientePV.nativeElement.focus();
         this.modificarFactura = false;
-      }else{
+      } else {
         console.error("error actualizando documento detalle");
       }
     });
@@ -1523,7 +1524,7 @@ export class VentasDiaComponent implements OnInit {
   private asignarDocumentoDetalle(cantidad: number, costo_publico: number) {
     let docDetalle = new DocumentoDetalleModel();
     docDetalle.cantidad = cantidad;
-    docDetalle.saldo=Number(this.productoIdSelect.cantidad)
+    docDetalle.saldo = Number(this.productoIdSelect.cantidad)
     docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
     docDetalle.peso_producto = Number(this.productoIdSelect.peso);
     docDetalle.producto_id = this.productoIdSelect.producto_id;
@@ -1585,8 +1586,21 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
-  private restarCantidadesSubProducto(productoSelect3: DocumentoDetalleModel) {
-    console.log("TODO hacer (copiar)la logica de restar cantidades subproducto");
+  private restarCantidadesSubProducto(productoSelect3: DocumentoDetalleModel, operacion: string) {
+    this.productoService.getSubProductoByProductoId(productoSelect3.producto_id).subscribe(res => {
+      let subProductoList: Array<SubProductoModel> = res;
+      for (let p of subProductoList) {
+        this.productoService.getProductoById(p.producto_hijo.toString(), this.empresaId.toString()).subscribe(result => {
+          let obj = result[0];
+          if (operacion == 'suma') {
+            obj.cantidad = Number(obj.cantidad) + Number(p.cantidad);
+          } else {
+            obj.cantidad = Number(obj.cantidad) - Number(p.cantidad);
+          }
+          this.productoService.updateCantidad(obj).subscribe();
+        });
+      }
+    });
   }
 
   async scapeTecla(element) {
@@ -2090,8 +2104,8 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
     $('#imprimirModal').modal('show');
-   // this.divImprimirModal.nativeElement.classList.remove("d-none");
-   // this.divImprimirModal.nativeElement.classList.add("d-block");
+    // this.divImprimirModal.nativeElement.classList.remove("d-none");
+    // this.divImprimirModal.nativeElement.classList.add("d-block");
     let contador = 0;
     if (this.descuentosActivo) {
       this.descuentoLavel.nativeElement.classList.remove("d-none");
