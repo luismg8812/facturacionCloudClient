@@ -1008,15 +1008,26 @@ export class ImpresionService {
     texto.push("DESCRIPCION CLIENTE: " + factura.documento.descripcion_cliente + '\n');
     texto.push("DIAGNOSTICO: " + factura.documento.descripcion_trabajador + '\n');
     texto.push('--------------------------------\n');  
-    texto.push('DESCRIPCION                TOTAL\n');
+    texto.push('DESCRIPCION         CANT.    TOT.\n');
     texto.push('--------------------------------\n');
     for (var i = 0; i < factura.detalle.length; i++) { 
-      let nombreProducto: string = this.calculosService.cortarDescripcion(factura.detalle[i].descripcion, 20);
-      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial).replace("COP", ""), 10);
-      texto.push(nombreProducto + "  " + totalProducto + "\n");
+      let nombreProducto: string = factura.detalle[i].descripcion;
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 9);
+      let cantidadProducto:string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].cantidad), 3);
+      let topeLinea = 18.0;
+      let linea: number = factura.detalle[i].descripcion.length / topeLinea;
+      let numlineas = Math.ceil(linea);
+      let ini = 0;
+      let fin = topeLinea;
+      for (let e = 0; e <= numlineas; e++) {
+        let lineaParcial:string = factura.detalle[i].descripcion.substring(ini, fin);
+        texto.push(lineaParcial +" "+  (e==0?cantidadProducto:'') +" "+  (e==0?totalProducto:'') + "\n");
+        ini = ini + topeLinea;
+        fin = fin + topeLinea;
+      }  
     }
     texto.push('--------------------------------\n');
-    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP", ""), 14) + '\n');
+    texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
     texto.push('--------------------------------\n');
     texto.push('\n');
     texto.push("El establecimiento no se hace responsable de la perdida o robo de objetos de valor dejados en el vehiculo" + '\n');

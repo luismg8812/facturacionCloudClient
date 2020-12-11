@@ -38,7 +38,7 @@
                 (keyup)="controlTeclasCliente($event,clientePV)">
             <datalist id="browsers">
                 <option *ngFor="let cliente of clientes"
-                    [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
+                    [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
                     Cod. interno: {{cliente.cliente_id}}
                 </option>
             </datalist>
@@ -247,7 +247,7 @@
                         <td>
                             <button type="button" class="btn btn-secondary" #borrar
                                 id="b_{{producto.documento_detalle_id}}" (keydown.esc)="enterTecla(borrar)"
-                                (keyup)="controlTeclas($event,borrar)"
+                                (keyup)="controlTeclas($event,borrar)" (blur)="desselectBlur(borrar)"
                                 (click)="borrarLista(producto,borrar)">Borrar</button>
                         </td>
                         <td>{{producto.producto_id}}</td>
