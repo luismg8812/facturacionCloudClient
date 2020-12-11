@@ -279,21 +279,21 @@ export class VentasDiaComponent implements OnInit {
       alert("El cliente es obligatorio");
       return;
     }
-    let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
+    let client = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento) == element.value);
 
     if (!this.clienteObligatorioActivo && element.value != '') {
 
     }
 
     if (!this.clienteObligatorioActivo && element.value == '') {
-      cliente = this.clientes.find(cliente => cliente.cliente_id == 1);//trae cliente varios por defecto
+      client = this.clientes.find(cliente => cliente.cliente_id == 1);//trae cliente varios por defecto
     }
 
-    if (cliente == undefined) {
+    if (client == undefined) {
       alert("El cliente " + element.value + " no existe, presione la tecla lado derecho para crearlo");
       return;
     }
-    this.documentoService.getCarteraClientes(cliente.cliente_id, "", "", "", this.empresaId, 10).subscribe(res => {
+    this.documentoService.getCarteraClientes(client.cliente_id, "", "", "", this.empresaId, 10).subscribe(res => {
       console.log(res);
       if (res.length > 0) {
         for (let con of res) {
@@ -303,10 +303,10 @@ export class VentasDiaComponent implements OnInit {
       }
 
     });
-    console.log(cliente);
-    this.clienteSelect = cliente.cliente_id;
+    console.log(client);
+    this.clienteSelect = client.cliente_id;
     this.document.cliente_id = this.clienteSelect;
-    this.factura.cliente = cliente;
+    this.factura.cliente = client;
     //this.clientePV.nativeElement.value=cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento ; 
     //console.log(cliente.nombre+" "+cliente.apellidos+" - "+cliente.documento );
     console.log("cliente select:" + this.clienteSelect);
@@ -875,6 +875,8 @@ export class VentasDiaComponent implements OnInit {
     let idModificarSelect = "b_" + this.productos[0].documento_detalle_id;
     this.indexModificarSelect = 0;
     $("#" + idModificarSelect).focus();
+    $("#" + idModificarSelect).removeClass("btn-secondary");
+    $("#" + idModificarSelect).addClass("btn-danger");
   }
 
   modificarEnter() {
@@ -1213,7 +1215,7 @@ export class VentasDiaComponent implements OnInit {
             return;
           }
           this.imprimirFactura(numImpresiones, empr);
-          this.calcularInfoDiario(cancelado);
+          //this.calcularInfoDiario(cancelado);
           this.limpiar();
           this.scapeTecla(null);
         });
@@ -1438,14 +1440,17 @@ export class VentasDiaComponent implements OnInit {
   }
 
   async borrarLista(detalle: DocumentoDetalleModel, element) {
-    if (this.claveBorradoActivo) {
-      this.claveBorrado = true;
-      await this.delay(100);
-      this.claveBorradoPV.nativeElement.focus();
-      this.detalleBorrado = detalle;
-    } else {
-      this.borradoPosClave(detalle);
+    if(this.modificarFactura){
+      if (this.claveBorradoActivo) {
+        this.claveBorrado = true;
+        await this.delay(100);
+        this.claveBorradoPV.nativeElement.focus();
+        this.detalleBorrado = detalle;
+      } else {
+        this.borradoPosClave(detalle);
+      }
     }
+    
 
   }
 
@@ -1684,11 +1689,11 @@ export class VentasDiaComponent implements OnInit {
           $('#direccionCliente').focus();
           $('#direccionCliente').select();
         } else {
-          alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + " " + cliente.apellidos + "\n" + "NIT: " + cliente.documento);
+          alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social + "\n" + "NIT: " + cliente.documento);
           $('#documentoCliente').focus();
           $('#documentoCliente').select();
         }
-
+ 
         return;
       }
       if (element.id == 'direccionCliente') {
@@ -1775,6 +1780,11 @@ export class VentasDiaComponent implements OnInit {
       }
     }
 
+  }
+
+  desselectBlur(element){
+    $("#" + element.id).removeClass("btn-danger");
+    $("#" + element.id).addClass("btn-secondary");
   }
 
   controlTeclas(event, element) {
@@ -1886,6 +1896,8 @@ export class VentasDiaComponent implements OnInit {
           let idModificarSelect = "b_" + this.productos[this.indexModificarSelect].documento_detalle_id;
           $("#" + idModificarSelect).focus();
           $("#" + idModificarSelect).select();
+          $("#" + idModificarSelect).removeClass("btn-secondary");
+          $("#" + idModificarSelect).addClass("btn-danger");
           return;
         }
       }
@@ -1915,6 +1927,8 @@ export class VentasDiaComponent implements OnInit {
           let idModificarSelect = "b_" + this.productos[this.indexModificarSelect].documento_detalle_id;
           $("#" + idModificarSelect).focus();
           $("#" + idModificarSelect).select();
+          $("#" + idModificarSelect).removeClass("btn-secondary");
+          $("#" + idModificarSelect).addClass("btn-danger");
           return;
         }
       }
