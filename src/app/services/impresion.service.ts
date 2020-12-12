@@ -1012,8 +1012,8 @@ export class ImpresionService {
     texto.push('--------------------------------\n');
     for (var i = 0; i < factura.detalle.length; i++) { 
       let nombreProducto: string = factura.detalle[i].descripcion;
-      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 9);
-      let cantidadProducto:string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].cantidad), 3);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 8);
+      let cantidadProducto:string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].cantidad), 4);
       let topeLinea = 18.0;
       let linea: number = factura.detalle[i].descripcion.length / topeLinea;
       let numlineas = Math.ceil(linea);
