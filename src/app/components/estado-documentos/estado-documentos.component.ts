@@ -199,6 +199,7 @@ export class EstadoDocumentosComponent implements OnInit {
     this.factura.detalle = this.itemsFactura;
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
+    this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     let stri: string = this.impresionService.imprimirFacturaPDFExportar(this.factura, this.configuracion);
     console.log(stri);
@@ -269,7 +270,7 @@ export class EstadoDocumentosComponent implements OnInit {
   }
  
   descargarPDF(docu: DocumentoModel) {
-    this.clienteService.getById(docu.cliente_id).subscribe(clien => {
+   
       this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento_id).subscribe(res => {
         //this.ngxQrcode2=docu.qrCode;
         //var myimg64 = $("#qrcode1").find("img").attr("src");
@@ -282,12 +283,11 @@ export class EstadoDocumentosComponent implements OnInit {
         this.factura.detalle = res;
         this.factura.titulo = tituloDocumento;
         this.factura.empresa = this.empresa;
-        this.factura.cliente = clien[0];
+        this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
         this.factura.resolucionEmpresa=this.resolucionAll[1];
         this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
         let stri: string = this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
       });
-    });
   }
 
   descargarXML(documento: DocumentoModel) {

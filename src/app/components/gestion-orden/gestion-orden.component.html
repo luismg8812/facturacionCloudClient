@@ -358,19 +358,33 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2">
+                  Cliente
                   <input list="browsers" name="clienteBuscarPV" #clienteBuscarPV placeholder="Cliente"
                     class="form-control" id="clienteBuscarPV">
 
                 </div>
                 <div class="form-group col-md-6 col-sm-2">
+                  Placa
                   <input class="form-control" id="placaBuscar" placeholder="Placa" name="placaBuscar" #placaBuscar
                     required>
                 </div>
-
-
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-2">
+                  Usuario
+                  <select id="usuariosPV" name="usuariosPV" #usuariosPV placeholder="" class="form-control">
+                    <option value="">Seleccione</option>
+                    <option *ngFor="let usuario of usuarioList" [value]="usuario.usuario_id">
+                      {{usuario.nombre}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 col-sm-2">
+                  Numero de ordenes: {{numOrdenes}}
+                </div>
               </div>
               <button type="button" class="btn btn-primary"
-                (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar</button>
+                (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin,usuariosPV)">Buscar</button>
               <button type="button" class="btn btn-primary ml-2"
                 (click)="buscarOrdenesHoy(placaBuscar,clienteBuscarPV)">Buscar de Hoy</button>
               <br />
