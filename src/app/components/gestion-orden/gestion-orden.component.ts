@@ -108,6 +108,7 @@ export class GestionOrdenComponent implements OnInit {
   public empleadoOrdenActivo: boolean = false;
   public facturaOrdenActivo: boolean = false;
   public reabirOrdenActivo: boolean = false;
+  public numOrdenes:number=0;
 
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
@@ -1428,8 +1429,9 @@ export class GestionOrdenComponent implements OnInit {
     $('#eliminarModal').modal('hide');
   }
 
-  buscarOrdenes(placa, clien, fechaInicial, fechaFinal) {
+  buscarOrdenes(placa, clien, fechaInicial, fechaFinal,usuario) {
     let idCliente = "";
+    let idUsuario = "";
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;
     let ini: string = fechaInicial.value;
     let fin: string = fechaFinal.value;
@@ -1450,8 +1452,10 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, ini, fin, tipoDocumentoId).subscribe(res => {
+   
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, ini, fin, tipoDocumentoId,usuario.value).subscribe(res => {
       this.ordenesBuscarList = res;
+      this.numOrdenes=res.length;
     });
   }
 
@@ -1462,7 +1466,7 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId,"").subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -1474,7 +1478,7 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId,"").subscribe(res => {
       this.facturasBuscarList = res;
     });
   }
@@ -1488,7 +1492,7 @@ export class GestionOrdenComponent implements OnInit {
       idCliente = cliente.cliente_id.toString();
     }
 
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId,"").subscribe(res => {
       this.ordenesBuscarListFactura = res;
     });
   }

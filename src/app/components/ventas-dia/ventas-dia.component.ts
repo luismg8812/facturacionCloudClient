@@ -55,6 +55,7 @@ export class VentasDiaComponent implements OnInit {
   readonly GUIA_TRANSPORTE: string = '8';
   readonly CLAVE_BORRADO: string = '9';
   readonly DESCUENTOS: string = '10';
+  readonly STOCK: string = '12';
   readonly CLIENTE_OBLIGATORIO: string = '14';
   readonly CAMBIO_PRECIO: string = '15';
   readonly EMPLEADOS: string = '18';
@@ -62,6 +63,7 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPOS_PAGOS: string = '20';
   readonly MULTIPLE_RESOLUCION: string = '23';
   readonly PRODUCTOS_PRECIOS: string = '25';
+  readonly CANTIDADES_NEGATIVAS: string = '28';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_REMISION: number = 9;
@@ -117,6 +119,8 @@ export class VentasDiaComponent implements OnInit {
   public proporcionActivo: boolean = false;
   public impresionPantallaActivo: boolean = false;
   public productoPreciosActivo: boolean = false;
+  public cantidadesNegativasActivo: boolean = false;
+  public stockActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
   public multipleResolucionActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
@@ -279,7 +283,7 @@ export class VentasDiaComponent implements OnInit {
       alert("El cliente es obligatorio");
       return;
     }
-    let client = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento) == element.value);
+    let client = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == element.value);
 
     if (!this.clienteObligatorioActivo && element.value != '') {
 
@@ -1172,8 +1176,7 @@ export class VentasDiaComponent implements OnInit {
       resolucion = reso[0];
       switch (this.document.tipo_documento_id) {
         case 9:
-          con = resolucion.consecutivo;
-          consecutivo = resolucion.letra_consecutivo + con;
+          consecutivo = "" + resolucion.consecutivo;
           this.document.letra_consecutivo = resolucion.letra_consecutivo;
           this.document.consecutivo_dian = consecutivo;
           console.log("consecutivo documentoId: " + consecutivo);
@@ -1188,7 +1191,6 @@ export class VentasDiaComponent implements OnInit {
         default:
           console.log(resolucion.consecutivo);
           con = resolucion.consecutivo + 1;
-
           let topeConsecutivo = resolucion.autorizacion_hasta;
           let consegutivo = con;
           if (consegutivo + 500 > topeConsecutivo) {
@@ -1355,6 +1357,10 @@ export class VentasDiaComponent implements OnInit {
       alert("La cantidad no puede ser mayor a 1500");
       return;
     }
+    if (this.productoIdSelect.cantidad <= 0 && !this.cantidadesNegativasActivo) {
+      alert("No está habilitado para vender productos con cantidades negativas");
+      return;
+    }
     if (this.cambioPrecioActivo) {
       this.unitarioPV.nativeElement.focus();
       this.unitarioPV.nativeElement.select();
@@ -1384,7 +1390,11 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
 
-    console.log("//TODO aqui hacer la validacion de stock min");
+    if (this.stockActivo) {
+      if ((this.productoIdSelect.cantidad - cantidad) < this.productoIdSelect.stock_min) {
+        alert("Solo hay " + (this.productoIdSelect.cantidad - cantidad) + " de " + this.productoIdSelect.nombre);
+      }
+    }
     console.log("//TODO aqui hacer la validacion de que el producto se agotó");
 
     this.asignarDocumento(cantidad);
@@ -1440,7 +1450,7 @@ export class VentasDiaComponent implements OnInit {
   }
 
   async borrarLista(detalle: DocumentoDetalleModel, element) {
-    if(this.modificarFactura){
+    if (this.modificarFactura) {
       if (this.claveBorradoActivo) {
         this.claveBorrado = true;
         await this.delay(100);
@@ -1450,7 +1460,7 @@ export class VentasDiaComponent implements OnInit {
         this.borradoPosClave(detalle);
       }
     }
-    
+
 
   }
 
@@ -1689,11 +1699,11 @@ export class VentasDiaComponent implements OnInit {
           $('#direccionCliente').focus();
           $('#direccionCliente').select();
         } else {
-          alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social + "\n" + "NIT: " + cliente.documento);
+          alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + "\n" + "NIT: " + cliente.documento);
           $('#documentoCliente').focus();
           $('#documentoCliente').select();
         }
- 
+
         return;
       }
       if (element.id == 'direccionCliente') {
@@ -1782,7 +1792,7 @@ export class VentasDiaComponent implements OnInit {
 
   }
 
-  desselectBlur(element){
+  desselectBlur(element) {
     $("#" + element.id).removeClass("btn-danger");
     $("#" + element.id).addClass("btn-secondary");
   }
@@ -2256,6 +2266,14 @@ export class VentasDiaComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.PRODUCTOS_PRECIOS) {
           console.log("multiples precios de droductos activo ");
           this.productoPreciosActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.CANTIDADES_NEGATIVAS) {
+          console.log("facturar cantidades negativas activo ");
+          this.cantidadesNegativasActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.STOCK) {
+          console.log("stock activo ");
+          this.stockActivo = true;
         }
       }
     });
