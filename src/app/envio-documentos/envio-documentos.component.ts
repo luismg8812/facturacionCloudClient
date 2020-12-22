@@ -76,7 +76,7 @@ export class EnvioDocumentosComponent implements OnInit {
     this.getTiposDocumento();
     this.getclientes(this.empresaId);
     this.getDocumentos();
-
+    this.getEmpresa();
 
   }
 
@@ -117,53 +117,44 @@ export class EnvioDocumentosComponent implements OnInit {
       this.insertarEstado(res1, docu);
     }
     $('#descartarModal').modal('hide');
-    
+
   }
 
   enviarDocumentos() {
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
-      this.enviados = 0;
-      this.exitosos = 0;
-      this.erroneos = 0;
-      this.enviando = true;
-      $('#envioModal').modal('hide');
-      $('#enviardoModal').modal('show');
-      for (let docu of this.documentoMap) {
-        this.enviados++;
+    this.enviados = 0;
+    this.exitosos = 0;
+    this.erroneos = 0;
+    this.enviando = true;
+    $('#envioModal').modal('hide');
+    $('#enviardoModal').modal('show');
+    for (let docu of this.documentoMap) {
+      this.enviados++;
+      this.detalleDocumento(docu.documento);
+      this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(this.empresa, docu, this.clientes)).subscribe(async res1 => {
+        console.log(res1);
+        if (res1.status == 'Error') {
+          this.erroneos++;
+        } else {
+          this.exitosos++;
+        }
+        //this.insertarEstado(env, docu.documento);
+        await this.delay(100);
+        if (this.enviados == this.documentoMap.length) {
+          // alert("El proceso de envio ha terminado")
+          $("#ok").prop("disabled", false);
+          this.getDocumentos();
+          this.enviando = false;
+        }
+        this.insertarEstado(res1, docu.documento);
+      }, error => {
+        console.error(error);
+        alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
+          "mail: info@effectivesoftware.com.co\n" +
+          "Error: " + error.error
+        )
+      });
+    }
 
-        this.detalleDocumento(docu.documento);
-        this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(empr[0], docu, this.clientes)).subscribe(async res1 => {
-          console.log(res1);
-          if (res1.status == 'Error') {
-            this.erroneos++;
-          } else {
-            this.exitosos++;
-          }
-          //this.insertarEstado(env, docu.documento);
-          await this.delay(100);
-          if (this.enviados == this.documentoMap.length) {
-            // alert("El proceso de envio ha terminado")
-            $("#ok").prop("disabled", false);
-            this.getDocumentos();
-            this.enviando = false;
-          }
-          this.insertarEstado(res1, docu.documento);
-        }, error => {
-          console.error(error);
-          alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
-            "mail: info@effectivesoftware.com.co\n" +
-            "Error: " + error.error
-          )
-        });
-      }
-    }, error => {
-      console.error(error);
-      alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
-        "mail: info@effectivesoftware.com.co\n" +
-        "Error: " + error.error
-      )
-      $('#envioModal').modal('hide');
-    });
   }
 
   sendMail(res, docu: DocumentoModel) {
@@ -214,7 +205,6 @@ export class EnvioDocumentosComponent implements OnInit {
   }
 
   getfacturaPDF(docu: DocumentoModel, empresa: EmpresaModel) {
-
     var myimg64 = $("#qrcode1").find("img").attr("src");
     //console.log("base65");
     //console.log(myimg64);
@@ -225,6 +215,7 @@ export class EnvioDocumentosComponent implements OnInit {
     this.factura.detalle = this.itemsFactura;
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
+    this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     let stri: string = this.impresionService.imprimirFacturaPDFExportar(this.factura, this.configuracion);
     console.log(stri);
@@ -384,7 +375,7 @@ export class EnvioDocumentosComponent implements OnInit {
   getclientes(empresaId: number) {
     this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
       this.clientes = res;
-      console.log( this.clientes);
+      console.log(this.clientes);
     });
   }
 
@@ -400,6 +391,11 @@ export class EnvioDocumentosComponent implements OnInit {
     });
   }
 
+  getEmpresa() {
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      this.empresa = res[0];
+    });
+  }
 
 
 }

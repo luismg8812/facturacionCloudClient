@@ -628,7 +628,7 @@ export class VentasDiaComponent implements OnInit {
         this.pesoGramera = res;
         this.parcialGramera = Number(this.productoIdSelect.costo_publico) * Number(this.pesoGramera);
       }
-    });
+    }); 
   }
 
   getImprimirFisico(fileName: string) {
@@ -1171,9 +1171,8 @@ export class VentasDiaComponent implements OnInit {
     this.clienteService.getResolucionById(resolucion.resolucion_empresa_id).subscribe(reso => {
       resolucion = reso[0];
       switch (this.document.tipo_documento_id) {
-        case 9:
-          con = resolucion.consecutivo;
-          consecutivo = resolucion.letra_consecutivo + con;
+        case 9:      
+          consecutivo =""+ resolucion.consecutivo;
           this.document.letra_consecutivo = resolucion.letra_consecutivo;
           this.document.consecutivo_dian = consecutivo;
           console.log("consecutivo documentoId: " + consecutivo);
@@ -1188,7 +1187,6 @@ export class VentasDiaComponent implements OnInit {
         default:
           console.log(resolucion.consecutivo);
           con = resolucion.consecutivo + 1;
-
           let topeConsecutivo = resolucion.autorizacion_hasta;
           let consegutivo = con;
           if (consegutivo + 500 > topeConsecutivo) {
