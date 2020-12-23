@@ -537,7 +537,7 @@ export class CalculosService {
 		datacliente.additionalAccountIDCliente = "" + cliente.fact_tipo_empresa_id;//+ cliente.cliente_id; //tipo empresa juridica
 		datacliente.codigoTipoIdentificacionCliete = "13"; //TO DO cambiar por los valores que de ever
 		datacliente.identificacionCliente = cliente.documento;
-		datacliente.nombreCliente = cliente.nombre + " " + cliente.apellidos;
+		datacliente.nombreCliente = cliente.nombre + " " + cliente.apellidos+ " "+cliente.razon_social;
 		datacliente.codigoMunicipioCliente = "11001";
 		datacliente.direccionCliente = cliente.direccion;
 		datacliente.telefonoCliente = cliente.celular == "" ? cliente.fijo : cliente.celular;

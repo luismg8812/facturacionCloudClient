@@ -63,7 +63,7 @@ export class CarteraClientesComponent implements OnInit {
     if (cliente == undefined) {
       return ""; 
     } else {
-      return cliente.nombre;
+      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
     }
   }
 
