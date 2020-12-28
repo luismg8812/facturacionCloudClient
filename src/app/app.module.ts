@@ -5,7 +5,6 @@ import { APP_INITIALIZER } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { MenuComponent } from './menu/menu.component';
 import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
@@ -21,7 +20,6 @@ import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
-import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { SocketService } from './services/socket.service';
 import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
@@ -48,6 +46,9 @@ import { EstadoDocumentosComponent } from './components/estado-documentos/estado
 import { CuentasContablesComponent } from './components/cuentas-contables/cuentas-contables.component';
 import { VentasDiaComponent } from './components/ventas-dia/ventas-dia.component';
 import { KardexComponent } from './components/kardex/kardex.component';
+import { MenuComponent } from './components/menu/menu.component';
+import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
+import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -87,7 +88,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     TutorialesComponent,
     CuentasContablesComponent,
     BonosComponent,
-    KardexComponent
+    KardexComponent,
+    RequerimientoComponent
   ],
   imports: [
     BrowserModule,

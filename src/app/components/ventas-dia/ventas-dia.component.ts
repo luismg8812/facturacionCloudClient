@@ -931,7 +931,7 @@ export class VentasDiaComponent implements OnInit {
     console.log(this.configuracion);
     let numImpresiones = this.configuracion.numero_impresion;
     let impresora: string = this.impresoraPV.nativeElement.value;
-    if (impresora == "") {
+    if (impresora == "" || impresora == undefined) {
       impresora = '1';
     }
     this.document.impresora = Number(impresora);
@@ -985,21 +985,15 @@ export class VentasDiaComponent implements OnInit {
   }
 
   asignarTipoPago() {
-    let des1 = this.descuentoPV.nativeElement.value;
     let tiposPagosList: TipoPagoModel[] = [];
-    if (des1 == "") { //no se por que tiene que ver con el descuento... validar esta parte
-      //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
-      for (let tipo of this.tiposPagosDocumento) {
-        this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
-      }
-    } else {
-
+    for (let tipo of this.tiposPagosDocumento) {
+      this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
     }
   }
 
   verificarDescuento() {
     let des1 = this.descuentoPV.nativeElement.value;
-    if (des1 != 0.0 && des1 != "") {
+    if (des1 != 0.0 && des1 != "" && des1 != undefined) {
       let desTemp = 0.0; // si el descuento es mayor o menor que 100 entonces se calcula el
       // descuento en %
       desTemp = 0.0;

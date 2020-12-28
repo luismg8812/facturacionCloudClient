@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ProductoService } from '../services/producto.service';
-import { ProductoModel } from '../model/producto.model';
-import { GrupoModel } from '../model/grupo.model';
-import { SubGrupoModel } from '../model/subGrupo.model';
-import { ProductoPreciosModel } from '../model/productoPrecios.model';
-import { UsuarioService } from '../services/usuario.service';
-import { CampoInventarioModel } from '../model/campoInventario.model';
+import { CampoInventarioModel } from 'src/app/model/campoInventario.model';
+import { GrupoModel } from 'src/app/model/grupo.model';
+import { ProductoModel } from 'src/app/model/producto.model';
+import { ProductoPreciosModel } from 'src/app/model/productoPrecios.model';
+import { SubGrupoModel } from 'src/app/model/subGrupo.model';
+import { ProductoService } from 'src/app/services/producto.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
+
 declare var jquery: any;
 declare var $: any;
 

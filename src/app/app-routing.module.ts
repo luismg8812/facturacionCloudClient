@@ -1,12 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-import { MenuComponent } from './menu/menu.component';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
-import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
@@ -29,6 +27,9 @@ import { EstadoDocumentosComponent } from './components/estado-documentos/estado
 import { CuentasContablesComponent } from './components/cuentas-contables/cuentas-contables.component';
 import { VentasDiaComponent } from './components/ventas-dia/ventas-dia.component';
 import { KardexComponent } from './components/kardex/kardex.component';
+import { MenuComponent } from './components/menu/menu.component';
+import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
+import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -59,6 +60,7 @@ const routes: Routes = [
    { path: 'cuentasContables', component: CuentasContablesComponent },
    { path: 'bonos', component: BonosComponent },
    { path: 'kardex', component: KardexComponent },
+   { path: 'requerimiento', component: RequerimientoComponent},
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
