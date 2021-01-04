@@ -27,10 +27,11 @@ export class RequerimientoComponent implements OnInit {
   public usuarioId: number;
   public req: RequerimientoModel = new RequerimientoModel();
   public total: number = 0;
+  public obs:string ="";
 
   constructor(public usuarioService: UsuarioService,
     public productoService: ProductoService,
-    public calculosService:CalculosService,
+    public calculosService: CalculosService,
     public trasladosService: TrasladosService) { }
 
 
@@ -64,6 +65,16 @@ export class RequerimientoComponent implements OnInit {
     this.productosSelectList = [];
   }
 
+  editar(r: RequerimientoModel) {
+    this.req = r;
+    this.total = this.req.total;
+    this.obs=this.req.observacion;
+    this.trasladosService.getRequerimientoDetalleByRequerimientoId(r.requerimiento_id).subscribe(res => {
+      this.productosSelectList = res;
+      $('#crearModal').modal('show');
+    });
+  }
+
   articuloSelect(element) {
     console.log("articulo select:" + element.value);
     let productoNombre: string = element.value;
@@ -71,15 +82,15 @@ export class RequerimientoComponent implements OnInit {
     console.log(this.productoIdSelect);
   }
 
-  desAgregar(d:RequerimientoDetalleModel){
+  desAgregar(d: RequerimientoDetalleModel) {
     const index = this.productosSelectList.indexOf(d, 0);
-      if (index > -1) {
-        this.productosSelectList.splice(index, 1);
-      }
-      this.total = 0;
-      for (let p of this.productosSelectList) {
-        this.total = Number(this.total) + Number(p.parcial);
-      }
+    if (index > -1) {
+      this.productosSelectList.splice(index, 1);
+    }
+    this.total = 0;
+    for (let p of this.productosSelectList) {
+      this.total = Number(this.total) + Number(p.parcial);
+    }
   }
 
   agregar(cantidad, articuloPV) {
@@ -104,7 +115,7 @@ export class RequerimientoComponent implements OnInit {
     rd.estado = 1;
     rd.fecha_registro = new Date();
     rd.parcial = Number(cantidad.value) * Number(this.productoIdSelect.costo_publico);
-    rd.unitario= this.productoIdSelect.costo_publico;
+    rd.unitario = this.productoIdSelect.costo_publico;
     rd.producto_id = this.productoIdSelect.producto_id;
     rd.requerimiento_id
     this.productosSelectList.push(rd);
@@ -117,10 +128,10 @@ export class RequerimientoComponent implements OnInit {
 
   }
 
-  buscarSolicitudes(empresa,fechaInicial,fechaFinal){
+  buscarSolicitudes(empresa, fechaInicial, fechaFinal) {
     let ini: string = fechaInicial.value;
     let fin: string = fechaFinal.value;
-    let empresaId="";
+    let empresaId = "";
     if (ini != '' && fin != '') {
 
       ini = this.calculosService.fechaIniBusqueda(fechaInicial.value);
@@ -134,16 +145,17 @@ export class RequerimientoComponent implements OnInit {
       fin = date.toLocaleString();
     }
     if (empresa.value != "") {
-      empresaId = ""+empresa.value;
+      empresaId = "" + empresa.value;
     }
-    this.trasladosService.getRequerimientos(empresaId,  ini, fin).subscribe(res => {
+    this.trasladosService.getRequerimientos(empresaId, ini, fin).subscribe(res => {
       this.requerimientosList = res;
     });
   }
 
-  confirmarRequerimiento(observacion) {
-    this.req.observacion=observacion.value;
-    this.req.total=this.total;
+  confirmarRequerimiento() {
+    console.log(this.req.observacion);
+    this.req.total = this.total;
+    this.req.observacion = this.obs;
     if (this.req.requerimiento_id == null) {
       this.trasladosService.saveRequerimiento(this.req).subscribe(res => {
         if (res.code == 200) {
@@ -154,8 +166,8 @@ export class RequerimientoComponent implements OnInit {
 
           //this.req.fecha_registro = new Date(res.fecha_registro);
           $('#crearModal').modal('hide');
-          for(let p of this.productosSelectList){
-            p.requerimiento_id=this.req.requerimiento_id;
+          for (let p of this.productosSelectList) {
+            p.requerimiento_id = this.req.requerimiento_id;
             this.trasladosService.saveRequerimientoDetalle(p).subscribe();
           }
         } else {
@@ -164,15 +176,26 @@ export class RequerimientoComponent implements OnInit {
         }
       });
     } else {
-
+      this.trasladosService.updateRequerimiento(this.req).subscribe(res => {//falta
+        if (res.code == 200) {
+          $('#crearModal').modal('hide');
+          this.trasladosService.deleteRequerimientoDetalle(this.req).subscribe(res => {//falta
+            for (let p of this.productosSelectList) {
+              p.requerimiento_detalle_id=null;
+              p.requerimiento_id = this.req.requerimiento_id;
+              this.trasladosService.saveRequerimientoDetalle(p).subscribe();
+            }
+          });
+        }
+      });
     }
 
   }
 
-  detalleRequerimiento(requerimiento:RequerimientoModel){
+  detalleRequerimiento(requerimiento: RequerimientoModel) {
     $('#detalleModal').modal('show');
-    this.req=requerimiento;
-    this.total=this.req.total;
+    this.req = requerimiento;
+    this.total = this.req.total;
     this.trasladosService.getRequerimientoDetalleByRequerimientoId(requerimiento.requerimiento_id).subscribe(res => {
       this.productosSelectList = res;
     });
@@ -197,13 +220,13 @@ export class RequerimientoComponent implements OnInit {
   }
 
   nombreEmpresa(id) {
-    if(id==null){
+    if (id == null) {
       return "";
     }
     let tipo = this.empresaList.find(tipos => tipos.empresa_id == id);
     if (tipo == undefined) {
       return "";
-    } else { 
+    } else {
       return tipo.nombre;
     }
   }

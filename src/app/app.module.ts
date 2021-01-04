@@ -19,7 +19,6 @@ import { EmpresaComponent } from './empresa/empresa.component';
 import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
-import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
 import { SocketService } from './services/socket.service';
 import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
@@ -49,6 +48,7 @@ import { KardexComponent } from './components/kardex/kardex.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
 import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
+import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();

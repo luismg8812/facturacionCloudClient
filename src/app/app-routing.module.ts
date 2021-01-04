@@ -4,7 +4,6 @@ import { LoginComponent } from './login/login.component';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
-import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
@@ -30,6 +29,7 @@ import { KardexComponent } from './components/kardex/kardex.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
 import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
+import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },

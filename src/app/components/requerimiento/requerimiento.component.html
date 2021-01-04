@@ -54,7 +54,7 @@
       <tr *ngFor="let r of requerimientosList">
         <th scope="row">
           <button type="button" class="btn btn-secondary btn-sm"  [disabled]="r.estado=='1'" data-toggle="modal" title="Editar"
-            (click)="editarOrden(ordenes)">
+            (click)="editar(r)" >
             <i class="far fa-edit"></i>
           </button>
           <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Detelle"
@@ -154,8 +154,7 @@
 
             <div class="form-group col-md-4 col-sm-12">
               Cantidad
-              <input name="cantidadPV" #cantidadPV placeholder="Cantidad" class="form-control" id="cantidadPV"
-                (keydown.enter)="enterTecla(cantidadPV)" (keydown.esc)="scapeTecla(cantidadPV)">
+              <input name="cantidadPV" #cantidadPV placeholder="Cantidad" class="form-control" id="cantidadPV" >
             </div>  
           </div>
           <div class="form-row">
@@ -165,7 +164,7 @@
           </div>
           <div class="form-row">
             <div class="form-group  col-sm-12">
-              <textarea class="form-control " id="observacion" #observacion
+              <textarea class="form-control " id="observacion" #observacion [value]="obs"
               placeholder="Descripción "></textarea>
             </div>
           </div>
@@ -193,7 +192,7 @@
           </tbody>  
         </table>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" (click)=confirmarRequerimiento(observacion)>Confirmar</button>
+          <button type="button" class="btn btn-primary" (click)=confirmarRequerimiento()>Confirmar</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           
         </div>

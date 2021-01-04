@@ -22,6 +22,15 @@ export class TrasladosService {
     return this.http.put<any>(this.server_api+'/traslados/saveRequerimientoDetalle',requerimiento);
   }
 
+  public updateRequerimiento(requerimiento:RequerimientoModel){
+    return this.http.put<any>(this.server_api+'/traslados/updateRequerimiento',requerimiento);
+  }
+
+  public deleteRequerimientoDetalle(requerimiento:RequerimientoModel){
+    return this.http.put<any>(this.server_api+'/traslados/deleteRequerimientoDetalle',requerimiento);
+  }
+  
+
   public getRequerimientos(empresaId:string,fechaIni,fechaFin){
     return this.http.get<RequerimientoModel[]>(this.server_api+'/traslados/getRequerimientos?empresaId='+empresaId+'&fechaIni='+fechaIni+'&fechaFin='+fechaFin);
   }
