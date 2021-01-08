@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import { ParametrosModel } from '../model/parametros.model';
 import { RequerimientoDetalleModel } from '../model/requerimientoDetalle.model';
 import { TrasladoModel } from '../model/traslado.model';
-import { TrasladoDetalleModel } from '../model/documentoDetalle.model copy 2';
+import { TrasladoDetalleModel } from '../model/trasladoDetalle.model';
 
 @Injectable({
   providedIn: 'root'
