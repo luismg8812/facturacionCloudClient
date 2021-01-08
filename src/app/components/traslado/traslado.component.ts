@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TrasladoDetalleModel } from 'src/app/model/documentoDetalle.model copy 2';
+import { TrasladoDetalleModel } from 'src/app/model/trasladoDetalle.model';
 import { EmpresaModel } from 'src/app/model/empresa.model';
 import { ProductoModel } from 'src/app/model/producto.model';
 import { RequerimientoModel } from 'src/app/model/requerimiento.model';
