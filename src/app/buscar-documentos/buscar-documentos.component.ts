@@ -24,6 +24,7 @@ import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
 import { CierreService } from '../services/cierre.service';
 import { InformeDiarioModel } from '../model/informeDiario.model';
 import { DocumentoNotaModel } from '../model/documentoNota.model';
+import { SubProductoModel } from '../model/subProducto.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -53,6 +54,7 @@ export class BuscarDocumentosComponent implements OnInit {
   public configuracion: ConfiguracionModel;
   public productoIdSelect: ProductoModel = undefined;
   public productosAll: Array<ProductoModel>;
+  public productosSelectList: Array<ProductoModel>=[];
   public informeDiario: InformeDiarioModel;
 
   readonly ANULAR_FACTURA: string = '6';
@@ -181,6 +183,7 @@ export class BuscarDocumentosComponent implements OnInit {
           documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
           this.calcularInfoDiario(newDocu, factura[0]);
           this.crearNotaDocumento(newDocu, factura[0]);
+          $('#notaModal').modal('hide');
           this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
             if (res.code == 200) {
               console.log("Se agrega estado para facturación electrónica");
@@ -197,7 +200,14 @@ export class BuscarDocumentosComponent implements OnInit {
               }
             });
           }
-          $('#notaModal').modal('hide');
+          for(let p of this.productosSelectList){
+            this.productoService.updateProducto(p).subscribe(res => {
+              if (res.code != 200) {
+                alert("Error agregando producto: " + res.error);
+              }
+            });
+          }
+         
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
           return;
@@ -279,11 +289,15 @@ export class BuscarDocumentosComponent implements OnInit {
   }
 
   borrarItem(borrar) {
+   
     let id = borrar.id.toString().replace("d_", "");
     for (let i = 0; i < this.itemsFactura.length; i++) {
       if (this.itemsFactura[i].documento_detalle_id.toString() == id) {
+        this.productoIdSelect = this.productosAll.find(product => product.producto_id === this.itemsFactura[i].producto_id);
+        this.updateCantidad(this.itemsFactura[i],'suma');
         this.itemsFactura.splice(i, 1);
         this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
+        
         break;
       }
     }
@@ -340,9 +354,38 @@ export class BuscarDocumentosComponent implements OnInit {
     console.log(docDetalle);
     this.itemsFactura.unshift(docDetalle);
     this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
+    this.updateCantidad(docDetalle, 'resta');
+  }
+
+  updateCantidad(anterior: DocumentoDetalleModel, operacion: string) {
     let newCantidad: number = this.productoIdSelect.cantidad;
-    this.productoIdSelect.cantidad = newCantidad - docDetalle.cantidad;
-    //this.restarCantidadesSubProducto(docDetalle); 
+    let product: ProductoModel = new ProductoModel();
+    product = this.productoIdSelect;
+    if (operacion == 'suma') {
+      product.cantidad = Number(newCantidad) + Number(anterior.cantidad);
+    } else {
+      product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
+    }
+    //this.restarCantidadesSubProducto(anterior, operacion);
+    this.productosSelectList.push(product);
+    console.log(product);
+  }
+
+  private restarCantidadesSubProducto(productoSelect3: DocumentoDetalleModel, operacion: string) {
+    this.productoService.getSubProductoByProductoId(productoSelect3.producto_id).subscribe(res => {
+      let subProductoList: Array<SubProductoModel> = res;
+      for (let p of subProductoList) {
+        this.productoService.getProductoById(p.producto_hijo.toString(), this.empresaId.toString()).subscribe(result => {
+          let obj = result[0];
+          if (operacion == 'suma') {
+            obj.cantidad = Number(obj.cantidad) + Number(p.cantidad);
+          } else {
+            obj.cantidad = Number(obj.cantidad) - Number(p.cantidad);
+          }
+          this.productoService.updateCantidad(obj).subscribe();
+        });
+      }
+    });
   }
 
   articuloSelect(element) {
@@ -392,7 +435,6 @@ export class BuscarDocumentosComponent implements OnInit {
           case 9:
             this.tituloFactura = "FACTURA DE VENTA.";
             break;
-
           default:
             break;
         }
@@ -405,11 +447,9 @@ export class BuscarDocumentosComponent implements OnInit {
   imprimirFactura(numeroImpresiones: number, empresa: EmpresaModel, tipoImpresion: number) {
     console.log("entra a imprimir factura");
     let tituloDocumento: string = "";
-
     if (numeroImpresiones == undefined) {
       numeroImpresiones = 1;
     }
-
     tituloDocumento = this.tituloFactura + "_" + this.documentoSelect.consecutivo_dian + "_" + this.documentoSelect.impresora + "_false_" + numeroImpresiones + "_" + tipoImpresion;
     this.factura.documento = this.documentoSelect;
     this.factura.nombreTipoDocumento = this.tituloFactura;
@@ -462,7 +502,7 @@ export class BuscarDocumentosComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre;
+      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
     }
   }
 

@@ -109,6 +109,13 @@ export class ImpresionService {
       }
       texto.push('----------------------------------------\n');
     }
+    if (factura.SubGrupos != undefined) {
+      texto.push('Ventas por Sub Grupo\n');
+      for (let emp of factura.SubGrupos) {
+        texto.push(emp.nombre + ":...$" + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(Number(emp.total)), 12) + '\n');
+      }
+      texto.push('----------------------------------------\n');
+    }
 
     texto.push('----------------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("\n", tamanoMax) + '\n');
@@ -877,7 +884,7 @@ export class ImpresionService {
       this.doc.text("CAJA: " + factura.documento.mac, x, y);
       y = y + inicio;
       if (factura.cliente != undefined) {
-        let nombreCliente: string = factura.cliente.nombre == "" ? factura.cliente.razon_social : factura.cliente.nombre;
+        let nombreCliente: string = factura.cliente.nombre == "" ? factura.cliente.razon_social : factura.cliente.nombre+" "+factura.cliente.apellidos;
         this.doc.text("CLIENTE: " + nombreCliente, x, y);
         y = y + inicio;
         this.doc.text("NIT/CC: " + factura.cliente.documento, x, y);

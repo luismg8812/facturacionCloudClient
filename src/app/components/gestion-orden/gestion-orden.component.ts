@@ -1693,7 +1693,7 @@ export class GestionOrdenComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre + " " + cliente.apellidos;
+      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
     }
   }
 

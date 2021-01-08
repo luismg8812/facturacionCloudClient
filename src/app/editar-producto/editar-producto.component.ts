@@ -25,6 +25,7 @@ export class EditarProductoComponent implements OnInit {
   public grupoList: Array<GrupoModel>;
   public subGrupoList: Array<SubGrupoModel>;
   public subProductoList:Array<SubProductoModel>=[];
+  public fechaI: string = "";
   
   @ViewChild("articuloPV1") articuloPV1: ElementRef;
 
@@ -55,7 +56,7 @@ export class EditarProductoComponent implements OnInit {
      alert(mensageError);
      return;
    }
-
+   this.productoNew.fecha_registro=new Date(this.fechaI);
    this.productoNew.empresa_id = this.empresaId;
    this.productoService.updateProducto(this.productoNew).subscribe(res => {
      if (res.code == 200) {
@@ -168,6 +169,7 @@ eliminarSubProducto(subProducto:SubProductoModel){
     this.productoService.getProductoPreciosById(this.productoNew.producto_id).subscribe(res => {
       if(res.length>0){
         this.productoPrecioNew=res[0];
+        
       }else{
         this.productoPrecioNew=new ProductoPreciosModel();
       }
@@ -175,9 +177,24 @@ eliminarSubProducto(subProducto:SubProductoModel){
     this.productoService.getSubProductoByProductoId(this.productoNew.producto_id).subscribe(res => {
      this.subProductoList=res;
     });
+    this.fechasBusqueda(this.productoNew.fecha_vencimiento)
     console.log(this.productoNew);
   }
 
+  fechasBusqueda(da:Date) {
+    let date: Date = new Date(da);
+    let mes: string = "" + (date.getMonth() + 1);
+    let dia: string = "" + date.getDate();
+    if (mes.length == 1) {
+      mes = '0' + mes;
+    }
+    if (dia.length == 1) {
+      dia = '0' + dia;
+    }
+    let ano = date.getFullYear();
+    this.fechaI = ano + "-" + mes + "-" + dia;
+    console.log(this.fechaI);
+  }
 
   getProveedores(empresaId: number) {
     this.proveedorService.getProveedoresByEmpresa(empresaId.toString()).subscribe(res => {

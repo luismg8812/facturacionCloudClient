@@ -98,7 +98,7 @@
         <div class="form-group col-md-6 col-sm-6">
           Fecha vencimiento
           <input class="form-control" id="vencimiento" placeholder="Fecha vencimiento" type="date" name="vencimiento"
-            #vencimiento [(ngModel)]="productoNew.fecha_vencimiento">
+            #vencimiento [value]="fechaI">
         </div>
       </div>
       <div class="form-row">
@@ -205,6 +205,44 @@
                 </div>
                 <div class="form-group col-md-6 col-sm-6">
 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12 ">
+          <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseDrogueria"
+              aria-expanded="false" aria-controls="collapseDrogueria">
+              Campos droguería
+            </button>
+          </p>
+          <div class="collapse" id="collapseDrogueria">
+            <div class="card card-body">
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Lote
+                  <input class="form-control" id="lote" name="lote" #lote required
+                    [(ngModel)]="productoNew.lote">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  CUM 
+                  <input class="form-control" id="cum" name="cum" #cum required
+                    [(ngModel)]="productoNew.cum">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Registro invima
+                  <input class="form-control" id="registro_sanitario" name="registro_sanitario" #registro_sanitario required
+                    [(ngModel)]="productoNew.registro_sanitario">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Laboratorio 
+                  <input class="form-control" id="laboratorio" name="laboratorio" #laboratorio required
+                    [(ngModel)]="productoNew.laboratorio">
                 </div>
               </div>
             </div>

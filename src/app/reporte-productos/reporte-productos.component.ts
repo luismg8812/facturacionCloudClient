@@ -151,9 +151,9 @@ export class ReporteProductosComponent implements OnInit {
     var tableSelect = tableID
     var texto = [];
     let tamanoMax: number = 40;
-    texto.push("Producto;IdNombre;Costo Publico;costo;Cantidad;IVA;Codigo Barras;GrupoId\n");
+    texto.push("Producto;IdNombre;Costo Publico;costo;Cantidad;IVA;Codigo Barras;GrupoId; Lote;CUM;Regustro sanitario;Laboratorio\n");
     for (let p of this.productos) {
-      texto.push(p.producto_id + ";" + p.nombre + ";" + p.costo_publico + ";" + p.costo + ";" + p.cantidad + ";" + p.impuesto + ";" + p.codigo_barras + ";" + p.grupo_id + '\n');
+      texto.push(p.producto_id + ";" + p.nombre + ";" + p.costo_publico + ";" + p.costo + ";" + p.cantidad + ";" + p.impuesto + ";" + p.codigo_barras + ";" + p.grupo_id + ";" + p.lote  + ";" + p.cum + ";" + p.registro_sanitario + ";" + p.laboratorio+ '\n');
     }
 
 

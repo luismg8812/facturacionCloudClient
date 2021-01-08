@@ -1,13 +1,18 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { TipoDocumentoModel } from '../model/tipoDocumento.model';
-import { DocumentoService } from '../services/documento.service';
-import { UsuarioService } from '../services/usuario.service';
-import { UsuarioModel } from '../model/usuario.model';
-import { EmpleadoModel } from '../model/empleado.model';
-import { EmpleadoService } from '../services/empleado.service';
-import { CalculosService } from '../services/calculos.service';
-import { ImpresionService } from '../services/impresion.service';
-import { EmpresaService } from '../services/empresa.service';
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { ClienteModel } from "src/app/model/cliente.model";
+import { DetalleNominaModel } from "src/app/model/detalleNomina.model";
+import { DocumentoModel } from "src/app/model/documento.model";
+import { EmpleadoModel } from "src/app/model/empleado.model";
+import { TipoDocumentoModel } from "src/app/model/tipoDocumento.model";
+import { UsuarioModel } from "src/app/model/usuario.model";
+import { CalculosService } from "src/app/services/calculos.service";
+import { ClienteService } from "src/app/services/cliente.service";
+import { DocumentoService } from "src/app/services/documento.service";
+import { EmpleadoService } from "src/app/services/empleado.service";
+import { EmpresaService } from "src/app/services/empresa.service";
+import { ImpresionService } from "src/app/services/impresion.service";
+import { UsuarioService } from "src/app/services/usuario.service";
+
 declare var jquery: any;
 declare var $: any;
 
@@ -22,6 +27,7 @@ export class InfoMovimientoComponent implements OnInit {
   public tiposDocumento: Array<TipoDocumentoModel>;
   public usuarios: Array<UsuarioModel>;
   public empleados: Array<EmpleadoModel>;
+  public detalles: Array<DocumentoModel>;
   public empresaId: number;
   public dias: Array<any>;
   public total: number = 0;
@@ -30,6 +36,7 @@ export class InfoMovimientoComponent implements OnInit {
   public iva_5: number = 0;
   public iva_19: number = 0;
   public exento: number = 0;
+  public clientes: Array<ClienteModel> = [];
 
   @ViewChild("fechaIni") fechaIni: ElementRef;
   @ViewChild("fechaFin") fechaFin: ElementRef;
@@ -41,6 +48,7 @@ export class InfoMovimientoComponent implements OnInit {
   constructor(public documentoService: DocumentoService,
     public usuarioService: UsuarioService,
     public empleadoService: EmpleadoService,
+    public clienteService:ClienteService,
     public impresionService: ImpresionService,
     public empresaService: EmpresaService,
     public calculosService: CalculosService) { }
@@ -52,12 +60,26 @@ export class InfoMovimientoComponent implements OnInit {
     this.getTiposDocumento();
     this.getUsuarios(this.empresaId);
     this.getEmpleados(this.empresaId);
+    this.getclientes(this.empresaId);
   }
 
   asignarFechas() {
 
   }
 
+  cargarDetalle(detalle){
+    let fechaInicial:string=this.calculosService.fechaIniBusquedaDate( detalle.fecha);
+    let fechaFinal:string=this.calculosService.fechaFinBusquedaDate( detalle.fecha);
+ console.log(fechaInicial);
+ console.log(fechaFinal);
+    this.documentoService.getDocumentosByFechaAndTipoDetalle(fechaInicial, fechaFinal,
+      this.empleadoPV.nativeElement.value, this.tipoDocumento.nativeElement.value,
+      this.usuariosPV.nativeElement.value, this.empresaId
+    ).subscribe(res => {
+      this.detalles = res;
+      
+    });
+  }
   
 
   calcular() {
@@ -118,6 +140,21 @@ export class InfoMovimientoComponent implements OnInit {
     });
   }
 
-  
+  getclientes(empresaId: number) {
+    this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
+      this.clientes = res;
+      console.log("lista de clientes cargados: " + this.clientes.length);
+    });
+  }
+
+  nombreClienteFun(id) {
+
+    let cliente = this.clientes.find(cliente => cliente.cliente_id == id);
+    if (cliente == undefined) {
+      return "";
+    } else {
+      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
+    }
+  }  
 
 }

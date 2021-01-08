@@ -157,6 +157,7 @@ export class CuadreCajaComponent implements OnInit {
           this.calcularDiferencia();
           this.ventaEmpleados();
           this.ventaGrupos();
+          this.ventaSubGrupos();
         });
       }
     });
@@ -182,6 +183,13 @@ export class CuadreCajaComponent implements OnInit {
       this.cuadreCajaVo.grupos = res;
     });
 
+  }
+
+  ventaSubGrupos() {
+    this.documentoService.getVentasPorSubGrupos(this.usuarioId,"","",true).subscribe(res => {
+      console.log(this.cuadreCajaVo);
+      this.cuadreCajaVo.SubGrupos = res;
+    });
   }
 
   asignarValoresNulos() {
