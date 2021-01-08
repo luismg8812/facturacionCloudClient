@@ -128,7 +128,7 @@ export class RequerimientoComponent implements OnInit {
 
   }
 
-  buscarSolicitudes(empresa, fechaInicial, fechaFinal) {
+  buscarSolicitudes(empresa, fechaInicial, fechaFinal,estado) {
     let ini: string = fechaInicial.value;
     let fin: string = fechaFinal.value;
     let empresaId = "";
@@ -147,7 +147,7 @@ export class RequerimientoComponent implements OnInit {
     if (empresa.value != "") {
       empresaId = "" + empresa.value;
     }
-    this.trasladosService.getRequerimientos(empresaId, ini, fin).subscribe(res => {
+    this.trasladosService.getRequerimientos(empresaId, ini, fin,estado.value).subscribe(res => {
       this.requerimientosList = res;
     });
   }

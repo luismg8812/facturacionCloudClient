@@ -25,13 +25,18 @@
       </select>
     </div>
     <div class="form-group col-md-6 ">
-
+      Estado
+      <select id="estado" name="estado" #estado class="form-control">
+        <option  value=""> Seleccione</option>
+        <option  value="0"> Sin Atender</option>
+        <option  value="1"> Atendido</option>
+      </select>
     </div>
   </div>
   <div class="form-row">
     <div class="form-group col-md-6 ">
       <button type="button" class="btn btn-primary mr-1"
-        (click)="buscarSolicitudes(empresa,fechaIni,fechaFin)">Buscar</button>
+        (click)="buscarSolicitudes(empresa,fechaIni,fechaFin,estado)">Buscar</button>
    
       <button type="button" class="btn btn-primary" data-toggle="modal" (click)="crear()">
         Crear solicitud

@@ -109,6 +109,13 @@ export class ImpresionService {
       }
       texto.push('----------------------------------------\n');
     }
+    if (factura.SubGrupos != undefined) {
+      texto.push('Ventas por Sub Grupo\n');
+      for (let emp of factura.SubGrupos) {
+        texto.push(emp.nombre + ":...$" + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(Number(emp.total)), 12) + '\n');
+      }
+      texto.push('----------------------------------------\n');
+    }
 
     texto.push('----------------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("\n", tamanoMax) + '\n');

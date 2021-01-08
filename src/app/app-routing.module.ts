@@ -30,6 +30,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
 import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
 import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
+import { TrasladoComponent } from './components/traslado/traslado.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -61,9 +62,10 @@ const routes: Routes = [
    { path: 'bonos', component: BonosComponent },
    { path: 'kardex', component: KardexComponent },
    { path: 'requerimiento', component: RequerimientoComponent},
+   { path: 'traslado', component: TrasladoComponent},
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
-  { path: '**', redirectTo: '/', pathMatch: 'full' },
+   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];
 
 @NgModule({

@@ -49,6 +49,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
 import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
 import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
+import { TrasladoComponent } from './components/traslado/traslado.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -89,7 +90,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     CuentasContablesComponent,
     BonosComponent,
     KardexComponent,
-    RequerimientoComponent
+    RequerimientoComponent,
+    TrasladoComponent
   ],
   imports: [
     BrowserModule,

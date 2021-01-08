@@ -64,6 +64,7 @@ export class VentasDiaComponent implements OnInit {
   readonly MULTIPLE_RESOLUCION: string = '23';
   readonly PRODUCTOS_PRECIOS: string = '25';
   readonly CANTIDADES_NEGATIVAS: string = '28';
+  readonly PRODUCTOS_ESPACIALES: string = '30';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_REMISION: number = 9;
@@ -125,6 +126,7 @@ export class VentasDiaComponent implements OnInit {
   public multipleResolucionActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
   public saldoClienteActivo: boolean = false;
+  public productosEspecialesActivo: boolean = false;
   public saldoCliente: number = 0;
   public clienteSelect: number;
   public empresaId: number;
@@ -531,6 +533,16 @@ export class VentasDiaComponent implements OnInit {
     if (element.value == '') {
       this.codigoPV.nativeElement.value = "";
       this.codigoPV.nativeElement.focus();
+    } else {
+      if (this.productosEspecialesActivo) {
+        this.productoIdSelect = this.productosAll.find(product => product.producto_id === 1);
+        this.productoIdSelect.nombre=element.value;
+        console.log(this.productoIdSelect);
+        if (this.productoIdSelect != undefined) {
+          this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
+          this.findByProducto();
+        }
+      }
     }
   }
 
@@ -2268,6 +2280,10 @@ export class VentasDiaComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.STOCK) {
           console.log("stock activo ");
           this.stockActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.PRODUCTOS_ESPACIALES) {
+          console.log("productos especiales activo ");
+          this.productosEspecialesActivo = true;
         }
       }
     });

@@ -56,7 +56,7 @@ export class EditarProductoComponent implements OnInit {
      alert(mensageError);
      return;
    }
-
+   this.productoNew.fecha_registro=new Date(this.fechaI);
    this.productoNew.empresa_id = this.empresaId;
    this.productoService.updateProducto(this.productoNew).subscribe(res => {
      if (res.code == 200) {
