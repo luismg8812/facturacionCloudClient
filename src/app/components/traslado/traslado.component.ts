@@ -223,6 +223,12 @@ export class TrasladoComponent implements OnInit {
             p.traslado_id = this.trasladoSelect.traslado_id;
             this.trasladosService.saveTrasladoDetalle(p).subscribe();
           }
+          if (this.trasladoSelect.requerimiento_id != null) {
+            this.trasladosService.getRequerimientoById(this.trasladoSelect.requerimiento_id).subscribe(res => {//falta
+              res[0].estado=1;
+              this.trasladosService.updateRequerimiento(res[0]).subscribe();
+            });
+          }
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
           return;

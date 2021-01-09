@@ -66,9 +66,9 @@ export class TrasladosService {
     return this.http.get<TrasladoDetalleModel[]>(this.server_api+'/traslados/getTrasladoDetalleByTrasladoId?trasladoId='+traslado);
   }
 
-  
+  public getRequerimientoById(requerimientoId:number){
+    return this.http.get<RequerimientoModel[]>(this.server_api+'/traslados/getRequerimientoById?requerimientoId='+requerimientoId);
+  }
 
-  
-  
-  
+
 }
