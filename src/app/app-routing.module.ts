@@ -7,7 +7,7 @@ import { EmpleadoComponent } from './empleado/empleado.component';
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
-import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
+import { InformeDiarioComponent } from './components/informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
@@ -31,6 +31,7 @@ import { RequerimientoComponent } from './components/requerimiento/requerimiento
 import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
 import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
 import { TrasladoComponent } from './components/traslado/traslado.component';
+import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -63,6 +64,7 @@ const routes: Routes = [
    { path: 'kardex', component: KardexComponent },
    { path: 'requerimiento', component: RequerimientoComponent},
    { path: 'traslado', component: TrasladoComponent},
+   { path: 'aceptacionMercancia', component: AceptacionMercanciaComponent},
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
    { path: '**', redirectTo: '/', pathMatch: 'full' },

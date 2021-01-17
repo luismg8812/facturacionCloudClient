@@ -79,7 +79,8 @@ export class VentasDiaComponent implements OnInit {
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
 
-
+  readonly TIPO_PAGO_EFECTIVO: number = 1;
+  readonly TIPO_PAGO_CREDITO: number = 2;
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -536,7 +537,7 @@ export class VentasDiaComponent implements OnInit {
     } else {
       if (this.productosEspecialesActivo) {
         this.productoIdSelect = this.productosAll.find(product => product.producto_id === 1);
-        this.productoIdSelect.nombre=element.value;
+        this.productoIdSelect.nombre = element.value;
         console.log(this.productoIdSelect);
         if (this.productoIdSelect != undefined) {
           this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
@@ -774,6 +775,10 @@ export class VentasDiaComponent implements OnInit {
   }
 
   tipoPagoEnter(element) {
+    if (this.document.cliente_id == 1 && element.value == this.TIPO_PAGO_CREDITO) {
+      alert("No existen los creditos para el cliente varios");
+      return;
+    }
     if (element.value != "") {
       let tipoPago = this.tipoPagosAll.find(usua => usua.tipo_pago_id == element.value);
       if (tipoPago == undefined) {
@@ -815,7 +820,7 @@ export class VentasDiaComponent implements OnInit {
       }
       tipoPagoDocumento.tipo_pago_id = tipoId;
     } else {
-      tipoPagoDocumento.tipo_pago_id = 1;//efectivo por defecto
+      tipoPagoDocumento.tipo_pago_id = this.TIPO_PAGO_EFECTIVO;//efectivo por defecto
     }
     //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
     tipoPagoDocumento.documento_id = this.document.documento_id;
@@ -823,6 +828,9 @@ export class VentasDiaComponent implements OnInit {
     tipoPagoDocumento.valor = element.value;
     this.tiposPagosDocumento.unshift(tipoPagoDocumento);
     let suma: number = 0;
+    if (tipoPagoDocumento.tipo_pago_id != this.TIPO_PAGO_CREDITO) {
+      this.document.saldo = Number(this.document.saldo) - Number(element.value);
+    }
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
@@ -1212,21 +1220,21 @@ export class VentasDiaComponent implements OnInit {
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
           resolucion.consecutivo = con;
+          this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
+            console.log("consecutivo actualizado");
+            // console.log(this.document);
+          });
           break;
       }
-      this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
-        console.log("consecutivo actualizado");
-        console.log(this.document);
-        this.documentoService.updateDocumento(this.document).subscribe(res => {
-          if (res.code != 200) {
-            alert("error creando documento, por favor inicie nuevamente la creación del documento");
-            return;
-          }
-          this.imprimirFactura(numImpresiones, empr);
-          //this.calcularInfoDiario(cancelado);
-          this.limpiar();
-          this.scapeTecla(null);
-        });
+      this.documentoService.updateDocumento(this.document).subscribe(res => {
+        if (res.code != 200) {
+          alert("error creando documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+        this.imprimirFactura(numImpresiones, empr);
+        //this.calcularInfoDiario(cancelado);
+        this.limpiar();
+        this.scapeTecla(null);
       });
     });
   }
@@ -1475,6 +1483,9 @@ export class VentasDiaComponent implements OnInit {
   }
 
   cambioPrecioLista(detalle: DocumentoDetalleModel, element) {
+    if (!this.modificarFactura) {
+      return;
+    }
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;

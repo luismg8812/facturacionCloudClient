@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 
 import * as e from 'express';
 import { DocumentoMapModel } from 'src/app/facturacion.cloud.model/documentoMap.model';
+import { EnvioFacturacionElectronicaModel } from 'src/app/facturacion.cloud.model/envioFacturacionElectronica.model';
 import { GetFileModel } from 'src/app/facturacion.cloud.model/getFile.model';
 import { MailModel } from 'src/app/facturacion.cloud.model/mail.model';
 import { ClienteModel } from 'src/app/model/cliente.model';
@@ -410,8 +411,35 @@ export class EstadoDocumentosComponent implements OnInit {
     }
   }
 
+  validarDescartar() {
+    if (this.documentosSelectEnviar.length == 0) {
+      alert("Debe seleccionar almenos 1 documento para ser descartado");
+      return;
+    }
+    $('#descartarModal').modal('show');
+  }
+
+  descartarDocumentos() {
+    let res1: any = {
+      status: "descartar",
+      mensaje: "Descartado"
+    }
+    for (let docu of this.documentosSelectEnviar) {
+
+      this.insertarEstado(res1, docu);
+    }
+    $('#descartarModal').modal('hide');
+    this.delay(1000)
+    this.getDocumentos(this.INVOICE_ERROR);
+  }
+
   selectOrdenOne(or: DocumentoModel, event) {
     if (event.target.checked) {
+      if(or.invoice_id==this.INVOICE_OK){
+         alert("No es posible seleccionar este documento puesto que ya ha sido enviado exitosamente");
+         event.target.checked=false;
+         return;
+      }
       this.documentosSelectEnviar.unshift(or);
       let docu: DocumentoMapModel = new DocumentoMapModel();
       docu.documento = or;
@@ -432,6 +460,20 @@ export class EstadoDocumentosComponent implements OnInit {
       }
     }
     console.log(this.documentoMap);
+  }
+
+  exportar() {
+    if (this.documentosSelectEnviar.length == 0) {
+      alert("Debe seleccionar almenos 1 documento para ser exportado");
+      return;
+    }
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
+      let envi: Array<EnvioFacturacionElectronicaModel> = [];
+      for (let docu of this.documentoMap) {
+        envi.unshift(this.calculosService.crearOjb(empr[0], docu, this.clientes));
+      }
+      this.descargarArchivo(this.impresionService.imprimirFacturaElectronicas(envi), "exportar_facturas_manualmente" + '.json');
+    });
   }
 
   getclientes(empresaId: number) {

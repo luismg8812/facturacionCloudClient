@@ -84,6 +84,12 @@ export class DocumentoService {
   getDocumentoOrdenById(ordenId: string) {
     return this.http.get<DocumentoOrdenModel[]>(this.server_api + '/documento/getDocumentoOrdenById?ordenId='+ordenId);
   }
+
+  getUltimoDocumentoId() {
+    return this.http.get<any>(this.server_api + '/documento/getUltimoDocumentoId');
+  }
+
+  
   
   getOrdenesByDocumentoId(documentoId: string) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByDocumentoId?documentoId='+documentoId);

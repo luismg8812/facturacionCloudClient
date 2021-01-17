@@ -24,7 +24,7 @@ import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos
 import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
-import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
+import { InformeDiarioComponent } from './components/informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 import { AppConfigService } from './services/app-config.service';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
@@ -50,6 +50,7 @@ import { RequerimientoComponent } from './components/requerimiento/requerimiento
 import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
 import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
 import { TrasladoComponent } from './components/traslado/traslado.component';
+import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -91,7 +92,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     BonosComponent,
     KardexComponent,
     RequerimientoComponent,
-    TrasladoComponent
+    TrasladoComponent,
+    AceptacionMercanciaComponent
   ],
   imports: [
     BrowserModule,

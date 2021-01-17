@@ -39,7 +39,7 @@ export class TrasladoComponent implements OnInit {
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
-    this.empresaId = Number(localStorage.getItem("empresa_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.fechasBusqueda();
     this.getEmpresas();
     this.getProductosByEmpresa(this.empresaId);
@@ -78,7 +78,7 @@ export class TrasladoComponent implements OnInit {
     }
     this.trasladosService.getTraslados(empresaOrigenId, empresaDestinoId, ini, fin, estado.value).subscribe(res => {
       this.trasladosList = res;
-    });
+    });  
   }
 
   selectEmpresaOrigen(empresaId) {
@@ -131,7 +131,7 @@ export class TrasladoComponent implements OnInit {
   detalleTraslado(traslado:TrasladoModel){
     $('#detalleModal').modal('show');
     this.trasladoSelect = traslado;
-    this.trasladosService.getTrasladoDetalleByTrasladoId(traslado.requerimiento_id).subscribe(res => {
+    this.trasladosService.getTrasladoDetalleByTrasladoId(traslado.traslado_id).subscribe(res => {
       this.trasladoDetalleSelectList = res;
     });
   }
@@ -222,6 +222,12 @@ export class TrasladoComponent implements OnInit {
           for (let p of this.trasladoDetalleSelectList) {
             p.traslado_id = this.trasladoSelect.traslado_id;
             this.trasladosService.saveTrasladoDetalle(p).subscribe();
+          }
+          if (this.trasladoSelect.requerimiento_id != null) {
+            this.trasladosService.getRequerimientoById(this.trasladoSelect.requerimiento_id).subscribe(res => {//falta
+              res[0].estado=1;
+              this.trasladosService.updateRequerimiento(res[0]).subscribe();
+            });
           }
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");

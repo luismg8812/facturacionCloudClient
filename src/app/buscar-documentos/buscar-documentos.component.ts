@@ -535,7 +535,7 @@ export class BuscarDocumentosComponent implements OnInit {
 
     fechaFinBuscar = this.calculosService.fechaFinBusqueda(this.fechaFinBuscar.nativeElement.value);
 
-    let cliente1 = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' - ' + cliente.documento == clientePV);
+    let cliente1 = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clientePV);
     let cliente_id = "";
     if (cliente1 != undefined) {
       cliente_id = cliente1.cliente_id.toString();
