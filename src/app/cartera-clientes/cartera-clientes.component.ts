@@ -86,6 +86,10 @@ export class CarteraClientesComponent implements OnInit {
       alert("El valor del abono supera el saldo");
       return;
     }
+    if(this.abonoNew.cantidad < 0){
+      alert("El valor del abono no puede ser negativo");
+      return;
+    }
     let saldo = Number(this.documentoSelect.saldo) - Number(this.abonoNew.cantidad);
     this.documentoSelect.saldo = saldo;
     this.abonoNew.documento_id = this.documentoSelect.documento_id;

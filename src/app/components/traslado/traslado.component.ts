@@ -39,7 +39,7 @@ export class TrasladoComponent implements OnInit {
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
-    this.empresaId = Number(localStorage.getItem("empresa_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.fechasBusqueda();
     this.getEmpresas();
     this.getProductosByEmpresa(this.empresaId);
@@ -78,7 +78,7 @@ export class TrasladoComponent implements OnInit {
     }
     this.trasladosService.getTraslados(empresaOrigenId, empresaDestinoId, ini, fin, estado.value).subscribe(res => {
       this.trasladosList = res;
-    });
+    });  
   }
 
   selectEmpresaOrigen(empresaId) {
@@ -131,7 +131,7 @@ export class TrasladoComponent implements OnInit {
   detalleTraslado(traslado:TrasladoModel){
     $('#detalleModal').modal('show');
     this.trasladoSelect = traslado;
-    this.trasladosService.getTrasladoDetalleByTrasladoId(traslado.requerimiento_id).subscribe(res => {
+    this.trasladosService.getTrasladoDetalleByTrasladoId(traslado.traslado_id).subscribe(res => {
       this.trasladoDetalleSelectList = res;
     });
   }

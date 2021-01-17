@@ -70,5 +70,8 @@ export class TrasladosService {
     return this.http.get<RequerimientoModel[]>(this.server_api+'/traslados/getRequerimientoById?requerimientoId='+requerimientoId);
   }
 
+  getRequerimientoDetalleByRequerimientoIdList(requerimientoIdList:string[]) {
+    return this.http.get<RequerimientoDetalleModel[]>(this.server_api + '/traslados/getRequerimientoDetalleByRequerimientoIdList?requerimientoIdList='+requerimientoIdList);
+  }
 
 }

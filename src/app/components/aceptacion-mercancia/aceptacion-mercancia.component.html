@@ -1,0 +1,131 @@
+<app-menu></app-menu>
+<div class="container-fluid main">
+  <div class="form-row">
+    <h4 class="mt-3">Aceptación y rechazo de mercancia</h4>
+  </div>
+  <br />
+  <div class="form-row">
+    <div class="form-group col-md-6 ">
+      Fecha Inicial
+      <input class="form-control" type="date" [value]="fechaI" id="fechaIni" #fechaIni>
+    </div>
+    <div class="form-group col-md-6 ">
+      Fecha Final
+      <input class="form-control" type="date" value="2021-12-31" id="fechaFin" #fechaFin>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6 ">
+      Empresa Origen
+      <select id="empresaOrigen" name="empresaOrigen" #empresaOrigen class="form-control">
+        <option value=""> Seleccione</option>
+        <option *ngFor="let e of empresaList" [value]="e.empresa_id">
+          {{e.nombre}}
+        </option>
+      </select>
+    </div>
+    <div class="form-group col-md-6 ">
+      Empresa Destino
+      <select id="empresaDestino" name="empresaDestino" #empresaDestino class="form-control">
+        <option value=""> Seleccione</option>
+        <option *ngFor="let e of empresaList" [value]="e.empresa_id">
+          {{e.nombre}}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6 ">
+      Estado
+      <select id="estado" name="estado" #estado class="form-control">
+        <option value=""> Seleccione</option>
+        <option value="0"> Sin Atender</option>
+        <option value="1"> Atendido</option>
+      </select>
+    </div>
+    <div class="form-group col-md-6 ">
+
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6 ">
+      <button type="button" class="btn btn-primary mr-1"
+        (click)="buscarTraslados(empresaOrigen,empresaDestino,fechaIni,fechaFin,estado)">Buscar</button>
+    </div>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Opciones</th>
+        <th scope="col"># requerimiento</th>
+        <th scope="col">Valor total</th>
+        <th scope="col">Origen</th>
+        <th scope="col">Destino</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of trasladosList">
+        <th scope="row">
+          <button type="button" class="btn btn-secondary btn-sm"  data-toggle="modal"
+            title="Gestionar" (click)="gestionTraslado(r)">
+            <i class="far fa-edit"></i>
+          </button>
+        </th>
+        <td>{{r.requerimiento_id}}</td>
+        <td>{{r.total}}</td>
+        <td>{{nombreEmpresa(r.empresa_origen_id)}}</td>
+        <td>{{nombreEmpresa(r.empresa_destino_id)}}</td>
+        <td>{{r.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
+        <td>{{r.estado==0?'Sin Atender':'Atendido'}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- gestionar aceptar o rechazar  modal -->
+  <div class="modal fade" id="gestionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Aceptar o rechazar Mercancia</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <button type="button" class="btn btn-primary mr-1" [disabled]="trasladoSelect.estado==1"
+          (click)="gestionar()">Gestionar</button>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Producto</th>
+                <th scope="col">Cant. traslado</th>
+                <th scope="col">Cant. Aceptada</th>
+                <th scope="col">Cant. Rechazada</th>
+                <th scope="col">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of trasladoDetalleSelectList">
+                <td>{{p.descripcion}}</td>
+                <td>{{p.cantidad_traslado}}</td>
+                <td>
+                  <input name="cantidadAcectata"   [value]="p.cantidad_aceptada" (blur)="compararCantidad(p,cantidadAcectata)"  #cantidadAcectata placeholder="Cantidad" class="form-control" id="{{p.traslado_detalle_id}}" >
+                  </td>
+                <td>{{p.cantidad_rechazada}}</td>
+                <td>{{isOk(p)}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

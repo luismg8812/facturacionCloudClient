@@ -152,6 +152,18 @@ export class RequerimientoComponent implements OnInit {
     });
   }
 
+  consolidado(){
+    let ids: string[] = [];
+    $('#consolidadoModal').modal('show');
+    for (let d of this.requerimientosList) {
+      ids.unshift(d.requerimiento_id.toString());
+    }
+    this.trasladosService.getRequerimientoDetalleByRequerimientoIdList(ids).subscribe(res => {
+      this.productosSelectList = res;
+      console.log(this.productosSelectList);
+    });
+  }
+
   confirmarRequerimiento() {
     console.log(this.req.observacion);
     this.req.total = this.total;

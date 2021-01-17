@@ -1484,8 +1484,8 @@ export class ImpresionService {
   imprimirInformeDiarioPDFCarta(factura: InformeDiarioVOModel) {
     let imgData = factura.empresa.url_logo;
     this.doc = new jsPDF();
-    let ini = this.calculosService.fechaIniBusquedaDate(new Date(factura.informe_diario.fecha_informe));
-    let fin = this.calculosService.fechaFinBusquedaDate(new Date(factura.informe_diario.fecha_informe));
+    let ini = this.calculosService.fechaIniBusquedaDate(new Date(factura.informe_diario.fecha));
+    let fin = this.calculosService.fechaFinBusquedaDate(new Date(factura.informe_diario.fecha));
     this.getBase64ImageFromURL(imgData).subscribe(base64data => {
       this.usuarioService.usuarioByRol(this.ROL_CAJERO, factura.empresa.empresa_id, this.TIPO_DOCUMENTO_FACTURA, ini, fin).subscribe(res => {
         this.documentoService.getDocumentosByTipoPago(factura.empresa.empresa_id, this.TIPO_DOCUMENTO_FACTURA, ini, fin).subscribe(pagos => {
@@ -1505,15 +1505,16 @@ export class ImpresionService {
 
           this.doc.setFontSize(9);
           this.doc.text("Comprobante de Informe Diario ", 10, 35);
-          this.doc.text("Fecha informe: " + this.calculosService.formatDate(factura.informe_diario.fecha_informe, false), 10, 40);
+          this.doc.text("Fecha informe: " + this.calculosService.formatDate(factura.informe_diario.fecha, false), 10, 40);
           this.doc.text("__________________________________________________________________________________________________________", 10, 45);
           this.doc.text("# Fact. Inicial             # Fact. Final              Cant. Facturas             Valor Total Facturado ", 10, 50);
           this.doc.text("__________________________________________________________________________________________________________", 10, 51);
           this.doc.setFontType('normal')
-          this.doc.text(factura.informe_diario.documento_inicio, 10, 55);
-          this.doc.text(factura.informe_diario.documento_fin, 50, 55);
-          this.doc.text("" + factura.informe_diario.cantidad_documentos, 80, 55);
-          this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total_ventas).replace("COP", ""), 20), 100, 55);
+          let letra=factura.detalle[0].letra_consecutivo==undefined?"":factura.detalle[0].letra_consecutivo;
+          this.doc.text(letra+factura.detalle[0].consecutivo_dian, 10, 55);
+          this.doc.text(letra+factura.detalle[factura.detalle.length-1].consecutivo_dian, 50, 55);
+          this.doc.text("" + factura.detalle.length, 80, 55);
+          this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total).replace("COP", ""), 20), 100, 55);
           this.doc.setFontType('bold');
 
           this.doc.text("Descriminación de ventas atendidas por Cajero", 10, 65);
@@ -1556,15 +1557,15 @@ export class ImpresionService {
           this.doc.text("Resumen Informe Diario", 10, espacio + 5);
           this.doc.text("__________________________________________________________________________________________________________", 10, espacio - 5);
           espacio = espacio + 10;
-          this.doc.text("Total Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total_ventas).replace("COP", ""), 10, espacio);
-          this.doc.text("IVA Total: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_ventas).replace("COP", ""), 10, espacio + 5);
+          this.doc.text("Total Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total).replace("COP", ""), 10, espacio);
+          this.doc.text("IVA Total: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(factura.informe_diario.iva_19)+Number(factura.informe_diario.iva_5)).replace("COP", ""), 10, espacio + 5);
           this.doc.text("IVA 19%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_19).replace("COP", ""), 10, espacio + 10);
           this.doc.text("IVA 5%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_5).replace("COP", ""), 10, espacio + 15);
           this.doc.text("Base 19%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.base_19).replace("COP", ""), 10, espacio + 20);
           this.doc.text("Base 5%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.base_5).replace("COP", ""), 10, espacio + 25);
           this.doc.text("Excluido: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.excento).replace("COP", ""), 10, espacio + 30);
-          this.doc.text("Costos en Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.costo_ventas).replace("COP", ""), 10, espacio + 35);
-          this.doc.text("Ganancias: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format((Number(factura.informe_diario.total_ventas) - Number(factura.informe_diario.costo_ventas))).replace("COP", ""), 10, espacio + 40);
+          this.doc.text("Costos en Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total_costo).replace("COP", ""), 10, espacio + 35);
+          this.doc.text("Ganancias: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format((Number(factura.informe_diario.total) - Number(factura.informe_diario.total_costo))).replace("COP", ""), 10, espacio + 40);
           //if(){
 
           //}else{

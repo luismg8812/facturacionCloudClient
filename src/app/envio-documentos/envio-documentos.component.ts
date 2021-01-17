@@ -50,6 +50,7 @@ export class EnvioDocumentosComponent implements OnInit {
   public enviados: number;
   public exitosos: number;
   public erroneos: number;
+  public faltantes:number=0;
   public empresa: EmpresaModel;
   public factura: FacturaModel = new FacturaModel();;
   public enviando: boolean = false;
@@ -121,37 +122,46 @@ export class EnvioDocumentosComponent implements OnInit {
   }
 
   enviarDocumentos() {
+    
     this.enviados = 0;
     this.exitosos = 0;
     this.erroneos = 0;
     this.enviando = true;
     $('#envioModal').modal('hide');
     $('#enviardoModal').modal('show');
+    this.faltantes=this.documentoMap.length;
     for (let docu of this.documentoMap) {
-      this.enviados++;
-      this.detalleDocumento(docu.documento);
-      this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(this.empresa, docu, this.clientes)).subscribe(async res1 => {
-        console.log(res1);
-        if (res1.status == 'Error') {
-          this.erroneos++;
-        } else {
-          this.exitosos++;
-        }
-        //this.insertarEstado(env, docu.documento);
-        await this.delay(100);
-        if (this.enviados == this.documentoMap.length) {
-          // alert("El proceso de envio ha terminado")
-          $("#ok").prop("disabled", false);
-          this.getDocumentos();
-          this.enviando = false;
-        }
-        this.insertarEstado(res1, docu.documento);
-      }, error => {
-        console.error(error);
-        alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
-          "mail: info@effectivesoftware.com.co\n" +
-          "Error: " + error.error
-        )
+    
+      this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento.documento_id).subscribe(async detalles => {
+      this.itemsFactura=detalles;  
+        this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(this.empresa, docu, this.clientes)).subscribe(async res1 => {
+          console.log(res1);
+          this.enviados++;
+          this.faltantes--;
+          if (res1.status == 'Error') {
+            this.erroneos++;
+          } else {
+            this.exitosos++;
+          }
+          //this.insertarEstado(env, docu.documento);
+          await this.delay(100);
+          if (this.faltantes<=0) {
+            // alert("El proceso de envio ha terminado")
+            $("#ok").prop("disabled", false);
+            this.getDocumentos();
+            this.enviando = false;
+          }
+          this.insertarEstado(res1, docu.documento);
+        }, error => {
+          console.error(error);
+          this.enviados++;
+          this.faltantes--;
+          /*alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
+            "mail: info@effectivesoftware.com.co\n" +
+            "Error: " + error.error
+          )*/
+
+        });
       });
     }
 
@@ -223,11 +233,8 @@ export class EnvioDocumentosComponent implements OnInit {
 
   }
 
-  detalleDocumento(documento: DocumentoModel) {
-    this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
-      this.itemsFactura = res;
-      console.log("detalles encontrados:" + res.length);
-    });
+  async detalleDocumento(documento: DocumentoModel) {
+    return await this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe();
   }
 
   insertarEstado(res, docu: DocumentoModel) {
@@ -301,8 +308,8 @@ export class EnvioDocumentosComponent implements OnInit {
       this.documentosSelectEnviar = this.documentos;
       for (let or of this.documentosSelectEnviar) {
         let docu: DocumentoMapModel = new DocumentoMapModel();
-        docu.documento = or;
         this.documentoDetalleService.getDocumentoDetalleByDocumento(or.documento_id).subscribe(detalle => {
+          docu.documento = or;
           docu.documentoDetalle = detalle;
           this.documentoMap.unshift(docu);
         });
@@ -359,7 +366,7 @@ export class EnvioDocumentosComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
+      return cliente.nombre + " " + cliente.apellidos + " " + cliente.razon_social;
     }
   }
 
