@@ -21,6 +21,7 @@ export class FacturaModel {
     public resolucionEmpresa:ResolucionEmpresaModel;
     public saldo:number;
     public pagaCon:number;
+    public base64Logo:string;
     
     
     constructor(){
@@ -37,6 +38,7 @@ export class FacturaModel {
         this.proveedor=null;
         this.saldo=0;
         this.pagaCon=0;
+        this.base64Logo="";
     }
 }
 

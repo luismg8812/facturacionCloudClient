@@ -63,7 +63,7 @@ export class CarteraClientesComponent implements OnInit {
     if (cliente == undefined) {
       return ""; 
     } else {
-      return cliente.nombre;
+      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
     }
   }
 
@@ -84,6 +84,10 @@ export class CarteraClientesComponent implements OnInit {
     }
     if ((this.documentoSelect.saldo - this.abonoNew.cantidad) < 0) {
       alert("El valor del abono supera el saldo");
+      return;
+    }
+    if(this.abonoNew.cantidad < 0){
+      alert("El valor del abono no puede ser negativo");
       return;
     }
     let saldo = Number(this.documentoSelect.saldo) - Number(this.abonoNew.cantidad);

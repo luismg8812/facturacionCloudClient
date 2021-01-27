@@ -150,13 +150,14 @@ export class CuadreCajaComponent implements OnInit {
           console.log(res);
           this.cuadreCajaVo = res[0];
           this.cuadreCajaVo.total_facturas = Number(this.cuadreCajaVo.total_facturas) + Number(this.cuadreCajaVo.total_notas);
-          console.log(this.cuadreCajaVo.abonosDia);
+          console.log(this.cuadreCajaVo.abonos);
           this.asignarValoresNulos();
           this.calcularTotalIngresos();
           this.calcularEnCaja();
           this.calcularDiferencia();
           this.ventaEmpleados();
           this.ventaGrupos();
+          this.ventaSubGrupos();
         });
       }
     });
@@ -184,8 +185,15 @@ export class CuadreCajaComponent implements OnInit {
 
   }
 
+  ventaSubGrupos() {
+    this.documentoService.getVentasPorSubGrupos(this.usuarioId,"","",true).subscribe(res => {
+      console.log(this.cuadreCajaVo);
+      this.cuadreCajaVo.SubGrupos = res;
+    });
+  }
+
   asignarValoresNulos() {
-    this.cuadreCajaVo.abonosDia = this.cuadreCajaVo.abonosDia == undefined ? 0 : this.cuadreCajaVo.abonosDia;
+    this.cuadreCajaVo.abonos = this.cuadreCajaVo.abonos == undefined ? 0 : this.cuadreCajaVo.abonos;
     this.cuadreCajaVo.avanceEfectivo = this.cuadreCajaVo.avanceEfectivo == undefined ? 0 : this.cuadreCajaVo.avanceEfectivo;
     this.cuadreCajaVo.chequesRecogidos = this.cuadreCajaVo.chequesRecogidos == undefined ? 0 : this.cuadreCajaVo.chequesRecogidos;
     this.cuadreCajaVo.otros = this.cuadreCajaVo.otros == undefined ? 0 : this.cuadreCajaVo.otros;
@@ -205,7 +213,7 @@ export class CuadreCajaComponent implements OnInit {
     let totalingresos = 0.0;
     totalingresos = Number(this.cuadreCajaVo.total_facturas) +
       Number(this.cuadreCajaVo.base) +
-      Number(this.cuadreCajaVo.abonosDia) +
+      Number(this.cuadreCajaVo.abonos) +
       Number(this.cuadreCajaVo.avanceEfectivo) +
       Number(this.cuadreCajaVo.chequesRecogidos) +
       Number(this.cuadreCajaVo.otros) +

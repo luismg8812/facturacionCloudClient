@@ -27,7 +27,10 @@ export class ProductoModel {
     public sub_producto:number;
     public granel:number;
     public porcentaje_venta:number;
-    
+    public lote:string;
+    public cum:string;
+    public registro_sanitario:string;
+    public laboratorio:string;
 
 
     constructor(){
@@ -58,5 +61,9 @@ export class ProductoModel {
         this. sub_producto=0;
         this. granel=0;
         this.porcentaje_venta=0;
+        this.lote="";
+        this.cum="";
+        this.registro_sanitario="";
+        this.laboratorio="";
     }
 }

@@ -84,6 +84,12 @@ export class DocumentoService {
   getDocumentoOrdenById(ordenId: string) {
     return this.http.get<DocumentoOrdenModel[]>(this.server_api + '/documento/getDocumentoOrdenById?ordenId='+ordenId);
   }
+
+  getUltimoDocumentoId() {
+    return this.http.get<any>(this.server_api + '/documento/getUltimoDocumentoId');
+  }
+
+  
   
   getOrdenesByDocumentoId(documentoId: string) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByDocumentoId?documentoId='+documentoId);
@@ -123,9 +129,15 @@ export class DocumentoService {
     return this.http.get<any>(this.server_api + '/documento/getVentasPorSubGrupos?usuarioId=' + usuarioId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+ '&conCierre=' + conCierre);
   }
 
-  getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
-    return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
+  getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number,autorizacion:string) {
+    return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId+"&autorizacion="+autorizacion);
   }
+
+  getDocumentosByFechaAndTipoDetalle(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getDocumentosByFechaAndTipoDetalle?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
+  }
+
+  
 
   getRetirosByFechaAndTipo(fechaInicial,fechaFinal,usuario_hace_id:string,usuario_aplica_id:string,empresaId:number) {
     return this.http.get<RetirosCajaModel[]>(this.server_api + '/documento/getRetirosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&usuario_hace_id="+usuario_hace_id+"&usuario_aplica_id="+usuario_aplica_id+"&empresaId="+empresaId);

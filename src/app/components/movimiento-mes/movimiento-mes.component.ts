@@ -1,32 +1,32 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { DocumentoModel } from '../model/documento.model';
-import { TipoDocumentoModel } from '../model/tipoDocumento.model';
-import { DocumentoService } from '../services/documento.service';
-import { ProveedorService } from '../services/proveedor.service';
-import { ProveedorModel } from '../model/proveedor.model';
-import { FacturaModel } from '../vo/factura.model';
-import { UsuarioService } from '../services/usuario.service';
-import { ActivacionModel } from '../model/activacion';
-import { ProductoModel } from '../model/producto.model';
-import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
-import { ProductoService } from '../services/producto.service';
 import { Router } from '@angular/router';
-import { ConfiguracionModel } from '../model/configuracion.model';
-import { ClienteService } from '../services/cliente.service';
-import { SocketService } from '../services/socket.service';
-import { CalculosService } from '../services/calculos.service';
-import { DocumentoDetalleService } from '../services/documento-detalle.service';
-import { TipoPagoModel } from '../model/tipoPago.model';
-import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
-import { EmpresaService } from '../services/empresa.service';
-import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
-import { EmpresaModel } from '../model/empresa.model';
-import { ImpresionService } from '../services/impresion.service';
-import { SubMenuModel } from '../model/submenu.model';
-import { CierreService } from '../services/cierre.service';
-import { InformeDiarioModel } from '../model/informeDiario.model';
-import { GrupoModel } from '../model/grupo.model';
-import { SubGrupoModel } from '../model/subGrupo.model';
+import { ActivacionModel } from 'src/app/model/activacion';
+import { ConfiguracionModel } from 'src/app/model/configuracion.model';
+import { DocumentoModel } from 'src/app/model/documento.model';
+import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
+import { EmpresaModel } from 'src/app/model/empresa.model';
+import { GrupoModel } from 'src/app/model/grupo.model';
+import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
+import { InformeDiarioModel } from 'src/app/model/informeDiario.model';
+import { ProductoModel } from 'src/app/model/producto.model';
+import { ProveedorModel } from 'src/app/model/proveedor.model';
+import { SubGrupoModel } from 'src/app/model/subGrupo.model';
+import { SubMenuModel } from 'src/app/model/submenu.model';
+import { TipoDocumentoModel } from 'src/app/model/tipoDocumento.model';
+import { TipoPagoModel } from 'src/app/model/tipoPago.model';
+import { TipoPagoDocumentoModel } from 'src/app/model/tipoPagoDocumento.model';
+import { CalculosService } from 'src/app/services/calculos.service';
+import { CierreService } from 'src/app/services/cierre.service';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
+import { DocumentoService } from 'src/app/services/documento.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
+import { ProductoService } from 'src/app/services/producto.service';
+import { ProveedorService } from 'src/app/services/proveedor.service';
+import { SocketService } from 'src/app/services/socket.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
+import { FacturaModel } from 'src/app/vo/factura.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -937,44 +937,11 @@ export class MovimientoMesComponent implements OnInit {
     //this.document.mac= Calculos.conseguirMAC2()); ver como se hace la mag desde el cliente..
     this.document.impreso = 1;
     this.verificarDescuento();
-
-    this.calcularInfoDiario(cancelado);
     this.asignarTipoPago();
     this.asignarConsecutivo(numImpresiones);
   }
 
-  calcularInfoDiario(anulado: boolean) {
-    console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(new Date(), false), this.calculosService.formatDate(new Date(), false)).subscribe(res => {
-
-      if (res.length == 0) {
-        this.informeDiario = new InformeDiarioModel();
-      } else {
-        this.informeDiario = res[0];
-        console.log(this.informeDiario);
-      }
-      this.informeDiario = this.calculosService.calcularInfoDiario(this.document, this.informeDiario, anulado);
-      this.informeDiario.fecha_ingreso = new Date();
-      this.informeDiario.fecha_informe = this.calculosService.formatDate(new Date(), false);
-      if (this.informeDiario.informe_diario_id == null) {
-        this.informeDiario.empresa_id = this.empresaId;
-        console.log(this.informeDiario.fecha_ingreso);
-        this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
-          if (res.code != 200) {
-            alert("error creando informe diario");
-            return;
-          }
-        });
-      } else {
-        this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
-          if (res.code != 200) {
-            alert("error actualizando informe diario");
-            return;
-          }
-        });
-      }
-    });
-  }
+  
 
   asignarTipoPago() {
     let des1 = this.descuentoPV.nativeElement.value;

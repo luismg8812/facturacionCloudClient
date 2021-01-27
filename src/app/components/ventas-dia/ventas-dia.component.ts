@@ -1,6 +1,9 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 
 import { Router } from '@angular/router';
+import { DocumentoMapModel } from 'src/app/facturacion.cloud.model/documentoMap.model';
+import { GetFileModel } from 'src/app/facturacion.cloud.model/getFile.model';
+import { MailModel } from 'src/app/facturacion.cloud.model/mail.model';
 import { ActivacionModel } from 'src/app/model/activacion';
 import { ClienteModel } from 'src/app/model/cliente.model';
 import { ConfiguracionModel } from 'src/app/model/configuracion.model';
@@ -24,6 +27,7 @@ import { TipoIdentificacionModel } from 'src/app/model/tipoIdentificacion.model'
 import { TipoPagoModel } from 'src/app/model/tipoPago.model';
 import { TipoPagoDocumentoModel } from 'src/app/model/tipoPagoDocumento.model';
 import { UsuarioModel } from 'src/app/model/usuario.model';
+import { AppConfigService } from 'src/app/services/app-config.service';
 import { CalculosService } from 'src/app/services/calculos.service';
 import { CierreService } from 'src/app/services/cierre.service';
 import { ClienteService } from 'src/app/services/cliente.service';
@@ -31,6 +35,7 @@ import { DocumentoDetalleService } from 'src/app/services/documento-detalle.serv
 import { DocumentoService } from 'src/app/services/documento.service';
 import { EmpleadoService } from 'src/app/services/empleado.service';
 import { EmpresaService } from 'src/app/services/empresa.service';
+import { FacturacionElectronicaService } from 'src/app/services/facturacion-electronica.service';
 import { ImpresionService } from 'src/app/services/impresion.service';
 import { ProductoService } from 'src/app/services/producto.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -55,6 +60,7 @@ export class VentasDiaComponent implements OnInit {
   readonly GUIA_TRANSPORTE: string = '8';
   readonly CLAVE_BORRADO: string = '9';
   readonly DESCUENTOS: string = '10';
+  readonly STOCK: string = '12';
   readonly CLIENTE_OBLIGATORIO: string = '14';
   readonly CAMBIO_PRECIO: string = '15';
   readonly EMPLEADOS: string = '18';
@@ -62,6 +68,9 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPOS_PAGOS: string = '20';
   readonly MULTIPLE_RESOLUCION: string = '23';
   readonly PRODUCTOS_PRECIOS: string = '25';
+  readonly CANTIDADES_NEGATIVAS: string = '28';
+  readonly PRODUCTOS_ESPACIALES: string = '30';
+  readonly ENVIO_AUTOMATICO: string = '31';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_REMISION: number = 9;
@@ -75,8 +84,13 @@ export class VentasDiaComponent implements OnInit {
   readonly TIPO_IMPRESION_TXTMEDIANABOR: number = 6;
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
+  readonly INVOICE_ENVIAR: number = 2;
+  readonly INVOICE_DESCARTAR: number = 3;
+  readonly INVOICE_ERROR: number = 4;
+  readonly INVOICE_OK: number = 5;
 
-
+  readonly TIPO_PAGO_EFECTIVO: number = 1;
+  readonly TIPO_PAGO_CREDITO: number = 2;
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -90,6 +104,7 @@ export class VentasDiaComponent implements OnInit {
     public socketService: SocketService,
     public cierreService: CierreService,
     public documentoService: DocumentoService,
+    public facturacionElectronicaService: FacturacionElectronicaService,
     public calculosService: CalculosService,
     public documentoDetalleService: DocumentoDetalleService,
     private router: Router, public empresaService: EmpresaService,
@@ -117,10 +132,14 @@ export class VentasDiaComponent implements OnInit {
   public proporcionActivo: boolean = false;
   public impresionPantallaActivo: boolean = false;
   public productoPreciosActivo: boolean = false;
+  public cantidadesNegativasActivo: boolean = false;
+  public stockActivo: boolean = false;
   public multipleImpresoraActivo: boolean = false;
   public multipleResolucionActivo: boolean = false;
   public TipoPagosActivo: boolean = false;
   public saldoClienteActivo: boolean = false;
+  public productosEspecialesActivo: boolean = false;
+  public envioAutomaticoFEActivo: boolean = false;
   public saldoCliente: number = 0;
   public clienteSelect: number;
   public empresaId: number;
@@ -153,6 +172,9 @@ export class VentasDiaComponent implements OnInit {
   public parcialGramera: number = 0.0;
   public informeDiario: InformeDiarioModel;
   public productoPreciosSelect: ProductoPreciosModel = new ProductoPreciosModel();
+  public ngxQrcode2: string = "123"
+  public logoEmpresa:string;
+  
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -279,7 +301,7 @@ export class VentasDiaComponent implements OnInit {
       alert("El cliente es obligatorio");
       return;
     }
-    let client = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento) == element.value);
+    let client = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == element.value);
 
     if (!this.clienteObligatorioActivo && element.value != '') {
 
@@ -527,6 +549,16 @@ export class VentasDiaComponent implements OnInit {
     if (element.value == '') {
       this.codigoPV.nativeElement.value = "";
       this.codigoPV.nativeElement.focus();
+    } else {
+      if (this.productosEspecialesActivo) {
+        this.productoIdSelect = this.productosAll.find(product => product.producto_id === 1);
+        this.productoIdSelect.nombre = element.value;
+        console.log(this.productoIdSelect);
+        if (this.productoIdSelect != undefined) {
+          this.codigoPV.nativeElement.value = this.productoIdSelect.producto_id;
+          this.findByProducto();
+        }
+      }
     }
   }
 
@@ -628,7 +660,7 @@ export class VentasDiaComponent implements OnInit {
         this.pesoGramera = res;
         this.parcialGramera = Number(this.productoIdSelect.costo_publico) * Number(this.pesoGramera);
       }
-    }); 
+    });
   }
 
   getImprimirFisico(fileName: string) {
@@ -758,6 +790,10 @@ export class VentasDiaComponent implements OnInit {
   }
 
   tipoPagoEnter(element) {
+    if (this.document.cliente_id == 1 && element.value == this.TIPO_PAGO_CREDITO) {
+      alert("No existen los creditos para el cliente varios");
+      return;
+    }
     if (element.value != "") {
       let tipoPago = this.tipoPagosAll.find(usua => usua.tipo_pago_id == element.value);
       if (tipoPago == undefined) {
@@ -799,7 +835,7 @@ export class VentasDiaComponent implements OnInit {
       }
       tipoPagoDocumento.tipo_pago_id = tipoId;
     } else {
-      tipoPagoDocumento.tipo_pago_id = 1;//efectivo por defecto
+      tipoPagoDocumento.tipo_pago_id = this.TIPO_PAGO_EFECTIVO;//efectivo por defecto
     }
     //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
     tipoPagoDocumento.documento_id = this.document.documento_id;
@@ -807,6 +843,9 @@ export class VentasDiaComponent implements OnInit {
     tipoPagoDocumento.valor = element.value;
     this.tiposPagosDocumento.unshift(tipoPagoDocumento);
     let suma: number = 0;
+    if (tipoPagoDocumento.tipo_pago_id != this.TIPO_PAGO_CREDITO) {
+      this.document.saldo = Number(this.document.saldo) - Number(element.value);
+    }
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
@@ -927,7 +966,7 @@ export class VentasDiaComponent implements OnInit {
     console.log(this.configuracion);
     let numImpresiones = this.configuracion.numero_impresion;
     let impresora: string = this.impresoraPV.nativeElement.value;
-    if (impresora == "") {
+    if (impresora == "" || impresora == undefined) {
       impresora = '1';
     }
     this.document.impresora = Number(impresora);
@@ -943,59 +982,23 @@ export class VentasDiaComponent implements OnInit {
     this.verificarDescuento();
     this.asignarTipoPago();
     this.asignarConsecutivo(numImpresiones, cancelado);
+    
 
 
 
   }
 
-  calcularInfoDiario(anulado: boolean) {
-    console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.fechaIniBusquedaDate(this.document.fecha_registro), this.calculosService.fechaFinBusquedaDate(this.document.fecha_registro)).subscribe(res => {
-      if (res.length == 0) {
-        this.informeDiario = new InformeDiarioModel();
-      } else {
-        this.informeDiario = res[0];
-        console.log(this.informeDiario);
-      }
-      this.informeDiario = this.calculosService.calcularInfoDiario(this.document, this.informeDiario, anulado);
-      this.informeDiario.fecha_ingreso = this.document.fecha_registro;
-      this.informeDiario.fecha_informe = this.calculosService.formatDate(this.document.fecha_registro, false);
-      if (this.informeDiario.informe_diario_id == null) {
-        this.informeDiario.empresa_id = this.empresaId;
-        console.log(this.informeDiario.fecha_ingreso);
-        this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
-          if (res.code != 200) {
-            alert("error creando informe diario");
-            return;
-          }
-        });
-      } else {
-        this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
-          if (res.code != 200) {
-            alert("error actualizando informe diario");
-            return;
-          }
-        });
-      }
-    });
-  }
 
   asignarTipoPago() {
-    let des1 = this.descuentoPV.nativeElement.value;
     let tiposPagosList: TipoPagoModel[] = [];
-    if (des1 == "") { //no se por que tiene que ver con el descuento... validar esta parte
-      //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
-      for (let tipo of this.tiposPagosDocumento) {
-        this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
-      }
-    } else {
-
+    for (let tipo of this.tiposPagosDocumento) {
+      this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
     }
   }
 
   verificarDescuento() {
     let des1 = this.descuentoPV.nativeElement.value;
-    if (des1 != 0.0 && des1 != "") {
+    if (des1 != 0.0 && des1 != "" && des1 != undefined) {
       let desTemp = 0.0; // si el descuento es mayor o menor que 100 entonces se calcula el
       // descuento en %
       desTemp = 0.0;
@@ -1149,30 +1152,31 @@ export class VentasDiaComponent implements OnInit {
     if (this.resolucionEnter() == null) {
       resolucion = this.resolucionAll[0];
     } else {
-      resolucion = this.resolucionEnter();
-      //si es igual a resolucion electronica
-      if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA && resolucion.tipo_resolucion_id == 3) { //se alistan documentos para la dian cuando son facturas
-        let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
-        documentoInvoice.documento_id = Number(this.document.documento_id);
-        documentoInvoice.fecha_registro = new Date();
-        documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
-        this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
-          if (res.code == 200) {
-            console.log("Se agrega estado para facturación electrónica");
-          } else {
-            alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
-            return;
-          }
-        });
-        this.document.invoice_id = this.INVOICE_SIN_ENVIAR;
-      }
+      resolucion = this.resolucionEnter();    
+      //si es igual a resolucion electronica   
+    }
+    this.document.resolucion_empresa_id = resolucion.resolucion_empresa_id;
+    if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA && resolucion.tipo_resolucion_id == 3) { //se alistan documentos para la dian cuando son facturas
+      let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
+      documentoInvoice.documento_id = Number(this.document.documento_id);
+      documentoInvoice.fecha_registro = new Date();
+      documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+      this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+        if (res.code == 200) {
+          console.log("Se agrega estado para facturación electrónica");
+        } else {
+          alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+          return;
+        }
+      });
+      this.document.invoice_id = this.INVOICE_SIN_ENVIAR;
     }
     this.factura.resolucionEmpresa = resolucion;
     this.clienteService.getResolucionById(resolucion.resolucion_empresa_id).subscribe(reso => {
       resolucion = reso[0];
       switch (this.document.tipo_documento_id) {
-        case 9:      
-          consecutivo =""+ resolucion.consecutivo;
+        case 9:
+          consecutivo = "" + resolucion.consecutivo;
           this.document.letra_consecutivo = resolucion.letra_consecutivo;
           this.document.consecutivo_dian = consecutivo;
           console.log("consecutivo documentoId: " + consecutivo);
@@ -1186,7 +1190,7 @@ export class VentasDiaComponent implements OnInit {
           break;
         default:
           console.log(resolucion.consecutivo);
-          con = resolucion.consecutivo + 1;
+          con = Number(resolucion.consecutivo) + 1;
           let topeConsecutivo = resolucion.autorizacion_hasta;
           let consegutivo = con;
           if (consegutivo + 500 > topeConsecutivo) {
@@ -1202,23 +1206,139 @@ export class VentasDiaComponent implements OnInit {
           this.document.consecutivo_dian = consecutivo;
           this.tituloFactura = "FACTURA DE VENTA";
           resolucion.consecutivo = con;
+          this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
+            console.log("consecutivo actualizado");
+            // console.log(this.document);
+          });
           break;
       }
-      this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
-        console.log("consecutivo actualizado");
-        console.log(this.document);
-        this.documentoService.updateDocumento(this.document).subscribe(res => {
-          if (res.code != 200) {
-            alert("error creando documento, por favor inicie nuevamente la creación del documento");
-            return;
-          }
-          this.imprimirFactura(numImpresiones, empr);
-          //this.calcularInfoDiario(cancelado);
-          this.limpiar();
-          this.scapeTecla(null);
+      this.documentoService.updateDocumento(this.document).subscribe(res => {
+        if (res.code != 200) {
+          alert("error creando documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+        this.imprimirFactura(numImpresiones, empr);
+        if(this.envioAutomaticoFEActivo){
+          this. enviarDocumentos();//envia documento para facturacion electronica
+        }
+        this.limpiar();
+        this.scapeTecla(null);
+      });
+    });
+  }
+
+  enviarDocumentos() {
+    let docu: DocumentoMapModel = new DocumentoMapModel();
+    docu.documento = this.document;
+    docu.documentoDetalle = this.productos;
+    this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(this.empresa, docu, this.clientes)).subscribe(async res1 => {
+      console.log(res1);
+      this.insertarEstado(res1, docu.documento);
+    }, error => {
+      console.error(error);
+      alert("Error enviando factura electronica, por favor ingrese a estado de documentos e intente reenviarla");
+    });
+  }
+
+  insertarEstado(res, docu: DocumentoModel) {
+    let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel();
+    documentoInvoice.fecha_registro = new Date();
+    documentoInvoice.documento_id = Number(docu.documento_id);
+    documentoInvoice.status = res.status;
+
+    if (res.status == "OK") {
+      docu.cufe = res.cufe;
+      this.ngxQrcode2 = res.qrCode;
+      docu.qrcode = res.qrCode;
+      documentoInvoice.mensaje = res.mensaje;
+      documentoInvoice.invoice_id = this.INVOICE_OK;
+      docu.invoice_id = this.INVOICE_OK;
+      this.sendMail(res, docu);
+    }
+    if (res.status == "Error") {
+      documentoInvoice.mensaje = res.mensaje + " " + documentoInvoice.mensaje + res.mensajeError;
+      documentoInvoice.invoice_id = this.INVOICE_ERROR;
+      docu.invoice_id = this.INVOICE_ERROR;
+    }
+    if (res.status == "descartar") {
+      documentoInvoice.mensaje = res.mensaje;
+      documentoInvoice.invoice_id = this.INVOICE_DESCARTAR;
+      docu.invoice_id = this.INVOICE_DESCARTAR;
+    }
+
+    if (res.status == "") {
+      documentoInvoice.mensaje = "Enviado a la DIAN";
+      documentoInvoice.invoice_id = this.INVOICE_ERROR;
+      docu.invoice_id = this.INVOICE_ERROR;
+    }
+    this.documentoService.updateDocumento(docu).subscribe(res => {
+      if (res.code != 200) {
+        alert("error creando documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
+    this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+      if (res.code == 200) {
+        console.log("Se agrega estado para facturación electrónica");
+      } else {
+        console.error("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+        return;
+      }
+    });
+  }
+
+  sendMail(res, docu: DocumentoModel) {
+    let mail: MailModel = new MailModel();
+    let cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
+    if (cliente.mail == "") {
+      return;
+    }
+    if (docu.cufe == "") {
+      return;
+    }
+    mail.emailCliente = cliente.mail;
+    mail.html = this.calculosService.enunciadoEmailFE(this.empresa,docu);
+    let getFile: GetFileModel = new GetFileModel();
+    getFile.cufe = docu.cufe;
+    getFile.key = AppConfigService.key_invoice;
+
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(async empr => {
+      getFile.nitEmpresa = empr[0].nit;
+      mail.pdf_64 = this.getfacturaPDF(docu, empr[0]);
+      await this.delay(500);
+      this.facturacionElectronicaService.getXML(getFile).subscribe(async xml => {
+        console.log(xml);
+        mail.xml_64 = xml.mensaje;
+
+        mail.pdf_name = "f_" + docu.consecutivo_dian + ".pdf"; //+xml.filename;
+        mail.xml_name = "f_" + docu.consecutivo_dian + ".xml"; //+xml.filename;
+        this.facturacionElectronicaService.sendMail(mail).subscribe(async emai => {
+          console.log(emai);
+        }, err => {
+          console.error("errr enviando correo");
         });
       });
     });
+  }
+
+  getfacturaPDF(docu: DocumentoModel, empresa: EmpresaModel) {
+    var myimg64 = $("#qrcode1").find("img").attr("src");
+    //console.log("base65");
+    //console.log(myimg64);
+    docu.qrcode = myimg64;
+    let tituloDocumento = "factura" + "_" + docu.consecutivo_dian + "_" + docu.impresora;
+    this.factura.documento = docu;
+    this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
+    this.factura.detalle = this.productos;
+    this.factura.titulo = tituloDocumento;
+    this.factura.empresa = empresa;
+    this.factura.base64Logo=this.logoEmpresa;
+    this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
+    this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
+    let stri: string = this.impresionService.imprimirFacturaPDFExportar(this.factura, this.configuracion,);
+    console.log(stri);
+    return stri;
+
   }
 
 
@@ -1353,6 +1473,10 @@ export class VentasDiaComponent implements OnInit {
       alert("La cantidad no puede ser mayor a 1500");
       return;
     }
+    if (this.productoIdSelect.cantidad <= 0 && !this.cantidadesNegativasActivo) {
+      alert("No está habilitado para vender productos con cantidades negativas");
+      return;
+    }
     if (this.cambioPrecioActivo) {
       this.unitarioPV.nativeElement.focus();
       this.unitarioPV.nativeElement.select();
@@ -1382,7 +1506,11 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
 
-    console.log("//TODO aqui hacer la validacion de stock min");
+    if (this.stockActivo) {
+      if ((this.productoIdSelect.cantidad - cantidad) < this.productoIdSelect.stock_min) {
+        alert("Solo hay " + (this.productoIdSelect.cantidad - cantidad) + " de " + this.productoIdSelect.nombre);
+      }
+    }
     console.log("//TODO aqui hacer la validacion de que el producto se agotó");
 
     this.asignarDocumento(cantidad);
@@ -1438,7 +1566,7 @@ export class VentasDiaComponent implements OnInit {
   }
 
   async borrarLista(detalle: DocumentoDetalleModel, element) {
-    if(this.modificarFactura){
+    if (this.modificarFactura) {
       if (this.claveBorradoActivo) {
         this.claveBorrado = true;
         await this.delay(100);
@@ -1448,7 +1576,7 @@ export class VentasDiaComponent implements OnInit {
         this.borradoPosClave(detalle);
       }
     }
-    
+
 
   }
 
@@ -1457,6 +1585,9 @@ export class VentasDiaComponent implements OnInit {
   }
 
   cambioPrecioLista(detalle: DocumentoDetalleModel, element) {
+    if (!this.modificarFactura) {
+      return;
+    }
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;
@@ -1687,11 +1818,11 @@ export class VentasDiaComponent implements OnInit {
           $('#direccionCliente').focus();
           $('#direccionCliente').select();
         } else {
-          alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social + "\n" + "NIT: " + cliente.documento);
+          alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + "\n" + "NIT: " + cliente.documento);
           $('#documentoCliente').focus();
           $('#documentoCliente').select();
         }
- 
+
         return;
       }
       if (element.id == 'direccionCliente') {
@@ -1780,7 +1911,7 @@ export class VentasDiaComponent implements OnInit {
 
   }
 
-  desselectBlur(element){
+  desselectBlur(element) {
     $("#" + element.id).removeClass("btn-danger");
     $("#" + element.id).addClass("btn-secondary");
   }
@@ -2255,6 +2386,22 @@ export class VentasDiaComponent implements OnInit {
           console.log("multiples precios de droductos activo ");
           this.productoPreciosActivo = true;
         }
+        if (this.activaciones[e].activacion_id == this.CANTIDADES_NEGATIVAS) {
+          console.log("facturar cantidades negativas activo ");
+          this.cantidadesNegativasActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.STOCK) {
+          console.log("stock activo ");
+          this.stockActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.PRODUCTOS_ESPACIALES) {
+          console.log("productos especiales activo ");
+          this.productosEspecialesActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.ENVIO_AUTOMATICO) {
+          console.log("envio de facturas electronicas automantico activo ");
+          this.envioAutomaticoFEActivo = true;
+        }
       }
     });
   }
@@ -2338,6 +2485,12 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
+  getLogoEmpresa(imgData:string){
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
+      this.logoEmpresa = 'data:image/jpg;base64,' + base64data;
+    });
+  }
+
   getproporcion() {
     this.usuarioService.getProporcion(this.empresaId).subscribe(res => {
       this.proporcion = res[0];
@@ -2347,6 +2500,7 @@ export class VentasDiaComponent implements OnInit {
   getEmpresa() {
     this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
       this.empresa = res[0];
+      this.getLogoEmpresa(this.empresa.url_logo);
     });
   }
 
