@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ClienteModel } from 'src/app/model/cliente.model';
 import { DocumentoModel } from 'src/app/model/documento.model';
 import { EmpresaModel } from 'src/app/model/empresa.model';
-import { InformeDiarioModel } from 'src/app/model/informeDiario.model';
 import { InformeDiarioVOModel } from 'src/app/model/informeDiarioVO.model';
 import { CalculosService } from 'src/app/services/calculos.service';
 import { CierreService } from 'src/app/services/cierre.service';
@@ -119,7 +118,7 @@ export class InformeDiarioComponent implements OnInit {
       date.setDate(30);
       fin = date.toLocaleString();
     }
-    this.documentoService.getDocumentosByFechaAndTipo(ini, fin,"", "","", this.empresaId).subscribe(res => {
+    this.documentoService.getDocumentosByFechaAndTipo(ini, fin,"", "","", this.empresaId,"").subscribe(res => {
       this.dias = res;
       for (let dia of this.dias) {
         this.total = Number(this.total) + Number(dia.total);

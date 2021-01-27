@@ -4,7 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
-import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
+import { MovimientoMesComponent } from './components/movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './components/informe-diario/informe-diario.component';

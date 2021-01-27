@@ -3,6 +3,7 @@ import { ClienteModel } from "src/app/model/cliente.model";
 import { DetalleNominaModel } from "src/app/model/detalleNomina.model";
 import { DocumentoModel } from "src/app/model/documento.model";
 import { EmpleadoModel } from "src/app/model/empleado.model";
+import { ResolucionEmpresaModel } from "src/app/model/resolucionEmpresa.model";
 import { TipoDocumentoModel } from "src/app/model/tipoDocumento.model";
 import { UsuarioModel } from "src/app/model/usuario.model";
 import { CalculosService } from "src/app/services/calculos.service";
@@ -37,12 +38,14 @@ export class InfoMovimientoComponent implements OnInit {
   public iva_19: number = 0;
   public exento: number = 0;
   public clientes: Array<ClienteModel> = [];
+  public resolucionAll: Array<ResolucionEmpresaModel>;
 
   @ViewChild("fechaIni") fechaIni: ElementRef;
   @ViewChild("fechaFin") fechaFin: ElementRef;
   @ViewChild("tipoDocumento") tipoDocumento: ElementRef;
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
   @ViewChild("usuariosPV") usuariosPV: ElementRef;
+   @ViewChild("autorizacion") autorizacion: ElementRef;
   
 
   constructor(public documentoService: DocumentoService,
@@ -61,6 +64,7 @@ export class InfoMovimientoComponent implements OnInit {
     this.getUsuarios(this.empresaId);
     this.getEmpleados(this.empresaId);
     this.getclientes(this.empresaId);
+    this.getResolucion();
   }
 
   asignarFechas() {
@@ -103,7 +107,7 @@ export class InfoMovimientoComponent implements OnInit {
     }
     this.documentoService.getDocumentosByFechaAndTipo(ini, fin,
       this.empleadoPV.nativeElement.value, this.tipoDocumento.nativeElement.value,
-      this.usuariosPV.nativeElement.value, this.empresaId
+      this.usuariosPV.nativeElement.value, this.empresaId, this.autorizacion.nativeElement.value
     ).subscribe(res => {
       this.dias = res;
       for (let dia of this.dias) {
@@ -156,5 +160,12 @@ export class InfoMovimientoComponent implements OnInit {
       return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
     }
   }  
+
+  getResolucion() {
+    this.clienteService.getResolucion(this.empresaId).subscribe(res => {
+      this.resolucionAll = res;
+      console.log("resoluciones:" + this.resolucionAll.length);
+    });
+  }
 
 }

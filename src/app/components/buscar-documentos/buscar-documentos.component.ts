@@ -1,30 +1,31 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { UsuarioModel } from '../model/usuario.model';
-import { UsuarioService } from '../services/usuario.service';
-import { EmpleadoModel } from '../model/empleado.model';
-import { EmpleadoService } from '../services/empleado.service';
-import { ClienteModel } from '../model/cliente.model';
-import { ClienteService } from '../services/cliente.service';
-import { TipoDocumentoModel } from '../model/tipoDocumento.model';
-import { DocumentoService } from '../services/documento.service';
-import { DocumentoModel } from '../model/documento.model';
-import { ActivacionModel } from '../model/activacion';
-import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
-import { DocumentoDetalleService } from '../services/documento-detalle.service';
-import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
-import { EmpresaService } from '../services/empresa.service';
-import { EmpresaModel } from '../model/empresa.model';
-import { FacturaModel } from '../vo/factura.model';
-import { ImpresionService } from '../services/impresion.service';
-import { ConfiguracionModel } from '../model/configuracion.model';
-import { ProductoModel } from '../model/producto.model';
-import { ProductoService } from '../services/producto.service';
-import { CalculosService } from '../services/calculos.service';
-import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
-import { CierreService } from '../services/cierre.service';
-import { InformeDiarioModel } from '../model/informeDiario.model';
-import { DocumentoNotaModel } from '../model/documentoNota.model';
-import { SubProductoModel } from '../model/subProducto.model';
+import { ActivacionModel } from 'src/app/model/activacion';
+import { ClienteModel } from 'src/app/model/cliente.model';
+import { ConfiguracionModel } from 'src/app/model/configuracion.model';
+import { DocumentoModel } from 'src/app/model/documento.model';
+import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
+import { DocumentoInvoiceModel } from 'src/app/model/documentoInvoice.model';
+import { DocumentoNotaModel } from 'src/app/model/documentoNota.model';
+import { EmpleadoModel } from 'src/app/model/empleado.model';
+import { EmpresaModel } from 'src/app/model/empresa.model';
+import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
+import { InformeDiarioModel } from 'src/app/model/informeDiario.model';
+import { ProductoModel } from 'src/app/model/producto.model';
+import { SubProductoModel } from 'src/app/model/subProducto.model';
+import { TipoDocumentoModel } from 'src/app/model/tipoDocumento.model';
+import { UsuarioModel } from 'src/app/model/usuario.model';
+import { CalculosService } from 'src/app/services/calculos.service';
+import { CierreService } from 'src/app/services/cierre.service';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
+import { DocumentoService } from 'src/app/services/documento.service';
+import { EmpleadoService } from 'src/app/services/empleado.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
+import { ProductoService } from 'src/app/services/producto.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
+import { FacturaModel } from 'src/app/vo/factura.model';
+
 declare var jquery: any;
 declare var $: any;
 
@@ -121,38 +122,6 @@ export class BuscarDocumentosComponent implements OnInit {
     console.log(this.fechaI);
   }
 
-  calcularInfoDiario(nota: DocumentoModel, factura: DocumentoModel) {
-    console.log("entra a calcular info diario");
-    this.cierreService.getInfoDiarioByDate(this.empresaId, this.calculosService.formatDate(new Date(), false), this.calculosService.formatDate(new Date(), false)).subscribe(res => {
-      if (res.length == 0) {
-        this.informeDiario = new InformeDiarioModel();
-      } else {
-        this.informeDiario = res[0];
-        console.log(this.informeDiario);
-      }
-      this.informeDiario = this.calculosService.calcularInfoDiarioNota(factura, nota, this.informeDiario);
-      //this.informeDiario.fecha_ingreso = new Date();
-      this.informeDiario.fecha_informe = this.calculosService.formatDate(new Date(), false);
-      if (this.informeDiario.informe_diario_id == null) {
-        this.informeDiario.empresa_id = this.empresaId;
-        console.log(this.informeDiario.fecha_ingreso);
-        this.cierreService.saveInformeDiario(this.informeDiario).subscribe(res => {
-          if (res.code != 200) {
-            alert("error creando informe diario");
-            return;
-          }
-        });
-      } else {
-        this.cierreService.updateInformeDiario(this.informeDiario).subscribe(res => {
-          if (res.code != 200) {
-            alert("error actualizando informe diario");
-            return;
-          }
-        });
-      }
-    });
-  }
-
   confirmarNota(observacion) {
     let newDocu: DocumentoModel = this.documentoSelect;
     if (observacion.value == "") {
@@ -181,7 +150,6 @@ export class BuscarDocumentosComponent implements OnInit {
           documentoInvoice.documento_id = res.documento_id;
           documentoInvoice.fecha_registro = new Date();
           documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
-          this.calcularInfoDiario(newDocu, factura[0]);
           this.crearNotaDocumento(newDocu, factura[0]);
           $('#notaModal').modal('hide');
           this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
