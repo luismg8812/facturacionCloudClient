@@ -1244,17 +1244,18 @@ export class GestionOrdenComponent implements OnInit {
           resolucion.consecutivo = con;
           this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
             console.log("consecutivo actualizado");
+            this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+              if (res.code != 200) {
+                alert("error creando documento, por favor inicie nuevamente la creación del documento");
+                return;
+              }
+              this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
+              this.limpiarFactura();
+            });
           });
           break;
       }
-      this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
-        if (res.code != 200) {
-          alert("error creando documento, por favor inicie nuevamente la creación del documento");
-          return;
-        }
-        this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
-        this.limpiarFactura();
-      });
+ 
   }
 
 
@@ -1300,6 +1301,7 @@ export class GestionOrdenComponent implements OnInit {
     tituloDocumento = this.tituloFactura + "_" + this.documentoFactura.consecutivo_dian + "_" + this.documentoFactura.impresora + "_false_" + numeroImpresiones + "_" + tipoImpresion;
     this.factura.documento = this.documentoFactura;
     this.factura.nombreTipoDocumento = this.tituloFactura;
+    console.log(this.itemsFactura);
     this.factura.detalle = this.itemsFactura
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
