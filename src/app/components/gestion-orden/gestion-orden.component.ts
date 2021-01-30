@@ -1252,7 +1252,7 @@ export class GestionOrdenComponent implements OnInit {
               this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
               this.limpiarFactura();
             });
-          });
+          });     
           break;
       }
  

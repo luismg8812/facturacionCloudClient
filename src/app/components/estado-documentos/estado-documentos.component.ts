@@ -272,16 +272,29 @@ export class EstadoDocumentosComponent implements OnInit {
  
   descargarPDF(docu: DocumentoModel) {
    
-      this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento_id).subscribe(res => {
-        //this.ngxQrcode2=docu.qrCode;
-        //var myimg64 = $("#qrcode1").find("img").attr("src");
-        //console.log("base65");
-        //console.log(myimg64);
-        //docu.qrcode=myimg64;
+      this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento_id).subscribe(detalles => {
+      
         let tituloDocumento = "factura" + "_" + docu.consecutivo_dian + "_" + docu.impresora;
         this.factura.documento = docu;
         this.factura.nombreTipoDocumento = "FACTURA DE VENTA";
-        this.factura.detalle = res;
+        if (detalles.length > 0) {
+          this.factura.detalle = detalles;
+        } else {
+          console.log("Detalles de orden");
+          this.documentoService.getOrdenesByDocumentoId(docu.documento_id).subscribe(res => {
+            let ordenesBuscarListFacturaSelect: DocumentoModel[] = res;
+            let ids: string[] = [];
+            for (let d of ordenesBuscarListFacturaSelect) {
+              ids.unshift(d.documento_id);
+            }
+            if (ids.length > 0) {
+              this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+                this.factura.detalle= res;
+                console.log("detalles encontrados:" + res.length);
+              });
+            }
+          });
+        }
         this.factura.titulo = tituloDocumento;
         this.factura.empresa = this.empresa;
         this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
