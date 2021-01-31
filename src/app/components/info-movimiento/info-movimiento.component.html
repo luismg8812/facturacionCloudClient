@@ -49,7 +49,15 @@
         </option>
       </select>
     </div>
-    
+    <div class="form-group col-md-6 col-sm-1">
+      Autorización DIAN
+      <select id="autorizacion" name="autorizacion" #autorizacion placeholder="" class="form-control">
+        <option value="">Seleccione</option>
+        <option *ngFor="let tipo of resolucionAll" [value]="tipo.resolucion_empresa_id">
+          {{tipo.nombre}}
+        </option>
+      </select>
+    </div>
   </div>
   <div class="form-row">
     <div class="form-group col-md-6 col-sm-1">

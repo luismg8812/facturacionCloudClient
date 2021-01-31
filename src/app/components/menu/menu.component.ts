@@ -157,10 +157,12 @@ export class MenuComponent implements OnInit {
   cambiarEmpresa(empr) {
     if (!this.multipleEmpresaActivo) {
       alert("no tiene permisos para ingresar a la información de otras sucursales");
-      return;
+      return;  
     }
     localStorage.setItem("empresa_id", empr.value);
     this.router.navigate(['/menu']);
+    
+    empr.value = localStorage.getItem("empresa_id");
   }
 
   getActivaciones() {

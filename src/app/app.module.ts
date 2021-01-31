@@ -20,8 +20,8 @@ import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { SocketService } from './services/socket.service';
-import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos.component';
-import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
+import { BuscarDocumentosComponent } from './components/buscar-documentos/buscar-documentos.component';
+import { MovimientoMesComponent } from './components/movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
 import { InformeDiarioComponent } from './components/informe-diario/informe-diario.component';
@@ -51,6 +51,7 @@ import { InventarioFisicoComponent } from './components/inventario-fisico/invent
 import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
 import { TrasladoComponent } from './components/traslado/traslado.component';
 import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
+import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -93,7 +94,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     KardexComponent,
     RequerimientoComponent,
     TrasladoComponent,
-    AceptacionMercanciaComponent
+    AceptacionMercanciaComponent,
+    ReporteTercerosComponent
   ],
   imports: [
     BrowserModule,

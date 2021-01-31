@@ -60,12 +60,18 @@ export class EditarProductoComponent implements OnInit {
    this.productoNew.empresa_id = this.empresaId;
    this.productoService.updateProducto(this.productoNew).subscribe(res => {
      if (res.code == 200) {
-       this.productoNew = new ProductoModel();
+      
        $('#editarProduct').modal('hide');
        this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(async res => {
          this.productosAll = res;
-       });
-       this.productoService.updateProductoPrecios(this.productoPrecioNew).subscribe();
+       });   
+       if(this.productoPrecioNew.producto_id==null){
+         this.productoPrecioNew.producto_id=res.producto_id;
+        this.productoService.saveProductoPrecios(this.productoPrecioNew).subscribe();
+       }else{
+        this.productoService.updateProductoPrecios(this.productoPrecioNew).subscribe();
+       }
+       this.productoNew = new ProductoModel();
      } else {
        alert("error creando producto, por favor inicie nuevamente la creación del producto, si persiste consulte a su proveedor");
        return;
