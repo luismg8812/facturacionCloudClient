@@ -6,6 +6,7 @@ import { ProveedorModel } from '../model/proveedor.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
 import { BonoModel } from '../model/bono.model';
 import { BonoVOModel } from './bonoVO.model';
+import { TipoPagoDocumentoModel } from '../model/tipoPagoDocumento.model';
 
 export class FacturaModel {
     public documento:DocumentoModel;
@@ -22,6 +23,7 @@ export class FacturaModel {
     public saldo:number;
     public pagaCon:number;
     public base64Logo:string;
+    public tiposPago:TipoPagoDocumentoModel[];
     
     
     constructor(){
@@ -29,6 +31,7 @@ export class FacturaModel {
         this.bono=new BonoVOModel();
         this.resolucionEmpresa=new ResolucionEmpresaModel();
         this.detalle=[];
+        this.tiposPago=[];
         this.titulo="";
         this.empresa=null;
         this.nombreTipoDocumento="";

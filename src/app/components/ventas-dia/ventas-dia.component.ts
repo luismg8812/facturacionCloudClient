@@ -91,6 +91,7 @@ export class VentasDiaComponent implements OnInit {
 
   readonly TIPO_PAGO_EFECTIVO: number = 1;
   readonly TIPO_PAGO_CREDITO: number = 2;
+  readonly TIPO_PAGO_TARJETA: number = 5;
 
 
   @ViewChild("clientePV") clientePV: ElementRef;
@@ -173,8 +174,8 @@ export class VentasDiaComponent implements OnInit {
   public informeDiario: InformeDiarioModel;
   public productoPreciosSelect: ProductoPreciosModel = new ProductoPreciosModel();
   public ngxQrcode2: string = "123"
-  public logoEmpresa:string;
-  
+  public logoEmpresa: string;
+
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -833,14 +834,19 @@ export class VentasDiaComponent implements OnInit {
         alert("cantidad invalida");
         return;
       }
+      let tipo = this.tipoPagosAll.find(usua => usua.tipo_pago_id == tipoId);
+      tipoPagoDocumento.nombre = tipo.nombre;
       tipoPagoDocumento.tipo_pago_id = tipoId;
+      tipoPagoDocumento.valor = element.value;
     } else {
+      tipoPagoDocumento.nombre = "Efectivo";
       tipoPagoDocumento.tipo_pago_id = this.TIPO_PAGO_EFECTIVO;//efectivo por defecto
+      tipoPagoDocumento.valor = this.document.total;
     }
     //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
     tipoPagoDocumento.documento_id = this.document.documento_id;
     tipoPagoDocumento.fecha_registro = new Date;
-    tipoPagoDocumento.valor = element.value;
+
     this.tiposPagosDocumento.unshift(tipoPagoDocumento);
     let suma: number = 0;
     if (tipoPagoDocumento.tipo_pago_id != this.TIPO_PAGO_CREDITO) {
@@ -850,7 +856,40 @@ export class VentasDiaComponent implements OnInit {
       suma = suma + Number(sum.valor);
     }
     this.document.cambio = Number(suma) - Number(this.document.total);
+    if (this.document.cambio < 0) {
+      this.document.cambio = 0;
+    }
     if (suma < Number(this.document.total) && tipoId != "") {
+      this.tipoPagoPV.nativeElement.focus();
+      this.tipoPagoPV.nativeElement.select();
+    } else {
+      if (this.multipleResolucionActivo) {
+        this.resolucionPV.nativeElement.focus();
+      } else {
+        if (this.impresionPantallaActivo) {
+          this.enPantallaPV.nativeElement.focus();
+          this.enPantallaPV.nativeElement.select();
+        } else {
+          this.continuaImpresionPV.nativeElement.focus();
+        }
+      }
+    }
+  }
+
+  eliminarTipoPago(id: TipoPagoDocumentoModel) {
+    const index = this.tiposPagosDocumento.indexOf(id, 0);
+    if (index > -1) {
+      this.tiposPagosDocumento.splice(index, 1);
+    }
+    let suma: number = 0;
+    if (id.tipo_pago_id != this.TIPO_PAGO_CREDITO) {
+      this.document.saldo = Number(this.document.saldo) + Number(id.valor);
+    }
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
+    }
+    this.document.cambio = Number(suma) - Number(this.document.total);
+    if (suma < Number(this.document.total)) {
       this.tipoPagoPV.nativeElement.focus();
       this.tipoPagoPV.nativeElement.select();
     } else {
@@ -958,6 +997,16 @@ export class VentasDiaComponent implements OnInit {
       alert("El documento esta corructo, por favor vuelva a crearlo");
       return;
     }
+    let suma: number = 0;
+
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
+    }
+    if (suma != Number(this.document.total) + Number(this.document.cambio)) {
+      alert("No concuerdan los valores de los tipos de pago ingresados y el total de la factura");
+      return;
+    }
+
     $('#imprimirModal').modal('hide');
     //$("#imprimirModal").on('shown.bs.modal', () => {
 
@@ -982,7 +1031,7 @@ export class VentasDiaComponent implements OnInit {
     this.verificarDescuento();
     this.asignarTipoPago();
     this.asignarConsecutivo(numImpresiones, cancelado);
-    
+
 
 
 
@@ -1075,6 +1124,12 @@ export class VentasDiaComponent implements OnInit {
     if (numeroImpresiones == undefined) {
       numeroImpresiones = 1;
     }
+    for (let tipo of this.tiposPagosDocumento) {
+      if (tipo.tipo_pago_id == this.TIPO_PAGO_TARJETA) {
+        numeroImpresiones = 2;
+        break;
+      }
+    }
     let tipoImpresion = 0;
 
     let impresora = this.document.impresora;
@@ -1092,9 +1147,14 @@ export class VentasDiaComponent implements OnInit {
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
     this.factura.saldo = this.saldoCliente;
-    if (this.valorTipoPagoPV.nativeElement.value != "") {
-      this.factura.pagaCon = this.valorTipoPagoPV.nativeElement.value;
+    let suma: number = 0;
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
     }
+    if (this.valorTipoPagoPV.nativeElement.value != "") {
+      this.factura.pagaCon = suma;
+    }
+    this.factura.tiposPago = this.tiposPagosDocumento;
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     for (var i = 0; i < numeroImpresiones; i++) {
       switch (tipoImpresion) {
@@ -1152,7 +1212,7 @@ export class VentasDiaComponent implements OnInit {
     if (this.resolucionEnter() == null) {
       resolucion = this.resolucionAll[0];
     } else {
-      resolucion = this.resolucionEnter();    
+      resolucion = this.resolucionEnter();
       //si es igual a resolucion electronica   
     }
     this.document.resolucion_empresa_id = resolucion.resolucion_empresa_id;
@@ -1218,8 +1278,8 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
         this.imprimirFactura(numImpresiones, empr);
-        if(this.envioAutomaticoFEActivo){
-          this. enviarDocumentos();//envia documento para facturacion electronica
+        if (this.envioAutomaticoFEActivo) {
+          this.enviarDocumentos();//envia documento para facturacion electronica
         }
         this.limpiar();
         this.scapeTecla(null);
@@ -1297,7 +1357,7 @@ export class VentasDiaComponent implements OnInit {
       return;
     }
     mail.emailCliente = cliente.mail;
-    mail.html = this.calculosService.enunciadoEmailFE(this.empresa,docu);
+    mail.html = this.calculosService.enunciadoEmailFE(this.empresa, docu);
     let getFile: GetFileModel = new GetFileModel();
     getFile.cufe = docu.cufe;
     getFile.key = AppConfigService.key_invoice;
@@ -1332,7 +1392,7 @@ export class VentasDiaComponent implements OnInit {
     this.factura.detalle = this.productos;
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
-    this.factura.base64Logo=this.logoEmpresa;
+    this.factura.base64Logo = this.logoEmpresa;
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     let stri: string = this.impresionService.imprimirFacturaPDFExportar(this.factura, this.configuracion,);
@@ -2485,7 +2545,7 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
-  getLogoEmpresa(imgData:string){
+  getLogoEmpresa(imgData: string) {
     this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
       this.logoEmpresa = 'data:image/jpg;base64,' + base64data;
     });

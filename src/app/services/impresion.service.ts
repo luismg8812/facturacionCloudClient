@@ -654,9 +654,9 @@ export class ImpresionService {
     });
   }
 
- 
 
- 
+
+
 
   private crearHeader(factura: FacturaModel, configuracion: ConfiguracionModel, pagina: number, numPaginas: number) {
 
@@ -716,7 +716,7 @@ export class ImpresionService {
 
     this.doc.setFontType('normal');
     if (factura.cliente != undefined) {
-      this.doc.text(factura.cliente.nombre + " " + factura.cliente.apellidos+" "+factura.cliente.razon_social, 25, 44);
+      this.doc.text(factura.cliente.nombre + " " + factura.cliente.apellidos + " " + factura.cliente.razon_social, 25, 44);
       this.doc.text(factura.cliente.direccion, 25, 49);
       this.doc.text(factura.cliente.documento, 130, 44);
       this.doc.text(factura.cliente.celular, 130, 49);
@@ -750,7 +750,7 @@ export class ImpresionService {
     let numPaginas = this.calcularHojas(tope, factura.detalle, topeLinea, 2);
     let posy = 63; //controla la posicion de y para los productos
     let i = 0;
-    this.doc.addImage(factura.base64Logo, 'JPEG', 31, 2,71, 35);
+    this.doc.addImage(factura.base64Logo, 'JPEG', 31, 2, 71, 35);
     this.doc.addImage(factura.documento.qrcode, 'JPEG', 1, 1, 30, 29);
     this.crearHeader(factura, configuracion, (i + 1), numPaginas);
     this.doc.setFontType('normal');
@@ -798,7 +798,7 @@ export class ImpresionService {
         posy = 63;
         row = 0;
         i = i + 1;
-        this.doc.addImage(factura.base64Logo, 'JPEG', 31, 2,71, 35);
+        this.doc.addImage(factura.base64Logo, 'JPEG', 31, 2, 71, 35);
         this.doc.addImage(factura.documento.qrcode, 'JPEG', 1, 1, 30, 29);
         this.crearHeader(factura, configuracion, (i + 1), numPaginas);
         this.doc.setFontType('normal');
@@ -859,7 +859,7 @@ export class ImpresionService {
       this.doc.text("CAJA: " + factura.documento.mac, x, y);
       y = y + inicio;
       if (factura.cliente != undefined) {
-        let nombreCliente: string = factura.cliente.nombre == "" ? factura.cliente.razon_social : factura.cliente.nombre+" "+factura.cliente.apellidos;
+        let nombreCliente: string = factura.cliente.nombre == "" ? factura.cliente.razon_social : factura.cliente.nombre + " " + factura.cliente.apellidos;
         this.doc.text("CLIENTE: " + nombreCliente, x, y);
         y = y + inicio;
         this.doc.text("NIT/CC: " + factura.cliente.documento, x, y);
@@ -945,8 +945,11 @@ export class ImpresionService {
       //hacer un metodo para ir a traer los tipos de pago de este dococumento
       this.doc.text("PAGA CON:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.pagaCon).replace("COP", ""), x, y);
       y = y + inicio;
-      this.doc.text("Vr. Pago con Efectivo:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP", ""), x, y);
-      y = y + inicio;
+      for (let t of factura.tiposPago) {
+        this.doc.text("Vr. Pago con " + t.nombre + ":  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(t.valor).replace("COP", ""), x, y);
+        y = y + inicio;
+      }
+
       this.doc.text("Cambio:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.cambio).replace("COP", ""), x, y);
       y = y + inicio;
       this.doc.setFontSize(12);
@@ -1485,9 +1488,9 @@ export class ImpresionService {
           this.doc.text("# Fact. Inicial             # Fact. Final              Cant. Facturas             Valor Total Facturado ", 10, 50);
           this.doc.text("__________________________________________________________________________________________________________", 10, 51);
           this.doc.setFontType('normal')
-          let letra=factura.detalle[0].letra_consecutivo==undefined?"":factura.detalle[0].letra_consecutivo;
-          this.doc.text(letra+factura.detalle[0].consecutivo_dian, 10, 55);
-          this.doc.text(letra+factura.detalle[factura.detalle.length-1].consecutivo_dian, 50, 55);
+          let letra = factura.detalle[0].letra_consecutivo == undefined ? "" : factura.detalle[0].letra_consecutivo;
+          this.doc.text(letra + factura.detalle[0].consecutivo_dian, 10, 55);
+          this.doc.text(letra + factura.detalle[factura.detalle.length - 1].consecutivo_dian, 50, 55);
           this.doc.text("" + factura.detalle.length, 80, 55);
           this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total).replace("COP", ""), 20), 100, 55);
           this.doc.setFontType('bold');
@@ -1533,7 +1536,7 @@ export class ImpresionService {
           this.doc.text("__________________________________________________________________________________________________________", 10, espacio - 5);
           espacio = espacio + 10;
           this.doc.text("Total Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total).replace("COP", ""), 10, espacio);
-          this.doc.text("IVA Total: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(factura.informe_diario.iva_19)+Number(factura.informe_diario.iva_5)).replace("COP", ""), 10, espacio + 5);
+          this.doc.text("IVA Total: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(factura.informe_diario.iva_19) + Number(factura.informe_diario.iva_5)).replace("COP", ""), 10, espacio + 5);
           this.doc.text("IVA 19%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_19).replace("COP", ""), 10, espacio + 10);
           this.doc.text("IVA 5%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_5).replace("COP", ""), 10, espacio + 15);
           this.doc.text("Base 19%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.base_19).replace("COP", ""), 10, espacio + 20);

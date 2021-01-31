@@ -51,6 +51,7 @@ import { InventarioFisicoComponent } from './components/inventario-fisico/invent
 import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
 import { TrasladoComponent } from './components/traslado/traslado.component';
 import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
+import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -93,7 +94,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     KardexComponent,
     RequerimientoComponent,
     TrasladoComponent,
-    AceptacionMercanciaComponent
+    AceptacionMercanciaComponent,
+    ReporteTercerosComponent
   ],
   imports: [
     BrowserModule,

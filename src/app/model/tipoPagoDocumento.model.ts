@@ -4,6 +4,7 @@ export class TipoPagoDocumentoModel {
     public documento_id:string;
     public fecha_registro:Date;
     public valor:number;
+    public nombre:string;
 
     constructor(){
         this.tipo_pago_documento_id=null;
@@ -11,6 +12,7 @@ export class TipoPagoDocumentoModel {
         this.documento_id=null;
         this.fecha_registro=new Date;
         this.valor=0;
+        this.nombre="";
     }
 }
 
