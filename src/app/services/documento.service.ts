@@ -176,5 +176,11 @@ export class DocumentoService {
     return this.http.get<any>(this.server_api + '/documento/getGananciaDocumentos?empresaId=' + empresaId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal);
   }
 
+  getTerceros(fechaInicial,fechaFinal, tipoTercero:string,tipoDocumento:number, montoDesde:number, empresaId: number ,montoHasta:number ) {
+    return this.http.get<any>(this.server_api + '/documento/getTerceros?empresaId=' + empresaId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal
+    + '&tipoTercero=' + tipoTercero+ '&tipoDocumento=' + tipoDocumento+ '&montoDesde=' + montoDesde+ '&montoHasta=' + montoHasta);
+  }
+
+
   
 }
