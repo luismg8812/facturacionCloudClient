@@ -176,6 +176,8 @@ export class VentasDiaComponent implements OnInit {
   public ngxQrcode2: string = "123"
   public logoEmpresa: string;
 
+  public saldoTipoPago: number = 0;
+
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -855,6 +857,7 @@ export class VentasDiaComponent implements OnInit {
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
+    this.saldoTipoPago=Number(this.document.total)-suma;
     this.document.cambio = Number(suma) - Number(this.document.total);
     if (this.document.cambio < 0) {
       this.document.cambio = 0;
@@ -888,6 +891,7 @@ export class VentasDiaComponent implements OnInit {
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
+    this.saldoTipoPago=Number(this.document.total)-suma;
     this.document.cambio = Number(suma) - Number(this.document.total);
     if (suma < Number(this.document.total)) {
       this.tipoPagoPV.nativeElement.focus();
@@ -2213,6 +2217,7 @@ export class VentasDiaComponent implements OnInit {
     this.modificarFactura = false;
     this.saldoClienteActivo = false;
     this.saldoCliente = 0;
+    this.saldoTipoPago = 0;
     this.resolucionPV.nativeElement.value = "";
   }
 
@@ -2364,8 +2369,8 @@ export class VentasDiaComponent implements OnInit {
       this.valorTipoPagoPV.nativeElement.classList.add("d-none");
       this.tipoPagoPV.nativeElement.classList.add("d-none");
     }
+    this.saldoTipoPago=this.document.total;
     $("#imprimirModal").on('shown.bs.modal', () => {
-      //alert("entra");
       if (this.descuentosActivo) {
         this.descuentoPV.nativeElement.focus();
       } else {
