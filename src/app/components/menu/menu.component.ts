@@ -5,6 +5,7 @@ import { SubMenuModel } from 'src/app/model/submenu.model';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { EmpresaModel } from 'src/app/model/empresa.model';
 import { ActivacionModel } from 'src/app/model/activacion';
+import { ClienteService } from 'src/app/services/cliente.service';
 
 
 @Component({
@@ -39,21 +40,34 @@ export class MenuComponent implements OnInit {
   public empresaList: Array<EmpresaModel>;
   public activaciones: Array<ActivacionModel>;
   public multipleEmpresaActivo: boolean = false;
+  public empresaId: number;
 
-  constructor(public afauth: AngularFireAuth, private router: Router, private usuarioService: UsuarioService) { }
+  constructor(public afauth: AngularFireAuth, private router: Router,
+    private usuarioService: UsuarioService,
+    public clienteService: ClienteService) { }
 
   ngOnInit() {
-    this.observador();
-    this.nombreUsuario = localStorage.getItem('nombreUsuario');
-    this.usuarioId = Number(localStorage.getItem("usuario_id"));
-    this.opcionesSubmenu();
-    this.getEmpresas();
-    this.getActivaciones();
-    if (this.router.url == "/menu") {
-      this.facturacionPV.nativeElement.focus();
-    }
+    this.empresaId = Number(localStorage.getItem("empresa_id"));
+    this.clienteService.getConfiguracionByEmpresa(this.empresaId.toString()).subscribe(res => {
+      if (res[0].server == 0) {
+        alert("Actualmente tiene inconvenientes con los datos y configuraciones iniciales, por favor comuniquese con soporte:\n Lisencias: 3185222474");
+        return;
+      } else {
+        this.observador();
+        this.nombreUsuario = localStorage.getItem('nombreUsuario');
+        this.usuarioId = Number(localStorage.getItem("usuario_id"));
+        this.opcionesSubmenu();
+        this.getEmpresas();
+        this.getActivaciones();
+        if (this.router.url == "/menu") {
+          this.facturacionPV.nativeElement.focus();
+        }
+        if (this.router.url == "/") {
+          this.facturacionPV.nativeElement.focus();
+        }
+      }
 
-
+    });
   }
 
   controlTeclas(event, element) {
@@ -157,11 +171,11 @@ export class MenuComponent implements OnInit {
   cambiarEmpresa(empr) {
     if (!this.multipleEmpresaActivo) {
       alert("no tiene permisos para ingresar a la información de otras sucursales");
-      return;  
+      return;
     }
     localStorage.setItem("empresa_id", empr.value);
     this.router.navigate(['/menu']);
-    
+
     empr.value = localStorage.getItem("empresa_id");
   }
 
