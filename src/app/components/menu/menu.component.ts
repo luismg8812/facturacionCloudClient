@@ -48,6 +48,9 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
+    if(this.empresaId==undefined){
+      this.router.navigate(['/login']);
+    }
     this.clienteService.getConfiguracionByEmpresa(this.empresaId.toString()).subscribe(res => {
       if (res[0].server == 0) {
         alert("Actualmente tiene inconvenientes con los datos y configuraciones iniciales, por favor comuniquese con soporte:\n Lisencias: 3185222474");
