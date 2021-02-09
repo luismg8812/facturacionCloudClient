@@ -15,6 +15,7 @@ import { DocumentoService } from './documento.service';
 import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/envioFacturacionElectronica.model';
 import { AppConfigService } from './app-config.service';
 import { ProductoModel } from '../model/producto.model';
+import { ParametrosModel } from '../model/parametros.model';
 
 
 @Injectable({
@@ -817,7 +818,14 @@ export class ImpresionService {
 
   imprimirFacturaPdf80(factura: FacturaModel, configuracion: ConfiguracionModel, exportar: boolean) {
     //console.log(new Buffer(AppConfigService.image).toString('base64'));
-    this.calculosService.getBase64ImageFromURL("assets/images/logoempresa.jpg").subscribe(base64data => {
+    let parametros: ParametrosModel = new ParametrosModel;
+    let imgData = "";
+    if (parametros.ambiente == 'cloud') {
+      imgData = factura.empresa.url_logo;
+    } else {
+      imgData = "assets/images/logoempresa.jpg";
+    }
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
       let base64Image = 'data:image/jpg;base64,' + base64data;
       this.doc = new jsPDF();
       this.doc.setFontSize(12);
