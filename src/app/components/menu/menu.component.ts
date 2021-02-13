@@ -6,6 +6,8 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import { EmpresaModel } from 'src/app/model/empresa.model';
 import { ActivacionModel } from 'src/app/model/activacion';
 import { ClienteService } from 'src/app/services/cliente.service';
+import { UsuarioModel } from 'src/app/model/usuario.model';
+import { RolModel } from 'src/app/model/rol.model';
 
 
 @Component({
@@ -21,6 +23,8 @@ export class MenuComponent implements OnInit {
   @ViewChild("terceroPV") terceroPV: ElementRef;
   @ViewChild("listadosPV") listadosPV: ElementRef;
   @ViewChild("cerrar") cerrar: ElementRef;
+  @ViewChild("empresa") empresa: ElementRef;
+
 
   readonly MENU_FACTURACION: string = '1';
   readonly MENU_ELECTRONICA: string = '2';
@@ -41,6 +45,8 @@ export class MenuComponent implements OnInit {
   public activaciones: Array<ActivacionModel>;
   public multipleEmpresaActivo: boolean = false;
   public empresaId: number;
+  public usuariosList: Array<UsuarioModel>;
+  public rolList: Array<RolModel>;
 
   constructor(public afauth: AngularFireAuth, private router: Router,
     private usuarioService: UsuarioService,
@@ -48,25 +54,42 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
+    console.log(this.empresaId);
+    if (this.empresaId == undefined) {
+      this.cerrarSesision();
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.getEmpresas();
+    this.roles();
     this.clienteService.getConfiguracionByEmpresa(this.empresaId.toString()).subscribe(res => {
+      if (res.length == 0) {
+        alert("No existe una configuración para la empresa seleccionada");
+        this.cerrarSesision();
+        this.router.navigate(['/login']);
+        return;
+      }
       if (res[0].server == 0) {
         alert("Actualmente tiene inconvenientes con los datos y configuraciones iniciales, por favor comuniquese con soporte:\n Lisencias: 3185222474");
+        this.cerrarSesision();
+        this.router.navigate(['/login']);
         return;
-      } else {
-        this.observador();
-        this.nombreUsuario = localStorage.getItem('nombreUsuario');
-        this.usuarioId = Number(localStorage.getItem("usuario_id"));
-        this.opcionesSubmenu();
-        this.getEmpresas();
-        this.getActivaciones();
-        if (this.router.url == "/menu") {
-          this.facturacionPV.nativeElement.focus();
-        }
-        if (this.router.url == "/") {
-          this.facturacionPV.nativeElement.focus();
-        }
       }
+      this.observador();
+      this.nombreUsuario = localStorage.getItem('nombreUsuario');
+      this.usuarioId = Number(localStorage.getItem("usuario_id"));
+      this.opcionesSubmenu();
 
+      this.getActivaciones();
+
+      this.getUsuarios(this.empresaId);
+      if (this.router.url == "/menu") {
+        this.facturacionPV.nativeElement.focus();
+      }
+      if (this.router.url == "/") {
+        this.facturacionPV.nativeElement.focus();
+      }
+      this.empresa.nativeElement.value = this.empresaId.toString();
     });
   }
 
@@ -173,10 +196,31 @@ export class MenuComponent implements OnInit {
       alert("no tiene permisos para ingresar a la información de otras sucursales");
       return;
     }
+    let rolId: number[] = [];
+    let usuario_id = localStorage.getItem('usuario_id');
+    let usuario: UsuarioModel = this.usuariosList.find(tipos => tipos.usuario_id == Number(usuario_id));
+    usuario.empresa_id = empr.value;
+    console.log(usuario);
+    this.usuarioService.getRolByUsuario(usuario.usuario_id).subscribe(res => {
+      let rolListSelect: Array<RolModel> = [];
+      for (var i = 0; i < res.length; i++) {
+        let rol: RolModel = this.rolList.find(tipos => tipos.rol_id == res[i].rol_id);
+        rolListSelect.push(rol);
+      }
+      console.log(rolListSelect);
+      for (var i = 0; i < rolListSelect.length; i++) {
+        rolId.push(rolListSelect[i].rol_id);
+      }
+      this.usuarioService.updateUsuario(usuario, rolId).subscribe(res => {
+
+      });
+    });
     localStorage.setItem("empresa_id", empr.value);
+
     this.router.navigate(['/menu']);
 
     empr.value = localStorage.getItem("empresa_id");
+
   }
 
   getActivaciones() {
@@ -197,4 +241,16 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  getUsuarios(empresaId: number) {
+    this.usuarioService.getByUsuario(null, empresaId.toString(), null).subscribe(res => {
+      this.usuariosList = res;
+    });
+  }
+
+  roles() {
+    let ids: string[] = ['1', '2', '5', '6']; //se envia los roles sin develop y propietario
+    this.usuarioService.getRolByIds(ids).subscribe(res => {
+      this.rolList = res;
+    });
+  }
 }

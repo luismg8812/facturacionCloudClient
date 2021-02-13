@@ -1443,7 +1443,7 @@ export class ImpresionService {
           posy = 63;
           row = 0;
           i = i + 1;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4,)
           this.crearHeader(factura, configuracion, (i + 1), numPaginas);
           this.doc.setFontType('normal');
           this.doc.setFontSize(9);
@@ -1478,7 +1478,7 @@ export class ImpresionService {
           let cajeros = res;
           let tipos = pagos
           let base64Image = 'data:image/jpg;base64,' + base64data;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4, 60,29)
           this.doc.setFontType('bold')
           this.doc.setFontSize(9);
           this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);
