@@ -1282,7 +1282,7 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
         this.imprimirFactura(numImpresiones, empr);
-        if (this.envioAutomaticoFEActivo) {
+        if (this.envioAutomaticoFEActivo && this.document.invoice_id==this.INVOICE_SIN_ENVIAR) {
           this.enviarDocumentos();//envia documento para facturacion electronica
         }
         this.limpiar();
