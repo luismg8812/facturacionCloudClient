@@ -831,12 +831,17 @@ export class VentasDiaComponent implements OnInit {
     // aqui voy toca verificar si el tipo de pago esta en la lista sino retorna con un mensaje  y va agregando tipos de pago hasta que se concrete el finally, hacer validaciones de topes maximos y minimos
     let tipoId = this.tipoPagoPV.nativeElement.value;
     let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
+   
     if (tipoId != "") {
       if (element.value <= 0 || element.value == "" || isNaN(element.value)) {
         alert("cantidad invalida");
         return;
       }
       let tipo = this.tipoPagosAll.find(usua => usua.tipo_pago_id == tipoId);
+      if (this.document.cliente_id == 1 && tipo.tipo_pago_id == this.TIPO_PAGO_CREDITO) {
+        alert("No existen los creditos para el cliente varios");
+        return;
+      }
       tipoPagoDocumento.nombre = tipo.nombre;
       tipoPagoDocumento.tipo_pago_id = tipoId;
       tipoPagoDocumento.valor = element.value;
