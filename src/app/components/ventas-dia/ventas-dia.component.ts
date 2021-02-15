@@ -1656,7 +1656,7 @@ export class VentasDiaComponent implements OnInit {
       console.log("no es numérico:" + element.value);
       return;
     }
-    if (element.value == null || element.value <= 0) {
+    if (element.value == null ||element.value == "" || element.value <= 0) {
       return;
     }
 
@@ -1743,11 +1743,14 @@ export class VentasDiaComponent implements OnInit {
     } else {
       if (cantidad != null && costo_publico != null) {
         if (this.productoIdSelect.varios) {
-          let precio: number = this.precioPV.nativeElement.value;
+          let precio = this.precioPV.nativeElement.value;
+          if(precio==''){
+            precio=costo_publico;
+          }
           console.log("precio");
           console.log(precio);
-          docDetalle.parcial = precio;
-          docDetalle.unitario = precio;
+          docDetalle.parcial = Number(precio);
+          docDetalle.unitario = Number(precio);
           this.precioPV.nativeElement.value = "";
         } else {
           docDetalle.parcial = cantidad * costo_publico;
