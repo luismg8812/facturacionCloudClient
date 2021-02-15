@@ -79,9 +79,7 @@ export class MenuComponent implements OnInit {
       this.nombreUsuario = localStorage.getItem('nombreUsuario');
       this.usuarioId = Number(localStorage.getItem("usuario_id"));
       this.opcionesSubmenu();
-
       this.getActivaciones();
-
       this.getUsuarios(this.empresaId);
       if (this.router.url == "/menu") {
         this.facturacionPV.nativeElement.focus();
