@@ -57,6 +57,7 @@ export class ImpresionService {
     texto.push('----------------------------------------\n');
     let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.total_facturas), 12);
     let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base), 12);
+    let abonos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.abonos), 12);
     let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques), 12);
     let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros), 12);
     let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0), 12);
@@ -73,6 +74,7 @@ export class ImpresionService {
     let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
 
     texto.push("Total Facturas:.........:" + totalFacturas + "\n");
+    texto.push("Abonos:................:" + abonos + "\n");
     texto.push("Base:...................:" + base + "\n");
     texto.push("Cheques Recogidos:.....: " + cheques + "\n");
     texto.push("Otros:.................: " + otros + "\n");
