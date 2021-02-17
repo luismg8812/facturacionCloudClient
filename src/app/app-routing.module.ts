@@ -13,7 +13,6 @@ import { MovimientoProductosComponent } from './movimiento-productos/movimiento-
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
 import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
-import { CarteraClientesComponent } from './cartera-clientes/cartera-clientes.component';
 import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
@@ -33,6 +32,7 @@ import { InfoMovimientoComponent } from './components/info-movimiento/info-movim
 import { TrasladoComponent } from './components/traslado/traslado.component';
 import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
 import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
+import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
