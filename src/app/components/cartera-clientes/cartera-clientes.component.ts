@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ClienteModel } from '../model/cliente.model';
-import { ClienteService } from '../services/cliente.service';
-import { DocumentoService } from '../services/documento.service';
-import { AbonoModel } from '../model/abono.model';
-import { DocumentoModel } from '../model/documento.model';
-import { TipoPagoModel } from '../model/tipoPago.model';
-import { AbonoService } from '../services/abono.service';
-import { async } from '@angular/core/testing';
+import { AbonoModel } from 'src/app/model/abono.model';
+import { ClienteModel } from 'src/app/model/cliente.model';
+import { DocumentoModel } from 'src/app/model/documento.model';
+import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
+import { TipoPagoModel } from 'src/app/model/tipoPago.model';
+import { AbonoService } from 'src/app/services/abono.service';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
+import { DocumentoService } from 'src/app/services/documento.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -23,6 +24,7 @@ export class CarteraClientesComponent implements OnInit {
   public cartera: any;
   public abonoNew: AbonoModel = new AbonoModel();
   public abonosDetalle: Array<AbonoModel> = [];
+  public itemsFactura: Array<DocumentoDetalleModel> = [];
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
@@ -30,6 +32,7 @@ export class CarteraClientesComponent implements OnInit {
 
   constructor(public clienteService: ClienteService,
     public abonoService: AbonoService,
+    public documentoDetalleService: DocumentoDetalleService,
     public documentoService: DocumentoService) { }
 
   ngOnInit() {
@@ -65,6 +68,10 @@ export class CarteraClientesComponent implements OnInit {
     } else {
       return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
     }
+  }
+
+  closeModal() {
+    $('#detalleDocumentoModal').modal('hide');
   }
 
   crearAbono() {
@@ -177,6 +184,14 @@ export class CarteraClientesComponent implements OnInit {
     } else {
       return tipo.nombre;
     }
+  }
+
+  detalleDocumento(documento: DocumentoModel) {
+    this.documentoSelect = documento;
+    this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
+      this.itemsFactura = res;
+      console.log("detalles encontrados:" + res.length);
+    });
   }
 
 }
