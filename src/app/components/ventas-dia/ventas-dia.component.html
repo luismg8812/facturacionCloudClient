@@ -141,7 +141,7 @@
                 (click)="teclaAnteriorSiguiente('u')">Ultima</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divBuscar" #divBuscar>
-            <button type="button" class="btn btn-primary btn-sm" id="buscarPV" #buscarPV
+            <button type="button" class="btn btn-primary btn-sm" id="buscarPV" #buscarPV data-toggle="modal" data-target="#buscarDocumentoXFech"
                 (keyup)="controlTeclas($event,buscarPV)" (keyup.enter)="enterTecla(buscarPV)">Buscar</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divModificar" #divModificar>
@@ -332,6 +332,11 @@
                     <div class="form-row ">
                         <div class="col col-ms-12 ">
                             <h6>Total a pagar: {{formatearNumber(document.total)}}</h6>
+                        </div>
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12 ">
+                            <h6>Saldo: {{formatearNumber(saldoTipoPago )}}</h6>
                         </div>
                     </div>
                     <div class="form-row ">

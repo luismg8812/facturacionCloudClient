@@ -15,6 +15,7 @@ import { DocumentoService } from './documento.service';
 import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/envioFacturacionElectronica.model';
 import { AppConfigService } from './app-config.service';
 import { ProductoModel } from '../model/producto.model';
+import { ParametrosModel } from '../model/parametros.model';
 
 
 @Injectable({
@@ -56,6 +57,7 @@ export class ImpresionService {
     texto.push('----------------------------------------\n');
     let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.total_facturas), 12);
     let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base), 12);
+    let abonos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.abonos), 12);
     let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques), 12);
     let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros), 12);
     let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0), 12);
@@ -72,6 +74,7 @@ export class ImpresionService {
     let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
 
     texto.push("Total Facturas:.........:" + totalFacturas + "\n");
+    texto.push("Abonos:................:" + abonos + "\n");
     texto.push("Base:...................:" + base + "\n");
     texto.push("Cheques Recogidos:.....: " + cheques + "\n");
     texto.push("Otros:.................: " + otros + "\n");
@@ -817,7 +820,14 @@ export class ImpresionService {
 
   imprimirFacturaPdf80(factura: FacturaModel, configuracion: ConfiguracionModel, exportar: boolean) {
     //console.log(new Buffer(AppConfigService.image).toString('base64'));
-    this.calculosService.getBase64ImageFromURL("assets/images/logoempresa.jpg").subscribe(base64data => {
+    let parametros: ParametrosModel = new ParametrosModel;
+    let imgData = "";
+    if (parametros.ambiente == 'cloud') {
+      imgData = factura.empresa.url_logo;
+    } else {
+      imgData = "assets/images/logoempresa.jpg";
+    }
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
       let base64Image = 'data:image/jpg;base64,' + base64data;
       this.doc = new jsPDF();
       this.doc.setFontSize(12);
@@ -1435,7 +1445,7 @@ export class ImpresionService {
           posy = 63;
           row = 0;
           i = i + 1;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4,)
           this.crearHeader(factura, configuracion, (i + 1), numPaginas);
           this.doc.setFontType('normal');
           this.doc.setFontSize(9);
@@ -1470,7 +1480,7 @@ export class ImpresionService {
           let cajeros = res;
           let tipos = pagos
           let base64Image = 'data:image/jpg;base64,' + base64data;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4, 60,29)
           this.doc.setFontType('bold')
           this.doc.setFontSize(9);
           this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);

@@ -44,16 +44,19 @@
         <th scope="col">Valor Factura</th>
         <th scope="col">Valor Crédito</th>
         <th scope="col">Saldo</th>
-       
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let ordenes of cartera">
         <th scope="row">
-          <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Detalle"
+          <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Detalle abonos"
             data-target="#detalleModal"  (click)="detalleAbonos(ordenes)" >
             <i class="fas fa-search"></i>
           </button>
+          <button type="button" class="btn btn-primary btn-sm" title="Detalle factura" data-toggle="modal"
+          data-target="#detalleDocumentoModal" (click)="detalleDocumento(ordenes)">
+          <i class="fas fa-search"></i>
+        </button>
           <!-- Button trigger modal -->
           <button type="button" class="btn btn-secondary btn-sm" title="Crear Abono" data-toggle="modal"
             data-target="#crearAbonoModal" (click)="selectDocumento(ordenes)">
@@ -71,10 +74,47 @@
         <td>{{formatearNumber(ordenes.total)}}</td>
         <td>{{formatearNumber(ordenes.valor)}}</td>
         <td>{{formatearNumber(ordenes.saldo)}}</td>
-        
       </tr>
     </tbody>
   </table>
+
+   <!-- Modal buscar -->
+   <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="detalleDocumentoModal"
+   aria-labelledby="mySmallModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-sm" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h5 class="modal-title" id="exampleModalCenterTitle">Detalle factura</h5>
+         <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+       <div class="modal-body">
+         Detalle Factura
+         <table class="table table-hover">
+           <thead>
+             <tr>
+               <th scope="col">Nombre Producto</th>
+               <th scope="col">Cantidad</th>
+               <th scope="col">Valor</th>
+             </tr>
+           </thead>
+           <tbody>
+             <tr *ngFor="let item of itemsFactura">
+               <td>{{item.descripcion}}</td>
+               <td>{{item.cantidad}}</td>
+               <td>{{formatearNumber(item.parcial)}}</td>
+
+             </tr>
+           </tbody>
+         </table>
+       </div>
+       <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+       </div>
+     </div>
+   </div>
+ </div>
 
   <!-- Modal detalle-->
 <div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

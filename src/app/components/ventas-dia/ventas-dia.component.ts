@@ -176,6 +176,8 @@ export class VentasDiaComponent implements OnInit {
   public ngxQrcode2: string = "123"
   public logoEmpresa: string;
 
+  public saldoTipoPago: number = 0;
+
 
   @ViewChild("CodigoBarrasPV") CodigoBarrasPV: ElementRef;
   @ViewChild("articuloPV") articuloPV: ElementRef;
@@ -829,12 +831,17 @@ export class VentasDiaComponent implements OnInit {
     // aqui voy toca verificar si el tipo de pago esta en la lista sino retorna con un mensaje  y va agregando tipos de pago hasta que se concrete el finally, hacer validaciones de topes maximos y minimos
     let tipoId = this.tipoPagoPV.nativeElement.value;
     let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
+   
     if (tipoId != "") {
       if (element.value <= 0 || element.value == "" || isNaN(element.value)) {
         alert("cantidad invalida");
         return;
       }
       let tipo = this.tipoPagosAll.find(usua => usua.tipo_pago_id == tipoId);
+      if (this.document.cliente_id == 1 && tipo.tipo_pago_id == this.TIPO_PAGO_CREDITO) {
+        alert("No existen los creditos para el cliente varios");
+        return;
+      }
       tipoPagoDocumento.nombre = tipo.nombre;
       tipoPagoDocumento.tipo_pago_id = tipoId;
       tipoPagoDocumento.valor = element.value;
@@ -855,6 +862,7 @@ export class VentasDiaComponent implements OnInit {
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
+    this.saldoTipoPago=Number(this.document.total)-suma;
     this.document.cambio = Number(suma) - Number(this.document.total);
     if (this.document.cambio < 0) {
       this.document.cambio = 0;
@@ -888,6 +896,7 @@ export class VentasDiaComponent implements OnInit {
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
+    this.saldoTipoPago=Number(this.document.total)-suma;
     this.document.cambio = Number(suma) - Number(this.document.total);
     if (suma < Number(this.document.total)) {
       this.tipoPagoPV.nativeElement.focus();
@@ -1278,7 +1287,7 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
         this.imprimirFactura(numImpresiones, empr);
-        if (this.envioAutomaticoFEActivo) {
+        if (this.envioAutomaticoFEActivo && this.document.invoice_id==this.INVOICE_SIN_ENVIAR) {
           this.enviarDocumentos();//envia documento para facturacion electronica
         }
         this.limpiar();
@@ -1652,7 +1661,7 @@ export class VentasDiaComponent implements OnInit {
       console.log("no es numérico:" + element.value);
       return;
     }
-    if (element.value == null || element.value <= 0) {
+    if (element.value == null ||element.value == "" || element.value <= 0) {
       return;
     }
 
@@ -1739,11 +1748,14 @@ export class VentasDiaComponent implements OnInit {
     } else {
       if (cantidad != null && costo_publico != null) {
         if (this.productoIdSelect.varios) {
-          let precio: number = this.precioPV.nativeElement.value;
+          let precio = this.precioPV.nativeElement.value;
+          if(precio==''){
+            precio=costo_publico;
+          }
           console.log("precio");
           console.log(precio);
-          docDetalle.parcial = precio;
-          docDetalle.unitario = precio;
+          docDetalle.parcial = Number(precio);
+          docDetalle.unitario = Number(precio);
           this.precioPV.nativeElement.value = "";
         } else {
           docDetalle.parcial = cantidad * costo_publico;
@@ -2213,6 +2225,7 @@ export class VentasDiaComponent implements OnInit {
     this.modificarFactura = false;
     this.saldoClienteActivo = false;
     this.saldoCliente = 0;
+    this.saldoTipoPago = 0;
     this.resolucionPV.nativeElement.value = "";
   }
 
@@ -2364,8 +2377,8 @@ export class VentasDiaComponent implements OnInit {
       this.valorTipoPagoPV.nativeElement.classList.add("d-none");
       this.tipoPagoPV.nativeElement.classList.add("d-none");
     }
+    this.saldoTipoPago=this.document.total;
     $("#imprimirModal").on('shown.bs.modal', () => {
-      //alert("entra");
       if (this.descuentosActivo) {
         this.descuentoPV.nativeElement.focus();
       } else {
