@@ -29,6 +29,14 @@ export class InformeDiarioComponent implements OnInit {
   public iva_5: number = 0;
   public iva_19: number = 0;
   public exento: number = 0;
+
+  public total_entrada: number = 0;
+  public gravable_5_entrada: number = 0;
+  public gravable_19_entrada: number = 0;
+  public iva_5_entrada: number = 0;
+  public iva_19_entrada: number = 0;
+  public exento_entrada: number = 0;
+
   public grupos: any;
   public subGrupos: any;
   public detalles: Array<DocumentoModel>;
@@ -97,6 +105,39 @@ export class InformeDiarioComponent implements OnInit {
     let formato: string = "";
     formato = new Intl.NumberFormat().format(number);
     return formato;
+  }
+
+  getEntradaSalidas(){
+    this.total_entrada= 0;
+    this.gravable_5_entrada = 0;
+    this.gravable_19_entrada = 0;
+    this.iva_5_entrada = 0;
+    this.iva_19_entrada = 0;
+    this.exento_entrada = 0;
+    let ini: string = this.fechaIni.nativeElement.value;
+    let fin: string = this.fechaFin.nativeElement.value;
+    if (ini != '' && fin != '') {
+      ini = this.calculosService.fechaIniBusqueda(this.fechaIni.nativeElement.value);
+      fin = this.calculosService.fechaFinBusqueda(this.fechaFin.nativeElement.value);
+    } else {
+      let date: Date = new Date();
+      date.setDate(1);
+      ini = date.toLocaleString();
+      date.setDate(30);
+      fin = date.toLocaleString();
+    }
+    let tipoDocumento:string='2';//entradas de almacen
+    this.documentoService.getDocumentosByFechaAndTipo(ini, fin,"", tipoDocumento,"", this.empresaId,"").subscribe(res => {
+      this.dias = res;
+      for (let dia of this.dias) {
+        this.total_entrada = Number(this.total_entrada) + Number(dia.total);
+        this.gravable_5_entrada = Number(this.gravable_5_entrada) + Number(dia.base_5);
+        this.gravable_19_entrada = Number(this.gravable_19_entrada) + Number(dia.base_19);
+        this.iva_5_entrada = Number(this.iva_5_entrada) + Number(dia.iva_5);
+        this.iva_19_entrada = Number(this.iva_19_entrada) + Number(dia.iva_19);
+        this.exento_entrada = Number(this.exento_entrada) + Number(dia.excento);
+      }
+    });
   }
 
   getInformeDiario() {

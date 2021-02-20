@@ -8,6 +8,7 @@ import { ActivacionModel } from 'src/app/model/activacion';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { UsuarioModel } from 'src/app/model/usuario.model';
 import { RolModel } from 'src/app/model/rol.model';
+import { ParametrosModel } from 'src/app/model/parametros.model';
 
 
 @Component({
@@ -63,13 +64,14 @@ export class MenuComponent implements OnInit {
     this.getEmpresas();
     this.roles();
     this.clienteService.getConfiguracionByEmpresa(this.empresaId.toString()).subscribe(res => {
+      let parametros: ParametrosModel = new ParametrosModel;
       if (res.length == 0) {
         alert("No existe una configuración para la empresa seleccionada");
         this.cerrarSesision();
         this.router.navigate(['/login']);
         return;
       }
-      if (res[0].server == 0) {
+      if (res[0].server == 0 && parametros.ambiente != 'cloud') {
         alert("Actualmente tiene inconvenientes con los datos y configuraciones iniciales, por favor comuniquese con soporte:\n Lisencias: 3185222474");
         this.cerrarSesision();
         this.router.navigate(['/login']);

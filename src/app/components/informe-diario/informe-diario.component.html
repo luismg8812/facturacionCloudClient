@@ -24,7 +24,9 @@
         </div>
         <div class="form-group col-md-4 col-sm-1">
           <div class="form-row">
-            <button type="button" class="btn btn-primary mb-2" >Ralación Entradas/Salidas</button>
+            <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#relacionModal" (click)="getEntradaSalidas()">
+              Ralación Entradas/Salidas
+            </button>
           </div>
         </div>
         <div class="form-group col-md-4 col-sm-1">  
@@ -152,6 +154,119 @@
       </div>
     </div>
   </div>
+
+ <!-- Modal -->
+<div class="modal fade" id="relacionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Relación Entradas y salidas</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm">
+            </div>
+            <div class="col-sm">
+              TOTAL
+            </div>
+            <div class="col-sm">
+              Gravable 5%
+            </div>
+            <div class="col-sm">
+              Gravable 19%
+            </div>
+            <div class="col-sm">
+              IVA 5%
+            </div>
+            <div class="col-sm">
+              IVA 19%
+            </div>
+            <div class="col-sm">
+              Exento
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm">
+              Ventas
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(total)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(gravable_5)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(gravable_19)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(iva_5)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(iva_19)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(exento)}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm">
+              Compras
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(total_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(gravable_5_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(gravable_19_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(iva_5_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(iva_19_entrada)}}
+            </div> 
+            <div class="col-sm">
+              {{formatearNumber(exento_entrada)}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm">
+              Diferencia
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(total-total_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(gravable_5-gravable_5_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(gravable_19-gravable_19_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(iva_5-iva_5_entrada)}}
+            </div>
+            <div class="col-sm">
+              {{formatearNumber(iva_19-iva_19_entrada)}}
+            </div> 
+            <div class="col-sm">
+              {{formatearNumber(exento-exento_entrada)}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="gruposModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
