@@ -57,6 +57,7 @@ export class ImpresionService {
     texto.push('----------------------------------------\n');
     let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.total_facturas), 12);
     let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base), 12);
+    let abonos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.abonos), 12);
     let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques), 12);
     let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros), 12);
     let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0), 12);
@@ -73,6 +74,7 @@ export class ImpresionService {
     let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
 
     texto.push("Total Facturas:.........:" + totalFacturas + "\n");
+    texto.push("Abonos:................:" + abonos + "\n");
     texto.push("Base:...................:" + base + "\n");
     texto.push("Cheques Recogidos:.....: " + cheques + "\n");
     texto.push("Otros:.................: " + otros + "\n");
@@ -1443,7 +1445,7 @@ export class ImpresionService {
           posy = 63;
           row = 0;
           i = i + 1;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4,)
           this.crearHeader(factura, configuracion, (i + 1), numPaginas);
           this.doc.setFontType('normal');
           this.doc.setFontSize(9);
@@ -1478,7 +1480,7 @@ export class ImpresionService {
           let cajeros = res;
           let tipos = pagos
           let base64Image = 'data:image/jpg;base64,' + base64data;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4, 60,29)
           this.doc.setFontType('bold')
           this.doc.setFontSize(9);
           this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);

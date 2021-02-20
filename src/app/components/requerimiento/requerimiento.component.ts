@@ -28,6 +28,7 @@ export class RequerimientoComponent implements OnInit {
   public req: RequerimientoModel = new RequerimientoModel();
   public total: number = 0;
   public obs:string ="";
+  public empresaSolicita:string="";
 
   constructor(public usuarioService: UsuarioService,
     public productoService: ProductoService,
@@ -41,6 +42,7 @@ export class RequerimientoComponent implements OnInit {
     this.fechasBusqueda();
     this.getEmpresas();
     this.getProductosByEmpresa(this.empresaId);
+    
   }
 
   fechasBusqueda() {
@@ -55,7 +57,6 @@ export class RequerimientoComponent implements OnInit {
   }
 
   crear() {
-
     this.req = new RequerimientoModel();
     this.req.empresa_id = this.empresaId;
     this.req.estado = 0;
@@ -63,9 +64,15 @@ export class RequerimientoComponent implements OnInit {
     this.req.usuario_id = this.usuarioId;
     $('#crearModal').modal('show');
     this.productosSelectList = [];
+    this.empresaSolicita=this.nombreEmpresa(this.req.empresa_id);
   }
 
   editar(r: RequerimientoModel) {
+    if(r.empresa_id!=this.empresaId){
+      alert("La empresa que realizó el requerimiento es diferente a su empresa:\nEmpresa Que solicita: "+this.nombreEmpresa(r.empresa_id)+
+      "\nSu empresa: "+this.nombreEmpresa(this.empresaId));
+    return;
+    }
     this.req = r;
     this.total = this.req.total;
     this.obs=this.req.observacion;
