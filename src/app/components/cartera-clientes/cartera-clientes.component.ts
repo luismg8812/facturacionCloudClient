@@ -3,11 +3,15 @@ import { AbonoModel } from 'src/app/model/abono.model';
 import { ClienteModel } from 'src/app/model/cliente.model';
 import { DocumentoModel } from 'src/app/model/documento.model';
 import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
+import { EmpresaModel } from 'src/app/model/empresa.model';
 import { TipoPagoModel } from 'src/app/model/tipoPago.model';
 import { AbonoService } from 'src/app/services/abono.service';
+import { CalculosService } from 'src/app/services/calculos.service';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
 import { DocumentoService } from 'src/app/services/documento.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -25,6 +29,8 @@ export class CarteraClientesComponent implements OnInit {
   public abonoNew: AbonoModel = new AbonoModel();
   public abonosDetalle: Array<AbonoModel> = [];
   public itemsFactura: Array<DocumentoDetalleModel> = [];
+  public empresa: EmpresaModel;
+  public logoEmpresa: string;
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
@@ -33,6 +39,9 @@ export class CarteraClientesComponent implements OnInit {
   constructor(public clienteService: ClienteService,
     public abonoService: AbonoService,
     public documentoDetalleService: DocumentoDetalleService,
+    public empresaService:EmpresaService,
+    public calculosService:CalculosService,
+    public impresionService:ImpresionService,
     public documentoService: DocumentoService) { }
 
   ngOnInit() {
@@ -40,6 +49,7 @@ export class CarteraClientesComponent implements OnInit {
     this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.getclientes(this.empresaId);
     this.getTipoPago();
+    this.getEmpresa();
   }
 
   detalleAbonos(documento) {
@@ -49,15 +59,14 @@ export class CarteraClientesComponent implements OnInit {
     this.selectDocumento(documento);
   }
 
-  imprimirInforme(documento:DocumentoModel) {
-    /*let informeDiario:InformeDiarioVOModel= new InformeDiarioVOModel();
-    informeDiario.informe_diario=informe;
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
-      informeDiario.empresa=res[0];
-      let tituloDocumento="informe_diario_"+this.calculosService.formatDate(informeDiario.informe_diario.fecha_informe,false)+"_"+informeDiario.empresa.nombre
-      informeDiario.tituloArchivo=tituloDocumento;
-      this.impresionService.imprimirInformeDiarioPDFCarta(informeDiario);
-    });*/
+  imprimirInforme(documento) {
+    this.abonoService.getAbonosByDocumento(documento.documento_id).subscribe(async abonos => {
+      let cliente = this.clientes.find(client => client.cliente_id == documento.cliente_id);   
+      let formato = ".txt";
+      let tituloDocumento: string = "soporte_abonos"+formato;
+      this.descargarArchivo(this.impresionService.imprimirAbonosCliente(this.empresa,  tituloDocumento,documento,cliente, abonos),tituloDocumento);
+    });
+    this.selectDocumento(documento);
   } 
 
   nombreClienteFun(id) {
@@ -191,6 +200,19 @@ export class CarteraClientesComponent implements OnInit {
     this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
       this.itemsFactura = res;
       console.log("detalles encontrados:" + res.length);
+    });
+  }
+
+  getEmpresa() {
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      this.empresa = res[0];
+      this.getLogoEmpresa(this.empresa.url_logo);
+    });
+  }
+
+  getLogoEmpresa(imgData: string) {
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
+      this.logoEmpresa = 'data:image/jpg;base64,' + base64data;
     });
   }
 

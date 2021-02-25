@@ -16,6 +16,9 @@ import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/env
 import { AppConfigService } from './app-config.service';
 import { ProductoModel } from '../model/producto.model';
 import { ParametrosModel } from '../model/parametros.model';
+import { ClienteModel } from '../model/cliente.model';
+import { AbonoModel } from '../model/abono.model';
+import { database } from 'firebase';
 
 
 @Injectable({
@@ -424,6 +427,48 @@ export class ImpresionService {
       type: 'text/plain'
     });
   }
+
+  imprimirAbonosCliente(empresa:EmpresaModel,nombreArchivo:string,documento,cliente:ClienteModel,abonos:Array<AbonoModel>){
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push('----------------------------------------\n');
+    texto.push(this.calculosService.centrarDescripcion(empresa.nombre, tamanoMax) + "\n");//nombre empresa
+    texto.push(this.calculosService.centrarDescripcion(empresa.slogan, tamanoMax) + "\n");//slogan
+    texto.push(this.calculosService.centrarDescripcion(empresa.represente, tamanoMax) + "\n");//representante
+    texto.push(this.calculosService.centrarDescripcion("NIT. " + empresa.nit + " - " + empresa.digito_verificacion + " " + empresa.regimen, tamanoMax) + "\n");//nit y regimen
+    texto.push(this.calculosService.centrarDescripcion(empresa.direccion, tamanoMax) + "\n");//direccion
+    texto.push(this.calculosService.centrarDescripcion(empresa.barrio, tamanoMax) + "\n");//barrio
+    texto.push(this.calculosService.centrarDescripcion("TEL: " + empresa.telefono_fijo + "-" + empresa.cel, tamanoMax) + "\n");//telefonos
+    texto.push('\n');
+    texto.push("ABONOS A FACTURA N°:" + documento.consecutivo_dian+ "\n");//consecutivo
+    texto.push("FECHA FACTURA: " + this.calculosService.cortarDescripcion(documento.fecha_registro, 19) + "\n");//fecha
+    texto.push("FECHA ACTUAL: " + this.calculosService.cortarDescripcion((new Date()).toLocaleDateString()+" "+(new Date()).toTimeString(), 19) + "\n");//fecha
+    
+      texto.push("CLIENTE: " + cliente.nombre + '\n');
+      texto.push("NIT/CC: " + cliente.documento + '\n');
+      texto.push("DIRECCIÓN: " + cliente.direccion + '\n');
+    
+    texto.push('----------------------------------------\n');
+    texto.push('FECHA                  #    VALOR PAGADO\n');
+    texto.push('----------------------------------------\n');
+    for (var i = 0; i < abonos.length; i++) {
+      let fecha: string = this.calculosService.cortarDescripcion(abonos[i].fecha_ingreso.toString(), 19)
+      let numeroAbono: string = this.calculosService.cortarCantidades(""+abonos[i].abono_id, 4);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(abonos[i].cantidad), 14);
+      texto.push(fecha + " " + numeroAbono + " " + totalProducto  + "\n");
+    }
+    texto.push('----------------------------------------\n');
+    texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:      ", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("info@effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push('\n');
+    texto.push('\n');
+    texto.push('\n');
+    return new Blob(texto, {
+      type: 'text/plain'
+    });
+  }
+
 
   imprimirFacturaTxt80(factura: FacturaModel, configuracion: ConfiguracionModel) {
     //Genera un objeto Blob con los datos en un archivo TXT

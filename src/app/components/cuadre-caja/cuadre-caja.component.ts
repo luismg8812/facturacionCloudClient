@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { CuadreCajaVoModel } from '../model/cuadreCajaVo.model';
-import { UsuarioService } from '../services/usuario.service';
-import { ActivacionModel } from '../model/activacion';
-import { DocumentoService } from '../services/documento.service';
-import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
-import { ClienteService } from '../services/cliente.service';
-import { EmpresaService } from '../services/empresa.service';
-import { ImpresionService } from '../services/impresion.service';
-import { EmpleadoService } from '../services/empleado.service';
-import { EmpleadoModel } from '../model/empleado.model';
-import { ProductoService } from '../services/producto.service';
-import { GrupoModel } from '../model/grupo.model';
+import { ActivacionModel } from 'src/app/model/activacion';
+import { CuadreCajaVoModel } from 'src/app/model/cuadreCajaVo.model';
+import { EmpleadoModel } from 'src/app/model/empleado.model';
+import { GrupoModel } from 'src/app/model/grupo.model';
+import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { DocumentoService } from 'src/app/services/documento.service';
+import { EmpleadoService } from 'src/app/services/empleado.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
+import { ProductoService } from 'src/app/services/producto.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
   selector: 'app-cuadre-caja',
@@ -43,9 +43,8 @@ export class CuadreCajaComponent implements OnInit {
     public clienteService: ClienteService,
     public productoService: ProductoService,
     public empleadoService: EmpleadoService) {
-    console.log("cuadre cargado");
+    console.log("cargando cuadre de caja");
     this.inicio();
-    console.log("cuadre cargado");
   }
 
   public cuadreCajaVo: CuadreCajaVoModel = new CuadreCajaVoModel();

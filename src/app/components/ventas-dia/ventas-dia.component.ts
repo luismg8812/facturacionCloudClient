@@ -862,11 +862,12 @@ export class VentasDiaComponent implements OnInit {
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
-    this.saldoTipoPago=Number(this.document.total)-suma;
+    
+    this.saldoTipoPago=Number(this.document.total)-Number(suma);
     this.document.cambio = Number(suma) - Number(this.document.total);
-    if (this.document.cambio < 0) {
-      this.document.cambio = 0;
-    }
+    //if (this.document.cambio < 0) {
+     // this.document.cambio = 0;
+    //}
     if (suma < Number(this.document.total) && tipoId != "") {
       this.tipoPagoPV.nativeElement.focus();
       this.tipoPagoPV.nativeElement.select();
