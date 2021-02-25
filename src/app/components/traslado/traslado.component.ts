@@ -9,6 +9,7 @@ import { CalculosService } from 'src/app/services/calculos.service';
 import { ProductoService } from 'src/app/services/producto.service';
 import { TrasladosService } from 'src/app/services/traslados.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
+import { ActivacionModel } from 'src/app/model/activacion';
 declare var jquery: any;
 declare var $: any;
 
@@ -30,6 +31,10 @@ export class TrasladoComponent implements OnInit {
   public empresaId: number;
   public productoIdSelect: ProductoModel;
   public usuarioId: number;
+  public activaciones: Array<ActivacionModel>;
+  public cantidadesNegativasActivo: boolean = false;
+
+  readonly CANTIDADES_NEGATIVAS: string = '28';
 
   constructor(public usuarioService: UsuarioService,
     public calculosService: CalculosService,
@@ -43,12 +48,13 @@ export class TrasladoComponent implements OnInit {
     this.fechasBusqueda();
     this.getEmpresas();
     this.getProductosByEmpresa(this.empresaId);
+    this.getActivaciones(this.usuarioId);
   }
 
   crearTraslado() {
     this.trasladoSelect = new TrasladoModel();
     this.trasladoSelect.usuario_crea_id = this.usuarioId;
-    this.trasladoDetalleSelectList=[];
+    this.trasladoDetalleSelectList = [];
     $('#crearTrasladoModal').modal('show');
 
   }
@@ -78,7 +84,7 @@ export class TrasladoComponent implements OnInit {
     }
     this.trasladosService.getTraslados(empresaOrigenId, empresaDestinoId, ini, fin, estado.value).subscribe(res => {
       this.trasladosList = res;
-    });  
+    });
   }
 
   selectEmpresaOrigen(empresaId) {
@@ -97,6 +103,16 @@ export class TrasladoComponent implements OnInit {
   seleccionarRequerimiento(requerimiento: RequerimientoModel) {
     this.trasladoSelect.requerimiento_id = requerimiento.requerimiento_id;
     this.trasladosService.getRequerimientoDetalleByRequerimientoId(requerimiento.requerimiento_id).subscribe(res => {
+      if (!this.cantidadesNegativasActivo) {
+        for (let t of this.productosSelectList) {
+          let p = this.productosAll.find(product => product.producto_id === t.producto_id);
+          if ((p.cantidad - t.cantidad) < 0) {
+            alert("Está solicitando " + t.cantidad + " unidades de " + p.nombre + " pero solo tiene " + p.cantidad + " en inventario");
+            return;
+          }
+        }
+      }
+
       this.productosSelectList = res;
       console.log(this.productosSelectList);
       for (let t of this.productosSelectList) {
@@ -114,6 +130,14 @@ export class TrasladoComponent implements OnInit {
     $('#BuscarRequerimientoModal').modal('hide');
   }
 
+  buscarRequerimiento(emprOrigen) {
+    if (emprOrigen.value == "") {
+      alert("Debe seleccionar una empresa origen primero");
+      return;
+    }
+    $('#BuscarRequerimientoModal').modal('show');
+  }
+
   desAgregar(d: TrasladoDetalleModel) {
     const index = this.trasladoDetalleSelectList.indexOf(d, 0);
     if (index > -1) {
@@ -128,7 +152,7 @@ export class TrasladoComponent implements OnInit {
     console.log(this.productoIdSelect);
   }
 
-  detalleTraslado(traslado:TrasladoModel){
+  detalleTraslado(traslado: TrasladoModel) {
     $('#detalleModal').modal('show');
     this.trasladoSelect = traslado;
     this.trasladosService.getTrasladoDetalleByTrasladoId(traslado.traslado_id).subscribe(res => {
@@ -144,6 +168,11 @@ export class TrasladoComponent implements OnInit {
     console.log(this.productoIdSelect);
     if (this.productoIdSelect == undefined) {
       alert("producto no valido");
+      return;
+    }
+
+    if ((Number(this.productoIdSelect.cantidad) - Number(cantidad.value)) < 0) {
+      alert("La cantidad solicita no se encuentra en inventario");
       return;
     }
 
@@ -190,23 +219,23 @@ export class TrasladoComponent implements OnInit {
   }
 
   confirmarTraslado() {
-    if(this.trasladoSelect.empresa_destino_id==null){
+    if (this.trasladoSelect.empresa_destino_id == null) {
       alert("La empresa destino es obligatoria");
       return;
     }
-    if(this.trasladoSelect.empresa_origen_id==null){
+    if (this.trasladoSelect.empresa_origen_id == null) {
       alert("La empresa origen es obligatoria");
       return;
     }
-    if(this.trasladoDetalleSelectList.length==0){
+    if (this.trasladoDetalleSelectList.length == 0) {
       alert("Debe agregar productos para poderlos transfeir");
       return;
     }
-    if((this.trasladoSelect.empresa_origen_id!=null)&& 
-       (this.trasladoSelect.empresa_destino_id==null)&&
-      (this.trasladoSelect.empresa_origen_id==this.trasladoSelect.empresa_destino_id)){
-        alert("La empresa de destino y origen no pueden ser iguales");
-        return;
+    if ((this.trasladoSelect.empresa_origen_id != null) &&
+      (this.trasladoSelect.empresa_destino_id == null) &&
+      (this.trasladoSelect.empresa_origen_id == this.trasladoSelect.empresa_destino_id)) {
+      alert("La empresa de destino y origen no pueden ser iguales");
+      return;
     }
     console.log(this.trasladoSelect);
     if (this.trasladoSelect.traslado_id == null) {
@@ -225,7 +254,7 @@ export class TrasladoComponent implements OnInit {
           }
           if (this.trasladoSelect.requerimiento_id != null) {
             this.trasladosService.getRequerimientoById(this.trasladoSelect.requerimiento_id).subscribe(res => {//falta
-              res[0].estado=1;
+              res[0].estado = 1;
               this.trasladosService.updateRequerimiento(res[0]).subscribe();
             });
           }
@@ -289,6 +318,19 @@ export class TrasladoComponent implements OnInit {
   getProductosByEmpresa(empresaId: number) {
     this.productoService.getProductosByEmpresa(empresaId.toString()).subscribe(res => {
       this.productosAll = res;
+    });
+  }
+
+  getActivaciones(user: number) {
+    this.usuarioService.getActivacionByUsuario(user.toString()).subscribe(res => {
+      this.activaciones = res;
+      for (var e = 0; e < this.activaciones.length; e++) {
+        if (this.activaciones[e].activacion_id == this.CANTIDADES_NEGATIVAS) {
+          console.log("facturar cantidades negativas activo ");
+          this.cantidadesNegativasActivo = true;
+        }
+
+      }
     });
   }
 }
