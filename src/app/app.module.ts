@@ -16,7 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { EmpresaComponent } from './empresa/empresa.component';
-import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
+import { CuadreCajaComponent } from './components/cuadre-caja/cuadre-caja.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
 import { SocketService } from './services/socket.service';
@@ -52,6 +52,7 @@ import { TrasladoComponent } from './components/traslado/traslado.component';
 import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
 import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
 import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
+import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -95,7 +96,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     RequerimientoComponent,
     TrasladoComponent,
     AceptacionMercanciaComponent,
-    ReporteTercerosComponent
+    ReporteTercerosComponent,
+    ControlInventarioComponent
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,7 @@ import { MailModel } from 'src/app/facturacion.cloud.model/mail.model';
 import { ActivacionModel } from 'src/app/model/activacion';
 import { ClienteModel } from 'src/app/model/cliente.model';
 import { ConfiguracionModel } from 'src/app/model/configuracion.model';
+import { ControlInventarioModel } from 'src/app/model/controlInventario.model';
 import { DocumentoModel } from 'src/app/model/documento.model';
 import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
 import { DocumentoInvoiceModel } from 'src/app/model/documentoInvoice.model';
@@ -31,6 +32,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 import { CalculosService } from 'src/app/services/calculos.service';
 import { CierreService } from 'src/app/services/cierre.service';
 import { ClienteService } from 'src/app/services/cliente.service';
+import { ControlInventarioService } from 'src/app/services/control-inventario.service';
 import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { EmpleadoService } from 'src/app/services/empleado.service';
@@ -101,6 +103,7 @@ export class VentasDiaComponent implements OnInit {
   constructor(public usuarioService: UsuarioService,
     public clienteService: ClienteService,
     public productoService: ProductoService,
+    public controlInventarioService:ControlInventarioService,
     public empleadoService: EmpleadoService,
     public socketService: SocketService,
     public cierreService: CierreService,
@@ -862,11 +865,12 @@ export class VentasDiaComponent implements OnInit {
     for (let sum of this.tiposPagosDocumento) {
       suma = suma + Number(sum.valor);
     }
-    this.saldoTipoPago=Number(this.document.total)-suma;
+    
+    this.saldoTipoPago=Number(this.document.total)-Number(suma);
     this.document.cambio = Number(suma) - Number(this.document.total);
-    if (this.document.cambio < 0) {
-      this.document.cambio = 0;
-    }
+    //if (this.document.cambio < 0) {
+     // this.document.cambio = 0;
+    //}
     if (suma < Number(this.document.total) && tipoId != "") {
       this.tipoPagoPV.nativeElement.focus();
       this.tipoPagoPV.nativeElement.select();
@@ -1623,6 +1627,7 @@ export class VentasDiaComponent implements OnInit {
       product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
     }
     this.restarCantidadesSubProducto(anterior, operacion);
+    this.controlInventario(anterior, operacion);
     this.productoService.updateCantidad(product).subscribe(res => {
       if (res.code == 200) {
         this.productoIdSelect = product;
@@ -1630,6 +1635,20 @@ export class VentasDiaComponent implements OnInit {
       } else {
         alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
         return;
+      }
+    });
+  }
+
+  controlInventario(anterior: DocumentoDetalleModel, operacion: string){
+    this.controlInventarioService.getControlInventarioByProductoId(anterior.producto_id).subscribe(res => {
+      if(res.length>0){
+        let ci:ControlInventarioModel=res[0];
+        if (operacion == 'suma') {
+          ci.venta = Number(ci.venta) - Number(anterior.cantidad);
+        } else {
+          ci.venta = Number(ci.venta) + Number(anterior.cantidad);
+        }
+        this.controlInventarioService.updateControlInventario(ci).subscribe();
       }
     });
   }
