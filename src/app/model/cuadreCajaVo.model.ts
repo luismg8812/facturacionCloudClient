@@ -29,6 +29,8 @@ export class CuadreCajaVoModel {
     public retiro_caja: number;
 
     constructor(){
+        this.grupos=[];
+        this.SubGrupos=[];
         this.total_facturas=0;
         this.total_notas=0;
         this.documentos_no_impresos=0;

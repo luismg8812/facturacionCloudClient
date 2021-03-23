@@ -33,6 +33,7 @@ import { TrasladoComponent } from './components/traslado/traslado.component';
 import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
 import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
 import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
+import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -67,6 +68,7 @@ const routes: Routes = [
    { path: 'traslado', component: TrasladoComponent},
    { path: 'aceptacionMercancia', component: AceptacionMercanciaComponent},
    { path: 'reporteTerceros', component: ReporteTercerosComponent},
+   { path: 'controlImventario', component: ControlInventarioComponent},
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
    { path: '**', redirectTo: '/', pathMatch: 'full' },

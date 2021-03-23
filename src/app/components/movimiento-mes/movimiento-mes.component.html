@@ -16,7 +16,8 @@
                 </div>
             </div>
         </div>
-        <div class="form-group col-md-2 col-sm-2"><b>Fecha:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+        <div class="form-group col-md-2 col-sm-2"><b>Fecha:</b> 
+            <input class="form-control" type="date" id="fechaIniBuscar"  (blur)="fechaDocumento(fechaIniBuscar1)" #fechaIniBuscar1> 
         </div>
         <div class="form-group col-md-4 col-sm-2">
             <input list="browsers" name="proveedorPV" #proveedorPV placeholder="Proveedor" class="form-control"
@@ -406,24 +407,24 @@
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Precio de compra
-              <input class="form-control" id="costo" placeholder="* Precio de compra"
+              <input class="form-control" id="costoPV" placeholder="* Precio de compra"
               name="costoPV" #costoPV required [(ngModel)]="productoNew.costo">
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Precio de venta
-              <input class="form-control" id="costoPublicoPV" placeholder="* Precio de venta"
-              name="costoPublicoPV" #costoPublicoPV required [(ngModel)]="productoNew.costo_publico">
+              <input class="form-control" id="costoPublicoCrearPV" placeholder="* Precio de venta"
+              name="costoPublicoPV" #costoPublicoCrearPV required [(ngModel)]="productoNew.costo_publico">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Impuesto
-              <input class="form-control" id="impuestoPV" placeholder="Iva o Ipoconsumo"
-              name="impuestoPV" #impuestoPV required [(ngModel)]="productoNew.impuesto">
+              <input class="form-control" id="impuestoPVCrear" placeholder="Iva o Ipoconsumo"
+              name="impuestoPVCrear" #impuestoPVCrear required [(ngModel)]="productoNew.impuesto">
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Stock Mínimo
-              <input class="form-control" id="stockMin" placeholder="Stock mínimo" name="stockMin" #stockMin
+              <input class="form-control" id="stockMinCrear" placeholder="Stock mínimo" name="stockMinCrear" #stockMinCrear
                 required [(ngModel)]="productoNew.stock_min">
             </div>
           </div>
@@ -435,7 +436,7 @@
             </div>
             <div class="form-group col-md-6 col-sm-6">
               Codigo de barras
-              <input class="form-control" id="codBarrasPv" placeholder="Codigo de barras" name="codBarrasPv"
+              <input class="form-control" id="codBarrasPvCrear" placeholder="Codigo de barras" name="codBarrasPv"
                 #codBarrasPv required [(ngModel)]="productoNew.codigo_barras">
             </div>
           </div>
@@ -443,7 +444,7 @@
              
             <div class="form-group col-md-6 col-sm-6">    
                 % ganancia      
-              <input class="form-control" id="ganancia" placeholder="% ganancia" name="ganancia" #ganancia required
+              <input class="form-control" id="gananciaCrear" placeholder="% ganancia" name="gananciaCrear" #gananciaCrear required
                 [(ngModel)]="productoNew.porcentaje_venta">
             </div>
             <div class="form-group col-md-6 col-sm-6">
@@ -455,8 +456,8 @@
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-6">
               Peso
-              <input class="form-control" id="peso"  placeholder="peso"
-                name="peso" #peso required [(ngModel)]="productoNew.peso">
+              <input class="form-control" id="pesoCrear"  placeholder="peso"
+                name="pesoCrear" #pesoCrear required [(ngModel)]="productoNew.peso">
             </div>
             <div class="form-group col-md-6 col-sm-6">
                 Proveedor
@@ -472,22 +473,22 @@
           <div class="form-row">
             <div class="form-group col-md-3 col-sm-6">
               Balanza
-              <input class="form-control" id="BalanzaPV"  placeholder="1 o 0"
+              <input class="form-control" id="BalanzaPVCrear"  placeholder="1 o 0"
                 name="peso" #peso required [(ngModel)]="productoNew.balanza">
             </div>
             <div class="form-group col-md-3 col-sm-6">
               Varios
-              <input class="form-control" id="varios"  placeholder="1 o 0"
-                name="varios" #varios required [(ngModel)]="productoNew.varios">
+              <input class="form-control" id="variosCrear"  placeholder="1 o 0"
+                name="variosCrear" #variosCrear required [(ngModel)]="productoNew.varios">
             </div>
             <div class="form-group col-md-3 col-sm-6">
               Sub producto
-              <input class="form-control" id="subproducto"  placeholder="1 o 0"
-                name="subproducto" #subproducto required [(ngModel)]="productoNew.sub_producto">
+              <input class="form-control" id="subproductoCrear"  placeholder="1 o 0"
+                name="subproductoCrear" #subproductoCrear required [(ngModel)]="productoNew.sub_producto">
             </div>
             <div class="form-group col-md-3 col-sm-6">
                 Granel
-                <input class="form-control" id="subproducto"  placeholder="1 o 0"
+                <input class="form-control" id="granelCrear"  placeholder="1 o 0"
                   name="granel" #granel required [(ngModel)]="productoNew.granel">
               </div>
           </div>
@@ -504,24 +505,24 @@
                   <div class="form-row">
                     <div class="form-group col-md-6 col-sm-6">
                       Lote
-                      <input class="form-control" id="lote" name="lote" #lote required
+                      <input class="form-control" id="loteCrear" name="loteCrear" #loteCrear required
                         [(ngModel)]="productoNew.lote">
                     </div>
                     <div class="form-group col-md-6 col-sm-6">
                       CUM 
-                      <input class="form-control" id="cum" name="cum" #cum required
+                      <input class="form-control" id="cumCrear" name="cumCrear" #cumCrear required
                         [(ngModel)]="productoNew.cum">
                     </div>
                   </div>
                   <div class="form-row">
                     <div class="form-group col-md-6 col-sm-6">
                       Registro invima
-                      <input class="form-control" id="registro_sanitario" name="registro_sanitario" #registro_sanitario required
+                      <input class="form-control" id="registro_sanitarioCrear" name="registro_sanitarioCrear" #registro_sanitarioCrear required
                         [(ngModel)]="productoNew.registro_sanitario">
                     </div>
                     <div class="form-group col-md-6 col-sm-6">
                       Laboratorio 
-                      <input class="form-control" id="laboratorio" name="laboratorio" #laboratorio required
+                      <input class="form-control" id="laboratorioCrear" name="laboratorio" #laboratorioCrear required
                         [(ngModel)]="productoNew.laboratorio">
                     </div>
                   </div>
