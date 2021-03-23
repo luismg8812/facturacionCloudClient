@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivacionModel } from 'src/app/model/activacion';
 import { ConfiguracionModel } from 'src/app/model/configuracion.model';
+import { ControlInventarioModel } from 'src/app/model/controlInventario.model';
 import { DocumentoModel } from 'src/app/model/documento.model';
 import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
 import { EmpresaModel } from 'src/app/model/empresa.model';
@@ -18,6 +19,7 @@ import { TipoPagoDocumentoModel } from 'src/app/model/tipoPagoDocumento.model';
 import { CalculosService } from 'src/app/services/calculos.service';
 import { CierreService } from 'src/app/services/cierre.service';
 import { ClienteService } from 'src/app/services/cliente.service';
+import { ControlInventarioService } from 'src/app/services/control-inventario.service';
 import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { EmpresaService } from 'src/app/services/empresa.service';
@@ -167,6 +169,7 @@ export class MovimientoMesComponent implements OnInit {
     public calculosService: CalculosService,
     public documentoDetalleService: DocumentoDetalleService,
     public productoService: ProductoService,
+    public controlInventarioService:ControlInventarioService,
     private router: Router,
     public socketService: SocketService,
     public clienteService: ClienteService,
@@ -559,6 +562,7 @@ export class MovimientoMesComponent implements OnInit {
       product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
     }
     this.restarCantidadesSubProducto(anterior);
+    this.controlInventario(anterior, operacion);
     this.productoService.updateCantidad(product).subscribe(res => {
       if (res.code == 200) {
         this.productoIdSelect = product;
@@ -566,6 +570,20 @@ export class MovimientoMesComponent implements OnInit {
       } else {
         alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
         return;
+      }
+    });
+  }
+
+  controlInventario(anterior: DocumentoDetalleModel, operacion: string){
+    this.controlInventarioService.getControlInventarioByProductoId(anterior.producto_id).subscribe(res => {
+      if(res.length>0){
+        let ci:ControlInventarioModel=res[0];
+        if (operacion == 'suma') {
+          ci.entrada = Number(ci.entrada) + Number(anterior.cantidad);
+        } else {
+          ci.entrada = Number(ci.entrada) - Number(anterior.cantidad);
+        }
+        this.controlInventarioService.updateControlInventario(ci).subscribe();
       }
     });
   }
@@ -944,7 +962,7 @@ export class MovimientoMesComponent implements OnInit {
   fechaDocumento(element) {
     if (this.document.documento_id == "") {
       alert("Para actualizar la fecha debe crear un nuevo documento o cargar uno");
-      element.value="";
+      element.value = "";
       return;
     }
     this.document.fecha_registro = element.value;
@@ -1291,33 +1309,25 @@ export class MovimientoMesComponent implements OnInit {
     docDetalle.costo_producto = this.productoIdSelect.costo;
     docDetalle.fecha_registro = this.calculosService.fechaActual();
     docDetalle.estado = 1;
-    //se valida promocion
-    if (this.calculosService.validarPromo(this.productoIdSelect, cantidad)) {
-      let precioPromo: number = this.productoIdSelect.pub_promo;
-      let cantidadPromo: number = this.productoIdSelect.kg_promo;
-      let unitarioPromo: number = precioPromo / cantidadPromo;
-      docDetalle.parcial = cantidad * unitarioPromo;
-      docDetalle.unitario = unitarioPromo;
-    } else {
-      if (cantidad != null && costo_publico != null) {
-        if (this.productoIdSelect.varios) {
-          let precio: number = this.precioPV.nativeElement.value;
-          console.log("precio");
-          console.log(precio);
-          docDetalle.parcial = precio;
-          docDetalle.unitario = precio;
-          this.precioPV.nativeElement.value = "";
-        } else {
-          docDetalle.parcial = cantidad * costo_publico;
-          docDetalle.unitario = costo_publico;
-        }
+    //se quita el condicional que valida promocion
+    if (cantidad != null && costo_publico != null) {
+      if (this.productoIdSelect.varios) {
+        let precio: number = this.precioPV.nativeElement.value;
+        console.log("precio");
+        console.log(precio);
+        docDetalle.parcial = precio;
+        docDetalle.unitario = precio;
+        this.precioPV.nativeElement.value = "";
       } else {
-        docDetalle.parcial = 0;
-        docDetalle.unitario = 0;
+        docDetalle.parcial = cantidad * costo_publico;
+        docDetalle.unitario = costo_publico;
       }
+    } else {
+      docDetalle.parcial = 0;
+      docDetalle.unitario = 0;
     }
     console.log(docDetalle);
-    if (this.document.tipo_documento_id == null) {//si es nulo se asigna factura por defecto
+    if (this.document.tipo_documento_id == null) {//si es nulo se asigna entrada de almacen por defecto
       this.document.tipo_documento_id = this.TIPO_DOCUMENTO_ENTRADA_ALMACEN;
     }
     this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
