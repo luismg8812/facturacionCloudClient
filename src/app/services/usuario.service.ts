@@ -13,6 +13,7 @@ import { ProporcionModel } from '../model/proporcion.model';
 import { ActivacionUsuarioModel } from '../model/activacionUsuario.model';
 import { CampoInventarioModel } from '../model/campoInventario.model';
 import { EmpleadoModel } from '../model/empleado.model';
+import { EmpresaModel } from '../model/empresa.model';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +60,10 @@ export class UsuarioService {
 
   public opcionUsuarioByUsuario(usuarioId: string, menuId: string) {
     return this.http.get<SubMenuModel[]>(this.server_api + '/usuario/opcionUsuarioByUsuario?usuarioId=' + usuarioId + '&menuId=' + menuId);
+  }
+
+  public getEmpresas(){
+    return this.http.get<EmpresaModel[]>(this.server_api+'/usuario/getEmpresas');
   }
 
   public opcionPuntoVentaByUsuario(usuarioId: string) {

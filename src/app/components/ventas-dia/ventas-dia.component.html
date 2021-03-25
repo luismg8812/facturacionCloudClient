@@ -141,7 +141,7 @@
                 (click)="teclaAnteriorSiguiente('u')">Ultima</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divBuscar" #divBuscar>
-            <button type="button" class="btn btn-primary btn-sm" id="buscarPV" #buscarPV
+            <button type="button" class="btn btn-primary btn-sm" id="buscarPV" #buscarPV data-toggle="modal" data-target="#buscarDocumentoXFech"
                 (keyup)="controlTeclas($event,buscarPV)" (keyup.enter)="enterTecla(buscarPV)">Buscar</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divModificar" #divModificar>
@@ -219,15 +219,15 @@
         </div>
     </div>
     <div class="form-row" *ngIf="productoPreciosActivo">
-        <div class=" col-sm-1 col-md-1 "  >Precio 2: {{formatearNumber(productoPreciosSelect.precio_2)}}</div>
-        <div class="col-sm-1 col-md-1 "  >Precio 3: {{formatearNumber(productoPreciosSelect.precio_3)}}</div>
-        <div class="col-sm-1 col-md-1 "  >Precio 4: {{formatearNumber(productoPreciosSelect.precio_4)}}</div>
-        <div class="col-sm-1 col-md-1 "  >Precio 5: {{formatearNumber(productoPreciosSelect.precio_5)}}</div>
-        <div class="col-sm-1 col-md-1 "  >Precio 6: {{formatearNumber(productoPreciosSelect.precio_6)}}</div>
-        <div class="col-sm-1 col-md-1 "  >Precio 7: {{formatearNumber(productoPreciosSelect.precio_7)}}</div>
-        <div class="col-sm-1 col-md-1 "  >Precio 8: {{formatearNumber(productoPreciosSelect.precio_8)}}</div>
-        <div class="col-sm-1 col-md-1 "  >Precio 9: {{formatearNumber(productoPreciosSelect.precio_9)}}</div>
-        <div class="col-sm-1 col-md-2 "  >Precio 10: {{formatearNumber(productoPreciosSelect.precio_10)}}</div>
+        <div class=" col-sm-1 col-md-1 ">Precio 2: {{formatearNumber(productoPreciosSelect.precio_2)}}</div>
+        <div class="col-sm-1 col-md-1 ">Precio 3: {{formatearNumber(productoPreciosSelect.precio_3)}}</div>
+        <div class="col-sm-1 col-md-1 ">Precio 4: {{formatearNumber(productoPreciosSelect.precio_4)}}</div>
+        <div class="col-sm-1 col-md-1 ">Precio 5: {{formatearNumber(productoPreciosSelect.precio_5)}}</div>
+        <div class="col-sm-1 col-md-1 ">Precio 6: {{formatearNumber(productoPreciosSelect.precio_6)}}</div>
+        <div class="col-sm-1 col-md-1 ">Precio 7: {{formatearNumber(productoPreciosSelect.precio_7)}}</div>
+        <div class="col-sm-1 col-md-1 ">Precio 8: {{formatearNumber(productoPreciosSelect.precio_8)}}</div>
+        <div class="col-sm-1 col-md-1 ">Precio 9: {{formatearNumber(productoPreciosSelect.precio_9)}}</div>
+        <div class="col-sm-1 col-md-2 ">Precio 10: {{formatearNumber(productoPreciosSelect.precio_10)}}</div>
     </div>
     <div class="form-row col-md-12 ">
         <div class="form-group col-md-9 col-sm-6 border border-primary ">
@@ -336,6 +336,11 @@
                     </div>
                     <div class="form-row ">
                         <div class="col col-ms-12 ">
+                            <h6>Saldo: {{formatearNumber(saldoTipoPago )}}</h6>
+                        </div>
+                    </div>
+                    <div class="form-row ">
+                        <div class="col col-ms-12 ">
                             <h6 #descuentoLavel name="descuentoLavel" id="descuentoLavel" class="d-none">Descuento:
                             </h6>
                             <input name="descuentoPV" #descuentoPV placeholder="Descuento" class="form-control d-none"
@@ -369,7 +374,7 @@
                                 data-toggle="tooltip" title="" (keydown.enter)="enterTecla(tipoPagoPV)"
                                 (keydown.esc)="scapeTecla(tipoPagoPV)">
                         </div>
-                        <div class="col col-ms-6">
+                        <div class="col col-md-6">
                             <h6 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">
                                 Valor
                                 pago: </h6>
@@ -380,12 +385,18 @@
 
                     </div>
                     <div class="form-row " *ngFor="let tipos of tiposPagosDocumento">
-                        <div class="col col-ms-6">
+                        <div class="col col-md-6">
                             <h6>Tipo de Pago: {{nombreTipoPago(tipos.tipo_pago_id) }} </h6>
 
                         </div>
-                        <div class="col col-ms-6">
-                            <h6>Valor pago: {{tipos.valor }} </h6>
+                        <div class="col col-md-4">
+                            <h6>Valor: {{formatearNumber(tipos.valor) }} </h6>
+                        </div>
+                        <div class="col col-ms-2">
+                            <button type="button" class="btn btn-outline-danger" id="{{tipos.tipo_pago_id}}" 
+                            (click)="eliminarTipoPago(tipos)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                         </div>
                     </div>
                     <div class="form-row ">

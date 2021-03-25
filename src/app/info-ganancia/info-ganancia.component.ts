@@ -44,7 +44,7 @@ export class InfoGananciaComponent implements OnInit {
         fin = date.toLocaleString();
       }
       this.documentoService.getGananciaDocumentos(ini, fin,this.empresaId).subscribe(res => {
-        console.log(res)
+        console.log(res) 
         this.totalVentas = res[0].total_ventas;
         this. totalVentasCostos= res[0].total_costos_ventas
         this. totalRemisiones= res[0].total_remisiones
