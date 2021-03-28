@@ -6,6 +6,7 @@ import { GrupoModel } from '../model/grupo.model';
 import { SubGrupoModel } from '../model/subGrupo.model';
 import { ProductoPreciosModel } from '../model/productoPrecios.model';
 import { SubProductoModel } from '../model/subProducto.model';
+import { AuditoriaModel } from '../model/auditoria.model';
 
 
 @Injectable({
@@ -73,6 +74,12 @@ export class ProductoService {
   public saveProducto(productoId:ProductoModel){
     return this.http.put<any>(this.server_api+'/producto/saveProducto',productoId);
   }
+
+  public saveAuditoria(auditoriaId:AuditoriaModel){
+    return this.http.put<any>(this.server_api+'/producto/saveAuditoria',auditoriaId);
+  }
+
+  
 
   public saveSubProducto(subProductoId:SubProductoModel){
     return this.http.put<any>(this.server_api+'/producto/saveSubProducto',subProductoId); 
