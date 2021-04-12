@@ -441,6 +441,7 @@ export class CalculosService {
 	}
 
 	enunciadoEmailFE(empresa:EmpresaModel,docu:DocumentoModel){
+		let linkDescarga ="https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=";
 		let enunciado=`<p> Estimado Cliente,</p>
 		<b/>
 		<p>___________________________________________________________________________</p>
@@ -470,7 +471,12 @@ export class CalculosService {
 		<p>Si su factura presenta algún error, le agradecemos a más tardar dentro de las siguientes 48 horas, dar “click” al “link” de rechazo que aparece en este correo. </p>
 		<p>Saludos cordiales,</p>
 		<p><b/></p>
+		<p><b/></p>
+		<p><b/></p>
+		<p><b/></p>
+		<div><p>Estimado cliente</p></div><div><p>Para revizar su factura electrónica por favor dar click en el siguiente link</p></div><div><a href="'${linkDescarga} ${docu.cufe}'">DESCARGAR AQUI!</a></div>
 		<p>EFFECTIVE SOFTWARE (Sistemas de facturacón e inventario)</p>
+		
 		`;
 		return enunciado;
 	}
