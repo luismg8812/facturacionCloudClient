@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { AuditoriaModel } from 'src/app/model/auditoria.model';
 import { CampoInventarioModel } from 'src/app/model/campoInventario.model';
 import { GrupoModel } from 'src/app/model/grupo.model';
 import { ProductoModel } from 'src/app/model/producto.model';
@@ -465,33 +466,48 @@ export class InventarioFisicoComponent implements OnInit {
 
   cambioPrecioLista(producto: ProductoModel, element) {
     console.log(element.value);
-
+    let auditoria:AuditoriaModel=new AuditoriaModel();
+    auditoria.aplicativo="inventario fisico";
+    auditoria.empresa_id= this.empresaId;
+    auditoria.observacion=" se cambia datos del producto id="+producto.producto_id+" "+producto.nombre;
+    auditoria.usuario_id=this.usuarioId;
+    auditoria.accion_auditoria_id=1; // cambios por inventario fisico
     this.mensaje = "Producto Editado: " + producto.nombre + " valor actual: " + element.value;
     if (element.id.substr(0, 7) == 'nombre_') {
       this.mensaje = this.mensaje.replace("valor", "nombre");
       this.mensaje = this.mensaje + " nombre anterior: " + producto.nombre;
       console.log(producto.nombre);
+      auditoria.valor_actual=producto.nombre;
+      auditoria.valor_anterior=element.value;
       producto.nombre = element.value;
     }
     if (element.id.substr(0, 9) == 'cantidad_') {
       this.mensaje = this.mensaje.replace("valor", "cantidad");
       this.mensaje = this.mensaje + " cantidad anterior: " + producto.cantidad;
+      auditoria.valor_actual=""+producto.cantidad;
+      auditoria.valor_anterior=element.value;
       producto.cantidad = element.value;
     }
     if (element.id.substr(0, 6) == 'costo_') {
       this.mensaje = this.mensaje.replace("valor", "costo");
       this.mensaje = this.mensaje + " costo anterior: " + producto.costo;
+      auditoria.valor_actual=""+producto.costo;
+      auditoria.valor_anterior=element.value;
       producto.costo = element.value;
     }
     if (element.id.substr(0, 8) == 'publico_') {
       this.mensaje = this.mensaje.replace("valor", "costo publico");
       this.mensaje = this.mensaje + " costo publico anterior: " + producto.costo_publico;
+      auditoria.valor_actual=""+producto.costo_publico;
+      auditoria.valor_anterior=element.value;
       producto.costo_publico = element.value;
     }
     if (element.id.substr(0, 9) == 'impuesto_') {
       this.mensaje = this.mensaje.replace("valor", "impuesto");
       this.mensaje = this.mensaje + " impuesto anterior: " + producto.impuesto;
       console.log(producto.impuesto);
+      auditoria.valor_actual=""+producto.impuesto;
+      auditoria.valor_anterior=element.value;
       producto.impuesto = element.value;
     }
     if (element.id.substr(0, 8) == 'balanza_') {
@@ -502,21 +518,29 @@ export class InventarioFisicoComponent implements OnInit {
     if (element.id.substr(0, 7) == 'barras_') {
       this.mensaje = this.mensaje.replace("valor", "codigo barras");
       this.mensaje = this.mensaje + " codigo barras anterior: " + producto.codigo_barras;
+      auditoria.valor_actual=producto.codigo_barras;
+      auditoria.valor_anterior=element.value;
       producto.codigo_barras = element.value;
     }
     if (element.id.substr(0, 6) == 'promo_') {
       this.mensaje = this.mensaje.replace("valor", "promo");
       this.mensaje = this.mensaje + " promo anterior: " + producto.promo;
+      auditoria.valor_actual=""+producto.promo;
+      auditoria.valor_anterior=element.value;
       producto.promo = element.value;
     }
     if (element.id.substr(0, 13) == 'public_promo_') {
       this.mensaje = this.mensaje.replace("valor", "publico promo");
       this.mensaje = this.mensaje + " publico promo anterior: " + producto.pub_promo;
+      auditoria.valor_actual=""+producto.pub_promo;
+      auditoria.valor_anterior=element.value;
       producto.pub_promo = element.value;
     }
     if (element.id.substr(0, 8) == 'kg_promo') {
       this.mensaje = this.mensaje.replace("valor", "kg_promo");
       this.mensaje = this.mensaje + " kg_promo anterior: " + producto.kg_promo;
+      auditoria.valor_actual=""+producto.kg_promo;
+      auditoria.valor_anterior=element.value;
       producto.kg_promo = element.value;
     }
     this.productoService.updateProducto(producto).subscribe(async res => {
@@ -527,6 +551,7 @@ export class InventarioFisicoComponent implements OnInit {
         return;
       }
     });
+    this.productoService.saveAuditoria(auditoria).subscribe();
   }
 
   seleccionarEliminarItem(producto: ProductoModel) {

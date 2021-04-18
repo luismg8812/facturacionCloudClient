@@ -58,8 +58,13 @@
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Proveedor
-          <input class="form-control" id="proveedorBuscar" placeholder="Proveedor" name="proveedorBuscar"
+          <input class="form-control" list="proveedoresList" id="proveedorBuscar" placeholder="Proveedor" name="proveedorBuscar"
             #proveedorBuscar>
+            <datalist id="proveedoresList">
+              <option *ngFor="let proveedor of proveedores" [value]="proveedor.nombre">
+                  Identificación: {{proveedor.documento}} id:{{proveedor.proveedor_id}}
+              </option>
+          </datalist>
         </div>
 
       </div>
