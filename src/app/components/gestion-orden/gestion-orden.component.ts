@@ -305,16 +305,17 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   confirmarNota(observacion) {
-    let newDocu: DocumentoModel = this.documentoSelect;
+    let newDocu: DocumentoModel = new DocumentoModel();
     if (observacion.value == "") {
       alert("La descripción del error es obligatoria");
       return;
     }
     this.documentoService.getByDocumentoId(this.documentoSelect.documento_id).subscribe(factura => {
-      if (newDocu.total == factura[0].total) {
-        alert("Los valores totales de la factura y de la nota son iguales, por lo cual no se creará la Nota");
-        return;
-      }
+      newDocu.cliente_id=this.documentoSelect.cliente_id;
+      newDocu.letra_consecutivo=this.documentoSelect.letra_consecutivo;
+      newDocu.consecutivo_dian=this.documento.consecutivo_dian;
+      newDocu.empresa_id=this.documentoSelect.empresa_id;
+     newDocu.impreso=1;
       newDocu.descripcion_trabajador = observacion.value;
       newDocu.fecha_registro = new Date();
       newDocu.usuario_id = this.usuarioId;
@@ -325,6 +326,7 @@ export class GestionOrdenComponent implements OnInit {
       } else {
         newDocu.tipo_documento_id = this.NOTA_DEBITO;
       }
+      factura[0].anulado=1;//se anula el documento
       this.documentoService.saveDocumento(newDocu).subscribe(res => {
         if (res.code == 200) {
           newDocu.documento_id = res.documento_id;
@@ -341,16 +343,13 @@ export class GestionOrdenComponent implements OnInit {
               return;
             }
           });
-          for (let deta of this.itemsFactura2) {
-            let newdd: DocumentoDetalleModel = new DocumentoDetalleModel();
-            newdd = deta;
-            newdd.documento_id = newDocu.documento_id;
-            this.documentoDetalleService.saveDocumentoDetalle(newdd).subscribe(res => {
-              if (res.code != 200) {
-                alert("Error agregando producto: " + res.error);
-              }
-            });
-          }
+          this.documentoService.deleteDocumentoOrdenByDocumento(this.documentoSelect).subscribe(res => {
+            if (res.code != 200) {
+              alert("error eliminando el documentoOrden, por favor inicie nuevamente la creación del documento");
+              return;
+            } 
+          });
+        
           $('#notaModal').modal('hide');
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
@@ -362,7 +361,7 @@ export class GestionOrdenComponent implements OnInit {
 
 
 
-  crearNotaDocumento(nota: DocumentoModel, factura: DocumentoModel) {
+  crearNotaDocumento(nota1: DocumentoModel, factura: DocumentoModel) {
     this.documentoService.getDocumentoNotaByDocumento(factura.documento_id).subscribe(res => {
       for (let nota of res) {
         nota.estado = 0;
@@ -378,7 +377,7 @@ export class GestionOrdenComponent implements OnInit {
       let newDocuNota: DocumentoNotaModel = new DocumentoNotaModel();
       newDocuNota.estado = 1;
       newDocuNota.documento_id = factura.documento_id;
-      newDocuNota.documento_nota_id = nota.documento_id;
+      newDocuNota.nota_id = Number(nota1.documento_id);
       this.documentoService.saveDocumentoNota(newDocuNota).subscribe(res => {
         if (res.code == 200) {
           console.log("se agrega documento nota");
@@ -1436,7 +1435,7 @@ export class GestionOrdenComponent implements OnInit {
     let idCliente = "";
     let tipoDocumentoId = tipoDocu.value; // se buscan facturas
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
     this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId,"").subscribe(res => {
@@ -1654,7 +1653,7 @@ export class GestionOrdenComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
+      return cliente.nombre+" "+cliente.apellidos+" "+(cliente.razon_social==null?'':cliente.razon_social);
     }
   }
 
