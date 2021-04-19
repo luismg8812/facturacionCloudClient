@@ -313,7 +313,8 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoService.getByDocumentoId(this.documentoSelect.documento_id).subscribe(factura => {
       newDocu.cliente_id=this.documentoSelect.cliente_id;
       newDocu.letra_consecutivo=this.documentoSelect.letra_consecutivo;
-      newDocu.consecutivo_dian=this.documento.consecutivo_dian;
+      newDocu.consecutivo_dian=this.documentoSelect.consecutivo_dian;
+      newDocu.resolucion_empresa_id=this.documentoSelect.resolucion_empresa_id;
       newDocu.empresa_id=this.documentoSelect.empresa_id;
      newDocu.impreso=1;
       newDocu.descripcion_trabajador = observacion.value;
