@@ -83,11 +83,11 @@
         <div class="form-group col-md-4 col-sm-2">
           <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1"
             class="form-control" id="clientePV" (change)="clienteSelectFun(clientePV)">
-          <datalist id="browsers">
-            <option *ngFor="let cliente of clientes"
-              [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
-              Cod. interno: {{cliente.cliente_id}}
-            </option>
+            <datalist id="browsers">
+              <option *ngFor="let cliente of clientes"
+                  [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
+                  Cod. interno: {{cliente.cliente_id}}
+              </option>
           </datalist>
         </div>
 
