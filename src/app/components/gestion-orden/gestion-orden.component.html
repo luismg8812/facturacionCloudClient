@@ -210,7 +210,7 @@
             </div>
             <div class="modal-body">
               <div class="form-row">
-                <div class="form-group col-md-6 col-sm-2" *ngIf="productoFijoActivo">
+                <div class="form-group col-md-6 " *ngIf="productoFijoActivo">
                   Artículo
                   <input list="articulos" name="articuloC" [value]="articuloPV" #articuloC placeholder="Articulo"
                     class="form-control" id="articuloC" (change)="articuloSelect(articuloC)">
@@ -220,23 +220,23 @@
                     </option>
                   </datalist>
                 </div>
-                <div class="form-group col-md-6 col-sm-2" *ngIf="!productoFijoActivo">
+                <div class="form-group col-md-6 " *ngIf="!productoFijoActivo">
                   Artículo
                   <textarea class="form-control " id="item" #item placeholder="Nombre repuesto" required></textarea>
                 </div>
-                <div class="form-group col-md-6 col-sm-2">
+                <div class="form-group col-md-6 ">
                   Cantidad
                   <input class="form-control" id="cantidad" type="number" placeholder="* Cantidad" name="cantidad"
                     #cantidad required>
                 </div>
               </div>
               <div class="form-row">
-                <div class="form-group col-md-6 col-sm-2">
+                <div class="form-group col-md-6 ">
                   Precio compra
                   <input class="form-control" id="pCompra" type="number" placeholder="* Precio de compra" name="pCompra"
                     #pCompra required>
                 </div>
-                <div class="form-group col-md-6 col-sm-2">
+                <div class="form-group col-md-6 ">
                   Precio venta
                   <input class="form-control" id="pVenta" type="number" placeholder="* Precio de venta" name="pVenta"
                     #pVenta required>
@@ -245,13 +245,13 @@
               <br />
               <div class="form-row">
 
-                <div class="form-group col-md-12 col-sm-1">
+                <div class="form-group col-md-12 ">
                   <input type="file" class="form-control-file" capture="camera" #fotoRepuesto id="fotoRepuesto"
                     aria-describedby="fileHelp">
                 </div>
               </div>
               <div class="form-row">
-                <div class="form-group col-md-6 col-sm-1">
+                <div class="form-group col-md-6 ">
                   <div class="container" *ngIf="downloadURL2 | async; let url2">
                     <img [src]="url2" alt="Image from AngularFireStorage" width="100%" height="200px">
                   </div>
