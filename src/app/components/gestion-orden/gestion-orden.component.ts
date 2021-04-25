@@ -462,7 +462,7 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nueva orden");
       return;
     }
-    let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == element.value);
+    let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == element.value);
     if (cliente == undefined) {
       this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
@@ -581,7 +581,7 @@ export class GestionOrdenComponent implements OnInit {
     if (this.vehiculo != undefined) {
       let cliente = this.clientes.find(client => client.cliente_id == this.vehiculo.cliente_id);
       if (cliente != undefined) {
-        this.clientePV.nativeElement.value = cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento;
+        this.clientePV.nativeElement.value =(cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento);
         this.numeroCliente = cliente.celular + (cliente.fijo != "" ? "-" + cliente.fijo : "");
         this.documento.cliente_id = cliente.cliente_id;
       }
@@ -1410,7 +1410,7 @@ export class GestionOrdenComponent implements OnInit {
       fin = date.toLocaleString();
     }
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == clien.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
    
@@ -1424,7 +1424,7 @@ export class GestionOrdenComponent implements OnInit {
     let idCliente = "";
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      let cliente = this.clientes.find(cliente =>(cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
     this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId,"").subscribe(res => {
@@ -1436,7 +1436,7 @@ export class GestionOrdenComponent implements OnInit {
     let idCliente = "";
     let tipoDocumentoId = tipoDocu.value; // se buscan facturas
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == clien.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
     this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId,"").subscribe(res => {
@@ -1449,7 +1449,7 @@ export class GestionOrdenComponent implements OnInit {
     let idCliente = "";
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;// se buscan ordenes de trabajo
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento)== clien.value);
       idCliente = cliente.cliente_id.toString();
     }
 
@@ -1711,7 +1711,7 @@ export class GestionOrdenComponent implements OnInit {
         let cliente = this.clientes.find(cliente => cliente.cliente_id == documento_id.cliente_id);
         let nombre = "";
         if (cliente != undefined) {
-          nombre = cliente.nombre;
+          nombre = (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento);
         }
         let empleado = this.empleados.find(empleado => empleado.empleado_id == documento_id.empleado_id);
         let nombreEmpleado = "";
@@ -1807,7 +1807,7 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       let nombre = "";
       if (cliente != undefined) {
-        nombre = cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento;
+        nombre = (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento);
         this.numeroCliente = cliente.celular + (cliente.fijo != "" ? "-" + cliente.fijo : "");
       }
       let empleado = this.empleados.find(empleado => empleado.empleado_id == this.documento.empleado_id);
@@ -1884,7 +1884,7 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoFactura.cliente_id);
       let nombre = "";
       if (cliente != undefined) {
-        nombre = cliente.nombre;
+        nombre = (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento);
       }
       let parametros: ParametrosModel = new ParametrosModel;
       this.clienteFactura.nativeElement.value = nombre;
