@@ -127,7 +127,7 @@ export class EnvioDocumentosComponent implements OnInit {
       this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento.documento_id).subscribe(async detalles => {
         if (detalles.length > 0) {
           this.itemsFactura = detalles;
-        } else {
+        } else {// esta parte copiarla para exportar documento y para reenviar facturas electronicas
           console.log("Detalles de orden");
           this.documentoService.getOrdenesByDocumentoId(docu.documento.documento_id).subscribe(res => {
             let ordenesBuscarListFacturaSelect: DocumentoModel[] = res;
@@ -165,6 +165,12 @@ export class EnvioDocumentosComponent implements OnInit {
           console.error(error);
           this.enviados++;
           this.faltantes--;
+          if (this.faltantes <= 0) {
+            // alert("El proceso de envio ha terminado")
+            $("#ok").prop("disabled", false);
+            this.getDocumentos();
+            this.enviando = false;
+          }
           /*alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
             "mail: info@effectivesoftware.com.co\n" +
             "Error: " + error.error
