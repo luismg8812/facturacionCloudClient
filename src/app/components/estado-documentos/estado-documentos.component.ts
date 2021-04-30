@@ -88,7 +88,24 @@ export class EstadoDocumentosComponent implements OnInit {
 
   detalleDocumento(documento: DocumentoModel) {
     this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
-      this.itemsFactura = res;
+      if (res.length > 0) {
+        this.itemsFactura = res;
+      } else {// esta parte copiarla para exportar documento y para reenviar facturas electronicas
+        console.log("Detalles de orden");
+        this.documentoService.getOrdenesByDocumentoId(documento.documento_id).subscribe(res => {
+          let ordenesBuscarListFacturaSelect: DocumentoModel[] = res;
+          let ids: string[] = [];
+          for (let d of ordenesBuscarListFacturaSelect) {
+            ids.unshift(d.documento_id);
+          }
+          if (ids.length > 0) {
+            this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+              this.itemsFactura = res;
+              console.log("detalles encontrados:" + res.length);
+            });
+          }
+        });
+      }
       console.log("detalles encontrados:" + res.length);
     });
   }
