@@ -509,7 +509,7 @@ export class CalculosService {
 		dataFactura.metodoDePago = "1";
 		dataFactura.formaDePago = "10";
 		dataFactura.paymentDueDate = "0000-00-00";// si es a credito mando esta fecha  
-		dataFactura.dataFactura=docu.documento.descripcion_trabajador;
+		dataFactura.notaFactura=docu.documento.descripcion_trabajador;
 		return dataFactura;
 	}
 

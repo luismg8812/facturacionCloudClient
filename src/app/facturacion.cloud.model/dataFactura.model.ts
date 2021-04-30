@@ -9,7 +9,7 @@ export class DataFacturaModel {
     public metodoDePago:string;
     public formaDePago:string;
     public paymentDueDate:string;
-    public dataFactura:string;
+    public notaFactura:string;
     
     constructor(){
         this.tipoCorreccion="";
@@ -22,7 +22,7 @@ export class DataFacturaModel {
         this.metodoDePago="";
         this.formaDePago="";
         this.paymentDueDate="";
-        this.dataFactura="";
+        this.notaFactura="";
        }
 }
 
