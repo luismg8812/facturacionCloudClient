@@ -182,7 +182,7 @@ export class EnvioDocumentosComponent implements OnInit {
 
   }
 
-  sendMail(res, docu: DocumentoModel) {
+  async sendMail(res, docu: DocumentoModel) {
     let mail: MailModel = new MailModel();
     let cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
     if (cliente.mail == "") {
@@ -196,15 +196,21 @@ export class EnvioDocumentosComponent implements OnInit {
     let getFile: GetFileModel = new GetFileModel();
     getFile.cufe = docu.cufe;
     getFile.key = AppConfigService.key_invoice;
-    mail.pdf_64="";
-    mail.xml_64="";
-    mail.pdf_name = "f_" + docu.consecutivo_dian + ".pdf"; //+xml.filename;
-    mail.xml_name = "f_" + docu.consecutivo_dian + ".xml"; //+xml.filename;
-    this.facturacionElectronicaService.sendMail(mail).subscribe(async emai => {
-      console.log(emai);
-    }, err => {
-      console.error("errr enviando correo");
+    mail.pdf_64=this.getfacturaPDF(docu, this.empresa);
+    await this.delay(500);
+    this.facturacionElectronicaService.getXML(getFile).subscribe(async xml => {
+      mail.xml_64=xml.mensaje;
+      mail.pdf_name = "f_" + docu.consecutivo_dian + ".pdf"; //+xml.filename;
+      mail.xml_name = "f_" + docu.consecutivo_dian + ".xml"; //+xml.filename;
+      this.facturacionElectronicaService.sendMail(mail).subscribe(async emai => {
+        console.log(emai);
+      }, err => {
+        console.error("errr enviando correo");
+      });
     });
+    
+   
+    
   }
 
   getfacturaPDF(docu: DocumentoModel, empresa: EmpresaModel) {
