@@ -335,6 +335,7 @@ export class GestionOrdenComponent implements OnInit {
           documentoInvoice.documento_id = res.documento_id;
           documentoInvoice.fecha_registro = new Date();
           documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+          this.asignarDetalleDevolucion(newDocu);
           this.crearNotaDocumento(newDocu, factura[0]);
           this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
             if (res.code == 200) {
@@ -358,6 +359,33 @@ export class GestionOrdenComponent implements OnInit {
         }
       });
     });
+  }
+
+  asignarDetalleDevolucion(d:DocumentoModel){
+      let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
+      docDetalle.descripcion = "Prodocto devolución";
+      docDetalle.estado = 1;
+      docDetalle.cantidad = 1;
+      docDetalle.unitario = 0;
+      docDetalle.parcial = 0;
+      docDetalle.impreso_comanda = 0;
+      docDetalle.documento_id = d.documento_id;
+      let dd: Array<DocumentoDetalleModel>=[];
+      this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
+        if (res.code == 200) {
+          docDetalle.documento_detalle_id = res.documento_detalle_id;
+          dd.push(docDetalle);
+          d = this.calculosService.calcularExcento(d, dd);
+          this.documentoService.updateDocumento(d).subscribe(res => {
+            if (res.code != 200) {
+              alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+              return;
+            }
+          });
+        } else {
+          alert("Error agregando repuesto: " + res.error);
+        }
+      });
   }
 
 
