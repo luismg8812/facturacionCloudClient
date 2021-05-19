@@ -5,6 +5,7 @@ export class AbonoModel {
     public tipo_pago_id:string;
     public usuario_id:number;
     public cantidad:number;
+    public cierre_diario:number;
 
     constructor(){
         this.abono_id=null;
@@ -13,5 +14,6 @@ export class AbonoModel {
         this.tipo_pago_id="";
         this.usuario_id=null;
         this.cantidad=0;
+        this.cierre_diario=0;
     }
 }

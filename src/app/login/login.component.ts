@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
           let empresa_id = "" + this.nombreUsuario.empresa_id;
           this.empresaService.pagosEmpresaByEmpresa(empresa_id).subscribe((res) => {
             let hoy: Date = new Date();
-            hoy.setDate(new Date().getDate() + 5);
+            hoy.setDate(new Date().getDate() + 2);
             console.log(res);
             if ((res.length === 0) || res[0].fecha_vencimiento < hoy) {
               alert("Existe un inconveniente con su Pago, por favor contacte a su proveedor");
@@ -74,15 +74,14 @@ export class LoginComponent implements OnInit {
       localStorage.setItem("userLogin", usuario);
       this.usuarioService.usuarioByMail(usuario).subscribe((res1) => {
         //console.log(res1);
-        if(res1.length==0){
+        if (res1.length == 0) {
           alert("usuario no valido");
           return;
         }
-        if(clave!=res1[0].clave){ 
+        if (clave != res1[0].clave) {
           alert("clave no valida");
           return;
         }
-         
         this.nombreUsuario = res1[0];
         let empresa_id = "" + this.nombreUsuario.empresa_id;
         localStorage.setItem("nombreUsuario", this.nombreUsuario.nombre);

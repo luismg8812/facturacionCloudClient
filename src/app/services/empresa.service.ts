@@ -25,5 +25,9 @@ export class EmpresaService {
   updateConsecutivoEmpresa(empresaId:ResolucionEmpresaModel){
     return this.http.post<any>(this.server_api+'/empresa/updateConsecutivoEmpresa',empresaId);
   }
+
+  public validarLisencia(){
+    return this.http.get<EmpresaModel[]>(this.server_api+'/validarLisencia');
+  }
   
 }

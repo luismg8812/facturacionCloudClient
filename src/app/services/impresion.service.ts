@@ -15,6 +15,10 @@ import { DocumentoService } from './documento.service';
 import { EnvioFacturacionElectronicaModel } from '../facturacion.cloud.model/envioFacturacionElectronica.model';
 import { AppConfigService } from './app-config.service';
 import { ProductoModel } from '../model/producto.model';
+import { ParametrosModel } from '../model/parametros.model';
+import { ClienteModel } from '../model/cliente.model';
+import { AbonoModel } from '../model/abono.model';
+import { database } from 'firebase';
 
 
 @Injectable({
@@ -56,6 +60,7 @@ export class ImpresionService {
     texto.push('----------------------------------------\n');
     let totalFacturas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.total_facturas), 12);
     let base: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.base), 12);
+    let abonos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.abonos), 12);
     let cheques: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cheques), 12);
     let otros: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.otros), 12);
     let recargas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(0), 12);
@@ -72,6 +77,7 @@ export class ImpresionService {
     let efectivo: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.efectivo), 12);
 
     texto.push("Total Facturas:.........:" + totalFacturas + "\n");
+    texto.push("Abonos:................:" + abonos + "\n");
     texto.push("Base:...................:" + base + "\n");
     texto.push("Cheques Recogidos:.....: " + cheques + "\n");
     texto.push("Otros:.................: " + otros + "\n");
@@ -105,6 +111,13 @@ export class ImpresionService {
     if (factura.grupos != undefined) {
       texto.push('Ventas por Grupo\n');
       for (let emp of factura.grupos) {
+        texto.push(emp.nombre + ":...$" + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(Number(emp.total)), 12) + '\n');
+      }
+      texto.push('----------------------------------------\n');
+    }
+    if (factura.SubGrupos != undefined) {
+      texto.push('Ventas por Sub Grupo\n');
+      for (let emp of factura.SubGrupos) {
         texto.push(emp.nombre + ":...$" + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(Number(emp.total)), 12) + '\n');
       }
       texto.push('----------------------------------------\n');
@@ -345,8 +358,8 @@ export class ImpresionService {
     texto.push('----------------------------------------\n');
     texto.push(factura.bono.bono.observacion + '\n');
     let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.bono.bono.total).replace("COP", ""), 10);
-    texto.push("TOTAL: $"+ totalProducto+ '\n');
-    texto.push('----------------------------------------\n');   
+    texto.push("TOTAL: $" + totalProducto + '\n');
+    texto.push('----------------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("*****GRACIAS POR SU COMPRA*****", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
@@ -414,6 +427,48 @@ export class ImpresionService {
       type: 'text/plain'
     });
   }
+
+  imprimirAbonosCliente(empresa:EmpresaModel,nombreArchivo:string,documento,cliente:ClienteModel,abonos:Array<AbonoModel>){
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push('----------------------------------------\n');
+    texto.push(this.calculosService.centrarDescripcion(empresa.nombre, tamanoMax) + "\n");//nombre empresa
+    texto.push(this.calculosService.centrarDescripcion(empresa.slogan, tamanoMax) + "\n");//slogan
+    texto.push(this.calculosService.centrarDescripcion(empresa.represente, tamanoMax) + "\n");//representante
+    texto.push(this.calculosService.centrarDescripcion("NIT. " + empresa.nit + " - " + empresa.digito_verificacion + " " + empresa.regimen, tamanoMax) + "\n");//nit y regimen
+    texto.push(this.calculosService.centrarDescripcion(empresa.direccion, tamanoMax) + "\n");//direccion
+    texto.push(this.calculosService.centrarDescripcion(empresa.barrio, tamanoMax) + "\n");//barrio
+    texto.push(this.calculosService.centrarDescripcion("TEL: " + empresa.telefono_fijo + "-" + empresa.cel, tamanoMax) + "\n");//telefonos
+    texto.push('\n');
+    texto.push("ABONOS A FACTURA N°:" + documento.consecutivo_dian+ "\n");//consecutivo
+    texto.push("FECHA FACTURA: " + this.calculosService.cortarDescripcion(documento.fecha_registro, 19) + "\n");//fecha
+    texto.push("FECHA ACTUAL: " + this.calculosService.cortarDescripcion((new Date()).toLocaleDateString()+" "+(new Date()).toTimeString(), 19) + "\n");//fecha
+    
+      texto.push("CLIENTE: " + cliente.nombre + '\n');
+      texto.push("NIT/CC: " + cliente.documento + '\n');
+      texto.push("DIRECCIÓN: " + cliente.direccion + '\n');
+    
+    texto.push('----------------------------------------\n');
+    texto.push('FECHA                  #    VALOR PAGADO\n');
+    texto.push('----------------------------------------\n');
+    for (var i = 0; i < abonos.length; i++) {
+      let fecha: string = this.calculosService.cortarDescripcion(abonos[i].fecha_ingreso.toString(), 19)
+      let numeroAbono: string = this.calculosService.cortarCantidades(""+abonos[i].abono_id, 4);
+      let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(abonos[i].cantidad), 14);
+      texto.push(fecha + " " + numeroAbono + " " + totalProducto  + "\n");
+    }
+    texto.push('----------------------------------------\n');
+    texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:      ", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push(this.calculosService.centrarDescripcion("info@effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push('\n');
+    texto.push('\n');
+    texto.push('\n');
+    return new Blob(texto, {
+      type: 'text/plain'
+    });
+  }
+
 
   imprimirFacturaTxt80(factura: FacturaModel, configuracion: ConfiguracionModel) {
     //Genera un objeto Blob con los datos en un archivo TXT
@@ -647,36 +702,9 @@ export class ImpresionService {
     });
   }
 
-  getBase64ImageFromURL(url: string) {
-    return Observable.create((observer: Observer<string>) => {
-      let img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.src = url; img.src = url;
-      if (!img.complete) {
-        img.onload = () => {
-          observer.next(this.getBase64Image(img));
-          observer.complete();
-        };
-        img.onerror = (err) => {
-          observer.error(err);
-        };
-      } else {
-        observer.next(this.getBase64Image(img));
-        observer.complete();
-      }
-    });
-  }
 
-  getBase64Image(img: HTMLImageElement) {
-    var canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    var dataURL = canvas.toDataURL("image/png");
-    // console.log(dataURL);
-    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-  }
+
+
 
   private crearHeader(factura: FacturaModel, configuracion: ConfiguracionModel, pagina: number, numPaginas: number) {
 
@@ -685,8 +713,8 @@ export class ImpresionService {
     if (factura.documento.cufe != "") {
       this.doc.text("CUFE: " + factura.documento.cufe, 4, 269);
     }
-    this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);
-    this.doc.text(this.calculosService.centrarDescripcion("NIT: " + factura.empresa.nit+"-"+factura.empresa.digito_verificacion, 77), 80, 10);
+    this.doc.text(factura.empresa.nombre, 104, 5);
+    this.doc.text("NIT: " + factura.empresa.nit + "-" + factura.empresa.digito_verificacion, 104, 10);
 
     this.doc.text(factura.nombreTipoDocumento, 165, 10);
     this.doc.text("FECHA DE EXPEDICIÓN", 163, 28);
@@ -713,7 +741,7 @@ export class ImpresionService {
     this.doc.text("N° " + factura.documento.consecutivo_dian, 175, 18);
     this.doc.text(this.calculosService.cortarDescripcion(this.calculosService.formatDate(factura.documento.fecha_registro, true), 19), 160, 35);
 
-    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.gravado + factura.documento.excento)).replace("COP", ""), 15), 183, 275);
+    this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(Number(factura.documento.gravado) + Number(factura.documento.excento))).replace("COP", ""), 15), 183, 275);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.iva)).replace("COP", ""), 15), 183, 280);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.total)).replace("COP", ""), 15), 183, 285);
     //datos del cliente
@@ -736,7 +764,7 @@ export class ImpresionService {
 
     this.doc.setFontType('normal');
     if (factura.cliente != undefined) {
-      this.doc.text(factura.cliente.nombre + " " + factura.cliente.apellidos, 25, 44);
+      this.doc.text(factura.cliente.nombre + " " + factura.cliente.apellidos + " " + factura.cliente.razon_social, 25, 44);
       this.doc.text(factura.cliente.direccion, 25, 49);
       this.doc.text(factura.cliente.documento, 130, 44);
       this.doc.text(factura.cliente.celular, 130, 49);
@@ -746,13 +774,13 @@ export class ImpresionService {
 
 
     this.doc.setFontSize(6);
-    this.doc.text(this.calculosService.centrarDescripcion("SOMOS " + factura.empresa.regimen, 77), 90, 13);
-    this.doc.text(this.calculosService.centrarDescripcion("AUTORIZACION DIAN N° " + factura.resolucionEmpresa.resolucion_dian + " DE " + this.calculosService.formatDate(factura.resolucionEmpresa.fecha_resolucion, false), 77), 90, 16);
-    this.doc.text(this.calculosService.centrarDescripcion("Actividad económica CIIU " + factura.empresa.actividad_economica, 77), 90, 19);
-    this.doc.text(this.calculosService.centrarDescripcion("Representante Legal: " + factura.empresa.represente, 77), 90, 22);
-    this.doc.text(this.calculosService.centrarDescripcion("Dirección: " + factura.empresa.direccion, 77), 90, 25);
-    this.doc.text(this.calculosService.centrarDescripcion("Telefono: " + factura.empresa.telefono_fijo, 77), 90, 28);
-    this.doc.text(this.calculosService.centrarDescripcion("Mail: " + factura.empresa.correo, 77), 90, 31);
+    this.doc.text("SOMOS " + factura.empresa.regimen, 104, 13);
+    this.doc.text("AUTORIZACION DIAN N° " + factura.resolucionEmpresa.resolucion_dian + " DE " + this.calculosService.formatDate(factura.resolucionEmpresa.fecha_resolucion, false), 104, 16);
+    this.doc.text("Actividad económica CIIU " + factura.empresa.actividad_economica, 104, 19);
+    this.doc.text("Representante Legal: " + factura.empresa.represente, 104, 22);
+    this.doc.text("Dirección: " + factura.empresa.direccion, 104, 25);
+    this.doc.text("Telefono: " + factura.empresa.telefono_fijo, 104, 28);
+    this.doc.text("Mail: " + factura.empresa.correo, 104, 31);
     this.doc.text("RECIBÍ CONFORME: ", 4, 281);
     this.doc.text("NIT: ", 4, 286);
     this.doc.text("VENDEDOR: ADMINISTRADOR DEL SISTEMA ", 82, 288);
@@ -763,59 +791,70 @@ export class ImpresionService {
 
 
   imprimirFacturaPDFExportar(factura: FacturaModel, configuracion: ConfiguracionModel) {
-    let imgData = factura.empresa.url_logo;
-    let tope: number = 39.0;// esta variable controla el nuero de productos por pagina en la factura
     this.doc = new jsPDF();
     console.log("# de detalles:" + factura.detalle.length);
-    let div: number = factura.detalle.length / tope;
-    let numPaginas = Math.ceil(div);
-    let contadorP = 0;
+    let topeLinea = 42.0;
+    let tope: number = 41.0;// esta variable controla el nuero de productos por pagina en la factura
+    let numPaginas = this.calcularHojas(tope, factura.detalle, topeLinea, 2);
     let posy = 63; //controla la posicion de y para los productos
-    for (let i = 0; i < numPaginas; i++) {
-      this.doc.addImage(factura.documento.qrcode, 'JPEG', 3, 2, 38, 37);
-      this.crearHeader(factura, configuracion, (i + 1), numPaginas);
-      this.doc.setFontType('normal');
-      this.doc.setFontSize(9);
-      this.doc.text("CUFE: " + factura.documento.cufe, 4, 269);
-      this.doc.text("Total IVA: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva), 20) + "   "
-        + "Exento: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.excento), 20) + "   "
-        + "Gravado: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.gravado), 20) + "   "
-        , 4, 263);
-      for (let e = 0; e < tope; e++) {
-        if (contadorP < factura.detalle.length) {
-          let codigo = factura.detalle[contadorP].documento_detalle_id;
-          let cantidad = factura.detalle[contadorP].cantidad;
-          let descripcion = factura.detalle[contadorP].descripcion;
-          let unitario = factura.detalle[contadorP].unitario;
-          let parcial = factura.detalle[contadorP].parcial;
-          let iva = factura.detalle[contadorP].impuesto_producto;
-          contadorP = contadorP + 1;
-          this.doc.text(codigo, 4, posy);
-          this.doc.text(cantidad, 20, posy);
+    let i = 0;
+    this.doc.addImage(factura.base64Logo, 'JPEG', 31, 2, 71, 35);
+    this.doc.addImage(factura.documento.qrcode, 'JPEG', 1, 1, 30, 29);
+    this.crearHeader(factura, configuracion, (i + 1), numPaginas);
+    this.doc.setFontType('normal');
+    this.doc.setFontSize(9);
 
-          this.doc.text(iva, 145, posy);
-          this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(unitario).replace("COP", ""), 20), 115, posy);
-          this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(parcial), 20).replace("COP", ""), 182, posy);
-          let topeLinea = 54.0;
-          let linea: number = descripcion.length / topeLinea;
-          let numlineas = Math.ceil(linea);
-          let ini = 0;
-          let fin = topeLinea;
-          for (let i = 0; i <= numlineas; i++) {
-            let parcial = descripcion.substring(ini, fin);
-            this.doc.text(parcial, 33, posy);
-            posy = posy + 5;
-            ini = ini + topeLinea;
-            fin = fin + topeLinea;
-          }
-          //posy = posy + 5;
-        } else {
-          break;
-        }
-        if (e + 1 == tope) {
-          this.doc.addPage();
-          posy = 63;
-        }
+    this.doc.text("Total IVA: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP", ""), 20) + "   "
+      + "Exento: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.excento).replace("COP", ""), 20) + "   "
+      + "Gravado: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP", ""), 20) + "   "
+      , 4, 264);
+    let row = 0;
+    for (let contadorP of factura.detalle) {
+      row = row + 2;
+
+      let codigo = contadorP.documento_detalle_id;
+      let cantidad = contadorP.cantidad;
+      let descripcion = contadorP.descripcion.trim().replace(/(\r\n|\n|\r)/gm, "");
+      let dividir = 1 + (Number(contadorP.impuesto_producto) / 100)
+      let unitario = Number(contadorP.unitario) / dividir;
+      let parcial = contadorP.parcial;
+      let iva = contadorP.impuesto_producto;
+      this.doc.text(codigo, 4, posy);
+      this.doc.text(cantidad, 20, posy);
+
+      this.doc.text("" + iva, 145, posy);
+      this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario)).replace("COP", ""), 20), 113, posy);
+      this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario + (unitario * (Number(contadorP.impuesto_producto) / 100)))).replace("COP", ""), 20), 156, posy);
+      this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(parcial)).replace("COP", ""), 20), 182, posy);
+
+      let linea: number = descripcion.length / topeLinea;
+      let numlineas = Math.ceil(linea);
+      if (descripcion.length > topeLinea) {
+        row = row + numlineas;
+      }
+      let ini = 0;
+      let fin = topeLinea;
+      for (let i = 0; i <= numlineas; i++) {
+        let parcial = descripcion.substring(ini, fin);
+        this.doc.text(parcial, 33, posy);
+        posy = posy + 5;
+        ini = ini + topeLinea;
+        fin = fin + topeLinea;
+      }
+      if (row + 1 >= tope) {
+        this.doc.addPage();
+        posy = 63;
+        row = 0;
+        i = i + 1;
+        this.doc.addImage(factura.base64Logo, 'JPEG', 31, 2, 71, 35);
+        this.doc.addImage(factura.documento.qrcode, 'JPEG', 1, 1, 30, 29);
+        this.crearHeader(factura, configuracion, (i + 1), numPaginas);
+        this.doc.setFontType('normal');
+        this.doc.setFontSize(9);
+        this.doc.text("Total IVA: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP", ""), 20) + "   "
+          + "Exento: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.excento).replace("COP", ""), 20) + "   "
+          + "Gravado: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP", ""), 20) + "   "
+          , 4, 264);
       }
     }
     return this.doc.output('datauristring');
@@ -826,7 +865,14 @@ export class ImpresionService {
 
   imprimirFacturaPdf80(factura: FacturaModel, configuracion: ConfiguracionModel, exportar: boolean) {
     //console.log(new Buffer(AppConfigService.image).toString('base64'));
-    this.getBase64ImageFromURL("assets/images/logoempresa.jpg").subscribe(base64data => {
+    let parametros: ParametrosModel = new ParametrosModel;
+    let imgData = "";
+    if (parametros.ambiente == 'cloud') {
+      imgData = factura.empresa.url_logo;
+    } else {
+      imgData = "assets/images/logoempresa.jpg";
+    }
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
       let base64Image = 'data:image/jpg;base64,' + base64data;
       this.doc = new jsPDF();
       this.doc.setFontSize(12);
@@ -868,7 +914,7 @@ export class ImpresionService {
       this.doc.text("CAJA: " + factura.documento.mac, x, y);
       y = y + inicio;
       if (factura.cliente != undefined) {
-        let nombreCliente:string = factura.cliente.nombre==""?factura.cliente.razon_social:factura.cliente.nombre;
+        let nombreCliente: string = factura.cliente.nombre == "" ? factura.cliente.razon_social : factura.cliente.nombre + " " + factura.cliente.apellidos;
         this.doc.text("CLIENTE: " + nombreCliente, x, y);
         y = y + inicio;
         this.doc.text("NIT/CC: " + factura.cliente.documento, x, y);
@@ -906,7 +952,7 @@ export class ImpresionService {
         let ini = 0;
         let fin = topeLinea;
         for (let e = 0; e <= numlineas; e++) {
-          let lineaParcial:string = i.descripcion.substring(ini, fin);
+          let lineaParcial: string = i.descripcion.substring(ini, fin);
           this.doc.text(lineaParcial.toLowerCase(), x + 10, y);
           y = y + inicio;
           ini = ini + topeLinea;
@@ -954,8 +1000,11 @@ export class ImpresionService {
       //hacer un metodo para ir a traer los tipos de pago de este dococumento
       this.doc.text("PAGA CON:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.pagaCon).replace("COP", ""), x, y);
       y = y + inicio;
-      this.doc.text("Vr. Pago con Efectivo:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP", ""), x, y);
-      y = y + inicio;
+      for (let t of factura.tiposPago) {
+        this.doc.text("Vr. Pago con " + t.nombre + ":  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(t.valor).replace("COP", ""), x, y);
+        y = y + inicio;
+      }
+
       this.doc.text("Cambio:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.cambio).replace("COP", ""), x, y);
       y = y + inicio;
       this.doc.setFontSize(12);
@@ -1000,31 +1049,31 @@ export class ImpresionService {
     if (factura.cliente != undefined) {
       texto.push("CLIENTE: " + factura.cliente.nombre + '\n');
       texto.push("NIT/CC: " + factura.cliente.documento + '\n');
-      texto.push("TELEFONO: " + factura.cliente.fijo +' - '+ factura.cliente.celular + '\n');
+      texto.push("TELEFONO: " + factura.cliente.fijo + ' - ' + factura.cliente.celular + '\n');
     }
     texto.push("EMPLEADO: " + factura.nombreEmpleado + '\n');
     texto.push("VEHICULO: " + factura.documento.detalle_entrada + '\n');
     texto.push("LINEA: " + factura.documento.linea_vehiculo + '\n');
     texto.push("DESCRIPCION CLIENTE: " + factura.documento.descripcion_cliente + '\n');
     texto.push("DIAGNOSTICO: " + factura.documento.descripcion_trabajador + '\n');
-    texto.push('--------------------------------\n');  
+    texto.push('--------------------------------\n');
     texto.push('DESCRIPCION         CANT.    TOT.\n');
     texto.push('--------------------------------\n');
-    for (var i = 0; i < factura.detalle.length; i++) { 
+    for (var i = 0; i < factura.detalle.length; i++) {
       let nombreProducto: string = factura.detalle[i].descripcion;
       let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].parcial), 9);
-      let cantidadProducto:string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].cantidad), 3);
-      let topeLinea = 18.0;
+      let cantidadProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.detalle[i].cantidad), 4);
+      let topeLinea = 17.0;
       let linea: number = factura.detalle[i].descripcion.length / topeLinea;
       let numlineas = Math.ceil(linea);
       let ini = 0;
       let fin = topeLinea;
       for (let e = 0; e <= numlineas; e++) {
-        let lineaParcial:string = factura.detalle[i].descripcion.substring(ini, fin);
-        texto.push(lineaParcial +" "+  (e==0?cantidadProducto:'') +" "+  (e==0?totalProducto:'') + "\n");
+        let lineaParcial: string = factura.detalle[i].descripcion.substring(ini, fin);
+        texto.push(lineaParcial + " " + (e == 0 ? cantidadProducto : '') + " " + (e == 0 ? totalProducto : '') + "\n");
         ini = ini + topeLinea;
         fin = fin + topeLinea;
-      }  
+      }
     }
     texto.push('--------------------------------\n');
     texto.push("TOTAL A PAGAR:    " + this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.documento.total), 14) + '\n');
@@ -1047,7 +1096,7 @@ export class ImpresionService {
 
 
   imprimirOrdenPDF50(factura: FacturaModel, exportar: boolean) {
-    this.getBase64ImageFromURL(factura.empresa.url_logo).subscribe(base64data => {
+    this.calculosService.getBase64ImageFromURL(factura.empresa.url_logo).subscribe(base64data => {
       let base64Image = 'data:image/jpg;base64,' + base64data;
       this.doc = new jsPDF();
       this.doc.setFontSize(10);
@@ -1166,7 +1215,7 @@ export class ImpresionService {
 
 
   imprimirFacturaPdf50(factura: FacturaModel, configuracion: ConfiguracionModel, exportar: boolean) {
-    this.getBase64ImageFromURL("assets/images/logoempresa.jpg").subscribe(base64data => {
+    this.calculosService.getBase64ImageFromURL("assets/images/logoempresa.jpg").subscribe(base64data => {
       let base64Image = 'data:image/jpg;base64,' + base64data;
       this.doc = new jsPDF();
       this.doc.setFontSize(10);
@@ -1390,7 +1439,7 @@ export class ImpresionService {
     let tope: number = 41.0;// esta variable controla el nuero de productos por pagina en la factura
     let numPaginas = this.calcularHojas(tope, factura.detalle, topeLinea, 2);
     let posy = 63; //controla la posicion de y para los productos
-    this.getBase64ImageFromURL(imgData).subscribe(base64data => {
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
       let base64Image = 'data:image/jpg;base64,' + base64data;
       // for (let i = 0; i < numPaginas; i++) {
       let i = 0;
@@ -1441,7 +1490,7 @@ export class ImpresionService {
           posy = 63;
           row = 0;
           i = i + 1;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4,)
           this.crearHeader(factura, configuracion, (i + 1), numPaginas);
           this.doc.setFontType('normal');
           this.doc.setFontSize(9);
@@ -1468,15 +1517,15 @@ export class ImpresionService {
   imprimirInformeDiarioPDFCarta(factura: InformeDiarioVOModel) {
     let imgData = factura.empresa.url_logo;
     this.doc = new jsPDF();
-    let ini = this.calculosService.fechaIniBusquedaDate(new Date(factura.informe_diario.fecha_informe));
-    let fin = this.calculosService.fechaFinBusquedaDate(new Date(factura.informe_diario.fecha_informe));
-    this.getBase64ImageFromURL(imgData).subscribe(base64data => {
+    let ini = this.calculosService.fechaIniBusquedaDate(new Date(factura.informe_diario.fecha));
+    let fin = this.calculosService.fechaFinBusquedaDate(new Date(factura.informe_diario.fecha));
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
       this.usuarioService.usuarioByRol(this.ROL_CAJERO, factura.empresa.empresa_id, this.TIPO_DOCUMENTO_FACTURA, ini, fin).subscribe(res => {
         this.documentoService.getDocumentosByTipoPago(factura.empresa.empresa_id, this.TIPO_DOCUMENTO_FACTURA, ini, fin).subscribe(pagos => {
           let cajeros = res;
           let tipos = pagos
           let base64Image = 'data:image/jpg;base64,' + base64data;
-          this.doc.addImage(base64Image, 'JPEG', 10, 4)
+          this.doc.addImage(base64Image, 'JPEG', 10, 4, 60,29)
           this.doc.setFontType('bold')
           this.doc.setFontSize(9);
           this.doc.text(this.calculosService.centrarDescripcion(factura.empresa.nombre, 77), 80, 5);
@@ -1489,15 +1538,16 @@ export class ImpresionService {
 
           this.doc.setFontSize(9);
           this.doc.text("Comprobante de Informe Diario ", 10, 35);
-          this.doc.text("Fecha informe: " + this.calculosService.formatDate(factura.informe_diario.fecha_informe, false), 10, 40);
+          this.doc.text("Fecha informe: " + this.calculosService.formatDate(factura.informe_diario.fecha, false), 10, 40);
           this.doc.text("__________________________________________________________________________________________________________", 10, 45);
           this.doc.text("# Fact. Inicial             # Fact. Final              Cant. Facturas             Valor Total Facturado ", 10, 50);
           this.doc.text("__________________________________________________________________________________________________________", 10, 51);
           this.doc.setFontType('normal')
-          this.doc.text(factura.informe_diario.documento_inicio, 10, 55);
-          this.doc.text(factura.informe_diario.documento_fin, 50, 55);
-          this.doc.text("" + factura.informe_diario.cantidad_documentos, 80, 55);
-          this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total_ventas).replace("COP", ""), 20), 100, 55);
+          let letra = factura.detalle[0].letra_consecutivo == undefined ? "" : factura.detalle[0].letra_consecutivo;
+          this.doc.text(letra + factura.detalle[0].consecutivo_dian, 10, 55);
+          this.doc.text(letra + factura.detalle[factura.detalle.length - 1].consecutivo_dian, 50, 55);
+          this.doc.text("" + factura.detalle.length, 80, 55);
+          this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total).replace("COP", ""), 20), 100, 55);
           this.doc.setFontType('bold');
 
           this.doc.text("Descriminación de ventas atendidas por Cajero", 10, 65);
@@ -1540,15 +1590,15 @@ export class ImpresionService {
           this.doc.text("Resumen Informe Diario", 10, espacio + 5);
           this.doc.text("__________________________________________________________________________________________________________", 10, espacio - 5);
           espacio = espacio + 10;
-          this.doc.text("Total Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total_ventas).replace("COP", ""), 10, espacio);
-          this.doc.text("IVA Total: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_ventas).replace("COP", ""), 10, espacio + 5);
+          this.doc.text("Total Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total).replace("COP", ""), 10, espacio);
+          this.doc.text("IVA Total: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Number(factura.informe_diario.iva_19) + Number(factura.informe_diario.iva_5)).replace("COP", ""), 10, espacio + 5);
           this.doc.text("IVA 19%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_19).replace("COP", ""), 10, espacio + 10);
           this.doc.text("IVA 5%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.iva_5).replace("COP", ""), 10, espacio + 15);
           this.doc.text("Base 19%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.base_19).replace("COP", ""), 10, espacio + 20);
           this.doc.text("Base 5%: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.base_5).replace("COP", ""), 10, espacio + 25);
           this.doc.text("Excluido: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.excento).replace("COP", ""), 10, espacio + 30);
-          this.doc.text("Costos en Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.costo_ventas).replace("COP", ""), 10, espacio + 35);
-          this.doc.text("Ganancias: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format((Number(factura.informe_diario.total_ventas) - Number(factura.informe_diario.costo_ventas))).replace("COP", ""), 10, espacio + 40);
+          this.doc.text("Costos en Ventas: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.informe_diario.total_costo).replace("COP", ""), 10, espacio + 35);
+          this.doc.text("Ganancias: " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format((Number(factura.informe_diario.total) - Number(factura.informe_diario.total_costo))).replace("COP", ""), 10, espacio + 40);
           //if(){
 
           //}else{

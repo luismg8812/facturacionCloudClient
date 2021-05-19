@@ -73,28 +73,28 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-4 col-sm-2">
+        <div class="form-group col-md-4 col-sm-4">
           <b>Fecha entrega:</b> {{documento.fecha_entrega | date: 'dd/MM/yyyy, h:mm a'}}
         </div>
-        <div class="form-group col-md-4 col-sm-2 upper">
+        <div class="form-group col-md-4 col-sm-4 upper">
           <input class="form-control upper" id="placa" placeholder="* Placa" [disabled]="documento.impreso==1"
             name="placa" #placa required (blur)="agregarPlaca(placa)">
         </div>
-        <div class="form-group col-md-4 col-sm-2">
+        <div class="form-group col-md-4 col-sm-4">
           <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1"
             class="form-control" id="clientePV" (change)="clienteSelectFun(clientePV)">
-          <datalist id="browsers">
-            <option *ngFor="let cliente of clientes"
-              [value]="cliente.nombre+' '+cliente.apellidos+' - '+cliente.documento">
-              Cod. interno: {{cliente.cliente_id}}
-            </option>
+            <datalist id="browsers">
+              <option *ngFor="let cliente of clientes"
+                  [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
+                  Cod. interno: {{cliente.cliente_id}}
+              </option>
           </datalist>
         </div>
 
       </div>
 
       <div class="form-row">
-        <div class="form-group col-md-4 col-sm-2">
+        <div class="form-group col-md-4 col-sm-6">
           <input list="marcas" name="marca" #marca placeholder="Marca" class="form-control" id="marca"
             [disabled]="documento.impreso==1" (change)="marcaSelect(marca)">
           <datalist id="marcas">
@@ -102,7 +102,7 @@
             </option>
           </datalist>
         </div>
-        <div class="form-group col-md-4 col-sm-2">
+        <div class="form-group col-md-4 col-sm-6">
           <input list="modelos" name="modelo" #modelo placeholder="modelo" [disabled]="documento.impreso==1"
             class="form-control" id="modelo" (change)="guardarModelo(modelo)">
           <datalist id="modelos">
@@ -110,7 +110,7 @@
             </option>
           </datalist>
         </div>
-        <div class="form-group col-md-4 col-sm-2">
+        <div class="form-group col-md-4 col-sm-6">
           <select class="form-control" id="linea" placeholder="Marca" [disabled]="documento.impreso==1" #linea
             (change)="asignarLinea(linea)">
             <option>Seleccione Linea</option>
@@ -122,14 +122,14 @@
       </div>
 
       <div class="form-row">
-        <div class="form-group col-md-6 col-sm-1">
+        <div class="form-group col-md-6 col-sm-12">
           <textarea class="form-control mb-2" id="descripcionCliente" [disabled]="documento.impreso==1"
             #descripcionCliente placeholder="Descripción cliente" required
             (blur)="agregarDescripcionCliente(descripcionCliente)"></textarea>
           <textarea class="form-control " (blur)="agregarObservacion(observacion)" [disabled]="documento.impreso==1"
             id="observacion" #observacion placeholder="Observación" required></textarea>
         </div>
-        <div class="form-group col-md-6 col-sm-1">
+        <div class="form-group col-md-6 col-sm-12">
           <div class="container" *ngIf="downloadURL | async; let url">
             <img [src]="url" alt="Image from AngularFireStorage" width="100%" height="200px">
           </div>
@@ -139,7 +139,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-4 col-sm-2" *ngIf="empleadoOrdenActivo">
+        <div class="form-group col-md-4 col-sm-12" *ngIf="empleadoOrdenActivo">
           <input list="browsersEmpreados" name="empleadoPV" #empleadoPV [disabled]="documento.impreso==1"
             placeholder="Empleado" class="form-control" id="empleadoPV" (change)="empleadoSelectFun(empleadoPV)">
           <datalist id="browsersEmpreados">
@@ -150,14 +150,14 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-6 col-sm-1">
+        <div class="form-group col-md-6 col-sm-6">
           <!-- Button trigger modal -->
           <button type="button" class="btn btn-primary" data-toggle="modal" [disabled]="documento.impreso==1"
             data-target="#exampleModal">
             Agregar repuesto
           </button>
         </div>
-        <div class="form-group col-md-6 col-sm-1">
+        <div class="form-group col-md-6 col-sm-6">
           <h5>Total Orden: ${{formatearNumber(documento.total)}}</h5>
         </div>
       </div>
@@ -358,19 +358,33 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2">
+                  Cliente
                   <input list="browsers" name="clienteBuscarPV" #clienteBuscarPV placeholder="Cliente"
                     class="form-control" id="clienteBuscarPV">
 
                 </div>
                 <div class="form-group col-md-6 col-sm-2">
+                  Placa
                   <input class="form-control" id="placaBuscar" placeholder="Placa" name="placaBuscar" #placaBuscar
                     required>
                 </div>
-
-
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-2">
+                  Usuario
+                  <select id="usuariosPV" name="usuariosPV" #usuariosPV placeholder="" class="form-control">
+                    <option value="">Seleccione</option>
+                    <option *ngFor="let usuario of usuarioList" [value]="usuario.usuario_id">
+                      {{usuario.nombre}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 col-sm-2">
+                  Numero de ordenes: {{numOrdenes}}
+                </div>
               </div>
               <button type="button" class="btn btn-primary"
-                (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin)">Buscar</button>
+                (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin,usuariosPV)">Buscar</button>
               <button type="button" class="btn btn-primary ml-2"
                 (click)="buscarOrdenesHoy(placaBuscar,clienteBuscarPV)">Buscar de Hoy</button>
               <br />
@@ -612,7 +626,7 @@
                 <b>Consecutivo DIAN: </b> {{documentoFactura.consecutivo_dian}}
               </div>
               <div class="form-row">
-                <b>Tipo documento: </b> {{documentoFactura.consecutivo_dian}}
+                <b>Tipo documento: </b> {{documentoFactura.tipo_documento_id}}
               </div>
             </div>
           </div>
@@ -756,11 +770,11 @@
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Inicial
-                  <input class="form-control" type="date" value="2020-01-01" id="fechaIniFactura" #fechaIniFactura>
+                  <input class="form-control" type="date" value="2021-01-01" id="fechaIniFactura" #fechaIniFactura>
                 </div>
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Final
-                  <input class="form-control" type="date" value="2020-12-31" id="fechaFinFactura" #fechaFinFactura>
+                  <input class="form-control" type="date" value="2021-12-31" id="fechaFinFactura" #fechaFinFactura>
                 </div>
               </div>
               <div class="form-row">
@@ -885,11 +899,11 @@
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Inicial
-                  <input class="form-control" type="date" value="2020-01-01" id="fechaInicial" #fechaInicial>
+                  <input class="form-control" type="date" value="2021-01-01" id="fechaInicial" #fechaInicial>
                 </div>
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Final
-                  <input class="form-control" type="date" value="2020-12-31" id="fechaFinal" #fechaFinal>
+                  <input class="form-control" type="date" value="2021-12-31" id="fechaFinal" #fechaFinal>
                 </div>
               </div>
               <div class="form-row">
@@ -927,7 +941,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let ordenes of facturasBuscarList">
+                  <tr *ngFor="let ordenes of facturasBuscarList" class="{{ordenes.nota_id!=null?'table-danger':''}}">
                     <th scope="row">
                       <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
                         (click)="cargarFactura(ordenes)" title="Ver">
@@ -1001,22 +1015,7 @@
                     placeholder="Descripción corrección"></textarea>
                 </div>
               </div>
-              <div class="form-row">
-
-                <div class="form-group col-sm-8">
-                  Articulo
-                  <input list="articulos" name="articuloBuscar" #articuloBuscar placeholder="Articulo"
-                    class="form-control" id="articuloBuscar" (change)="articuloSelect(articuloBuscar) ">
-                </div>
-                <div class="form-group col-md-3 col-sm-1">
-                  Cantidad
-                  <input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control">
-                </div>
-                <div class="form-group col-md-1 col-sm-1">
-                  <button type="button" class="btn btn-primary mt-4" title="Adjuntar producto"
-                    (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
-                </div>
-              </div>
+             
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-1">
 
@@ -1025,38 +1024,7 @@
                   <button type="button" class="btn btn-secondary" (click)="cerrarNota()">Salir</button>
                 </div>
               </div>
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col">Opciones</th>
-                    <th scope="col">Producto</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Valor Uni.</th>
-                    <th scope="col">Valor Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of itemsFactura2">
-                    <th scope="row">
-                      <button type="button" id="d_{{item.documento_detalle_id}}" #borraR
-                        class="btn btn-secondary btn-sm" title="Eliminar Producto" (click)="borrarItem(borraR)">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </th>
-                    <td>{{item.descripcion}}</td>
-                    <td><input name="cantidadNota" #cantidadNota placeholder="Cantidad" class="form-control"
-                        id="c_{{item.documento_detalle_id}}" (blur)="cambioCantidad(cantidadNota)"
-                        value="{{item.cantidad}}">
-                    </td>
-                    <td>
-                      <input name="unitarioNota" #unitarioNota placeholder="Unitario" class="form-control"
-                        id="u_{{item.documento_detalle_id}}" (blur)="cambioUnitario(unitarioNota)"
-                        value="{{item.unitario}}">
-                    </td>
-                    <td>{{formatearNumber(item.parcial)}}</td>
-                  </tr>
-                </tbody>
-              </table>
+            
             </div>
 
           </div>

@@ -72,6 +72,10 @@ export class DocumentoService {
     return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByOrden', documento_id);
   }
 
+  deleteDocumentoOrdenByDocumento(documento_id: DocumentoModel) {
+    return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByDocumento', documento_id);
+  }
+
   
   saveTipoPagoDocumento(tipoPagoDocumentoId: TipoPagoDocumentoModel) { 
     return this.http.post<any>(this.server_api + '/documento/createTipoPagoDocumento', tipoPagoDocumentoId);
@@ -84,6 +88,12 @@ export class DocumentoService {
   getDocumentoOrdenById(ordenId: string) {
     return this.http.get<DocumentoOrdenModel[]>(this.server_api + '/documento/getDocumentoOrdenById?ordenId='+ordenId);
   }
+
+  getUltimoDocumentoId() {
+    return this.http.get<any>(this.server_api + '/documento/getUltimoDocumentoId');
+  }
+
+  
   
   getOrdenesByDocumentoId(documentoId: string) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesByDocumentoId?documentoId='+documentoId);
@@ -107,8 +117,8 @@ export class DocumentoService {
     return this.http.get<CuadreCajaVoModel>(this.server_api + '/documento/getCuadreCaja?tipoDocumentoId='+tipoDocumentoId+'&empresaId=' + empresaId + '&usuarioId=' + usuarioId + '&cerrado=' + cerrado);
   }
 
-  getOrdenesTrabajo(empresaId:string, placa: string,  cliente: string, fechaInicial, fechaFinal,tipoDocumentoId:number) {
-    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesTrabajo?empresaId='+empresaId+'&placa='+placa+'&cliente=' + cliente + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId);
+  getOrdenesTrabajo(empresaId:string, placa: string,  cliente: string, fechaInicial, fechaFinal,tipoDocumentoId:number,idUsuario:string) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesTrabajo?empresaId='+empresaId+'&placa='+placa+'&cliente=' + cliente + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId+'&idUsuario='+idUsuario);
   }
 
   getNominaByEmpleado(fechaInicial,fechaFinal,idEmpleados: number[],tipoDocumentoId:string) {
@@ -123,9 +133,15 @@ export class DocumentoService {
     return this.http.get<any>(this.server_api + '/documento/getVentasPorSubGrupos?usuarioId=' + usuarioId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+ '&conCierre=' + conCierre);
   }
 
-  getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
-    return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
+  getDocumentosByFechaAndTipo(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number,autorizacion:string) {
+    return this.http.get<any[]>(this.server_api + '/documento/getDocumentosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId+"&autorizacion="+autorizacion);
   }
+
+  getDocumentosByFechaAndTipoDetalle(fechaInicial,fechaFinal,empleadoId:string,tipoDocumentoId:string,usuarioId:string,empresaId:number) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getDocumentosByFechaAndTipoDetalle?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&idEmpleados="+empleadoId+"&tipoDocumentoId="+tipoDocumentoId+"&usuarioId="+usuarioId+"&empresaId="+empresaId);
+  }
+
+  
 
   getRetirosByFechaAndTipo(fechaInicial,fechaFinal,usuario_hace_id:string,usuario_aplica_id:string,empresaId:number) {
     return this.http.get<RetirosCajaModel[]>(this.server_api + '/documento/getRetirosByFechaAndTipo?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&usuario_hace_id="+usuario_hace_id+"&usuario_aplica_id="+usuario_aplica_id+"&empresaId="+empresaId);
@@ -163,6 +179,12 @@ export class DocumentoService {
   getGananciaDocumentos(fechaInicial,fechaFinal, empresaId: number  ) {
     return this.http.get<any>(this.server_api + '/documento/getGananciaDocumentos?empresaId=' + empresaId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal);
   }
+
+  getTerceros(fechaInicial,fechaFinal, tipoTercero:string,tipoDocumento:number, montoDesde:number, empresaId: number ,montoHasta:number ) {
+    return this.http.get<any>(this.server_api + '/documento/getTerceros?empresaId=' + empresaId +'&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal
+    + '&tipoTercero=' + tipoTercero+ '&tipoDocumento=' + tipoDocumento+ '&montoDesde=' + montoDesde+ '&montoHasta=' + montoHasta);
+  }
+
 
   
 }

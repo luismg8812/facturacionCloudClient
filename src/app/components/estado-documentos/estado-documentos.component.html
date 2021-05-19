@@ -39,6 +39,8 @@
     <div class="form-group col-md-9 col-sm-6">  
           <button type="button" class="btn btn-primary mr-1" (click)="buscar(estadoDocumento)" >Buscar</button>
           <button type="button" class="btn btn-primary" (click)="validarEnviar()">Enviar</button>
+          <button type="button" class="btn btn-primary mr-1" (click)="validarDescartar()">Descartar</button>
+          <button type="button" class="btn btn-primary" (click)="exportar() ">Exportar</button>
           <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" id="checkAll" #checkAll (change)="selectAll($event)">
             <label class="custom-control-label" for="checkAll">Seleccionar Todo</label>
@@ -69,10 +71,8 @@
           data-toggle="modal" data-target="#exampleModal">
           <i class="fas fa-sync"></i>
         </button>
-        <button type="button" (click)="descargarPDF(ordenes)" title="Descargar Representación grafica" class="btn btn-secondary btn-sm mr-1" [disabled]="ordenes.invoice_id!=5"
-          data-toggle="modal" >
-          <i class="far fa-file-pdf"></i>
-        </button>
+        <a href="https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey={{ordenes.cufe}}" target="_blank" class="badge badge-success {{ordenes.invoice_id!=5?'d-none':''}}" title="Descargar Representación grafica" > <i class="far fa-file-pdf"></i></a>
+ 
         <button type="button" (click)="descargarXML(ordenes)" title="Descargar XML" class="btn btn-secondary btn-sm mr-1" [disabled]="ordenes.invoice_id!=5"
        >
         <i class="far fa-file-code"></i>
@@ -89,6 +89,33 @@
       </tr>
     </tbody>
   </table>
+
+
+   <!-- descartar Modal -->
+   <div class="modal fade" id="descartarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+   aria-hidden="true">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h5 class="modal-title" id="exampleModalLabel">Descartar documentos seleccionados</h5>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+       <div class="modal-body">
+         Los documentos seleccionados serán descartados y NO serán enviados a la DIAN mediante facturación electrónica,
+         está seguro de
+         de descartarlos?
+         <br />
+         <h6>Documentos a Descartar: {{documentoMap.length}}</h6>
+       </div>
+       <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+         <button type="button" class="btn btn-primary" (click)="descartarDocumentos()">Descartar</button>
+       </div>
+     </div>
+   </div>
+ </div>
 
    <!-- confirmacion Modal -->
    <div class="modal fade" id="envioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

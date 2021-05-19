@@ -5,7 +5,6 @@ import { APP_INITIALIZER } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { MenuComponent } from './menu/menu.component';
 import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
@@ -17,17 +16,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { UsuarioComponent } from './usuario/usuario.component';
 import { EmpresaComponent } from './empresa/empresa.component';
-import { CuadreCajaComponent } from './cuadre-caja/cuadre-caja.component';
+import { CuadreCajaComponent } from './components/cuadre-caja/cuadre-caja.component';
 import { OtComponent } from './ot/ot.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
-import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
-import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
 import { SocketService } from './services/socket.service';
-import { BuscarDocumentosComponent } from './buscar-documentos/buscar-documentos.component';
-import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
+import { BuscarDocumentosComponent } from './components/buscar-documentos/buscar-documentos.component';
+import { MovimientoMesComponent } from './components/movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
-import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
+import { InformeDiarioComponent } from './components/informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
 import { AppConfigService } from './services/app-config.service';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
@@ -35,7 +32,6 @@ import { MovimientoProductosComponent } from './movimiento-productos/movimiento-
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
 import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
-import { CarteraClientesComponent } from './cartera-clientes/cartera-clientes.component';
 import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
@@ -48,6 +44,15 @@ import { EstadoDocumentosComponent } from './components/estado-documentos/estado
 import { CuentasContablesComponent } from './components/cuentas-contables/cuentas-contables.component';
 import { VentasDiaComponent } from './components/ventas-dia/ventas-dia.component';
 import { KardexComponent } from './components/kardex/kardex.component';
+import { MenuComponent } from './components/menu/menu.component';
+import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
+import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
+import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
+import { TrasladoComponent } from './components/traslado/traslado.component';
+import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
+import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
+import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
+import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -87,7 +92,12 @@ export function initializeApp(appConfigService: AppConfigService) {
     TutorialesComponent,
     CuentasContablesComponent,
     BonosComponent,
-    KardexComponent
+    KardexComponent,
+    RequerimientoComponent,
+    TrasladoComponent,
+    AceptacionMercanciaComponent,
+    ReporteTercerosComponent,
+    ControlInventarioComponent
   ],
   imports: [
     BrowserModule,

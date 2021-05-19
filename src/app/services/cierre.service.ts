@@ -21,13 +21,6 @@ export class CierreService {
     return this.http.get<InformeDiarioModel[]>(this.server_api + '/informeDiario/getInfoDiarioByDate?empresaId=' + empresaId+"&fechaInforme="+fechaInforme+"&fechaFin="+fechaFin);
   }
 
-  updateInformeDiario(infoDiario: InformeDiarioModel) { 
-    return this.http.post<any>(this.server_api + '/informeDiario/updateInformeDiario', infoDiario);
-  }
-
-  saveInformeDiario(infoDiario: InformeDiarioModel) { 
-    return this.http.post<any>(this.server_api + '/informeDiario/saveInformeDiario', infoDiario);
-  }
 
   hacerCierreDiario(empresaId:number) {
     console.log(empresaId);
