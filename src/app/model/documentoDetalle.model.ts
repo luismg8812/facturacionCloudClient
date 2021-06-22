@@ -8,6 +8,7 @@ export class DocumentoDetalleModel {
     public impreso_comanda:number;
     public cantidad:number;
     public unitario:number;
+    public unitarioAntesIva:number;
     public nombre_producto:string;
     public costo_producto:number;
     public impuesto_producto:number;
@@ -36,5 +37,6 @@ export class DocumentoDetalleModel {
        this.url_foto="";
        this.varios=0;
        this.saldo=0;
+       this.unitarioAntesIva=0;
     }
 }
