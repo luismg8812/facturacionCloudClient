@@ -53,6 +53,7 @@ import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/
 import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
 import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
 import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
+import { HojaDeVidaArticuloComponent } from './components/hoja-de-vida-articulo/hoja-de-vida-articulo.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -97,7 +98,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     TrasladoComponent,
     AceptacionMercanciaComponent,
     ReporteTercerosComponent,
-    ControlInventarioComponent
+    ControlInventarioComponent,
+    HojaDeVidaArticuloComponent
   ],
   imports: [
     BrowserModule,

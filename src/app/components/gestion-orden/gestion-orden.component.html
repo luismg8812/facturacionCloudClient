@@ -272,11 +272,24 @@
         data-target="#abonoModa">
         Launch demo modal
       </button>
+      <!-- Button trigger modal .d-none se repete esta parte para todos las pantallas de opciones de punto de venta dia -->
+      <button type="button" class="btn btn-primary d-none" id="hojaVidaArticuloModal" #hojaVidaArticuloModal data-toggle="modal"
+        data-target="#hojaVidaArticuloModa">
+        hojaVidaArticuloModal
+      </button>
+
+      
       <!-- Modal cuadre de caja -->
       <div class="modal fade" id="abonoModa" tabindex="-1" role="dialog" aria-labelledby="abonoModalLabel"
         aria-hidden="true">
         <app-bonos></app-bonos>
       </div>
+
+         <!-- Modal hojaVidaArticuloModal -->
+         <div class="modal fade" id="hojaVidaArticuloModa" tabindex="-1" role="dialog" aria-labelledby="hojaVidaArticuloModalLabel"
+         aria-hidden="true">
+         <app-hoja-de-vida-articulo></app-hoja-de-vida-articulo>
+       </div>
 
       <!-- crear producto Modal -->
       <div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -608,7 +621,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-9 col-sm-12 ">
+        <div class="form-group col-md-10 col-sm-12 ">
           <div class="form-row">
             <div class="form-group col-md-4 col-sm-2">
               <input list="browsers" name="clienteFactura" [disabled]="documentoFactura.impreso==1" #clienteFactura
@@ -679,6 +692,7 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Orden</th>
                 <th scope="col">Cantidad</th>
+                <th scope="col">U. antes de IVA</th>
                 <th scope="col">Unitario</th>
                 <th scope="col"> % Impuesto <select class="form-control" value="0"
                     (change)="calcularIvaAll(impuestoAll) " #impuestoAll>
@@ -696,9 +710,10 @@
             <tbody>
               <tr *ngFor="let ordenes of itemsFactura">
 
-                <td>{{ordenes.descripcion}}</td>
+                <td>{{ordenes.descripcion}}</td> 
                 <td>{{ordenes.documento_id}}</td>
-                <td>{{ordenes.cantidad}}</td>
+                <td>{{ordenes.cantidad}}</td> 
+                <td>${{formatearNumber(ordenes.unitarioAntesIva)}}</td>
                 <td>${{formatearNumber(ordenes.unitario)}}</td>
                 <td> <select class="form-control" value="{{ordenes.impuesto_producto}}"
                     [disabled]="documentoFactura.impreso==1" (change)="calcularIva(ordenes, impuesto) " #impuesto>
@@ -719,7 +734,7 @@
               #observacionFact placeholder="Observación" required (blur)="observacionFactura()"></textarea>
           </div>
         </div>
-        <div class="form-group col-md-3 col-sm-12 ">
+        <div class="form-group col-md-2 col-sm-12 ">
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-12 ">
               <h5><b>Vr. exento:</b></h5>

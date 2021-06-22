@@ -157,6 +157,7 @@ export class GestionOrdenComponent implements OnInit {
 
   //opciones
   @ViewChild("abonoModal") abonoModal: ElementRef;
+  @ViewChild("hojaVidaArticuloModal") hojaVidaArticuloModal: ElementRef;
 
 
   constructor(public productoService: ProductoService,
@@ -1582,6 +1583,8 @@ export class GestionOrdenComponent implements OnInit {
       const index = this.itemsFactura.indexOf(detalle, 0);
       if (index > -1) {
         detalle.impuesto_producto = impuesto.value;
+        let iva1 = detalle.impuesto_producto / 100.0;
+        detalle.unitarioAntesIva = (detalle.unitario / (1 + iva1));
         this.itemsFactura.splice(index, 1, detalle);
       }
       this.documentoDetalleService.updateDocumentoDetalle(detalle).subscribe(res => {
@@ -1604,6 +1607,8 @@ export class GestionOrdenComponent implements OnInit {
     const index = this.itemsFactura.indexOf(detalle, 0);
     if (index > -1) {
       detalle.impuesto_producto = impuesto.value;
+      let iva1 = detalle.impuesto_producto / 100.0;
+      detalle.unitarioAntesIva = (detalle.unitario / (1 + iva1));
       this.itemsFactura.splice(index, 1, detalle);
     }
     this.documentoDetalleService.updateDocumentoDetalle(detalle).subscribe(res => {
@@ -1901,8 +1906,12 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   enterTecla(element) {
+    console.log(element.id);
     if (element.id == "bonos") {
       this.abonoModal.nativeElement.click();
+    }
+    if (element.id == "hojaVidaArticulo") {
+      this.hojaVidaArticuloModal.nativeElement.click();
     }
   }
 
