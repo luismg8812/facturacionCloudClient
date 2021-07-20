@@ -11,6 +11,7 @@ import { EmpresaModel } from 'src/app/model/empresa.model';
 import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
 import { InformeDiarioModel } from 'src/app/model/informeDiario.model';
 import { ProductoModel } from 'src/app/model/producto.model';
+import { ProveedorModel } from 'src/app/model/proveedor.model';
 import { SubProductoModel } from 'src/app/model/subProducto.model';
 import { TipoDocumentoModel } from 'src/app/model/tipoDocumento.model';
 import { UsuarioModel } from 'src/app/model/usuario.model';
@@ -23,6 +24,7 @@ import { EmpleadoService } from 'src/app/services/empleado.service';
 import { EmpresaService } from 'src/app/services/empresa.service';
 import { ImpresionService } from 'src/app/services/impresion.service';
 import { ProductoService } from 'src/app/services/producto.service';
+import { ProveedorService } from 'src/app/services/proveedor.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { FacturaModel } from 'src/app/vo/factura.model';
 
@@ -38,6 +40,7 @@ export class BuscarDocumentosComponent implements OnInit {
 
   public usuarios: Array<UsuarioModel>;
   public empleados: Array<EmpleadoModel>;
+  public proveedores: Array<ProveedorModel>;
   public clientes: Array<ClienteModel> = [];
   public tiposDocumento: Array<TipoDocumentoModel>;
   public documentos: Array<DocumentoModel>;
@@ -94,6 +97,7 @@ export class BuscarDocumentosComponent implements OnInit {
     public documentoDetalleService: DocumentoDetalleService,
     public documentoService: DocumentoService,
     public cierreService: CierreService,
+    public proveedorService: ProveedorService,
     public clienteService: ClienteService) { }
 
   ngOnInit() {
@@ -102,6 +106,7 @@ export class BuscarDocumentosComponent implements OnInit {
     this.getUsuarios(this.empresaId);
     this.getEmpleados(this.empresaId);
     this.getclientes(this.empresaId);
+    this.getProveedores(this.empresaId);
     this.getTiposDocumento();
     this.getActivaciones(this.usuarioId);
     this.getImpresorasEmpresa(this.empresaId);
@@ -502,15 +507,19 @@ export class BuscarDocumentosComponent implements OnInit {
 
 
     fechaFinBuscar = this.calculosService.fechaFinBusqueda(this.fechaFinBuscar.nativeElement.value);
-
+    let proveedor = this.proveedores.find(proveedor => proveedor.nombre == proveedorBuscar);
     let cliente1 = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clientePV);
     let cliente_id = "";
     if (cliente1 != undefined) {
       cliente_id = cliente1.cliente_id.toString();
     }
+    let proveedor_id = "";
+    if (proveedor != undefined) {
+      proveedor_id = proveedor.proveedor_id.toString();
+    }
     console.log(tipoDocumento);
     this.documentoService.getDocumentoByTipoAndFecha(tipoDocumento, cajeroBuscar, empleadoBuscar, fechaIniBuscar, fechaFinBuscar,
-      consecutivoDianBuscar, internoBuscar, cliente_id, proveedorBuscar, this.empresaId).subscribe(res => {
+      consecutivoDianBuscar, internoBuscar, cliente_id, proveedor_id, this.empresaId).subscribe(res => {
         this.documentos = res;
       });
 
@@ -578,6 +587,13 @@ export class BuscarDocumentosComponent implements OnInit {
   getTiposDocumento() {
     this.documentoService.getTiposDocumento().subscribe(res => {
       this.tiposDocumento = res;
+    });
+  }
+
+  getProveedores(empresaId: number) {
+    this.proveedorService.getProveedoresByEmpresa(empresaId.toString()).subscribe(res => {
+      this.proveedores = res;
+      console.log("lista de proveedores cargados: " + this.proveedores.length);
     });
   }
 

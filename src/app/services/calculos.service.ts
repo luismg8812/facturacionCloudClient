@@ -358,7 +358,7 @@ export class CalculosService {
 			let impuesto: number = Number(detalle.impuesto_producto) / 100;
 			let datadetalle: DataDetalleFacturaModel = new DataDetalleFacturaModel();
 			datadetalle.cantidad = "" + detalle.cantidad;
-			datadetalle.codigoProducto = "" + detalle.producto_id;
+			datadetalle.codigoProducto = "" + detalle.documento_detalle_id;
 			datadetalle.nombreProducto = detalle.descripcion;
 			datadetalle.precio = "" + detalle.unitario;
 			datadetalle.subtotal = "" + (detalle.parcial / (1 + impuesto))
@@ -441,6 +441,7 @@ export class CalculosService {
 	}
 
 	enunciadoEmailFE(empresa:EmpresaModel,docu:DocumentoModel){
+		let linkDescarga ="https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=";
 		let enunciado=`<p> Estimado Cliente,</p>
 		<b/>
 		<p>___________________________________________________________________________</p>
@@ -470,7 +471,12 @@ export class CalculosService {
 		<p>Si su factura presenta algún error, le agradecemos a más tardar dentro de las siguientes 48 horas, dar “click” al “link” de rechazo que aparece en este correo. </p>
 		<p>Saludos cordiales,</p>
 		<p><b/></p>
+		<p><b/></p>
+		<p><b/></p>
+		<p><b/></p>
+		<div><p>Estimado cliente</p></div><div><p>Para revizar su factura electrónica por favor dar click en el siguiente link</p></div><div><a href="'${linkDescarga} ${docu.cufe}'">DESCARGAR AQUI!</a></div>
 		<p>EFFECTIVE SOFTWARE (Sistemas de facturacón e inventario)</p>
+		
 		`;
 		return enunciado;
 	}
@@ -503,6 +509,7 @@ export class CalculosService {
 		dataFactura.metodoDePago = "1";
 		dataFactura.formaDePago = "10";
 		dataFactura.paymentDueDate = "0000-00-00";// si es a credito mando esta fecha  
+		dataFactura.notaFactura=docu.documento.descripcion_trabajador;
 		return dataFactura;
 	}
 

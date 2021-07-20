@@ -72,6 +72,10 @@ export class DocumentoService {
     return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByOrden', documento_id);
   }
 
+  deleteDocumentoOrdenByDocumento(documento_id: DocumentoModel) {
+    return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByDocumento', documento_id);
+  }
+
   
   saveTipoPagoDocumento(tipoPagoDocumentoId: TipoPagoDocumentoModel) { 
     return this.http.post<any>(this.server_api + '/documento/createTipoPagoDocumento', tipoPagoDocumentoId);
