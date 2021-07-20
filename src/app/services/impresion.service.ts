@@ -1512,8 +1512,8 @@ export class ImpresionService {
         let unitario = Number(contadorP.unitario) / dividir;
         let parcial = contadorP.parcial;
         let iva = contadorP.impuesto_producto;
-        this.doc.text(codigo, 4, posy);
-        this.doc.text(cantidad, 20, posy);
+        this.doc.text(""+codigo, 4, posy);
+        this.doc.text(""+cantidad, 20, posy);
 
         this.doc.text("" + iva, 145, posy);
         this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario)).replace("COP", ""), 20), 113, posy);
