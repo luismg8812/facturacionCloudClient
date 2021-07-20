@@ -5,7 +5,7 @@ export class ParametrosModel {
     public ambiente:string;
     
     constructor(){
-        this. serverUrl='https://invacionboutiqueserver.herokuapp.com';
+        this. serverUrl='https://yacuingenieriaserver.herokuapp.com';
         //this. serverUrl=AppConfigService.ip+':'+AppConfigService.port;
         //this.ambiente = 'local';
         this.ambiente = 'cloud';
