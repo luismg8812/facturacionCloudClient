@@ -4,5 +4,5 @@
     "invoice_status":"https://apidian.grupcadaya.com/Factura_electronica/getStatus",
     "get_xml":"https://apidian.grupcadaya.com/Factura_electronica/getXmlBase64",
     "ws_envios_dian":"https://apidian.grupcadaya.com/Factura_electronica/generarFacturaData",
-    "key_invoice":"$argon2i$v=19$m=65536,t=4,p=1$WU9FS2NLM3I0R3JPcERGLw$pTsLu6F7aj1p3laYhMWsDGGFZ8fYF7pVaJHrPp7ENpE"
+    "key_invoice":"$argon2i$v=19$m=65536,t=4,p=1$YWszc0lpeWo0Z2diMmpOag$L97bfIO4zKvE2Zf01bt2aJqn1gPG3lmGLy5kL1HJvxw"
 }
