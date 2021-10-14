@@ -21,6 +21,7 @@ export class DocumentoModel {
     public detalle_entrada:string;
     public saldo:number;
     public peso_total:number;
+    public peso_cotero:number;
     public descuento:number;
     public cambio:number;
     public mac:string;
@@ -66,6 +67,7 @@ export class DocumentoModel {
         this. detalle_entrada="";
         this. saldo=0;
         this. peso_total=0;
+        this. peso_cotero=0;
         this. descuento=0;
         this. cambio=0;
         this. mac="";

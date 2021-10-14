@@ -10,6 +10,7 @@
       <select id="grupo" name="grupoPV" #grupoPV placeholder=""
          class="form-control">
         <option value="">Seleccione</option>
+        <option value="0">Sin grupo</option>
         <option *ngFor="let grupo of grupoList" [value]="grupo.grupo_id">
            {{grupo.nombre}}
         </option>
@@ -33,6 +34,7 @@
       <select id="grupo" name="subgrupoPV" #subgrupoPV placeholder=""
          class="form-control">
         <option value="">Seleccione</option>
+        <option value="0">Sin sub-grupo</option>
         <option *ngFor="let grupo of subGrupoList" [value]="grupo.sub_grupo_id">
            {{grupo.nombre}}
         </option>

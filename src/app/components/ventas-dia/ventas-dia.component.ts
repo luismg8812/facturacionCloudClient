@@ -975,13 +975,7 @@ export class VentasDiaComponent implements OnInit {
     this.modificarFactura = true;
   }
 
-  unitarioEnter(element) {
-    if (this.codigoBarrasActivo) {
-      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
-      this.CodigoBarrasPV.nativeElement.focus();
-    } else {
-      this.articuloPV.nativeElement.focus();
-    }
+  unitarioEnter(element) { 
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;
@@ -995,6 +989,12 @@ export class VentasDiaComponent implements OnInit {
     }
     this.productos.splice(0, 1);
     anterior.estado = 0;
+    if (this.codigoBarrasActivo) {
+      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+      this.CodigoBarrasPV.nativeElement.focus();
+    } else {
+      this.articuloPV.nativeElement.focus();
+    }
     this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(anterior.cantidad, element.value);
