@@ -1,0 +1,96 @@
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Gestión de Coteros</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+
+        <div class="form-group col-md-6 col-sm-1">
+          <button type="button" class="btn btn-primary" (click)=" getCoteros(1)">Buscar</button>
+          <button type="button" class="btn btn-primary" data-toggle="modal"(click)="crearCot()" data-target="#crearCoteroModal">
+            Crear Cotero
+          </button>
+          <button type="button" class="btn btn-secondary ml-1" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Opciones</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Peso</th>
+            <th scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cote of coteroList">
+            <th scope="row">
+              <button type="button" class="btn btn-primary btn-sm" 
+                title="Editar cotero" data-toggle="modal" data-target="#crearCoteroModal"
+                (click)="editarCotero(cote)">
+              Editar
+              </button>
+            
+            </th>
+            <td>{{cote.nombre}}</td>
+            <td>{{cote.peso}}</td>
+            <td>{{cote.estado=='1'?'Activo':'Inactivo'}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Modal crear cotero-->
+      <div class="modal fade" id="crearCoteroModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Crear cotero</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Nombre
+                  <input class="form-control" id="costo" placeholder="* Nombre del cotero" name="costoPV" #costoPV required
+                    [(ngModel)]="coteroNew.nombre">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Peso Kg
+                  <input class="form-control" id="costoPublicoPV" placeholder="* Peso del cotero en Kg" name="costoPublicoPV"
+                    #costoPublicoPV required [(ngModel)]="coteroNew.peso">
+                </div>
+              </div>
+              <div class="form-row">
+               
+                <div class="form-group col-md-6 col-sm-6">
+                  Estado
+                  <input type="checkbox" class="form-check-input ml-3 allti" id="estado"
+                  (change)="cambiarEstado($event)">
+                </div>
+              </div>
+            </div>
+
+           
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cerrar</button>
+              <button type="button" class="btn btn-primary" (click)="crearCotero()">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+</div>

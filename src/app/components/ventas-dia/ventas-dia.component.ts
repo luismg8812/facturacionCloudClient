@@ -669,8 +669,9 @@ export class VentasDiaComponent implements OnInit {
     });
   }
 
-  getImprimirFisico(fileName: string) {
+  async getImprimirFisico(fileName: string) {
     if (localStorage.getItem("socket") == 'true') {
+      await this.delay(4000);
       this.socketService.getImprimirFisico(fileName).subscribe(res => {
       });
     } else {
@@ -974,13 +975,7 @@ export class VentasDiaComponent implements OnInit {
     this.modificarFactura = true;
   }
 
-  unitarioEnter(element) {
-    if (this.codigoBarrasActivo) {
-      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
-      this.CodigoBarrasPV.nativeElement.focus();
-    } else {
-      this.articuloPV.nativeElement.focus();
-    }
+  unitarioEnter(element) { 
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;
@@ -994,6 +989,12 @@ export class VentasDiaComponent implements OnInit {
     }
     this.productos.splice(0, 1);
     anterior.estado = 0;
+    if (this.codigoBarrasActivo) {
+      this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+      this.CodigoBarrasPV.nativeElement.focus();
+    } else {
+      this.articuloPV.nativeElement.focus();
+    }
     this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(anterior.cantidad, element.value);
@@ -1817,10 +1818,11 @@ export class VentasDiaComponent implements OnInit {
       for (let p of subProductoList) {
         this.productoService.getProductoById(p.producto_hijo.toString(), this.empresaId.toString()).subscribe(result => {
           let obj = result[0];
+          
           if (operacion == 'suma') {
-            obj.cantidad = Number(obj.cantidad) + Number(p.cantidad);
+            obj.cantidad = Number(obj.cantidad) + (p.pesado==1?Number(productoSelect3.cantidad):Number(p.cantidad));
           } else {
-            obj.cantidad = Number(obj.cantidad) - Number(p.cantidad);
+            obj.cantidad = Number(obj.cantidad) - (p.pesado==1?Number(productoSelect3.cantidad):Number(p.cantidad));
           }
           this.productoService.updateCantidad(obj).subscribe();
         });

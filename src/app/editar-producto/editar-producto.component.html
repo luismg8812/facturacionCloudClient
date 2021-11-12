@@ -266,7 +266,7 @@
                     <i class="fas fa-plus-circle"></i>
                   </button>
                 </div>
-                <div class="form-group col-md-9 col-sm-9">
+                <div class="form-group col-md-7 col-sm-7">
                   Sub producto
                   <input list="articulos" name="articulo" #articulo placeholder="Articulo" class="form-control"
                     id="articulo">
@@ -274,8 +274,14 @@
                 </div>
                 <div class="form-group col-md-2 col-sm-2">
                   Cantidad
-                  <input class="form-control" id="cantidadSub" name="cantidadSub" #cantidadSub>
+                  <input class="form-control" id="cantidadSub" name="cantidadSub" #cantidadSub >
                 </div>
+                <div class="form-group col-md-2 col-sm-2">
+                  Pesado
+                  <input type="checkbox" class="form-check-input ml-3 allti" id="pesadoSub"
+                (change)="selectOrdenOne($event)">
+                </div>
+               
               </div>
               <div class="form-row">
                 <table class="table table-hover">

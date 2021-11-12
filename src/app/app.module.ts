@@ -31,7 +31,6 @@ import { NgxQRCodeModule } from 'ngx-qrcode2';
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
-import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
 import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
@@ -54,6 +53,8 @@ import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-
 import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
 import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
 import { HojaDeVidaArticuloComponent } from './components/hoja-de-vida-articulo/hoja-de-vida-articulo.component';
+import { CoteroComponent } from './components/cotero/cotero.component';
+import { ReporteProductosComponent } from './components/reporte-productos/reporte-productos.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -99,7 +100,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     AceptacionMercanciaComponent,
     ReporteTercerosComponent,
     ControlInventarioComponent,
-    HojaDeVidaArticuloComponent
+    HojaDeVidaArticuloComponent,
+    CoteroComponent
   ],
   imports: [
     BrowserModule,

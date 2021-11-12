@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ActivacionModel } from 'src/app/model/activacion';
 import { ConfiguracionModel } from 'src/app/model/configuracion.model';
 import { ControlInventarioModel } from 'src/app/model/controlInventario.model';
+import { CoteroModel } from 'src/app/model/cotero.model';
 import { DocumentoModel } from 'src/app/model/documento.model';
 import { DocumentoDetalleModel } from 'src/app/model/documentoDetalle.model';
 import { EmpresaModel } from 'src/app/model/empresa.model';
@@ -20,6 +21,7 @@ import { CalculosService } from 'src/app/services/calculos.service';
 import { CierreService } from 'src/app/services/cierre.service';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { ControlInventarioService } from 'src/app/services/control-inventario.service';
+import { CoteroService } from 'src/app/services/cotero.service';
 import { DocumentoDetalleService } from 'src/app/services/documento-detalle.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { EmpresaService } from 'src/app/services/empresa.service';
@@ -42,7 +44,7 @@ export class MovimientoMesComponent implements OnInit {
   public tiposDocumento: Array<TipoDocumentoModel>;
   public proveedores: Array<ProveedorModel>;
   public activaciones: Array<ActivacionModel>;
-  public productos: Array<DocumentoDetalleModel>;
+  public productos: Array<DocumentoDetalleModel> = [];
   public productosAll: Array<ProductoModel>;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
   public opciones: Array<SubMenuModel>;
@@ -72,6 +74,8 @@ export class MovimientoMesComponent implements OnInit {
   public documentosList: Array<DocumentoModel> = [];
   public modificarFactura: boolean = false;
   public divGramera: boolean = false;
+  public coterosActivo: boolean = false;
+  public coteroList: Array<CoteroModel>;
   public pesoGramera: number = 0.0;
   public indexModificarSelect: number = 0;
   public informeDiario: InformeDiarioModel;
@@ -110,6 +114,8 @@ export class MovimientoMesComponent implements OnInit {
   @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
   @ViewChild("buscarDocumentoXFecha") buscarDocumentoXFecha: ElementRef;
   @ViewChild("editarProducto") editarProducto: ElementRef;
+  @ViewChild("coterosModal") coterosModal: ElementRef;
+
 
   //div botones de acciones
   @ViewChild("divSiguiente") divSiguiente: ElementRef;
@@ -144,6 +150,7 @@ export class MovimientoMesComponent implements OnInit {
   @ViewChild("precioPV") precioPV: ElementRef;
   @ViewChild("grameraPV") grameraPV: ElementRef;
   @ViewChild("unitarioPV") unitarioPV: ElementRef;
+  @ViewChild("coteroPV") coteroPV: ElementRef;
   @ViewChild("efectovoPV") efectovoPV: ElementRef;
   @ViewChild("unitarioVentaPV") unitarioVentaPV: ElementRef;
   @ViewChild("facturacionPV") facturacionPV: ElementRef;
@@ -158,6 +165,7 @@ export class MovimientoMesComponent implements OnInit {
   readonly DESCUENTOS: string = '10';
   readonly CAMBIO_PRECIO: string = '15';
   readonly TIPOS_PAGOS: string = '20';
+  readonly COTEROS: string = '32';
 
   readonly TIPO_DOCUMENTO_ENTRADA_ALMACEN: number = 2;
   readonly TIPO_DOCUMENTO_SALIDA_ALMACEN: number = 6;
@@ -169,13 +177,14 @@ export class MovimientoMesComponent implements OnInit {
     public calculosService: CalculosService,
     public documentoDetalleService: DocumentoDetalleService,
     public productoService: ProductoService,
-    public controlInventarioService:ControlInventarioService,
+    public controlInventarioService: ControlInventarioService,
     private router: Router,
     public socketService: SocketService,
     public clienteService: ClienteService,
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
     public cierreService: CierreService,
+    public coteroService: CoteroService,
     public proveedorService: ProveedorService) { }
 
   ngOnInit() {
@@ -194,6 +203,7 @@ export class MovimientoMesComponent implements OnInit {
     this.getGrupos(this.empresaId);
     this.getSubGrupos(this.empresaId);
     this.getTipoPago();
+    this.getCoteros(1);
     this.guiaTransporteActivo = false;
     this.documentosList = [];
     this.modificarFactura = false;
@@ -574,10 +584,10 @@ export class MovimientoMesComponent implements OnInit {
     });
   }
 
-  controlInventario(anterior: DocumentoDetalleModel, operacion: string){
+  controlInventario(anterior: DocumentoDetalleModel, operacion: string) {
     this.controlInventarioService.getControlInventarioByProductoId(anterior.producto_id).subscribe(res => {
-      if(res.length>0){
-        let ci:ControlInventarioModel=res[0];
+      if (res.length > 0) {
+        let ci: ControlInventarioModel = res[0];
         if (operacion == 'suma') {
           ci.entrada = Number(ci.entrada) + Number(anterior.cantidad);
         } else {
@@ -748,6 +758,10 @@ export class MovimientoMesComponent implements OnInit {
           console.log("tipos pagos activos ");
           this.TipoPagosActivo = true;
         }
+        if (this.activaciones[e].activacion_id == this.COTEROS) {
+          console.log("coteros activos ");
+          this.coterosActivo = true;
+        }
         if (this.activaciones[e].activacion_id == this.CAMBIO_PRECIO) {
           console.log("cambio de precio activos ");
           this.cambioPrecioActivo = true;
@@ -805,6 +819,9 @@ export class MovimientoMesComponent implements OnInit {
     if (element.id == "unitarioVentaPV") {
       this.unitarioVentaEnter(element);
     }
+    if (element.id == "coteroPV") {
+      this.coteroEnter(element);
+    }
     if (element.id == "descuentoPV") {
       this.descuentoEnter();
     }
@@ -851,6 +868,9 @@ export class MovimientoMesComponent implements OnInit {
 
     if (element.id == "EditarProductos") {
       this.editarProducto.nativeElement.click();
+    }
+    if (element.id == "coteros") {
+      this.coterosModal.nativeElement.click();
     }
 
     if (element.id == "finPV") {
@@ -1172,13 +1192,54 @@ export class MovimientoMesComponent implements OnInit {
     }
   }
 
-  unitarioVentaEnter(element) {
+
+  coteroEnter(element) {
+
+    if (isNaN(element.value)) {
+      console.log("no es numérico:" + element.value);
+      return;
+    }
+    if (element.value == null || element.value <= 0) {
+      return;
+    }
+    if (this.nombreCoteroFun(element.value) == "") {
+      alert("Id no valido, debe irgresar un id del cotero valido");
+      return;
+    }
+    this.productos[0].cotero_id = element.value;
+    this.productos[0].peso_cotero = this.coteroList.find(cliente => cliente.cotero_id == element.value).peso;
     if (this.codigoBarrasActivo) {
       this.CodigoBarrasPV.nativeElement.classList.add("d-block");
       this.CodigoBarrasPV.nativeElement.focus();
     } else {
       this.articuloPV.nativeElement.focus();
     }
+    this.documentoDetalleService.updateDocumentoDetalle(this.productos[0]).subscribe(res => {
+      if (res.code == 200) {
+        this.document = this.calculosService.calcularExcento(this.document, this.productos);
+        this.documentoService.updateDocumento(this.document).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+      }
+    });
+  }
+
+  unitarioVentaEnter(element) {
+    if (this.coterosActivo) {
+      this.coteroPV.nativeElement.focus();
+      this.coteroPV.nativeElement.select();
+    } else {
+      if (this.codigoBarrasActivo) {
+        this.CodigoBarrasPV.nativeElement.classList.add("d-block");
+        this.CodigoBarrasPV.nativeElement.focus();
+      } else {
+        this.articuloPV.nativeElement.focus();
+      }
+    }
+
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;
@@ -1302,7 +1363,11 @@ export class MovimientoMesComponent implements OnInit {
     docDetalle.cantidad = cantidad;
     docDetalle.saldo = Number(this.productoIdSelect.cantidad);
     docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
-    docDetalle.peso_producto = Number(this.productoIdSelect.peso);
+    if (this.productoIdSelect.balanza == 1) {
+      docDetalle.peso_producto = Number(cantidad);
+    } else {
+      docDetalle.peso_producto = Number(this.productoIdSelect.peso) * Number(cantidad);
+    }
     docDetalle.producto_id = this.productoIdSelect.producto_id;
     docDetalle.documento_id = this.document.documento_id;
     docDetalle.descripcion = this.productoIdSelect.nombre;
@@ -1763,5 +1828,22 @@ export class MovimientoMesComponent implements OnInit {
     this.clienteService.getTipoPago().subscribe(res => {
       this.tipoPagosAll = res;
     });
+  }
+
+  getCoteros(empresaId: number) {
+    this.coteroService.getCoteros(empresaId.toString()).subscribe(res => {
+      this.coteroList = res;
+      console.log("lista de coteros cargados: " + this.coteroList.length);
+    });
+  }
+
+  nombreCoteroFun(id) {
+
+    let cliente = this.coteroList.find(cliente => cliente.cotero_id == id);
+    if (cliente == undefined) {
+      return "";
+    } else {
+      return cliente.nombre;
+    }
   }
 }

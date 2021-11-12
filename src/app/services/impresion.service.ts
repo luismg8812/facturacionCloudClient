@@ -901,6 +901,16 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.text("TEL: " + factura.empresa.cel + " - " + factura.empresa.telefono_fijo, x, y);
       y = y + inicio;
+      let titulo;
+      if (factura.documento.tipo_documento_id == 10) {
+        titulo = "FACTURA VENTA";
+      } else {
+        if (factura.documento.tipo_documento_id == 9) {
+          titulo = "FACTURA VENTA.";
+        } else {
+          titulo = "CONTIZACIÓN";
+        }
+      }
       this.doc.setFontType('bold');
       this.doc.setFontSize(11);
       this.doc.text(factura.nombreTipoDocumento + ": " + factura.resolucionEmpresa.letra_consecutivo + factura.documento.consecutivo_dian, x, y);
@@ -1266,9 +1276,20 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.text("CAJA: " + factura.documento.mac, x, y);
       y = y + inicio;
-      this.doc.text("CLIENTE: " + factura.cliente.nombre + " " + factura.cliente.apellidos, x, y);
-      y = y + inicio;
-      this.doc.text("CC/NIT: " + factura.cliente.documento, x, y);
+      if (factura.cliente != undefined) {
+        let nombreCliente: string = factura.cliente.nombre == "" ? factura.cliente.razon_social : factura.cliente.nombre + " " + factura.cliente.apellidos;
+        this.doc.text("CLIENTE: " + nombreCliente, x, y);
+        y = y + inicio;
+        this.doc.text("NIT/CC: " + factura.cliente.documento, x, y);
+        y = y + inicio;
+        this.doc.text("DIRECCIÓN: " + factura.cliente.direccion, x, y);
+      } else {
+        this.doc.text("CLIENTE: Varios", x, y);
+        y = y + inicio;
+        this.doc.text("NIT/CC:  0", x, y);
+        y = y + inicio;
+        this.doc.text("DIRECCIÓN: 0", x, y);
+      }
       y = y + inicio;
       this.doc.setFontSize(10);
       this.doc.text("--------------------------------", x, y);
@@ -1278,18 +1299,41 @@ export class ImpresionService {
       y = y + inicio;
       this.doc.setFontSize(10);
       this.doc.text("--------------------------------", x, y);
+      y = y + inicio;
       for (let i of factura.detalle) {
-        y = y + inicio;
+        let topeLinea = 13.0;
+        let linea: number = i.descripcion.length / topeLinea;
+        let numlineas = Math.ceil(linea);
         this.doc.setFontSize(7);
         this.doc.text(this.calculosService.cortarCantidades("" + i.cantidad, 4), x + 1, y);
-        this.doc.text(this.calculosService.cortarDescripcion(i.descripcion, 32), x + 8, y);
-        y = y + inicio;
-        let unitario = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(i.unitario).replace("COP", "");
-        let parcial = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(i.parcial).replace("COP", "");
-        let iva = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(i.impuesto_producto).replace("COP", "");
-        this.doc.text(unitario + "  " + parcial + "  " + iva, x + 7, y);
+        //this.doc.text(this.calculosService.cortarDescripcion(i.descripcion, 32), x + 8, y);
+        //y = y + inicio;
+        let unitario = new Intl.NumberFormat().format(i.unitario).replace("COP", "");
+        let parcial = new Intl.NumberFormat().format(i.parcial).replace("COP", "");
+        let iva = new Intl.NumberFormat().format(i.impuesto_producto).replace("COP", "");
+        this.doc.text(this.calculosService.cortarCantidades("" + unitario, 10), x + 17, y);
+        this.doc.text(this.calculosService.cortarCantidades("" + parcial, 10), x + 25, y);
+        this.doc.text(this.calculosService.cortarCantidades("" + iva, 10), x + 31, y);
+        let ini = 0;
+        let fin = topeLinea;
+        for (let e = 0; e <= numlineas; e++) {
+          let lineaParcial: string = i.descripcion.substring(ini, fin);
+          this.doc.text(lineaParcial.toLowerCase(), x + 5, y);
+          y = y + inicio;
+          ini = ini + topeLinea;
+          fin = fin + topeLinea;
+          if (y >= 297) {
+            y = 2;
+            //console.log("posy: " + y);
+            this.doc.addPage();
+          }
+        }
       }
-      y = y + inicio;
+      if (y >= 221) {
+        y = 2;
+        //console.log("posy: " + y);
+        this.doc.addPage();
+      }
       this.doc.setFontSize(10);
       this.doc.text("--------------------------------", x, y);
       this.doc.setFontSize(7);
@@ -1317,8 +1361,13 @@ export class ImpresionService {
       this.doc.setFontSize(7);
       this.doc.text("         **** FORMA DE PAGO****        ", x, y);
       y = y + inicio;
-      //hacer un metodo para ir a traer los tipos de pago de este dococumento
-      this.doc.text("Vr. Pago con Efectivo:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.total).replace("COP", ""), x, y);
+        //hacer un metodo para ir a traer los tipos de pago de este dococumento
+        this.doc.text("PAGA CON:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.pagaCon).replace("COP", ""), x, y);
+        y = y + inicio;
+        for (let t of factura.tiposPago) {
+          this.doc.text("Vr. Pago con " + t.nombre + ":  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(t.valor).replace("COP", ""), x, y);
+          y = y + inicio;
+        }
       y = y + inicio;
       this.doc.text("Cambio:  " + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.cambio).replace("COP", ""), x, y);
       y = y + inicio;
@@ -1463,8 +1512,8 @@ export class ImpresionService {
         let unitario = Number(contadorP.unitario) / dividir;
         let parcial = contadorP.parcial;
         let iva = contadorP.impuesto_producto;
-        this.doc.text(codigo, 4, posy);
-        this.doc.text(cantidad, 20, posy);
+        this.doc.text(""+codigo, 4, posy);
+        this.doc.text(""+cantidad, 20, posy);
 
         this.doc.text("" + iva, 145, posy);
         this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(unitario)).replace("COP", ""), 20), 113, posy);

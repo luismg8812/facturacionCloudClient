@@ -4,6 +4,7 @@ export class SubProductoModel {
     public producto_hijo:number;
     public cantidad:number;
     public estado:number;
+    public pesado:number;
 
     constructor(){
         this.sub_producto_id=null;
@@ -11,5 +12,6 @@ export class SubProductoModel {
         this.producto_hijo=null;
         this.cantidad=0;
         this.estado=1;
+        this.pesado=0;
     }
 }

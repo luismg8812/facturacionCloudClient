@@ -28,8 +28,10 @@ export class EditarProductoComponent implements OnInit {
   public subGrupoList: Array<SubGrupoModel>;
   public subProductoList:Array<SubProductoModel>=[];
   public fechaI: string = "";
+  public check = 0;
   
   @ViewChild("articuloPV1") articuloPV1: ElementRef;
+  @ViewChild("cantidadSub") cantidadSub: ElementRef;
 
   constructor(public productoService:ProductoService,
     public proveedorService:ProveedorService) { }
@@ -99,6 +101,17 @@ export class EditarProductoComponent implements OnInit {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+selectOrdenOne( event){
+  if (event.target.checked) {
+    this.check=1;
+    this.cantidadSub.nativeElement.value="";
+    this.cantidadSub.nativeElement.disabled=true;
+  }else{
+    this.check=0;
+    this.cantidadSub.nativeElement.disabled=false;
+  }
+}
+
 agregarSubProducto(articulo,cantidad){
   let producto:ProductoModel = this.productosAll.find(product => product.nombre === articulo.value);
   if(this.productoNew.producto_id==null){
@@ -109,7 +122,7 @@ agregarSubProducto(articulo,cantidad){
     alert("El sub producto es obligatorio");
     return;
   }
-  if(cantidad.value==""){
+  if(cantidad.value=="" && this.check==0){
     alert("La cantidad es obligatoria");
     return;
   }
@@ -131,8 +144,9 @@ agregarSubProducto(articulo,cantidad){
   let subProducto:SubProductoModel=new SubProductoModel();
   subProducto.producto_padre=this.productoNew.producto_id;
   subProducto.producto_hijo=producto.producto_id;
-  subProducto.cantidad=cantidad.value;
+  subProducto.cantidad=(this.check==1?0:cantidad.value);
   subProducto.estado=1;
+  subProducto.pesado=this.check;
   this.productoService.saveSubProducto(subProducto).subscribe(res => {
     subProducto.sub_producto_id = res.sub_producto_id;
     this.subProductoList.push(subProducto);

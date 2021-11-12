@@ -12,7 +12,6 @@ import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.co
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
-import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
 import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
@@ -34,6 +33,8 @@ import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/
 import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
 import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
 import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
+import { CoteroComponent } from './components/cotero/cotero.component';
+import { ReporteProductosComponent } from './components/reporte-productos/reporte-productos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -69,6 +70,7 @@ const routes: Routes = [
    { path: 'aceptacionMercancia', component: AceptacionMercanciaComponent},
    { path: 'reporteTerceros', component: ReporteTercerosComponent},
    { path: 'controlImventario', component: ControlInventarioComponent},
+   { path: 'coteros', component: CoteroComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
    { path: '**', redirectTo: '/', pathMatch: 'full' },
