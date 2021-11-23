@@ -16,7 +16,7 @@ declare var $: any;
 export class ClienteComponent implements OnInit {
 
   public empresaId: number;
-  public clientes: Array<ClienteModel>;
+  public clientes: Array<ClienteModel>= [];;
   public clienteNew: ClienteModel = new ClienteModel();
   public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
   public responsabilidadFiscalList: Array<ResponsabilidadFiscalModel> = [];
