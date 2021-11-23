@@ -147,7 +147,7 @@ responsabilidadPorCliente(cliente: ClienteModel) {
   
     if(this.clienteNew.cliente_id==null){
       this.clienteNew.empresa_id = this.empresaId;
-      let cliente = this.clientes.find(cliente => (cliente.documento) == this.clienteNew.documento);
+      let cliente = this.clientes.find(clien => (clien.documento) == this.clienteNew.documento);
       if (cliente != undefined) {
         alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + " " + cliente.apellidos + "\n" + "NIT: " + cliente.documento);
         return;
