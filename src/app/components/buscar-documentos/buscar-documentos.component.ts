@@ -66,6 +66,7 @@ export class BuscarDocumentosComponent implements OnInit {
   readonly CAMBIO_FECHA: string = '22';
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
+  readonly TIPO_IMPRESION_PDFCARTA: number = 3;
   readonly TIPO_IMPRESION_PDF80MM: number = 4;
   readonly TIPO_IMPRESION_PDF50MM: number = 5;
   readonly TIPO_IMPRESION_TXTMEDIANABOR: number = 6;
@@ -455,8 +456,11 @@ export class BuscarDocumentosComponent implements OnInit {
           formato = ".pdf";
           this.impresionService.imprimirFacturaPdf50(this.factura, this.configuracion, false);
           break;
-        default:
-          alert("no tiene un tipo impresion");
+          case this.TIPO_IMPRESION_PDFCARTA:
+            this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
+            break;  
+        default:   
+          alert("no tiene un tipo impresion configurado el sistema");
           //return;
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
           //    enPantalla, e);
