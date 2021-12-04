@@ -448,7 +448,7 @@ export class VentasDiaComponent implements OnInit {
   }
 
   tipoDocumentoSelect(element) {
-    switch (element.value) {
+    switch (element) {
       case '': {
         console.log("factura de venta por defecto");
         this.tipoDocumentSelect = 10;
@@ -692,7 +692,8 @@ export class VentasDiaComponent implements OnInit {
       this.clienteSelectFun(element);
     }
     if (element.id == "tipoDocumentoPV") {
-      this.tipoDocumentoSelect(element);
+      let tipoDocum=element.value;
+      this.tipoDocumentoSelect(tipoDocum);
     }
     if (element.id == "empleadoPV") {
       this.empleadoSelectFunt(element);
@@ -753,6 +754,7 @@ export class VentasDiaComponent implements OnInit {
 
     }
     if (element.id == "unitarioPV") {
+    
       this.unitarioEnter(element);
     }
 
@@ -983,18 +985,19 @@ export class VentasDiaComponent implements OnInit {
     if (element.value == null || element.value <= 0) {
       return;
     }
-    let anterior: DocumentoDetalleModel = this.productos[0];
-    if (anterior.unitario == element.value) {
-      return;
-    }
-    this.productos.splice(0, 1);
-    anterior.estado = 0;
     if (this.codigoBarrasActivo) {
       this.CodigoBarrasPV.nativeElement.classList.add("d-block");
       this.CodigoBarrasPV.nativeElement.focus();
     } else {
       this.articuloPV.nativeElement.focus();
     }
+    let anterior: DocumentoDetalleModel = this.productos[0];
+    if (anterior.unitario == element.value) {
+      return;
+    }
+    this.productos.splice(0, 1);
+    anterior.estado = 0;
+    
     this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(anterior.cantidad, element.value);
@@ -2296,6 +2299,9 @@ export class VentasDiaComponent implements OnInit {
       let nombre = "";
       if (cliente != undefined) {
         nombre = cliente.nombre;
+        this.clienteSelect = cliente.cliente_id;
+    this.document.cliente_id = this.clienteSelect;
+    this.factura.cliente = cliente;
       }
       this.clientePV.nativeElement.value = nombre;
       let ids: string[] = [];
