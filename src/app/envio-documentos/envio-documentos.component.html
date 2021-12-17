@@ -64,7 +64,7 @@
             (change)="selectOrdenOne(ordenes,$event)">
         </th>
         <td>{{ordenes.documento_id}}</td>
-        <td>{{ordenes.consecutivo_dian}}</td>
+        <td>{{ordenes.letra_consecutivo}} {{ordenes.consecutivo_dian}}</td>
         <td>${{formatearNumber(ordenes.total)}}</td>
         <td>{{nombreClienteFun(ordenes.cliente_id)}}</td>
         <td>{{nombreTipoDocumentoFun(ordenes.tipo_documento_id)}}</td>
@@ -134,7 +134,7 @@
           <h5 class="modal-title" id="exampleModalLabel">Enviando documentos seleccionados a la DIAN</h5>
         </div>
         <div class="modal-body">
-          <p>Documentos a enviar: {{documentoMap.length}}</p>
+          <p>Documentos a enviar: {{faltantes}}</p>
           <p>Documentos enviados: {{enviados}}</p>
           <p>Documentos exitosos: {{exitosos}}</p>
           <p>Documentos erroneos: {{erroneos}}</p>

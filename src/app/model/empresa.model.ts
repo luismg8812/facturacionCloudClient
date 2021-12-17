@@ -5,6 +5,7 @@ export class EmpresaModel {
     public nombre:string;
     public represente:string;
     public nit:string;
+    public digito_verificacion:string;
     public regimen:string;
     public direccion:string;
     public barrio:string;
@@ -16,4 +17,5 @@ export class EmpresaModel {
     public impuesto:string;
     public actividad_economica:string;
     public url_logo:string;
+    public correo:string;
 }

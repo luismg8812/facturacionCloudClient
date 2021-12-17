@@ -663,7 +663,7 @@ export class OtComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId,"").subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -675,7 +675,7 @@ export class OtComponent implements OnInit {
       let cliente = this.clientes.find(cliente => cliente.nombre == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId).subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId,"").subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -709,7 +709,7 @@ export class OtComponent implements OnInit {
   }
 
   getEmpleados() {
-    this.empleadoService.getEmpleadoAll(this.empresaId).subscribe(res => {
+    this.usuarioService.getEmpleadoByUsuario(this.usuarioId.toString()).subscribe(res => {
       this.empleados = res;
     });
   }

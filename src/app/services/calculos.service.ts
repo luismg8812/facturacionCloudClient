@@ -18,6 +18,7 @@ import { DataFacturaTotalesModel } from '../facturacion.cloud.model/dataFacturaT
 import { DataFacturaModel } from '../facturacion.cloud.model/dataFactura.model';
 import { DataClienteModel } from '../facturacion.cloud.model/dataCliente.model';
 import { ClienteModel } from '../model/cliente.model';
+import { Observable, Observer } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
@@ -50,67 +51,6 @@ export class CalculosService {
 		return infoDiario;
 	}
 
-	public calcularInfoDiario(documento: DocumentoModel, infoDiario: InformeDiarioModel, anulado: boolean) {
-		switch (documento.tipo_documento_id) {
-			case 2:
-				infoDiario.iva_5_compras = Number(infoDiario.iva_5_compras) + Number(documento.iva_5);
-				infoDiario.excento_compras = Number(infoDiario.excento_compras) + Number(documento.excento);
-				infoDiario.Iva_19_compras = Number(infoDiario.Iva_19_compras) + Number(documento.iva_19);
-				infoDiario.base_19_compras = Number(infoDiario.base_19_compras) + Number(documento.base_19);
-				infoDiario.base_5_compras = Number(infoDiario.base_5_compras) + Number(documento.base_5);
-				break;
-			case 10:
-				infoDiario = this.asignarValorInfoDiario(documento, infoDiario, anulado);
-				break;
-			case 9:
-				if (anulado) {
-					infoDiario.total_remisiones = Number(infoDiario.total_remisiones) - Number(documento.total);
-					infoDiario.iva_remisiones = Number(infoDiario.iva_remisiones) - Number(documento.iva);
-					infoDiario.costo_remisiones = Number(infoDiario.costo_remisiones) - Number(documento.total_costo);
-				} else {
-					infoDiario.total_remisiones = Number(infoDiario.total_remisiones) + Number(documento.total);
-					infoDiario.iva_remisiones = Number(infoDiario.iva_remisiones) + Number(documento.iva);
-					infoDiario.costo_remisiones = Number(infoDiario.costo_remisiones) + Number(documento.total_costo);
-				}
-				break;
-			default:
-				break;
-		}
-		return infoDiario;
-	}
-
-	private asignarValorInfoDiario(documento: DocumentoModel, info: InformeDiarioModel, anulado: boolean) {
-		//facturas
-		info.cantidad_documentos = Number(info.cantidad_documentos) + 1;
-		if (anulado) {
-			info.base_19 = Number(info.base_19) - Number(documento.base_19);
-			info.base_5 = Number(info.base_5) - Number(documento.base_5);
-			info.iva_5 = Number(info.iva_5) - Number(documento.iva_5);
-			info.iva_19 = Number(info.iva_19) - Number(documento.iva_19);
-			info.total_ventas = Number(info.total_ventas) - Number(documento.total);
-			info.iva_ventas = Number(info.iva_ventas) - Number(documento.iva);
-			info.excento = Number(info.excento) - Number(documento.excento);
-			info.costo_ventas = Number(info.costo_ventas) - Number(documento.total_costo);
-		} else {
-			info.base_19 = Number(info.base_19) + Number(documento.base_19);
-			info.base_5 = Number(info.base_5) + Number(documento.base_5);
-			info.iva_5 = Number(info.iva_5) + Number(documento.iva_5);
-			info.iva_19 = Number(info.iva_19) + Number(documento.iva_19);
-			info.total_ventas = Number(info.total_ventas) + Number(documento.total);
-			info.iva_ventas = Number(info.iva_ventas) + Number(documento.iva);
-			info.excento = Number(info.excento) + Number(documento.excento);
-			info.costo_ventas = Number(info.costo_ventas) + Number(documento.total_costo);
-		}
-		if (!anulado) {
-			if (info.informe_diario_id == null) {
-				info.documento_inicio = documento.consecutivo_dian;
-				info.documento_fin = documento.consecutivo_dian;
-			} else {
-				info.documento_fin = documento.consecutivo_dian;
-			}
-		}
-		return info;
-	}
 
 	public fechaActual() {
 		let fecha = new Date();
@@ -259,7 +199,8 @@ export class CalculosService {
 			return valido;
 		} else {
 			let can = cantidad == null ? 0.0 : cantidad;
-			if (ps.kg_promo > can) {
+			console.log(ps.kg_promo+":"+Number(can));
+			if (ps.kg_promo > Number(can)) {
 				valido = false;
 				return valido;
 			}
@@ -289,6 +230,7 @@ export class CalculosService {
 		let gravado: number = 0.0;
 		let ivatotal: number = 0.0;
 		let peso: number = 0.0;
+		let peso_cotero:number=0.0
 		let iva5: number = 0.0;
 		let iva19: number = 0.0;
 		let base5: number = 0.0;
@@ -301,12 +243,13 @@ export class CalculosService {
 			let costo = productos[i].costo_producto * productos[i].cantidad;
 			var iva1 = productos[i].impuesto_producto / 100.0;
 			let peso1 = productos[i].peso_producto;
-			peso1 = peso1 * productos[i].cantidad;
-			totalReal = Number(totalReal) + Number(costoPublico);
+			let valorPesoCotero:number=Number(productos[i].peso_cotero)*Number(productos[i].unitario);
+			peso = Number(peso) + Number(productos[i].peso_producto);
+			peso_cotero=Number(productos[i].peso_cotero)+Number(peso_cotero);
+			totalReal = Number(totalReal) + Number(costoPublico)-Number(valorPesoCotero);
 			costoTotal = costoTotal + costo;
 			let temp: number = 0;
 			ivatotal = ivatotal + ((costoPublico / (1 + iva1)) * iva1);
-			peso = peso + peso1;
 			// si es iva del 19 se agrega al documento junto con la base
 			if (iva1 == 0.19) {
 				iva19 = iva19 + ((costoPublico / (1 + iva1)) * iva1);
@@ -331,6 +274,7 @@ export class CalculosService {
 		doc.gravado = gravado;
 		doc.iva = ivatotal;
 		doc.peso_total = peso;
+		doc.peso_cotero=peso_cotero;
 		doc.iva_5 = iva5;
 		doc.iva_19 = iva19;
 		doc.base_5 = base5;
@@ -417,7 +361,7 @@ export class CalculosService {
 			let impuesto: number = Number(detalle.impuesto_producto) / 100;
 			let datadetalle: DataDetalleFacturaModel = new DataDetalleFacturaModel();
 			datadetalle.cantidad = "" + detalle.cantidad;
-			datadetalle.codigoProducto = "" + detalle.producto_id;
+			datadetalle.codigoProducto = "" + detalle.documento_detalle_id;
 			datadetalle.nombreProducto = detalle.descripcion;
 			datadetalle.precio = "" + detalle.unitario;
 			datadetalle.subtotal = "" + (detalle.parcial / (1 + impuesto))
@@ -499,6 +443,47 @@ export class CalculosService {
 		return dataFacturaTotales;
 	}
 
+	enunciadoEmailFE(empresa:EmpresaModel,docu:DocumentoModel){
+		let linkDescarga ="https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=";
+		let enunciado=`<p> Estimado Cliente,</p>
+		<b/>
+		<p>___________________________________________________________________________</p>
+		<b/>
+		<p>DATOS DEL EMISOR: </p>
+		<b/>
+		<p>NIT: ${empresa.nit}</p>
+		<b/>
+		<p>Razon social: ${empresa.nombre}</p>
+		<b/>
+		<p>Correo: ${empresa.correo}</p>
+		<b/>
+		<p>___________________________________________________________________________</p>
+		<b/>
+		<p>DATOS DE LA FACTURA</p>
+		<b/>
+		<p>Total : ${docu.total}</p>
+		<b/>
+		<p>Numero del comprobante : ${docu.consecutivo_dian}</p>
+		<b/>
+		<p>CUFE : ${docu.cufe}</p>
+		<b/>
+		<p>a este correo encontrará la factura correspondiente a la contratación de servicios y/o adquisición de Productos.</p>
+		<p>La factura electrónica que usted está recibiendo se conforma por dos archivos:</p>
+		<p>\t1. La representación gráfica en formato .pdf que usted podrá imprimir</p>
+		<p>\t2. La representación electrónica en formato .xml que usted deberá conservar</p>
+		<p>Si su factura presenta algún error, le agradecemos a más tardar dentro de las siguientes 48 horas, dar “click” al “link” de rechazo que aparece en este correo. </p>
+		<p>Saludos cordiales,</p>
+		<p><b/></p>
+		<p><b/></p>
+		<p><b/></p>
+		<p><b/></p>
+		<div><p>Estimado cliente</p></div><div><p>Para revizar su factura electrónica por favor dar click en el siguiente link</p></div><div><a href="'${linkDescarga} ${docu.cufe}'">DESCARGAR AQUI!</a></div>
+		<p>EFFECTIVE SOFTWARE (Sistemas de facturacón e inventario)</p>
+		
+		`;
+		return enunciado;
+	}
+
 	asignarDataFactura(docu: DocumentoMapModel) {
 		let dataFactura: DataFacturaModel = new DataFacturaModel();
 		dataFactura.codigoFactura = docu.documento.consecutivo_dian;
@@ -527,6 +512,7 @@ export class CalculosService {
 		dataFactura.metodoDePago = "1";
 		dataFactura.formaDePago = "10";
 		dataFactura.paymentDueDate = "0000-00-00";// si es a credito mando esta fecha  
+		dataFactura.notaFactura=docu.documento.descripcion_trabajador;
 		return dataFactura;
 	}
 
@@ -536,12 +522,43 @@ export class CalculosService {
 		datacliente.additionalAccountIDCliente = "" + cliente.fact_tipo_empresa_id;//+ cliente.cliente_id; //tipo empresa juridica
 		datacliente.codigoTipoIdentificacionCliete = "13"; //TO DO cambiar por los valores que de ever
 		datacliente.identificacionCliente = cliente.documento;
-		datacliente.nombreCliente = cliente.nombre + " " + cliente.apellidos;
+		datacliente.nombreCliente = cliente.nombre + " " + cliente.apellidos+ " "+cliente.razon_social;
 		datacliente.codigoMunicipioCliente = "11001";
 		datacliente.direccionCliente = cliente.direccion;
 		datacliente.telefonoCliente = cliente.celular == "" ? cliente.fijo : cliente.celular;
 		datacliente.emailCliente = cliente.mail;
 		return datacliente;
 	}
+
+	getBase64ImageFromURL(url: string) {
+		return Observable.create((observer: Observer<string>) => {
+		  let img = new Image();
+		  img.crossOrigin = 'Anonymous';
+		  img.src = url; img.src = url;
+		  if (!img.complete) {
+			img.onload = () => {
+			  observer.next(this.getBase64Image(img));
+			  observer.complete();
+			};
+			img.onerror = (err) => {
+			  observer.error(err);
+			};
+		  } else {
+			observer.next(this.getBase64Image(img));
+			observer.complete();
+		  }
+		});
+	  }
+
+	  getBase64Image(img: HTMLImageElement) {
+		var canvas = document.createElement("canvas");
+		canvas.width = img.width;
+		canvas.height = img.height;
+		var ctx = canvas.getContext("2d");
+		ctx.drawImage(img, 0, 0);
+		var dataURL = canvas.toDataURL("image/png");
+		// console.log(dataURL);
+		return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+	  }
 
 }

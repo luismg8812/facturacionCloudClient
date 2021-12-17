@@ -10,23 +10,22 @@
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-6">
           Primer nombre
-          <input list="articulos" name="articuloPV1" #articuloPV1 placeholder="Articulo" class="form-control"  
-                    id="articuloPV1" (change)="articuloSelect(articuloPV1)"
-                    (keydown.esc)="scapeTecla(articuloPV1)">
-                <datalist id="articulos">
-                    <option *ngFor="let producto of productosAll" [value]="producto.nombre">
-                        Venta: {{producto.costo_publico}} Costo: {{producto.costo}} Cantidad:{{producto.cantidad}}
-                        id:{{producto.producto_id}}
-                    </option>
-                </datalist>
+          <input list="articulos" name="articuloPV1" #articuloPV1 placeholder="Articulo" class="form-control"
+            id="articuloPV1" (change)="articuloSelect(articuloPV1)" (keydown.esc)="scapeTecla(articuloPV1)">
+          <datalist id="articulos">
+            <option *ngFor="let producto of productosAll" [value]="producto.nombre">
+              Venta: {{producto.costo_publico}} Costo: {{producto.costo}} Cantidad:{{producto.cantidad}}
+              id:{{producto.producto_id}}
+            </option>
+          </datalist>
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Grupo
-          <select id="grupo" name="grupoPV" #grupoPV placeholder=""
-            [(ngModel)]="productoNew.grupo_id" class="form-control">
+          <select id="grupo" name="grupoPV" #grupoPV placeholder="" [(ngModel)]="productoNew.grupo_id"
+            class="form-control">
             <option value="">Seleccione</option>
             <option *ngFor="let grupo of grupoList" [value]="grupo.grupo_id">
-               {{grupo.nombre}}
+              {{grupo.nombre}}
             </option>
           </select>
         </div>
@@ -44,11 +43,11 @@
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Marca
-          <select id="marca" name="marcaPV" #marcaPV placeholder=""
-            [(ngModel)]="productoNew.marca_id" class="form-control">
+          <select id="marca" name="marcaPV" #marcaPV placeholder="" [(ngModel)]="productoNew.marca_id"
+            class="form-control">
             <option value="">Seleccione</option>
             <option *ngFor="let marca of marcaList" [value]="marca.marca_id">
-               {{marca.nombre}}
+              {{marca.nombre}}
             </option>
           </select>
         </div>
@@ -56,92 +55,259 @@
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-6">
           Precio de compra
-          <input class="form-control" id="costo" placeholder="* Precio de compra"
-          name="costoPV" #costoPV required [(ngModel)]="productoNew.costo">
+          <input class="form-control" id="costo" placeholder="* Precio de compra" name="costoPV" #costoPV required
+            [(ngModel)]="productoNew.costo">
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Precio de venta
-          <input class="form-control" id="costoPublicoPV" placeholder="* Precio de venta"
-          name="costoPublicoPV" #costoPublicoPV required [(ngModel)]="productoNew.costo_publico">
+          <input class="form-control" id="costoPublicoPV" placeholder="* Precio de venta" name="costoPublicoPV"
+            #costoPublicoPV required [(ngModel)]="productoNew.costo_publico">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-6">
           Impuesto
-          <input class="form-control" id="impuestoPV" placeholder="Iva o Ipoconsumo"
-          name="impuestoPV" #impuestoPV required [(ngModel)]="productoNew.impuesto">
+          <input class="form-control" id="impuestoPV" placeholder="Iva o Ipoconsumo" name="impuestoPV" #impuestoPV
+            required [(ngModel)]="productoNew.impuesto">
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Stock Mínimo
-          <input class="form-control" id="stockMin" placeholder="Stock mínimo" name="stockMin" #stockMin
-            required [(ngModel)]="productoNew.stock_min">
+          <input class="form-control" id="stockMin" placeholder="Stock mínimo" name="stockMin" #stockMin required
+            [(ngModel)]="productoNew.stock_min">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-6">
           Stock Máximo
           <input class="form-control" id="stockMax" placeholder="Stock Máximo" name="stockMax" #stockMax required
-            [(ngModel)]="productoNew.stock_max"> 
+            [(ngModel)]="productoNew.stock_max">
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Codigo de barras
-          <input class="form-control" id="codBarrasPv" placeholder="Codigo de barras" name="codBarrasPv"
-            #codBarrasPv required [(ngModel)]="productoNew.codigo_barras">
+          <input class="form-control" id="codBarrasPv" placeholder="Codigo de barras" name="codBarrasPv" #codBarrasPv
+            required [(ngModel)]="productoNew.codigo_barras">
         </div>
       </div>
-      <div class="form-row"> 
-         
-        <div class="form-group col-md-6 col-sm-6">    
-            % ganancia      
+      <div class="form-row">
+
+        <div class="form-group col-md-6 col-sm-6">
+          % ganancia
           <input class="form-control" id="ganancia" placeholder="% ganancia" name="ganancia" #ganancia required
             [(ngModel)]="productoNew.porcentaje_venta">
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Fecha vencimiento
           <input class="form-control" id="vencimiento" placeholder="Fecha vencimiento" type="date" name="vencimiento"
-            #vencimiento  [(ngModel)]="productoNew.fecha_vencimiento">
+            #vencimiento [value]="fechaI">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6 col-sm-6">
           Peso
-          <input class="form-control" id="peso"  placeholder="peso"
-            name="peso" #peso required [(ngModel)]="productoNew.peso">
+          <input class="form-control" id="peso" placeholder="peso" name="peso" #peso required
+            [(ngModel)]="productoNew.peso">
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Proveedor
-          <select id="proveedorPV" name="proveedorPV" #proveedorPV placeholder=""
-            [(ngModel)]="productoNew.proveedor_id" class="form-control">
+          <select id="proveedorPV" name="proveedorPV" #proveedorPV placeholder="" [(ngModel)]="productoNew.proveedor_id"
+            class="form-control">
             <option *ngFor="let proveedor of proveedores" [value]="proveedor.proveedor_id">
               {{proveedor.nombre}}
-           </option>
+            </option>
           </select>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-3 col-sm-6">
           Balanza
-          <input class="form-control" id="BalanzaPV"  placeholder="1 o 0"
-            name="peso" #peso required [(ngModel)]="productoNew.balanza">
+          <input class="form-control" id="BalanzaPV" placeholder="1 o 0" name="peso" #peso required
+            [(ngModel)]="productoNew.balanza">
         </div>
         <div class="form-group col-md-3 col-sm-6">
           Varios
-          <input class="form-control" id="varios"  placeholder="1 o 0"
-            name="varios" #varios required [(ngModel)]="productoNew.varios">
+          <input class="form-control" id="varios" placeholder="1 o 0" name="varios" #varios required
+            [(ngModel)]="productoNew.varios">
         </div>
         <div class="form-group col-md-3 col-sm-6">
           Sub producto
-          <input class="form-control" id="subproducto"  placeholder="1 o 0"
-            name="subproducto" #subproducto required [(ngModel)]="productoNew.sub_producto">
+          <input class="form-control" id="subproducto" placeholder="1 o 0" name="subproducto" #subproducto required
+            [(ngModel)]="productoNew.sub_producto">
         </div>
         <div class="form-group col-md-3 col-sm-6">
           Granel
-          <input class="form-control" id="granel"  placeholder="1 o 0"
-            name="granel" #granel required [(ngModel)]="productoNew.granel">
+          <input class="form-control" id="granel" placeholder="1 o 0" name="granel" #granel required
+            [(ngModel)]="productoNew.granel">
         </div>
       </div>
-    
-  
+      <div class="form-row">
+        <div class="form-group col-md-12 ">
+          <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+              aria-expanded="false" aria-controls="collapseExample">
+              Precios por productos
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 2
+                  <input class="form-control" id="precio_2" name="precio_2" #precio_2 required
+                    [(ngModel)]="productoPrecioNew.precio_2">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 3
+                  <input class="form-control" id="precio_3" name="precio_3" #precio_3 required
+                    [(ngModel)]="productoPrecioNew.precio_3">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 4
+                  <input class="form-control" id="precio_4" name="precio_4" #precio_4 required
+                    [(ngModel)]="productoPrecioNew.precio_4">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 5
+                  <input class="form-control" id="precio_5" name="precio_5" #precio_5 required
+                    [(ngModel)]="productoPrecioNew.precio_5">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 6
+                  <input class="form-control" id="precio_6" name="precio_6" #precio_6 required
+                    [(ngModel)]="productoPrecioNew.precio_6">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 7
+                  <input class="form-control" id="precio_7" name="precio_7" #precio_7 required
+                    [(ngModel)]="productoPrecioNew.precio_7">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 8
+                  <input class="form-control" id="precio_8" name="precio_8" #precio_8 required
+                    [(ngModel)]="productoPrecioNew.precio_8">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 9
+                  <input class="form-control" id="precio_9" name="precio_9" #precio_9 required
+                    [(ngModel)]="productoPrecioNew.precio_9">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Precio 10
+                  <input class="form-control" id="precio_10" name="precio_10" #precio_10 required
+                    [(ngModel)]="productoPrecioNew.precio_10">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12 ">
+          <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseDrogueria"
+              aria-expanded="false" aria-controls="collapseDrogueria">
+              Campos droguería
+            </button>
+          </p>
+          <div class="collapse" id="collapseDrogueria">
+            <div class="card card-body">
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Lote
+                  <input class="form-control" id="lote" name="lote" #lote required
+                    [(ngModel)]="productoNew.lote">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  CUM 
+                  <input class="form-control" id="cum" name="cum" #cum required
+                    [(ngModel)]="productoNew.cum">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-6">
+                  Registro invima
+                  <input class="form-control" id="registro_sanitario" name="registro_sanitario" #registro_sanitario required
+                    [(ngModel)]="productoNew.registro_sanitario">
+                </div>
+                <div class="form-group col-md-6 col-sm-6">
+                  Laboratorio 
+                  <input class="form-control" id="laboratorio" name="laboratorio" #laboratorio required
+                    [(ngModel)]="productoNew.laboratorio">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12 ">
+          <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseSubProducto"
+              aria-expanded="false" aria-controls="collapseSubProducto">
+              Sub productos
+            </button>
+          </p>
+          <div class="collapse" id="collapseSubProducto">
+            <div class="card card-body">
+              <div class="form-row">
+                <div class="form-group col-md-1 col-sm-1">
+                  <button type="button" class="btn btn-primary" title="Agregar sub producto"
+                    (click)="agregarSubProducto(articulo,cantidadSub)">
+                    <i class="fas fa-plus-circle"></i>
+                  </button>
+                </div>
+                <div class="form-group col-md-7 col-sm-7">
+                  Sub producto
+                  <input list="articulos" name="articulo" #articulo placeholder="Articulo" class="form-control"
+                    id="articulo">
+
+                </div>
+                <div class="form-group col-md-2 col-sm-2">
+                  Cantidad
+                  <input class="form-control" id="cantidadSub" name="cantidadSub" #cantidadSub >
+                </div>
+                <div class="form-group col-md-2 col-sm-2">
+                  Pesado
+                  <input type="checkbox" class="form-check-input ml-3 allti" id="pesadoSub"
+                (change)="selectOrdenOne($event)">
+                </div>
+               
+              </div>
+              <div class="form-row">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Opciones</th>
+                      <th scope="col">Sub Producto</th>
+                      <th scope="col">Cantidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let s of subProductoList">
+                      <td> <button type="button" class="btn btn-primary" title="Agregar sub producto"
+                          (click)="eliminarSubProducto(s)">
+                          <i class="fas fa-trash"></i>
+                        </button></td>
+                      <td>{{nombreClienteFun(s.producto_hijo)}}</td>
+                      <td>{{s.cantidad}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

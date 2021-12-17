@@ -1,31 +1,40 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-import { MenuComponent } from './menu/menu.component';
 import { UsuarioComponent } from './usuario/usuario.component';
-import { VentasDiaComponent } from './ventas-dia/ventas-dia.component';
 import { OtComponent } from './ot/ot.component';
-import { GestionOrdenComponent } from './gestion-orden/gestion-orden.component';
-import { NominaComponent } from './nomina/nomina.component';
 import { EmpleadoComponent } from './empleado/empleado.component';
-import { InfoMovimientoComponent } from './info-movimiento/info-movimiento.component';
-import { ClienteComponent } from './cliente/cliente.component';
-import { InventarioFisicoComponent } from './inventario-fisico/inventario-fisico.component';
-import { MovimientoMesComponent } from './movimiento-mes/movimiento-mes.component';
+import { MovimientoMesComponent } from './components/movimiento-mes/movimiento-mes.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
 import { CierresComponent } from './cierres/cierres.component';
-import { InformeDiarioComponent } from './informe-diario/informe-diario.component';
+import { InformeDiarioComponent } from './components/informe-diario/informe-diario.component';
 import { EnvioDocumentosComponent } from './envio-documentos/envio-documentos.component';
-import { EstadoDocumentosComponent } from './estado-documentos/estado-documentos.component';
 import { MovimientoProductosComponent } from './movimiento-productos/movimiento-productos.component';
 import { EditarProductoComponent } from './editar-producto/editar-producto.component';
 import { InfoGananciaComponent } from './info-ganancia/info-ganancia.component';
-import { ReporteProductosComponent } from './reporte-productos/reporte-productos.component';
-import { CarteraClientesComponent } from './cartera-clientes/cartera-clientes.component';
 import { RetirosCajaComponent } from './retiros-caja/retiros-caja.component';
 import { LiberarCuadreComponent } from './liberar-cuadre/liberar-cuadre.component';
 import { CarteraProveedoresComponent } from './cartera-proveedores/cartera-proveedores.component';
 import { TutorialesComponent } from './tutoriales/tutoriales.component';
+import { NominaComponent } from './components/nomina/nomina.component';
+import { ClienteComponent } from './components/cliente/cliente.component';
+import { GestionOrdenComponent } from './components/gestion-orden/gestion-orden.component';
+import { BonosComponent } from './components/bonos/bonos.component';
+import { EstadoDocumentosComponent } from './components/estado-documentos/estado-documentos.component';
+import { CuentasContablesComponent } from './components/cuentas-contables/cuentas-contables.component';
+import { VentasDiaComponent } from './components/ventas-dia/ventas-dia.component';
+import { KardexComponent } from './components/kardex/kardex.component';
+import { MenuComponent } from './components/menu/menu.component';
+import { RequerimientoComponent } from './components/requerimiento/requerimiento.component';
+import { InventarioFisicoComponent } from './components/inventario-fisico/inventario-fisico.component';
+import { InfoMovimientoComponent } from './components/info-movimiento/info-movimiento.component';
+import { TrasladoComponent } from './components/traslado/traslado.component';
+import { AceptacionMercanciaComponent } from './components/aceptacion-mercancia/aceptacion-mercancia.component';
+import { ReporteTercerosComponent } from './components/reporte-terceros/reporte-terceros.component';
+import { CarteraClientesComponent } from './components/cartera-clientes/cartera-clientes.component';
+import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
+import { CoteroComponent } from './components/cotero/cotero.component';
+import { ReporteProductosComponent } from './components/reporte-productos/reporte-productos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -36,7 +45,7 @@ const routes: Routes = [
    { path: 'gestionOrden', component: GestionOrdenComponent },
    { path: 'nomima', component: NominaComponent },
    { path: 'empleado', component: EmpleadoComponent },
-   { path: 'cliente', component: ClienteComponent },
+   { path: 'cliente', component: ClienteComponent },  
    { path: 'infoMovimiento', component: InfoMovimientoComponent },
    { path: 'inventarioFisico', component: InventarioFisicoComponent },
    { path: 'entradasAlmacen', component: MovimientoMesComponent },
@@ -53,9 +62,18 @@ const routes: Routes = [
    { path: 'carteraProveedores', component: CarteraProveedoresComponent },
    { path: 'retirosCaja', component: RetirosCajaComponent },
    { path: 'liberarCuadre', component: LiberarCuadreComponent },
+   { path: 'cuentasContables', component: CuentasContablesComponent },
+   { path: 'bonos', component: BonosComponent },
+   { path: 'kardex', component: KardexComponent },
+   { path: 'requerimiento', component: RequerimientoComponent},
+   { path: 'traslado', component: TrasladoComponent},
+   { path: 'aceptacionMercancia', component: AceptacionMercanciaComponent},
+   { path: 'reporteTerceros', component: ReporteTercerosComponent},
+   { path: 'controlImventario', component: ControlInventarioComponent},
+   { path: 'coteros', component: CoteroComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
-  { path: '**', redirectTo: '/', pathMatch: 'full' },
+   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];
 
 @NgModule({

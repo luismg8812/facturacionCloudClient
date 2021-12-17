@@ -3,6 +3,7 @@ export class DocumentoModel {
     public tipo_documento_id:number;
     public proveedor_id:number;
     public usuario_id:number;
+    public resolucion_empresa_id:number;
     public nota_id:number;
     public cliente_id:number;
     public empleado_id:number;
@@ -20,6 +21,7 @@ export class DocumentoModel {
     public detalle_entrada:string;
     public saldo:number;
     public peso_total:number;
+    public peso_cotero:number;
     public descuento:number;
     public cambio:number;
     public mac:string;
@@ -51,6 +53,7 @@ export class DocumentoModel {
         this.nota_id=null;
         this. empleado_id=null;
         this.empresa_id=null;
+        this.resolucion_empresa_id=null;
         this.modelo_marca_id = null;
         this. fecha_registro=new Date;
         this. fecha_entrega=new Date;
@@ -64,6 +67,7 @@ export class DocumentoModel {
         this. detalle_entrada="";
         this. saldo=0;
         this. peso_total=0;
+        this. peso_cotero=0;
         this. descuento=0;
         this. cambio=0;
         this. mac="";

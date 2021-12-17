@@ -7,6 +7,9 @@ import { ParametrosModel } from '../model/parametros.model';
 import { TipoIdentificacionModel } from '../model/tipoIdentificacion.model';
 import { FactTipoEmpresaModel } from '../model/factTipoEmpresa.model';
 import { ResolucionEmpresaModel } from '../model/resolucionEmpresa.model';
+import { ResponsabilidadFiscalModel } from '../model/responsabilidadFiscal.model';
+import { ResponsabilidadFiscalClienteModelModel } from '../model/responsabilidadFiscalCliente.model';
+import { VehiculoModel } from '../model/vehiculo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +28,15 @@ export class ClienteService {
   }
 
   
+  public getById(clienteId:number){
+    return this.http.get<ClienteModel[]>(this.server_api+'/cliente/getById?getById='+clienteId);
+  }
+
+  public getVehiculos(){
+    return this.http.get<VehiculoModel[]>(this.server_api+'/cliente/getVehiculos');
+  }
+
+  
 
   public getConfiguracionByEmpresa(empresaId:string){
     return this.http.get<any>(this.server_api+'/cliente/getConfiguracionByEmpresa?empresaId='+empresaId);
@@ -38,7 +50,10 @@ export class ClienteService {
     return this.http.get<ResolucionEmpresaModel[]>(this.server_api+'/cliente/getResolucion?empresaId='+empresaId);
   }
 
-  
+  public getResolucionById(resolucionEmpresaId:number){
+    return this.http.get<ResolucionEmpresaModel[]>(this.server_api+'/cliente/getResolucionById?resolucionEmpresaId='+resolucionEmpresaId);
+  }
+
 
   public getTipoIdentificacionAll(){
     return this.http.get<TipoIdentificacionModel[]>(this.server_api+'/cliente/getTipoIdentificacionAll');
@@ -47,14 +62,36 @@ export class ClienteService {
   public getTipoEmpresa(){
     return this.http.get<FactTipoEmpresaModel[]>(this.server_api+'/cliente/getTipoEmpresa');
   }
+
+  public getResponsabilidades(){
+    return this.http.get<ResponsabilidadFiscalModel[]>(this.server_api+'/cliente/getResponsabilidades');
+  }
+
+  public getResponsabilidadesByCliente(clienteId:number){
+    return this.http.get<ResponsabilidadFiscalModel[]>(this.server_api+'/cliente/getResponsabilidadesByCliente?clienteId='+clienteId);
+  }
+  
   
   saveCliente(clienteId: ClienteModel) {
     return this.http.post<any>(this.server_api + '/cliente/saveCliente', clienteId);
   }
 
+  saveVehiculo(vehiculoId: VehiculoModel) {
+    return this.http.post<any>(this.server_api + '/cliente/saveVehiculo', vehiculoId);
+  }
+
+  saveResponsabilidadFiscalCliente(clienteId: ResponsabilidadFiscalClienteModelModel) {
+    return this.http.post<any>(this.server_api + '/cliente/saveResponsabilidadFiscalCliente', clienteId);
+  }
+
+  
+
   updateCliente(clienteId: ClienteModel) {
     return this.http.post<any>(this.server_api + '/cliente/updateCliente', clienteId);
   }
-  
+
+  updateVehiculo(vehiculoId: VehiculoModel) {
+    return this.http.post<any>(this.server_api + '/cliente/updateVehiculo', vehiculoId);
+  }
   
 }

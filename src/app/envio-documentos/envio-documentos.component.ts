@@ -11,16 +11,7 @@ import { CalculosService } from '../services/calculos.service';
 import { DocumentoDetalleService } from '../services/documento-detalle.service';
 import { DocumentoDetalleModel } from '../model/documentoDetalle.model';
 import { DocumentoMapModel } from '../facturacion.cloud.model/documentoMap.model';
-import { DataJSONModel } from '../facturacion.cloud.model/datajson.model';
-import { FacturasModel } from '../facturacion.cloud.model/facturas.model';
-import { DataClienteModel } from '../facturacion.cloud.model/dataCliente.model';
-import { DataFacturaModel } from '../facturacion.cloud.model/dataFactura.model';
-import { DataFacturaTotalesModel } from '../facturacion.cloud.model/dataFacturaTotales.model';
-import { DataImpuestosModel } from '../facturacion.cloud.model/dataImpuestos.model';
-import { DataDetalleFacturaModel } from '../facturacion.cloud.model/dataDetalleFactura.model';
-import { DataDescuentosModel } from '../facturacion.cloud.model/dataDescuentos.model';
 import { DocumentoInvoiceModel } from '../model/documentoInvoice.model';
-import { DataImpuestosDetalleModel } from '../facturacion.cloud.model/dataImpuestosDetalle.model';
 import { AppConfigService } from '../services/app-config.service';
 import { ImpresionService } from '../services/impresion.service';
 import { TipoDocumentoModel } from '../model/tipoDocumento.model';
@@ -50,6 +41,7 @@ export class EnvioDocumentosComponent implements OnInit {
   public enviados: number;
   public exitosos: number;
   public erroneos: number;
+  public faltantes: number = 0;
   public empresa: EmpresaModel;
   public factura: FacturaModel = new FacturaModel();;
   public enviando: boolean = false;
@@ -59,6 +51,7 @@ export class EnvioDocumentosComponent implements OnInit {
   readonly INVOICE_ERROR: number = 4;
   readonly INVOICE_OK: number = 5;
   public ngxQrcode2: string = "123"
+  public logoEmpresa: string;
 
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
@@ -76,7 +69,7 @@ export class EnvioDocumentosComponent implements OnInit {
     this.getTiposDocumento();
     this.getclientes(this.empresaId);
     this.getDocumentos();
-
+    this.getEmpresa();
 
   }
 
@@ -117,23 +110,43 @@ export class EnvioDocumentosComponent implements OnInit {
       this.insertarEstado(res1, docu);
     }
     $('#descartarModal').modal('hide');
-    
+
   }
 
   enviarDocumentos() {
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(empr => {
-      this.enviados = 0;
-      this.exitosos = 0;
-      this.erroneos = 0;
-      this.enviando = true;
-      $('#envioModal').modal('hide');
-      $('#enviardoModal').modal('show');
-      for (let docu of this.documentoMap) {
-        this.enviados++;
 
-        this.detalleDocumento(docu.documento);
-        this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(empr[0], docu, this.clientes)).subscribe(async res1 => {
+    this.enviados = 0;
+    this.exitosos = 0;
+    this.erroneos = 0;
+    this.enviando = true;
+    $('#envioModal').modal('hide');
+    $('#enviardoModal').modal('show');
+    this.faltantes = this.documentoMap.length;
+    for (let docu of this.documentoMap) {
+
+      this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento.documento_id).subscribe(async detalles => {
+        if (detalles.length > 0) {
+          this.itemsFactura = detalles;
+        } else {// esta parte copiarla para exportar documento y para reenviar facturas electronicas
+          console.log("Detalles de orden");
+          this.documentoService.getOrdenesByDocumentoId(docu.documento.documento_id).subscribe(res => {
+            let ordenesBuscarListFacturaSelect: DocumentoModel[] = res;
+            let ids: string[] = [];
+            for (let d of ordenesBuscarListFacturaSelect) {
+              ids.unshift(d.documento_id);
+            }
+            if (ids.length > 0) {
+              this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+                this.itemsFactura = res;
+                console.log("detalles encontrados:" + res.length);
+              });
+            }
+          });
+        }
+        this.facturacionElectronicaService.enviarFactura(this.calculosService.crearOjb(this.empresa, docu, this.clientes)).subscribe(async res1 => {
           console.log(res1);
+          this.enviados++;
+          this.faltantes--;
           if (res1.status == 'Error') {
             this.erroneos++;
           } else {
@@ -141,7 +154,7 @@ export class EnvioDocumentosComponent implements OnInit {
           }
           //this.insertarEstado(env, docu.documento);
           await this.delay(100);
-          if (this.enviados == this.documentoMap.length) {
+          if (this.faltantes <= 0) {
             // alert("El proceso de envio ha terminado")
             $("#ok").prop("disabled", false);
             this.getDocumentos();
@@ -150,23 +163,26 @@ export class EnvioDocumentosComponent implements OnInit {
           this.insertarEstado(res1, docu.documento);
         }, error => {
           console.error(error);
-          alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
+          this.enviados++;
+          this.faltantes--;
+          if (this.faltantes <= 0) {
+            // alert("El proceso de envio ha terminado")
+            $("#ok").prop("disabled", false);
+            this.getDocumentos();
+            this.enviando = false;
+          }
+          /*alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
             "mail: info@effectivesoftware.com.co\n" +
             "Error: " + error.error
-          )
+          )*/
+
         });
-      }
-    }, error => {
-      console.error(error);
-      alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
-        "mail: info@effectivesoftware.com.co\n" +
-        "Error: " + error.error
-      )
-      $('#envioModal').modal('hide');
-    });
+      });
+    }
+
   }
 
-  sendMail(res, docu: DocumentoModel) {
+  async sendMail(res, docu: DocumentoModel) {
     let mail: MailModel = new MailModel();
     let cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
     if (cliente.mail == "") {
@@ -176,45 +192,28 @@ export class EnvioDocumentosComponent implements OnInit {
       return;
     }
     mail.emailCliente = cliente.mail;
-    mail.html = `<p> Estimado Cliente,</p>
-    <b/>
-    <p>a este correo encontrará la factura correspondiente a la contratación de servicios y/o adquisición de Productos.</p>
-    <p>La factura electrónica que usted está recibiendo se conforma por dos archivos:</p>
-    <p>\t1. La representación gráfica en formato .pdf que usted podrá imprimir</p>
-    <p>\t2. La representación electrónica en formato .xml que usted deberá conservar</p>
-    <p>Si su factura presenta algún error, le agradecemos a más tardar dentro de las siguientes 48 horas, dar “click” al “link” de rechazo que aparece en este correo. </p>
-    <p>Saludos cordiales,</p>
-    <p><b/></p>
-    <p>EFFECTIVE SOFTWARE (Sistemas de facturacón e inventario)</p>
-    `;
+    mail.html = this.calculosService.enunciadoEmailFE(this.empresa, docu);
     let getFile: GetFileModel = new GetFileModel();
     getFile.cufe = docu.cufe;
     getFile.key = AppConfigService.key_invoice;
-
-    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(async empr => {
-      getFile.nitEmpresa = empr[0].nit;
-      mail.pdf_64 = this.getfacturaPDF(docu, empr[0]);
-      await this.delay(500);
-      this.facturacionElectronicaService.getXML(getFile).subscribe(async xml => {
-        console.log(xml);
-        mail.xml_64 = xml.mensaje;
-
-        mail.pdf_name = "f_" + docu.consecutivo_dian + ".pdf"; //+xml.filename;
-        mail.xml_name = "f_" + docu.consecutivo_dian + ".xml"; //+xml.filename;
-        this.facturacionElectronicaService.sendMail(mail).subscribe(async emai => {
-          console.log(emai);
-        }, err => {
-          console.error("errr enviando correo");
-        });
+    mail.pdf_64=this.getfacturaPDF(docu, this.empresa);
+    await this.delay(500);
+    this.facturacionElectronicaService.getXML(getFile).subscribe(async xml => {
+      mail.xml_64=xml.mensaje;
+      mail.pdf_name = "f_" + docu.consecutivo_dian + ".pdf"; //+xml.filename;
+      mail.xml_name = "f_" + docu.consecutivo_dian + ".xml"; //+xml.filename;
+      this.facturacionElectronicaService.sendMail(mail).subscribe(async emai => {
+        console.log(emai);
+      }, err => {
+        console.error("errr enviando correo");
       });
     });
-    // mail.xml_64=
-
-
+    
+   
+    
   }
 
   getfacturaPDF(docu: DocumentoModel, empresa: EmpresaModel) {
-
     var myimg64 = $("#qrcode1").find("img").attr("src");
     //console.log("base65");
     //console.log(myimg64);
@@ -225,6 +224,8 @@ export class EnvioDocumentosComponent implements OnInit {
     this.factura.detalle = this.itemsFactura;
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
+    this.factura.base64Logo = this.logoEmpresa;
+    this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     let stri: string = this.impresionService.imprimirFacturaPDFExportar(this.factura, this.configuracion);
     console.log(stri);
@@ -232,11 +233,8 @@ export class EnvioDocumentosComponent implements OnInit {
 
   }
 
-  detalleDocumento(documento: DocumentoModel) {
-    this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
-      this.itemsFactura = res;
-      console.log("detalles encontrados:" + res.length);
-    });
+  async detalleDocumento(documento: DocumentoModel) {
+    return await this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe();
   }
 
   insertarEstado(res, docu: DocumentoModel) {
@@ -310,10 +308,28 @@ export class EnvioDocumentosComponent implements OnInit {
       this.documentosSelectEnviar = this.documentos;
       for (let or of this.documentosSelectEnviar) {
         let docu: DocumentoMapModel = new DocumentoMapModel();
-        docu.documento = or;
         this.documentoDetalleService.getDocumentoDetalleByDocumento(or.documento_id).subscribe(detalle => {
-          docu.documentoDetalle = detalle;
-          this.documentoMap.unshift(docu);
+          docu.documento = or;
+          if (detalle.length > 0) {
+            docu.documentoDetalle = detalle;
+            this.documentoMap.unshift(docu);
+          } else {
+            console.log("Detalles de orden");
+            this.documentoService.getOrdenesByDocumentoId(docu.documento.documento_id).subscribe(res => {
+              let ordenesBuscarListFacturaSelect: DocumentoModel[] = res;
+              let ids: string[] = [];
+              for (let d of ordenesBuscarListFacturaSelect) {
+                ids.unshift(d.documento_id);
+              }
+              if (ids.length > 0) {
+                this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+                  docu.documentoDetalle = res;
+                  this.documentoMap.unshift(docu);
+                  console.log("detalles encontrados:" + res.length);
+                });
+              }
+            });
+          }
         });
       }
     } else {
@@ -330,8 +346,26 @@ export class EnvioDocumentosComponent implements OnInit {
       let docu: DocumentoMapModel = new DocumentoMapModel();
       docu.documento = or;
       this.documentoDetalleService.getDocumentoDetalleByDocumento(or.documento_id).subscribe(detalle => {
-        docu.documentoDetalle = detalle;
-        this.documentoMap.unshift(docu);
+        if (detalle.length > 0 || or.tipo_documento_id == 12) {
+          docu.documentoDetalle = detalle;
+          this.documentoMap.unshift(docu);
+        } else {
+          console.log("Detalles de orden");
+          this.documentoService.getOrdenesByDocumentoId(docu.documento.documento_id).subscribe(res => {
+            let ordenesBuscarListFacturaSelect: DocumentoModel[] = res;
+            let ids: string[] = [];
+            for (let d of ordenesBuscarListFacturaSelect) {
+              ids.unshift(d.documento_id);
+            }
+            if (ids.length > 0) {
+              this.documentoDetalleService.getDocumentoDetalleByDocumentoList(ids).subscribe(res => {
+                docu.documentoDetalle = res;
+                this.documentoMap.unshift(docu);
+                console.log("detalles encontrados:" + res.length);
+              });
+            }
+          });
+        }
       });
     } else {
       const index = this.documentosSelectEnviar.indexOf(or, 0);
@@ -368,7 +402,7 @@ export class EnvioDocumentosComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre + " " + cliente.apellidos;
+      return cliente.nombre + " " + cliente.apellidos + " " + cliente.razon_social;
     }
   }
 
@@ -384,7 +418,7 @@ export class EnvioDocumentosComponent implements OnInit {
   getclientes(empresaId: number) {
     this.clienteService.getClientesByEmpresa(empresaId.toString()).subscribe(res => {
       this.clientes = res;
-      console.log("lista de clientes cargados: " + this.clientes.length);
+      console.log(this.clientes);
     });
   }
 
@@ -400,6 +434,18 @@ export class EnvioDocumentosComponent implements OnInit {
     });
   }
 
+  getEmpresa() {
+    this.empresaService.getEmpresaById(this.empresaId.toString()).subscribe(res => {
+      this.empresa = res[0];
+      this.getLogoEmpresa(this.empresa.url_logo);
+    });
+  }
+
+  getLogoEmpresa(imgData: string) {
+    this.calculosService.getBase64ImageFromURL(imgData).subscribe(base64data => {
+      this.logoEmpresa = 'data:image/jpg;base64,' + base64data;
+    });
+  }
 
 
 }
