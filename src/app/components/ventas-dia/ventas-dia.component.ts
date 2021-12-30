@@ -1081,7 +1081,7 @@ export class VentasDiaComponent implements OnInit {
         return;
       }
       let des = desTemp / 100;
-      let temp: DocumentoDetalleModel[];
+      let temp: DocumentoDetalleModel[]=[];
       for (var i = 0; i < this.productos.length; i++) {
         let parcialDescuento = this.productos[i].parcial + (this.productos[i].parcial * des);
         let unitarioDescuento = this.productos[i].unitario + (this.productos[i].unitario * des);
