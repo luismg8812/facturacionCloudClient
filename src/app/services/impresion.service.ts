@@ -752,7 +752,7 @@ export class ImpresionService {
     this.doc.text("% IVA", 140, 57);
     this.doc.text("VR. UNIT. FIN", 158, 57);
     this.doc.text("VR. TOTAL", 182, 57);
-    this.doc.text("FORMA DE PAGO:", 159, 44);
+    this.doc.text("FORMA DE PAGO: "+ factura.tipoPago, 159, 44);
     this.doc.text("VENCIMIENTO:", 159, 49);
     this.doc.text("NOMBRE:", 5, 44);
     this.doc.text("DIRECCIÓN:", 5, 49);
