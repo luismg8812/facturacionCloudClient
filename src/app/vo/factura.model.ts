@@ -19,6 +19,7 @@ export class FacturaModel {
     public nombreTipoDocumento:string;
     public nombreUsuario:string;
     public nombreEmpleado:string;
+    public tipoPago:string;
     public resolucionEmpresa:ResolucionEmpresaModel;
     public saldo:number;
     public pagaCon:number;
@@ -42,6 +43,7 @@ export class FacturaModel {
         this.saldo=0;
         this.pagaCon=0;
         this.base64Logo="";
+        this.tipoPago="";
     }
 }
 

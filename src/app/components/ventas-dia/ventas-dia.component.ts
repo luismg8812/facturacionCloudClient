@@ -1057,6 +1057,7 @@ export class VentasDiaComponent implements OnInit {
 
   asignarTipoPago() {
     let tiposPagosList: TipoPagoModel[] = [];
+    this.factura.tipoPago=this.tiposPagosDocumento[0].nombre;
     for (let tipo of this.tiposPagosDocumento) {
       this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
     }

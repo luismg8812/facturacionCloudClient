@@ -58,7 +58,8 @@ export class BuscarDocumentosComponent implements OnInit {
   public configuracion: ConfiguracionModel;
   public productoIdSelect: ProductoModel = undefined;
   public productosAll: Array<ProductoModel>;
-  public productosSelectList: Array<ProductoModel>=[];
+  public productosSelectList: Array<ProductoModel> = [];
+  public tipos: string = "";
   public informeDiario: InformeDiarioModel;
 
   readonly ANULAR_FACTURA: string = '6';
@@ -174,14 +175,14 @@ export class BuscarDocumentosComponent implements OnInit {
               }
             });
           }
-          for(let p of this.productosSelectList){
+          for (let p of this.productosSelectList) {
             this.productoService.updateProducto(p).subscribe(res => {
               if (res.code != 200) {
                 alert("Error agregando producto: " + res.error);
               }
             });
           }
-         
+
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
           return;
@@ -263,15 +264,15 @@ export class BuscarDocumentosComponent implements OnInit {
   }
 
   borrarItem(borrar) {
-   
+
     let id = borrar.id.toString().replace("d_", "");
     for (let i = 0; i < this.itemsFactura.length; i++) {
       if (this.itemsFactura[i].documento_detalle_id.toString() == id) {
         this.productoIdSelect = this.productosAll.find(product => product.producto_id === this.itemsFactura[i].producto_id);
-        this.updateCantidad(this.itemsFactura[i],'suma');
+        this.updateCantidad(this.itemsFactura[i], 'suma');
         this.itemsFactura.splice(i, 1);
         this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
-        
+
         break;
       }
     }
@@ -300,7 +301,7 @@ export class BuscarDocumentosComponent implements OnInit {
   private asignarDocumentoDetalle(cantidad: number, costo_publico: number) {
     let docDetalle = new DocumentoDetalleModel();
     docDetalle.cantidad = cantidad;
-    docDetalle.saldo=Number(this.productoIdSelect.cantidad);
+    docDetalle.saldo = Number(this.productoIdSelect.cantidad);
     docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
     docDetalle.peso_producto = Number(this.productoIdSelect.peso);
     docDetalle.producto_id = this.productoIdSelect.producto_id;
@@ -369,6 +370,11 @@ export class BuscarDocumentosComponent implements OnInit {
     console.log(this.productoIdSelect);
   }
 
+  tiposPagoNombres(documento_id) {
+    //console.log("documento:" + documento_id);
+  
+  }
+
 
   imprimirCopia(documentoCopi: DocumentoModel) {
     this.documentoSelect = documentoCopi;
@@ -412,7 +418,12 @@ export class BuscarDocumentosComponent implements OnInit {
           default:
             break;
         }
-        this.imprimirFactura(1, res[0], tipoImpresion);
+        this.documentoService.getTipoPagoByDocumento(this.documentoSelect.documento_id).subscribe(res3 => {
+        this.tipos=res3[0].nombre;
+          this.imprimirFactura(1, res[0], tipoImpresion);
+        });
+
+       
       });
     });
 
@@ -430,6 +441,7 @@ export class BuscarDocumentosComponent implements OnInit {
     this.factura.detalle = this.itemsFactura
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
+    this.factura.tipoPago=this.tipos;
     let formato = "";
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoSelect.cliente_id);
@@ -456,10 +468,10 @@ export class BuscarDocumentosComponent implements OnInit {
           formato = ".pdf";
           this.impresionService.imprimirFacturaPdf50(this.factura, this.configuracion, false);
           break;
-          case this.TIPO_IMPRESION_PDFCARTA:
-            this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
-            break;  
-        default:   
+        case this.TIPO_IMPRESION_PDFCARTA:
+          this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
+          break;
+        default:
           alert("no tiene un tipo impresion configurado el sistema");
           //return;
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
@@ -479,17 +491,25 @@ export class BuscarDocumentosComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
+      return cliente.nombre + " " + cliente.apellidos + " " + cliente.razon_social;
     }
   }
 
 
 
   detalleDocumento(documento: DocumentoModel) {
+    this.tipos="";
     this.documentoSelect = documento;
     this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
       this.itemsFactura = res;
       console.log("detalles encontrados:" + res.length);
+    });
+    this.documentoService.getTipoPagoByDocumento(documento.documento_id).subscribe(res => {
+      for (let c of res) {
+        this.tipos = this.tipos  + c.nombre + ": " + c.valor+ "\n";
+        console.log(this.tipos);  
+      }
+      return this.tipos;
     });
   }
 

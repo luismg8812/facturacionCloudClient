@@ -185,6 +185,8 @@ export class DocumentoService {
     + '&tipoTercero=' + tipoTercero+ '&tipoDocumento=' + tipoDocumento+ '&montoDesde=' + montoDesde+ '&montoHasta=' + montoHasta);
   }
 
-
+  public getTipoPagoByDocumento(documentoId:string) {
+    return this.http.get<any>(this.server_api + '/documento/getTipoPagoByDocumento?documentoId=' + documentoId);
+  }
   
 }
