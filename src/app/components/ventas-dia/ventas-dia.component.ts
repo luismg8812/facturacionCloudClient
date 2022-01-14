@@ -73,6 +73,7 @@ export class VentasDiaComponent implements OnInit {
   readonly CANTIDADES_NEGATIVAS: string = '28';
   readonly PRODUCTOS_ESPACIALES: string = '30';
   readonly ENVIO_AUTOMATICO: string = '31';
+  readonly DEDUCCION_REMISIONES: string = '35';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_REMISION: number = 9;
@@ -144,6 +145,7 @@ export class VentasDiaComponent implements OnInit {
   public saldoClienteActivo: boolean = false;
   public productosEspecialesActivo: boolean = false;
   public envioAutomaticoFEActivo: boolean = false;
+  public deduccionInventarioRemisionesActivo: boolean = false;
   public saldoCliente: number = 0;
   public clienteSelect: number;
   public empresaId: number;
@@ -1606,7 +1608,7 @@ export class VentasDiaComponent implements OnInit {
 
     if (this.stockActivo) {
       if ((this.productoIdSelect.cantidad - cantidad) < this.productoIdSelect.stock_min) {
-        alert("Solo hay " + (this.productoIdSelect.cantidad - cantidad) + " de " + this.productoIdSelect.nombre);
+        alert("Solo hay " + (this.productoIdSelect.cantidad) + " de " + this.productoIdSelect.nombre);
       }
     }
     console.log("//TODO aqui hacer la validacion de que el producto se agotó");
@@ -1828,8 +1830,11 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
       });
-      if (this.document.tipo_documento_id != this.TIPO_DOCUMENTO_COTIZACION) {
-        this.updateCantidad(docDetalle, 'resta');
+      if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA || (!this.deduccionInventarioRemisionesActivo && this.document.tipo_documento_id == this.TIPO_DOCUMENTO_REMISION) ) {
+        
+          this.updateCantidad(docDetalle, 'resta');
+        
+        
       }
 
 
@@ -2522,6 +2527,10 @@ export class VentasDiaComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.ENVIO_AUTOMATICO) {
           console.log("envio de facturas electronicas automantico activo ");
           this.envioAutomaticoFEActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.DEDUCCION_REMISIONES) {
+          console.log("deduccion de inventario con remisiones activo ");
+          this.deduccionInventarioRemisionesActivo = true;
         }
       }
     });
