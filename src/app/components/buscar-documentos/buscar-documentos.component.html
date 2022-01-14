@@ -34,7 +34,7 @@
         </div>
         <div class="form-group col-md-6 col-sm-1">
           Fecha Final
-          <input class="form-control" type="date" id="fechaFinBuscar" value="2021-12-31" #fechaFinBuscar>
+          <input class="form-control" type="date" id="fechaFinBuscar" value="2022-12-31" #fechaFinBuscar>
         </div>
       </div>
       <div class="form-row">
@@ -58,12 +58,12 @@
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Proveedor
-          <input class="form-control" list="proveedoresList" id="proveedorBuscar" placeholder="Proveedor" name="proveedorBuscar"
-            #proveedorBuscar>
-            <datalist id="proveedoresList">
-              <option *ngFor="let proveedor of proveedores" [value]="proveedor.nombre">
-                  Identificación: {{proveedor.documento}} id:{{proveedor.proveedor_id}}
-              </option>
+          <input class="form-control" list="proveedoresList" id="proveedorBuscar" placeholder="Proveedor"
+            name="proveedorBuscar" #proveedorBuscar>
+          <datalist id="proveedoresList">
+            <option *ngFor="let proveedor of proveedores" [value]="proveedor.nombre">
+              Identificación: {{proveedor.documento}} id:{{proveedor.proveedor_id}}
+            </option>
           </datalist>
         </div>
 
@@ -101,6 +101,10 @@
               <button type="button" class="btn btn-primary btn-sm" title="Detalle" data-toggle="modal"
                 data-target="#detalleDocumentoModal" (click)="detalleDocumento(documento)">
                 <i class="fas fa-search"></i>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" [disabled]="!editarFacturaActivo"
+                (click)="editarFactura(documento)" title="Editar factura">
+                <i class="fas fa-edit"></i>
               </button>
               <!-- Button trigger modal -->
               <button type="button" class="btn btn-primary btn-sm" [disabled]="!copiaFacturaActivo"
@@ -197,13 +201,13 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group col-md-8 col-sm-1"> 
+            <div class="form-group col-md-8 col-sm-1">
               <b>Tipos Pago: </b>
             </div>
-           
+
           </div>
           <div class="form-row">
-            <div class="form-group col-md-12 col-sm-1" >
+            <div class="form-group col-md-12 col-sm-1">
               {{tipos}}
             </div>
           </div>
@@ -272,7 +276,7 @@
           </div>
           <div class="form-row">
             <div class="form-group  col-sm-12">
-              Descripción corrección: 
+              Descripción corrección:
             </div>
             <div class="form-group  col-sm-12">
               <textarea class="form-control " id="observacion" #observacion
@@ -280,8 +284,8 @@
             </div>
           </div>
           <div class="form-row">
-           
-            <div class="form-group col-sm-8" >
+
+            <div class="form-group col-sm-8">
               Articulo
               <input list="articulos" name="articuloBuscar" #articuloBuscar placeholder="Articulo" class="form-control"
                 id="articuloBuscar" (change)="articuloSelect(articuloBuscar) ">
@@ -292,12 +296,12 @@
             </div>
             <div class="form-group col-md-1 col-sm-1">
               <button type="button" class="btn btn-primary mt-4" title="Adjuntar producto"
-              (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
+                (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-1">
-            
+
               <button type="button" class="btn btn-primary mr-1" (click)="confirmarNota(observacion)">Confirmar</button>
               <button type="button" class="btn btn-secondary" (click)="cerrarNota()">Salir</button>
             </div>
@@ -315,8 +319,8 @@
             <tbody>
               <tr *ngFor="let item of itemsFactura">
                 <th scope="row">
-                  <button type="button" id="d_{{item.documento_detalle_id}}" #borraR class="btn btn-secondary btn-sm" title="Eliminar Producto" 
-                    (click)="borrarItem(borraR)">
+                  <button type="button" id="d_{{item.documento_detalle_id}}" #borraR class="btn btn-secondary btn-sm"
+                    title="Eliminar Producto" (click)="borrarItem(borraR)">
                     <i class="fas fa-trash"></i>
                   </button>
                 </th>
@@ -336,7 +340,7 @@
           </table>
         </div>
 
-      </div>  
+      </div>
     </div>
   </div>
 

@@ -27,6 +27,7 @@ import { ProductoService } from 'src/app/services/producto.service';
 import { ProveedorService } from 'src/app/services/proveedor.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { FacturaModel } from 'src/app/vo/factura.model';
+import { Router } from '@angular/router';
 
 declare var jquery: any;
 declare var $: any;
@@ -53,6 +54,7 @@ export class BuscarDocumentosComponent implements OnInit {
   public cambioFechaActivo: boolean = false;
   public anularFacturaActivo: boolean = false;
   public copiaFacturaActivo: boolean = false;
+  public editarFacturaActivo: boolean = false;
   public usuarioId: number;
   public factura: FacturaModel;
   public configuracion: ConfiguracionModel;
@@ -65,6 +67,7 @@ export class BuscarDocumentosComponent implements OnInit {
   readonly ANULAR_FACTURA: string = '6';
   readonly COPIA_FACTURA: string = '11';
   readonly CAMBIO_FECHA: string = '22';
+  readonly EDITAR_FACTURA: string = '34';
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
@@ -91,6 +94,7 @@ export class BuscarDocumentosComponent implements OnInit {
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
   constructor(public usuarioService: UsuarioService,
+    private router: Router,
     public empleadoService: EmpleadoService,
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
@@ -372,7 +376,19 @@ export class BuscarDocumentosComponent implements OnInit {
 
   tiposPagoNombres(documento_id) {
     //console.log("documento:" + documento_id);
-  
+
+  }
+
+  editarFactura(documentoCopi: DocumentoModel) {
+    console.log("entra a editar factura"+ documentoCopi.documento_id);
+    localStorage.setItem("factura_editar", documentoCopi.documento_id);
+    //this.router.navigate(['/user']);
+    $('#buscarDocumentoXFech').modal('hide');
+    let currentUrl = '/ventasDia';
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([currentUrl]);
+    
   }
 
 
@@ -419,11 +435,11 @@ export class BuscarDocumentosComponent implements OnInit {
             break;
         }
         this.documentoService.getTipoPagoByDocumento(this.documentoSelect.documento_id).subscribe(res3 => {
-        this.tipos=res3[0].nombre;
+          this.tipos = res3[0].nombre;
           this.imprimirFactura(1, res[0], tipoImpresion);
         });
 
-       
+
       });
     });
 
@@ -441,7 +457,7 @@ export class BuscarDocumentosComponent implements OnInit {
     this.factura.detalle = this.itemsFactura
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
-    this.factura.tipoPago=this.tipos;
+    this.factura.tipoPago = this.tipos;
     let formato = "";
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoSelect.cliente_id);
@@ -498,7 +514,7 @@ export class BuscarDocumentosComponent implements OnInit {
 
 
   detalleDocumento(documento: DocumentoModel) {
-    this.tipos="";
+    this.tipos = "";
     this.documentoSelect = documento;
     this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
       this.itemsFactura = res;
@@ -506,8 +522,8 @@ export class BuscarDocumentosComponent implements OnInit {
     });
     this.documentoService.getTipoPagoByDocumento(documento.documento_id).subscribe(res => {
       for (let c of res) {
-        this.tipos = this.tipos  + c.nombre + ": " + c.valor+ "\n";
-        console.log(this.tipos);  
+        this.tipos = this.tipos + c.nombre + ": " + c.valor + "\n";
+        console.log(this.tipos);
       }
       return this.tipos;
     });
@@ -565,6 +581,11 @@ export class BuscarDocumentosComponent implements OnInit {
           console.log("copia factura activo");
           this.copiaFacturaActivo = true;
         }
+        if (this.activaciones[e].activacion_id == this.EDITAR_FACTURA) {
+          console.log("editar factura activo");
+          this.editarFacturaActivo = true;
+        }
+
       }
     });
   }
