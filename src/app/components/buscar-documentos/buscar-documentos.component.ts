@@ -281,6 +281,36 @@ export class BuscarDocumentosComponent implements OnInit {
       }
     }
   }
+
+  exportTableToExcel(tableID) {
+    console.log(tableID);
+    let filename = "documentos";
+    var dataType = 'application/vnd.ms-excel';
+    var tableSelect = tableID
+    var texto = [];
+    let tamanoMax: number = 40;
+    
+    texto.push("numero interno;proveedor;cliente;usuario crea;autorizacion DIAN;empleado;fecha registro;consecutivo DIAN;"+
+    "total;exento;saldo;descuento;iva_5;iva_19;base_5;base_19;fecha_vencimiento\n");
+    for (let p of this.documentos) {
+      let nombreCliente:ClienteModel = this.clientes.find(cliente => cliente.cliente_id == p.cliente_id);
+      texto.push(p.documento_id + ";" + " " + ";" + nombreCliente.nombre+ " "+nombreCliente.apellidos+" " +nombreCliente.razon_social + ";" + " " + ";" + " " + ";" + " " + ";" + p.fecha_registro + ";" +
+       p.consecutivo_dian + ";" + p.total  + ";" + p.excento + ";" + p.saldo+ ";" + p.descuento + ";" + p.iva_5+ ";" +
+        Number(p.iva_19)+ ";" + p.base_5+ ";" + p.base_19+ ";" + p.fecha_vencimiento+ '\n');
+    }
+
+
+    // Specify file name
+    filename = filename ? filename + '.csv' : 'excel_data.csv';
+
+
+
+    var blob = new Blob(texto, {
+      type: dataType
+    });
+    this.descargarArchivo(blob, filename)
+
+  }
   
 
   cambioFecha(fechaVencimiento){
