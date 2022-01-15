@@ -1500,6 +1500,7 @@ export class ImpresionService {
       this.doc.text("Total IVA: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP", ""), 20) + "   "
         + "Exento: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.excento).replace("COP", ""), 20) + "   "
         + "Gravado: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP", ""), 20) + "   "
+        + "Saldo Anterior: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.saldo).replace("COP", ""), 20) + "   "
         , 4, 264);
       let row = 0;
       for (let contadorP of factura.detalle) {
