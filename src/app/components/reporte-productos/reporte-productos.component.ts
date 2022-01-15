@@ -1,13 +1,14 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { ProductoService } from '../services/producto.service';
-import { ProveedorService } from '../services/proveedor.service';
-import { ProductoModel } from '../model/producto.model';
-import { ClienteService } from '../services/cliente.service';
-import { ImpresoraEmpresaModel } from '../model/impresoraEmpresa.model';
-import { EmpresaService } from '../services/empresa.service';
-import { ImpresionService } from '../services/impresion.service';
-import { EmpresaModel } from '../model/empresa.model';
-import { SubGrupoModel } from '../model/subGrupo.model';
+import { EmpresaModel } from 'src/app/model/empresa.model';
+import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
+import { ProductoModel } from 'src/app/model/producto.model';
+import { SubGrupoModel } from 'src/app/model/subGrupo.model';
+import { ClienteService } from 'src/app/services/cliente.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
+import { ImpresionService } from 'src/app/services/impresion.service';
+import { ProductoService } from 'src/app/services/producto.service';
+import { ProveedorService } from 'src/app/services/proveedor.service';
+
 
 declare var jquery: any;
 declare var $: any;

@@ -72,6 +72,10 @@ export class DocumentoService {
     return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByOrden', documento_id);
   }
 
+  deleteDocumentoOrdenByDocumento(documento_id: DocumentoModel) {
+    return this.http.post<any>(this.server_api + '/documento/deleteDocumentoOrdenByDocumento', documento_id);
+  }
+
   
   saveTipoPagoDocumento(tipoPagoDocumentoId: TipoPagoDocumentoModel) { 
     return this.http.post<any>(this.server_api + '/documento/createTipoPagoDocumento', tipoPagoDocumentoId);
@@ -181,6 +185,8 @@ export class DocumentoService {
     + '&tipoTercero=' + tipoTercero+ '&tipoDocumento=' + tipoDocumento+ '&montoDesde=' + montoDesde+ '&montoHasta=' + montoHasta);
   }
 
-
+  public getTipoPagoByDocumento(documentoId:string) {
+    return this.http.get<any>(this.server_api + '/documento/getTipoPagoByDocumento?documentoId=' + documentoId);
+  }
   
 }

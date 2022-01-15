@@ -7,6 +7,7 @@ import { GrupoModel } from '../model/grupo.model';
 import { SubGrupoModel } from '../model/subGrupo.model';
 import { ProductoPreciosModel } from '../model/productoPrecios.model';
 import { SubProductoModel } from '../model/subProducto.model';
+import { AuditoriaModel } from '../model/auditoria.model';
 declare var jquery: any;
 declare var $: any;
 
@@ -20,20 +21,24 @@ export class EditarProductoComponent implements OnInit {
   public productoPrecioNew:ProductoPreciosModel=new ProductoPreciosModel();
   public productosAll: Array<ProductoModel>;
   public empresaId: number;
+  public usuarioId: number; 
   public proveedores: Array<ProveedorModel>;
   public marcaList: Array<any>;
   public grupoList: Array<GrupoModel>;
   public subGrupoList: Array<SubGrupoModel>;
   public subProductoList:Array<SubProductoModel>=[];
   public fechaI: string = "";
+  public check = 0;
   
   @ViewChild("articuloPV1") articuloPV1: ElementRef;
+  @ViewChild("cantidadSub") cantidadSub: ElementRef;
 
   constructor(public productoService:ProductoService,
     public proveedorService:ProveedorService) { }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.getProductosByEmpresa(this.empresaId);
     this.getProveedores(this.empresaId);
     this.getGrupos(this.empresaId);
@@ -58,6 +63,14 @@ export class EditarProductoComponent implements OnInit {
    }
    this.productoNew.fecha_registro=new Date(this.fechaI);
    this.productoNew.empresa_id = this.empresaId;
+
+   let auditoria:AuditoriaModel=new AuditoriaModel();
+   auditoria.aplicativo="inventario fisico";
+   auditoria.empresa_id= this.empresaId;
+   auditoria.observacion=" se cambia datos del producto id="+this.productoNew.producto_id+" "+this.productoNew.nombre;
+   auditoria.usuario_id=this.usuarioId;
+   auditoria.accion_auditoria_id=1; // cambios por inventario fisico
+   auditoria.valor_actual=""+this.productoNew.costo_publico;
    this.productoService.updateProducto(this.productoNew).subscribe(res => {
      if (res.code == 200) {
       
@@ -88,6 +101,17 @@ export class EditarProductoComponent implements OnInit {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+selectOrdenOne( event){
+  if (event.target.checked) {
+    this.check=1;
+    this.cantidadSub.nativeElement.value="";
+    this.cantidadSub.nativeElement.disabled=true;
+  }else{
+    this.check=0;
+    this.cantidadSub.nativeElement.disabled=false;
+  }
+}
+
 agregarSubProducto(articulo,cantidad){
   let producto:ProductoModel = this.productosAll.find(product => product.nombre === articulo.value);
   if(this.productoNew.producto_id==null){
@@ -98,7 +122,7 @@ agregarSubProducto(articulo,cantidad){
     alert("El sub producto es obligatorio");
     return;
   }
-  if(cantidad.value==""){
+  if(cantidad.value=="" && this.check==0){
     alert("La cantidad es obligatoria");
     return;
   }
@@ -120,8 +144,9 @@ agregarSubProducto(articulo,cantidad){
   let subProducto:SubProductoModel=new SubProductoModel();
   subProducto.producto_padre=this.productoNew.producto_id;
   subProducto.producto_hijo=producto.producto_id;
-  subProducto.cantidad=cantidad.value;
+  subProducto.cantidad=(this.check==1?0:cantidad.value);
   subProducto.estado=1;
+  subProducto.pesado=this.check;
   this.productoService.saveSubProducto(subProducto).subscribe(res => {
     subProducto.sub_producto_id = res.sub_producto_id;
     this.subProductoList.push(subProducto);

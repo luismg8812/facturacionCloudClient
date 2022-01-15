@@ -11,6 +11,7 @@ import { EmpresaModel } from 'src/app/model/empresa.model';
 import { ImpresoraEmpresaModel } from 'src/app/model/impresoraEmpresa.model';
 import { InformeDiarioModel } from 'src/app/model/informeDiario.model';
 import { ProductoModel } from 'src/app/model/producto.model';
+import { ProveedorModel } from 'src/app/model/proveedor.model';
 import { SubProductoModel } from 'src/app/model/subProducto.model';
 import { TipoDocumentoModel } from 'src/app/model/tipoDocumento.model';
 import { UsuarioModel } from 'src/app/model/usuario.model';
@@ -23,8 +24,10 @@ import { EmpleadoService } from 'src/app/services/empleado.service';
 import { EmpresaService } from 'src/app/services/empresa.service';
 import { ImpresionService } from 'src/app/services/impresion.service';
 import { ProductoService } from 'src/app/services/producto.service';
+import { ProveedorService } from 'src/app/services/proveedor.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { FacturaModel } from 'src/app/vo/factura.model';
+import { Router } from '@angular/router';
 
 declare var jquery: any;
 declare var $: any;
@@ -38,6 +41,7 @@ export class BuscarDocumentosComponent implements OnInit {
 
   public usuarios: Array<UsuarioModel>;
   public empleados: Array<EmpleadoModel>;
+  public proveedores: Array<ProveedorModel>;
   public clientes: Array<ClienteModel> = [];
   public tiposDocumento: Array<TipoDocumentoModel>;
   public documentos: Array<DocumentoModel>;
@@ -50,19 +54,23 @@ export class BuscarDocumentosComponent implements OnInit {
   public cambioFechaActivo: boolean = false;
   public anularFacturaActivo: boolean = false;
   public copiaFacturaActivo: boolean = false;
+  public editarFacturaActivo: boolean = false;
   public usuarioId: number;
   public factura: FacturaModel;
   public configuracion: ConfiguracionModel;
   public productoIdSelect: ProductoModel = undefined;
   public productosAll: Array<ProductoModel>;
-  public productosSelectList: Array<ProductoModel>=[];
+  public productosSelectList: Array<ProductoModel> = [];
+  public tipos: string = "";
   public informeDiario: InformeDiarioModel;
 
   readonly ANULAR_FACTURA: string = '6';
   readonly COPIA_FACTURA: string = '11';
   readonly CAMBIO_FECHA: string = '22';
+  readonly EDITAR_FACTURA: string = '34';
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
+  readonly TIPO_IMPRESION_PDFCARTA: number = 3;
   readonly TIPO_IMPRESION_PDF80MM: number = 4;
   readonly TIPO_IMPRESION_PDF50MM: number = 5;
   readonly TIPO_IMPRESION_TXTMEDIANABOR: number = 6;
@@ -86,6 +94,7 @@ export class BuscarDocumentosComponent implements OnInit {
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
 
   constructor(public usuarioService: UsuarioService,
+    private router: Router,
     public empleadoService: EmpleadoService,
     public empresaService: EmpresaService,
     public impresionService: ImpresionService,
@@ -94,6 +103,7 @@ export class BuscarDocumentosComponent implements OnInit {
     public documentoDetalleService: DocumentoDetalleService,
     public documentoService: DocumentoService,
     public cierreService: CierreService,
+    public proveedorService: ProveedorService,
     public clienteService: ClienteService) { }
 
   ngOnInit() {
@@ -102,6 +112,7 @@ export class BuscarDocumentosComponent implements OnInit {
     this.getUsuarios(this.empresaId);
     this.getEmpleados(this.empresaId);
     this.getclientes(this.empresaId);
+    this.getProveedores(this.empresaId);
     this.getTiposDocumento();
     this.getActivaciones(this.usuarioId);
     this.getImpresorasEmpresa(this.empresaId);
@@ -168,14 +179,14 @@ export class BuscarDocumentosComponent implements OnInit {
               }
             });
           }
-          for(let p of this.productosSelectList){
+          for (let p of this.productosSelectList) {
             this.productoService.updateProducto(p).subscribe(res => {
               if (res.code != 200) {
                 alert("Error agregando producto: " + res.error);
               }
             });
           }
-         
+
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
           return;
@@ -257,19 +268,64 @@ export class BuscarDocumentosComponent implements OnInit {
   }
 
   borrarItem(borrar) {
-   
+
     let id = borrar.id.toString().replace("d_", "");
     for (let i = 0; i < this.itemsFactura.length; i++) {
       if (this.itemsFactura[i].documento_detalle_id.toString() == id) {
         this.productoIdSelect = this.productosAll.find(product => product.producto_id === this.itemsFactura[i].producto_id);
-        this.updateCantidad(this.itemsFactura[i],'suma');
+        this.updateCantidad(this.itemsFactura[i], 'suma');
         this.itemsFactura.splice(i, 1);
         this.documentoSelect = this.calculosService.calcularExcento(this.documentoSelect, this.itemsFactura);
-        
+
         break;
       }
     }
   }
+
+  exportTableToExcel(tableID) {
+    console.log(tableID);
+    let filename = "documentos";
+    var dataType = 'application/vnd.ms-excel';
+    var tableSelect = tableID
+    var texto = [];
+    let tamanoMax: number = 40;
+    
+    texto.push("numero interno;proveedor;cliente;usuario crea;autorizacion DIAN;empleado;fecha registro;consecutivo DIAN;"+
+    "total;exento;saldo;descuento;iva_5;iva_19;base_5;base_19;fecha_vencimiento\n");
+    for (let p of this.documentos) {
+      let nombreCliente:ClienteModel = this.clientes.find(cliente => cliente.cliente_id == p.cliente_id);
+      texto.push(p.documento_id + ";" + " " + ";" + nombreCliente.nombre+ " "+nombreCliente.apellidos+" " +nombreCliente.razon_social + ";" + " " + ";" + " " + ";" + " " + ";" + p.fecha_registro + ";" +
+       p.consecutivo_dian + ";" + p.total  + ";" + p.excento + ";" + p.saldo+ ";" + p.descuento + ";" + p.iva_5+ ";" +
+        Number(p.iva_19)+ ";" + p.base_5+ ";" + p.base_19+ ";" + p.fecha_vencimiento+ '\n');
+    }
+
+
+    // Specify file name
+    filename = filename ? filename + '.csv' : 'excel_data.csv';
+
+
+
+    var blob = new Blob(texto, {
+      type: dataType
+    });
+    this.descargarArchivo(blob, filename)
+
+  }
+  
+
+  cambioFecha(fechaVencimiento){
+    this.documentoSelect.fecha_registro=fechaVencimiento.value;
+    console.log(this.documentoSelect.fecha_registro);
+     this.documentoService.updateDocumento(this.documentoSelect).subscribe(res => {
+       if (res.code != 200) {
+         alert("error creando documento, por favor inicie nuevamente la creación del documento");
+         return;
+       }else{
+        $('#cambioFechaModal').modal('hide');
+        
+       }
+     });
+   }
 
   cambioUnitario(unitario) {
     if (isNaN(unitario.value)) {
@@ -294,7 +350,7 @@ export class BuscarDocumentosComponent implements OnInit {
   private asignarDocumentoDetalle(cantidad: number, costo_publico: number) {
     let docDetalle = new DocumentoDetalleModel();
     docDetalle.cantidad = cantidad;
-    docDetalle.saldo=Number(this.productoIdSelect.cantidad);
+    docDetalle.saldo = Number(this.productoIdSelect.cantidad);
     docDetalle.impuesto_producto = Number(this.productoIdSelect.impuesto);
     docDetalle.peso_producto = Number(this.productoIdSelect.peso);
     docDetalle.producto_id = this.productoIdSelect.producto_id;
@@ -363,6 +419,23 @@ export class BuscarDocumentosComponent implements OnInit {
     console.log(this.productoIdSelect);
   }
 
+  tiposPagoNombres(documento_id) {
+    //console.log("documento:" + documento_id);
+
+  }
+
+  editarFactura(documentoCopi: DocumentoModel) {
+    console.log("entra a editar factura"+ documentoCopi.documento_id);
+    localStorage.setItem("factura_editar", documentoCopi.documento_id);
+    //this.router.navigate(['/user']);
+    $('#buscarDocumentoXFech').modal('hide');
+    let currentUrl = '/ventasDia';
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([currentUrl]);
+    
+  }
+
 
   imprimirCopia(documentoCopi: DocumentoModel) {
     this.documentoSelect = documentoCopi;
@@ -406,7 +479,12 @@ export class BuscarDocumentosComponent implements OnInit {
           default:
             break;
         }
-        this.imprimirFactura(1, res[0], tipoImpresion);
+        this.documentoService.getTipoPagoByDocumento(this.documentoSelect.documento_id).subscribe(res3 => {
+          this.tipos = res3[0].nombre;
+          this.imprimirFactura(1, res[0], tipoImpresion);
+        });
+
+
       });
     });
 
@@ -424,6 +502,7 @@ export class BuscarDocumentosComponent implements OnInit {
     this.factura.detalle = this.itemsFactura
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
+    this.factura.tipoPago = this.tipos;
     let formato = "";
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoSelect.cliente_id);
@@ -450,8 +529,11 @@ export class BuscarDocumentosComponent implements OnInit {
           formato = ".pdf";
           this.impresionService.imprimirFacturaPdf50(this.factura, this.configuracion, false);
           break;
+        case this.TIPO_IMPRESION_PDFCARTA:
+          this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
+          break;
         default:
-          alert("no tiene un tipo impresion");
+          alert("no tiene un tipo impresion configurado el sistema");
           //return;
           //Impresion.imprimirPDF(getDocumento(), getProductos(), usuario(), configuracion, impresora,
           //    enPantalla, e);
@@ -470,17 +552,25 @@ export class BuscarDocumentosComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre+" "+cliente.apellidos+" "+cliente.razon_social;
+      return cliente.nombre + " " + cliente.apellidos + " " + cliente.razon_social;
     }
   }
 
 
 
   detalleDocumento(documento: DocumentoModel) {
+    this.tipos = "";
     this.documentoSelect = documento;
     this.documentoDetalleService.getDocumentoDetalleByDocumento(documento.documento_id).subscribe(res => {
       this.itemsFactura = res;
       console.log("detalles encontrados:" + res.length);
+    });
+    this.documentoService.getTipoPagoByDocumento(documento.documento_id).subscribe(res => {
+      for (let c of res) {
+        this.tipos = this.tipos + c.nombre + ": " + c.valor + "\n";
+        console.log(this.tipos);
+      }
+      return this.tipos;
     });
   }
 
@@ -502,15 +592,19 @@ export class BuscarDocumentosComponent implements OnInit {
 
 
     fechaFinBuscar = this.calculosService.fechaFinBusqueda(this.fechaFinBuscar.nativeElement.value);
-
+    let proveedor = this.proveedores.find(proveedor => proveedor.nombre == proveedorBuscar);
     let cliente1 = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clientePV);
     let cliente_id = "";
     if (cliente1 != undefined) {
       cliente_id = cliente1.cliente_id.toString();
     }
+    let proveedor_id = "";
+    if (proveedor != undefined) {
+      proveedor_id = proveedor.proveedor_id.toString();
+    }
     console.log(tipoDocumento);
     this.documentoService.getDocumentoByTipoAndFecha(tipoDocumento, cajeroBuscar, empleadoBuscar, fechaIniBuscar, fechaFinBuscar,
-      consecutivoDianBuscar, internoBuscar, cliente_id, proveedorBuscar, this.empresaId).subscribe(res => {
+      consecutivoDianBuscar, internoBuscar, cliente_id, proveedor_id, this.empresaId).subscribe(res => {
         this.documentos = res;
       });
 
@@ -532,6 +626,11 @@ export class BuscarDocumentosComponent implements OnInit {
           console.log("copia factura activo");
           this.copiaFacturaActivo = true;
         }
+        if (this.activaciones[e].activacion_id == this.EDITAR_FACTURA) {
+          console.log("editar factura activo");
+          this.editarFacturaActivo = true;
+        }
+
       }
     });
   }
@@ -578,6 +677,13 @@ export class BuscarDocumentosComponent implements OnInit {
   getTiposDocumento() {
     this.documentoService.getTiposDocumento().subscribe(res => {
       this.tiposDocumento = res;
+    });
+  }
+
+  getProveedores(empresaId: number) {
+    this.proveedorService.getProveedoresByEmpresa(empresaId.toString()).subscribe(res => {
+      this.proveedores = res;
+      console.log("lista de proveedores cargados: " + this.proveedores.length);
     });
   }
 

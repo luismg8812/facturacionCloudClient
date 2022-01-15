@@ -21,7 +21,9 @@ export class FacturacionElectronicaService {
   enviarFactura(envioFacturacionElectronicaModel:EnvioFacturacionElectronicaModel){
     let json:string = JSON.stringify(envioFacturacionElectronicaModel) 
     console.log(json);
-    return this.http.post<any>(this.url_send_invoice,json);
+    let res:any = this.http.post<any>(this.url_send_invoice,json);
+    console.log(res);
+    return res;
   }
 
   getXML(documento:GetFileModel){

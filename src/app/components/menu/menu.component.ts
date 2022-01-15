@@ -9,6 +9,7 @@ import { ClienteService } from 'src/app/services/cliente.service';
 import { UsuarioModel } from 'src/app/model/usuario.model';
 import { RolModel } from 'src/app/model/rol.model';
 import { ParametrosModel } from 'src/app/model/parametros.model';
+import { EmpresaService } from 'src/app/services/empresa.service';
 
 
 @Component({
@@ -50,12 +51,14 @@ export class MenuComponent implements OnInit {
   public rolList: Array<RolModel>;
 
   constructor(public afauth: AngularFireAuth, private router: Router,
+    public empresaService: EmpresaService,
     private usuarioService: UsuarioService,
     public clienteService: ClienteService) { }
 
   ngOnInit() {
     this.empresaId = Number(localStorage.getItem("empresa_id"));
     console.log(this.empresaId);
+    let parametros: ParametrosModel = new ParametrosModel;
     if (this.empresaId == undefined) {
       this.cerrarSesision();
       this.router.navigate(['/login']);
@@ -64,7 +67,7 @@ export class MenuComponent implements OnInit {
     this.getEmpresas();
     this.roles();
     this.clienteService.getConfiguracionByEmpresa(this.empresaId.toString()).subscribe(res => {
-      let parametros: ParametrosModel = new ParametrosModel;
+
       if (res.length == 0) {
         alert("No existe una configuración para la empresa seleccionada");
         this.cerrarSesision();
@@ -91,6 +94,16 @@ export class MenuComponent implements OnInit {
       }
       this.empresa.nativeElement.value = this.empresaId.toString();
     });
+    if (parametros.ambiente != 'cloud') {
+      this.empresaService.validarLisencia().subscribe((empre) => {
+        if (empre[0].estado_empresa_id=='2') {
+          alert("Actualmente tiene inconvenientes con los datos y configuraciones iniciales, por favor comuniquese con soporte:\n Lisencias: 3185222474");
+          this.cerrarSesision();
+          this.router.navigate(['/login']);
+          return;
+        }
+      });
+    }
   }
 
   controlTeclas(event, element) {

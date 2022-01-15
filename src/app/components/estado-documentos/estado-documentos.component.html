@@ -71,10 +71,8 @@
           data-toggle="modal" data-target="#exampleModal">
           <i class="fas fa-sync"></i>
         </button>
-        <button type="button" (click)="descargarPDF(ordenes)" title="Descargar Representación grafica" class="btn btn-secondary btn-sm mr-1" [disabled]="ordenes.invoice_id!=5"
-          data-toggle="modal" >
-          <i class="far fa-file-pdf"></i>
-        </button>
+        <a href="https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey={{ordenes.cufe}}" target="_blank" class="badge badge-success {{ordenes.invoice_id!=5?'d-none':''}}" title="Descargar Representación grafica" > <i class="far fa-file-pdf"></i></a>
+ 
         <button type="button" (click)="descargarXML(ordenes)" title="Descargar XML" class="btn btn-secondary btn-sm mr-1" [disabled]="ordenes.invoice_id!=5"
        >
         <i class="far fa-file-code"></i>
