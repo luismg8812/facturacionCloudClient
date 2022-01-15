@@ -16,11 +16,32 @@
                 </div>
             </div>
         </div>
-        <div class="form-group col-md-2 col-sm-2">
+        <div class="form-group col-md-3 col-sm-2">
             <div class="form-row">
                 <div class="form-group col-md-12 col-sm-2">
-                    <b>Fecha:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+                    <b>Fecha Creación:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
                 </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-5 col-sm-2">
+                    <b>Fecha vencimiento: </b> 
+                </div>
+                <div class="form-group col-md-7 col-sm-2">
+                    <input class="form-control" type="date"  id="fechaVencimi" #fechaVencimi (change)="fechaVencimiento(fechaVencimi)">
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-4 col-sm-2">
+            <div class="form-row">
+                <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
+                (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)"
+                (keyup)="controlTeclasCliente($event,clientePV)">
+            <datalist id="browsers">
+                <option *ngFor="let cliente of clientes"
+                    [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
+                    Cod. interno: {{cliente.cliente_id}}
+                </option>
+            </datalist>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12 col-sm-2" *ngIf="saldoClienteActivo">
@@ -31,20 +52,10 @@
                     </h5>
                 </div>
             </div>
+            
         </div>
-        <div class="form-group col-md-4 col-sm-2">
-            <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
-                (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)"
-                (keyup)="controlTeclasCliente($event,clientePV)">
-            <datalist id="browsers">
-                <option *ngFor="let cliente of clientes"
-                    [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
-                    Cod. interno: {{cliente.cliente_id}}
-                </option>
-            </datalist>
-        </div>
-        <div class="form-group col-md-2 col-sm-2">
-            <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control"
+        <div class="form-group col-md-1 col-sm-2">
+            <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Docu." class="form-control"
                 id="tipoDocumentoPV" (keyup.F)="enterTecla(tipoDocumentoPV)" (keyup.C)="enterTecla(tipoDocumentoPV)"
                 (keyup.R)="enterTecla(tipoDocumentoPV)" (keydown.enter)="enterTecla(tipoDocumentoPV)"
                 (keydown.esc)="scapeTecla(clientePV)">

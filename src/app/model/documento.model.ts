@@ -11,6 +11,7 @@ export class DocumentoModel {
     public modelo_marca_id:number;
     public fecha_registro:Date;
     public fecha_entrega:Date;
+    public fecha_vencimiento:Date;
     public consecutivo_dian:string;
     public impreso:number;
     public total:number;
@@ -57,6 +58,7 @@ export class DocumentoModel {
         this.modelo_marca_id = null;
         this. fecha_registro=new Date;
         this. fecha_entrega=new Date;
+        this. fecha_vencimiento=new Date;
         this. consecutivo_dian="";
         this. impreso=0;
         this. total=0;

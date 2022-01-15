@@ -1830,15 +1830,24 @@ export class VentasDiaComponent implements OnInit {
           return;
         }
       });
-      if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA || (!this.deduccionInventarioRemisionesActivo && this.document.tipo_documento_id == this.TIPO_DOCUMENTO_REMISION) ) {
-        
+      if (this.document.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA || (!this.deduccionInventarioRemisionesActivo && this.document.tipo_documento_id == this.TIPO_DOCUMENTO_REMISION) ) { 
           this.updateCantidad(docDetalle, 'resta');
-        
-        
       }
-
-
     });
+  }
+
+  fechaVencimiento(fechaVencimiento){
+  
+   this.document.fecha_vencimiento=fechaVencimiento.value;
+   console.log(this.document.fecha_vencimiento);
+   if(this.document.documento_id!=""){
+    this.documentoService.updateDocumento(this.document).subscribe(res => {
+      if (res.code != 200) {
+        alert("error creando documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
+   }
   }
 
   private restarCantidadesSubProducto(productoSelect3: DocumentoDetalleModel, operacion: string) {
