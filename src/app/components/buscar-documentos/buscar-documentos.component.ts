@@ -281,6 +281,21 @@ export class BuscarDocumentosComponent implements OnInit {
       }
     }
   }
+  
+
+  cambioFecha(fechaVencimiento){
+    this.documentoSelect.fecha_registro=fechaVencimiento.value;
+    console.log(this.documentoSelect.fecha_registro);
+     this.documentoService.updateDocumento(this.documentoSelect).subscribe(res => {
+       if (res.code != 200) {
+         alert("error creando documento, por favor inicie nuevamente la creación del documento");
+         return;
+       }else{
+        $('#cambioFechaModal').modal('hide');
+        
+       }
+     });
+   }
 
   cambioUnitario(unitario) {
     if (isNaN(unitario.value)) {
