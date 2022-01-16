@@ -2222,6 +2222,9 @@ export class VentasDiaComponent implements OnInit {
     if (event.keyCode == 85 && !this.modificarFactura) { //cuando se presiona la tacla u
       this.teclaAnteriorSiguiente('u');
     }
+    if (event.keyCode == 69) { //cuando se presiona la tacla e
+      this.eliminarFactura();
+    }
     if (event.keyCode == 77) { //cuando se presiona la tacla m
       this.modificarEnter();
     }
@@ -2234,7 +2237,27 @@ export class VentasDiaComponent implements OnInit {
     if (event.keyCode == 85 && this.cambioPrecioActivo && this.modificarFactura) { //cuando se presiona la tacla p
       this.cambiarPrecio("modificarUnitarioPV");
     }
+  }
 
+  eliminarFactura(){
+    if(this.document.documento_id==""){
+      alert("seleccione un documento para borrar!");
+      return;
+    }
+    console.log("entra a eliminar factura "+this.document.documento_id);
+    this.documentoService.deleteDocumento(this.document).subscribe(res => {
+      if (res.code != 200) {
+        alert("error eliminando el documento, por favor inicie nuevamente la eliminación del documento");
+        return;
+      } else {
+        this.document=new DocumentoModel();
+        this.productos = [];
+        let currentUrl = '/ventasDia';
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate([currentUrl]);
+      }
+    });
   }
 
   insertarModificar() {
