@@ -282,14 +282,11 @@ export class BuscarDocumentosComponent implements OnInit {
     }
   }
 
-  exportTableToExcel(tableID) {
-    console.log(tableID);
+  exportTableToExcel() {
     let filename = "documentos";
     var dataType = 'application/vnd.ms-excel';
-    var tableSelect = tableID
     var texto = [];
     let tamanoMax: number = 40;
-    
     texto.push("numero interno;proveedor;cliente;usuario crea;autorizacion DIAN;empleado;fecha registro;consecutivo DIAN;"+
     "total;exento;saldo;descuento;iva_5;iva_19;base_5;base_19;fecha_vencimiento\n");
     for (let p of this.documentos) {
