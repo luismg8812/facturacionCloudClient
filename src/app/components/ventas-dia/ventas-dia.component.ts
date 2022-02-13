@@ -284,6 +284,7 @@ export class VentasDiaComponent implements OnInit {
     this.tipoDocumentSelect = null;
     this.empleadoSelect = "";
     this.document = new DocumentoModel();
+    console.log(this.document);
     this.productos = [];
     this.getActivaciones(this.usuarioId);
     this.tipoPagoPV.nativeElement.title = '1.Efectivo 2.Credito 3.Cheque 4.Consignación 5.Tarjeta 6.Vale.';
