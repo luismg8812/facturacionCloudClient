@@ -225,7 +225,7 @@
         </div>
         <div class="form-group col-sm-2 d-none" id="divUnitario" #divUnitario>
             <input type="text" class="form-control mb-2 mr-sm-2" placeholder="$ Unitario" id="unitarioPV"
-                name="unitarioPV" #unitarioPV [disabled]="!cambioPrecioActivo" (keydown.enter)="enterTecla(unitarioPV)"
+                name="unitarioPV" #unitarioPV  (keydown.enter)="enterTecla(unitarioPV)"
                 (keydown.esc)="scapeTecla(unitarioPV)">
         </div>
         <div class="form-group col-sm-2 d-none" id="divParcial" #divParcial>
