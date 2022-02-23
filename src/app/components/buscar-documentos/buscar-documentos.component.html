@@ -34,7 +34,7 @@
         </div>
         <div class="form-group col-md-6 col-sm-1">
           Fecha Final
-          <input class="form-control" type="date" id="fechaFinBuscar" value="2021-12-31" #fechaFinBuscar>
+          <input class="form-control" type="date" id="fechaFinBuscar" value="2022-12-31" #fechaFinBuscar>
         </div>
       </div>
       <div class="form-row">
@@ -58,12 +58,12 @@
         </div>
         <div class="form-group col-md-6 col-sm-6">
           Proveedor
-          <input class="form-control" list="proveedoresList" id="proveedorBuscar" placeholder="Proveedor" name="proveedorBuscar"
-            #proveedorBuscar>
-            <datalist id="proveedoresList">
-              <option *ngFor="let proveedor of proveedores" [value]="proveedor.nombre">
-                  Identificación: {{proveedor.documento}} id:{{proveedor.proveedor_id}}
-              </option>
+          <input class="form-control" list="proveedoresList" id="proveedorBuscar" placeholder="Proveedor"
+            name="proveedorBuscar" #proveedorBuscar>
+          <datalist id="proveedoresList">
+            <option *ngFor="let proveedor of proveedores" [value]="proveedor.nombre">
+              Identificación: {{proveedor.documento}} id:{{proveedor.proveedor_id}}
+            </option>
           </datalist>
         </div>
 
@@ -80,6 +80,7 @@
         </div>
         <div class="form-group col-md-6 col-sm-1">
           <button type="button" class="btn btn-primary" (click)="buscarDocumentos()">Buscar</button>
+          <button type="button" class="btn btn-primary ml-1" (click)="exportTableToExcel()">Exportar </button>
           <button type="button" class="btn btn-secondary ml-1" data-dismiss="modal">Cerrar</button>
         </div>
       </div>
@@ -102,6 +103,10 @@
                 data-target="#detalleDocumentoModal" (click)="detalleDocumento(documento)">
                 <i class="fas fa-search"></i>
               </button>
+              <button type="button" class="btn btn-primary btn-sm" [disabled]="!editarFacturaActivo"
+                (click)="editarFactura(documento)" title="Editar factura">
+                <i class="fas fa-edit"></i>
+              </button>
               <!-- Button trigger modal -->
               <button type="button" class="btn btn-primary btn-sm" [disabled]="!copiaFacturaActivo"
                 (click)="imprimirCopia(documento)" title="Imprimir Copia">
@@ -113,7 +118,7 @@
                 <i class="far fa-trash-alt"></i>
               </button>
               <button type="button" class="btn btn-primary btn-sm" [disabled]="!cambioFechaActivo" title="Cambiar fecha"
-                data-toggle="modal" data-target="#buscarFacturaModal">
+                data-toggle="modal" data-target="#cambioFechaModal"  (click)="detalleDocumento(documento)">
                 <i class="fas fa-calendar-alt"></i>
               </button>
             </th>
@@ -196,6 +201,18 @@
 
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group col-md-8 col-sm-1">
+              <b>Tipos Pago: </b>
+            </div>
+
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 col-sm-1">
+              {{tipos}}
+            </div>
+          </div>
+
           Detalle Factura
           <table class="table table-hover">
             <thead>
@@ -214,6 +231,35 @@
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal cambio fecha -->
+  <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="cambioFechaModal"
+    aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Cambio de fecha</h5>
+          <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-4 col-sm-1">
+              <b>Fecha deseada: </b>
+            </div>
+            <div class="form-group col-md-8 col-sm-1">
+              <input class="form-control" type="date"  id="cambioFech" #cambioFech (change)="cambioFecha(cambioFech)">
+            </div>
+          </div>
+         
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
@@ -260,7 +306,7 @@
           </div>
           <div class="form-row">
             <div class="form-group  col-sm-12">
-              Descripción corrección: 
+              Descripción corrección:
             </div>
             <div class="form-group  col-sm-12">
               <textarea class="form-control " id="observacion" #observacion
@@ -268,8 +314,8 @@
             </div>
           </div>
           <div class="form-row">
-           
-            <div class="form-group col-sm-8" >
+
+            <div class="form-group col-sm-8">
               Articulo
               <input list="articulos" name="articuloBuscar" #articuloBuscar placeholder="Articulo" class="form-control"
                 id="articuloBuscar" (change)="articuloSelect(articuloBuscar) ">
@@ -280,12 +326,12 @@
             </div>
             <div class="form-group col-md-1 col-sm-1">
               <button type="button" class="btn btn-primary mt-4" title="Adjuntar producto"
-              (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
+                (click)="adjuntarProducto(cantidadNota) "><i class="fas fa-plus"></i></button>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-6 col-sm-1">
-            
+
               <button type="button" class="btn btn-primary mr-1" (click)="confirmarNota(observacion)">Confirmar</button>
               <button type="button" class="btn btn-secondary" (click)="cerrarNota()">Salir</button>
             </div>
@@ -303,8 +349,8 @@
             <tbody>
               <tr *ngFor="let item of itemsFactura">
                 <th scope="row">
-                  <button type="button" id="d_{{item.documento_detalle_id}}" #borraR class="btn btn-secondary btn-sm" title="Eliminar Producto" 
-                    (click)="borrarItem(borraR)">
+                  <button type="button" id="d_{{item.documento_detalle_id}}" #borraR class="btn btn-secondary btn-sm"
+                    title="Eliminar Producto" (click)="borrarItem(borraR)">
                     <i class="fas fa-trash"></i>
                   </button>
                 </th>
@@ -324,7 +370,7 @@
           </table>
         </div>
 
-      </div>  
+      </div>
     </div>
   </div>
 

@@ -740,7 +740,7 @@ export class ImpresionService {
     this.doc.line(181, 52, 181, 260) // vertical line    
     this.doc.text("N° " + factura.documento.consecutivo_dian, 175, 18);
     this.doc.text(this.calculosService.cortarDescripcion(this.calculosService.formatDate(factura.documento.fecha_registro, true), 19), 160, 35);
-
+    this.doc.text(this.calculosService.cortarDescripcion(this.calculosService.formatDate(factura.documento.fecha_registro, true), 19), 160, 50);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(Number(factura.documento.gravado) + Number(factura.documento.excento))).replace("COP", ""), 15), 183, 275);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.iva)).replace("COP", ""), 15), 183, 280);
     this.doc.text(this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(Math.round(factura.documento.total)).replace("COP", ""), 15), 183, 285);
@@ -752,8 +752,8 @@ export class ImpresionService {
     this.doc.text("% IVA", 140, 57);
     this.doc.text("VR. UNIT. FIN", 158, 57);
     this.doc.text("VR. TOTAL", 182, 57);
-    this.doc.text("FORMA DE PAGO:", 159, 44);
-    this.doc.text("VENCIMIENTO:", 159, 49);
+    this.doc.text("FORMA DE PAGO: "+ factura.tipoPago, 159, 44);
+    this.doc.text("VENCIMIENTO: ", 159, 47);
     this.doc.text("NOMBRE:", 5, 44);
     this.doc.text("DIRECCIÓN:", 5, 49);
     this.doc.text("CC o NIT:", 110, 44);
@@ -1500,6 +1500,7 @@ export class ImpresionService {
       this.doc.text("Total IVA: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.iva).replace("COP", ""), 20) + "   "
         + "Exento: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.excento).replace("COP", ""), 20) + "   "
         + "Gravado: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.documento.gravado).replace("COP", ""), 20) + "   "
+        + "Saldo Anterior: $" + this.calculosService.cortarDescripcion(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.saldo).replace("COP", ""), 20) + "   "
         , 4, 264);
       let row = 0;
       for (let contadorP of factura.detalle) {
