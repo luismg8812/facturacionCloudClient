@@ -11,6 +11,7 @@ export class DocumentoModel {
     public modelo_marca_id:number;
     public fecha_registro:Date;
     public fecha_entrega:Date;
+    public fecha_vencimiento:Date;
     public consecutivo_dian:string;
     public impreso:number;
     public total:number;
@@ -21,6 +22,7 @@ export class DocumentoModel {
     public detalle_entrada:string;
     public saldo:number;
     public peso_total:number;
+    public peso_cotero:number;
     public descuento:number;
     public cambio:number;
     public mac:string;
@@ -56,6 +58,7 @@ export class DocumentoModel {
         this.modelo_marca_id = null;
         this. fecha_registro=new Date;
         this. fecha_entrega=new Date;
+        this. fecha_vencimiento=new Date;
         this. consecutivo_dian="";
         this. impreso=0;
         this. total=0;
@@ -66,6 +69,7 @@ export class DocumentoModel {
         this. detalle_entrada="";
         this. saldo=0;
         this. peso_total=0;
+        this. peso_cotero=0;
         this. descuento=0;
         this. cambio=0;
         this. mac="";

@@ -127,7 +127,7 @@ export class EnvioDocumentosComponent implements OnInit {
       this.documentoDetalleService.getDocumentoDetalleByDocumento(docu.documento.documento_id).subscribe(async detalles => {
         if (detalles.length > 0) {
           this.itemsFactura = detalles;
-        } else {
+        } else {// esta parte copiarla para exportar documento y para reenviar facturas electronicas
           console.log("Detalles de orden");
           this.documentoService.getOrdenesByDocumentoId(docu.documento.documento_id).subscribe(res => {
             let ordenesBuscarListFacturaSelect: DocumentoModel[] = res;
@@ -165,6 +165,12 @@ export class EnvioDocumentosComponent implements OnInit {
           console.error(error);
           this.enviados++;
           this.faltantes--;
+          if (this.faltantes <= 0) {
+            // alert("El proceso de envio ha terminado")
+            $("#ok").prop("disabled", false);
+            this.getDocumentos();
+            this.enviando = false;
+          }
           /*alert("Ocurrio un error con el proceso de envios de sus documentos a la DIAN, por favor tome un pantallazo o foto del error y comuniquese a los siguientes canales a soporte:\nCelular: 3185222474\n" +
             "mail: info@effectivesoftware.com.co\n" +
             "Error: " + error.error
@@ -176,7 +182,7 @@ export class EnvioDocumentosComponent implements OnInit {
 
   }
 
-  sendMail(res, docu: DocumentoModel) {
+  async sendMail(res, docu: DocumentoModel) {
     let mail: MailModel = new MailModel();
     let cliente = this.clientes.find(cliente => cliente.cliente_id == docu.cliente_id);
     if (cliente.mail == "") {
@@ -190,15 +196,21 @@ export class EnvioDocumentosComponent implements OnInit {
     let getFile: GetFileModel = new GetFileModel();
     getFile.cufe = docu.cufe;
     getFile.key = AppConfigService.key_invoice;
-    mail.pdf_64="";
-    mail.xml_64="";
-    mail.pdf_name = "f_" + docu.consecutivo_dian + ".pdf"; //+xml.filename;
-    mail.xml_name = "f_" + docu.consecutivo_dian + ".xml"; //+xml.filename;
-    this.facturacionElectronicaService.sendMail(mail).subscribe(async emai => {
-      console.log(emai);
-    }, err => {
-      console.error("errr enviando correo");
+    mail.pdf_64=this.getfacturaPDF(docu, this.empresa);
+    await this.delay(500);
+    this.facturacionElectronicaService.getXML(getFile).subscribe(async xml => {
+      mail.xml_64=xml.mensaje;
+      mail.pdf_name = "f_" + docu.consecutivo_dian + ".pdf"; //+xml.filename;
+      mail.xml_name = "f_" + docu.consecutivo_dian + ".xml"; //+xml.filename;
+      this.facturacionElectronicaService.sendMail(mail).subscribe(async emai => {
+        console.log(emai);
+      }, err => {
+        console.error("errr enviando correo");
+      });
     });
+    
+   
+    
   }
 
   getfacturaPDF(docu: DocumentoModel, empresa: EmpresaModel) {

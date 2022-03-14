@@ -16,7 +16,7 @@ declare var $: any;
 export class ClienteComponent implements OnInit {
 
   public empresaId: number;
-  public clientes: Array<ClienteModel>;
+  public clientes: Array<ClienteModel>= [];;
   public clienteNew: ClienteModel = new ClienteModel();
   public tipoEmpresaList: Array<FactTipoEmpresaModel> = [];
   public responsabilidadFiscalList: Array<ResponsabilidadFiscalModel> = [];
@@ -147,7 +147,7 @@ responsabilidadPorCliente(cliente: ClienteModel) {
   
     if(this.clienteNew.cliente_id==null){
       this.clienteNew.empresa_id = this.empresaId;
-      let cliente = this.clientes.find(cliente => (cliente.documento) == this.clienteNew.documento);
+      let cliente = this.clientes.find(clien => (clien.documento) == this.clienteNew.documento);
       if (cliente != undefined) {
         alert("El cliente que está intentando crear ya se incuentra registrado bajo el \nnombre: " + cliente.nombre + " " + cliente.apellidos + "\n" + "NIT: " + cliente.documento);
         return;

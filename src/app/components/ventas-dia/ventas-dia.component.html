@@ -16,11 +16,32 @@
                 </div>
             </div>
         </div>
-        <div class="form-group col-md-2 col-sm-2">
+        <div class="form-group col-md-3 col-sm-2">
             <div class="form-row">
                 <div class="form-group col-md-12 col-sm-2">
-                    <b>Fecha:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
+                    <b>Fecha Creación:</b> {{document.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
                 </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-5 col-sm-2">
+                    <b>Fecha vencimiento: </b> 
+                </div>
+                <div class="form-group col-md-7 col-sm-2">
+                    <input class="form-control" type="date"  id="fechaVencimi" #fechaVencimi (change)="fechaVencimiento(fechaVencimi)">
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-4 col-sm-2">
+            <div class="form-row">
+                <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
+                (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)"
+                (keyup)="controlTeclasCliente($event,clientePV)">
+            <datalist id="browsers">
+                <option *ngFor="let cliente of clientes"
+                    [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
+                    Cod. interno: {{cliente.cliente_id}}
+                </option>
+            </datalist>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12 col-sm-2" *ngIf="saldoClienteActivo">
@@ -31,20 +52,10 @@
                     </h5>
                 </div>
             </div>
+            
         </div>
-        <div class="form-group col-md-4 col-sm-2">
-            <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" class="form-control" id="clientePV"
-                (change)="enterTecla(clientePV)" (keydown.esc)="scapeTecla(clientePV)"
-                (keyup)="controlTeclasCliente($event,clientePV)">
-            <datalist id="browsers">
-                <option *ngFor="let cliente of clientes"
-                    [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
-                    Cod. interno: {{cliente.cliente_id}}
-                </option>
-            </datalist>
-        </div>
-        <div class="form-group col-md-2 col-sm-2">
-            <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Documento" class="form-control"
+        <div class="form-group col-md-1 col-sm-2">
+            <input name="tipoDocumentoPV" #tipoDocumentoPV placeholder="TIpo Docu." class="form-control"
                 id="tipoDocumentoPV" (keyup.F)="enterTecla(tipoDocumentoPV)" (keyup.C)="enterTecla(tipoDocumentoPV)"
                 (keyup.R)="enterTecla(tipoDocumentoPV)" (keydown.enter)="enterTecla(tipoDocumentoPV)"
                 (keydown.esc)="scapeTecla(clientePV)">
@@ -65,19 +76,22 @@
         <div class="form-group col-md-1 col-sm-2">
 
         </div>
-        <div class="form-group col-md-4 ">
+        <div class="form-group col-md-6 ">
             <button type="button" class="btn btn-secondary" id="cambiarPrecioPV" #cambiarPrecioPV
                 (keydown.esc)="enterTecla(cambiarPrecioPV)" (keyup)="controlTeclas($event,cambiarPrecioPV)"
-                (click)="cambiarPrecio(cambiarPrecioPV.id)">Cambiar Cantidad</button>
+                (click)="cambiarPrecio(cambiarPrecioPV.id)"><ins>C</ins>ambiar Cantidad</button>
             <button type="button" class="btn btn-secondary ml-1" id="insertarPV" #insertarPV
                 (keydown.esc)="enterTecla(insertarPV)" (keyup)="controlTeclas($event,insertarPV)"
-                (click)="insertarModificar()">Insertar</button>
+                (click)="insertarModificar()"><ins>I</ins>nsertar</button>
             <button type="button" class="btn btn-secondary ml-1" id="borrarPV" #borrarPV
                 (keydown.esc)="enterTecla(borrarPV)" (keyup)="controlTeclas($event,borrarPV)"
-                (click)="asigarEliminar()">Borrar</button>
+                (click)="asigarEliminar()"><ins>B</ins>orrar Producto</button>
             <button type="button" class="btn btn-secondary ml-1" id="modificarUnitarioPV" #modificarUnitarioPV
                 (keydown.esc)="enterTecla(modificarUnitarioPV)" (keyup)="controlTeclas($event,modificarUnitarioPV)"
-                [disabled]="!cambioPrecioActivo" (click)="cambiarPrecio(modificarUnitarioPV.id)">Unitario</button>
+                [disabled]="!cambioPrecioActivo" (click)="cambiarPrecio(modificarUnitarioPV.id)"><ins>U</ins>nitario</button>
+            <button type="button" class="btn btn-danger ml-1" id="eliminarPV" #eliminarPV
+                (keydown.esc)="enterTecla(eliminarPV)" (keyup)="controlTeclas($event,eliminarPV)"
+                (click)="eliminarFactura()"><ins>E</ins>liminar documento</button>
         </div>
         <div class="form-group col-md-3 col-sm-2" *ngIf="claveBorrado">
             Ingrese La contraseña de alguien con perfil de administrador:
@@ -124,45 +138,45 @@
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divSiguiente" #divSiguiente>
             <button type="button" class="btn btn-primary btn-sm" id="siguientePV" autofocus #siguientePV
-                (keyup)="controlTeclas($event,siguientePV)" (click)="teclaAnteriorSiguiente('s')">Siguiente</button>
+                (keyup)="controlTeclas($event,siguientePV)" (click)="teclaAnteriorSiguiente('s')"><ins>S</ins>iguiente</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divAnterior" #divAnterior>
             <button type="button" class="btn btn-primary btn-sm" id="anteriorPV" #anteriorPV
-                (keyup)="controlTeclas($event,anteriorPV)" (click)="teclaAnteriorSiguiente('a')">Anterior</button>
+                (keyup)="controlTeclas($event,anteriorPV)" (click)="teclaAnteriorSiguiente('a')"><ins>A</ins>nterior</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divPrimera" #divPrimera>
             <button type="button" class="btn btn-primary btn-sm" id="primeraPV" #primeraPV
                 (keyup)="controlTeclas($event,primeraPV)" (keyup.enter)="enterTecla(primeraPV)"
-                (click)="teclaAnteriorSiguiente('p')">Primera</button>
+                (click)="teclaAnteriorSiguiente('p')"><ins>P</ins>rimera</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divUltima" #divUltima>
             <button type="button" class="btn btn-primary btn-sm" id="ultimaPV" #ultimaPV
                 (keyup)="controlTeclas($event,ultimaPV)" (keyup.enter)="enterTecla(ultimaPV)"
-                (click)="teclaAnteriorSiguiente('u')">Ultima</button>
+                (click)="teclaAnteriorSiguiente('u')"><ins>U</ins>ltima</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divBuscar" #divBuscar>
             <button type="button" class="btn btn-primary btn-sm" id="buscarPV" #buscarPV data-toggle="modal" data-target="#buscarDocumentoXFech"
-                (keyup)="controlTeclas($event,buscarPV)" (keyup.enter)="enterTecla(buscarPV)">Buscar</button>
+                (keyup)="controlTeclas($event,buscarPV)" (keyup.enter)="enterTecla(buscarPV)"><ins>B</ins>uscar</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divModificar" #divModificar>
             <button type="button" class="btn btn-primary btn-sm" id="modificarPV" #modificarPV
                 (click)="modificarEnter()" (keyup)="controlTeclas($event,modificarPV)"
-                (keyup.enter)="enterTecla(modificarPV)">Modificar</button>
+                (keyup.enter)="enterTecla(modificarPV)"><ins>M</ins>odificar</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divNueva" #divNueva>
             <button type="button" class="btn btn-primary btn-sm" id="nuevaPV" (click)="nuevafactura()" #nuevaPV
-                (keyup)="controlTeclas($event,nuevaPV)" (keyup.enter)="enterTecla(nuevaPV)">Nueva</button>
+                (keyup)="controlTeclas($event,nuevaPV)" (keyup.enter)="enterTecla(nuevaPV)"><ins>N</ins>uevo Documento</button>
         </div>
         <div class="form-group col-md-1 col-sm-4" id="divImprimir" #divImprimir>
             <button type="button" class="btn btn-primary btn-sm" id="imprimirPV" (click)="imprimirModal()" #imprimirPV
-                (keyup)="controlTeclas($event,imprimirPV)" (keyup.enter)="enterTecla(imprimirPV)">Imprimir</button>
+                (keyup)="controlTeclas($event,imprimirPV)" (keyup.enter)="enterTecla(imprimirPV)"><ins>I</ins>mprimir</button>
         </div>
         <div class="form-group col-md-2 col-sm-4" id="divOpciones" #divOpciones>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" id="opcionPV" #opcionPV type="button"
                     (keyup)="controlTeclas($event,opcionPV)" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
-                    Opciones
+                    <ins>O</ins>pciones
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                     <button class="dropdown-item" type="button" *ngFor="let opcion of opciones" #cuadreCajaPV
@@ -176,7 +190,7 @@
 
         <div class="form-group col-md-1 col-sm-4" id="divFin" #divFin>
             <button type="button" class="btn btn-primary btn-sm" id="finPV" #finPV (keyup)="controlTeclas($event,finPV)"
-                routerLink="/menu" (keyup.enter)="enterTecla(finPV)">Fin</button>
+                routerLink="/menu" (keyup.enter)="enterTecla(finPV)"><ins>F</ins>in</button>
         </div>
     </div>
     <div class="form-row">
@@ -211,7 +225,7 @@
         </div>
         <div class="form-group col-sm-2 d-none" id="divUnitario" #divUnitario>
             <input type="text" class="form-control mb-2 mr-sm-2" placeholder="$ Unitario" id="unitarioPV"
-                name="unitarioPV" #unitarioPV [disabled]="!cambioPrecioActivo" (keydown.enter)="enterTecla(unitarioPV)"
+                name="unitarioPV" #unitarioPV  (keydown.enter)="enterTecla(unitarioPV)"
                 (keydown.esc)="scapeTecla(unitarioPV)">
         </div>
         <div class="form-group col-sm-2 d-none" id="divParcial" #divParcial>

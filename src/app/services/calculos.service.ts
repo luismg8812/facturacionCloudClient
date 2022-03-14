@@ -230,6 +230,7 @@ export class CalculosService {
 		let gravado: number = 0.0;
 		let ivatotal: number = 0.0;
 		let peso: number = 0.0;
+		let peso_cotero:number=0.0
 		let iva5: number = 0.0;
 		let iva19: number = 0.0;
 		let base5: number = 0.0;
@@ -242,12 +243,13 @@ export class CalculosService {
 			let costo = productos[i].costo_producto * productos[i].cantidad;
 			var iva1 = productos[i].impuesto_producto / 100.0;
 			let peso1 = productos[i].peso_producto;
-			peso1 = peso1 * productos[i].cantidad;
-			totalReal = Number(totalReal) + Number(costoPublico);
+			let valorPesoCotero:number=Number(productos[i].peso_cotero)*Number(productos[i].unitario);
+			peso = Number(peso) + Number(productos[i].peso_producto);
+			peso_cotero=Number(productos[i].peso_cotero)+Number(peso_cotero);
+			totalReal = Number(totalReal) + Number(costoPublico)-Number(valorPesoCotero);
 			costoTotal = costoTotal + costo;
 			let temp: number = 0;
 			ivatotal = ivatotal + ((costoPublico / (1 + iva1)) * iva1);
-			peso = peso + peso1;
 			// si es iva del 19 se agrega al documento junto con la base
 			if (iva1 == 0.19) {
 				iva19 = iva19 + ((costoPublico / (1 + iva1)) * iva1);
@@ -272,6 +274,7 @@ export class CalculosService {
 		doc.gravado = gravado;
 		doc.iva = ivatotal;
 		doc.peso_total = peso;
+		doc.peso_cotero=peso_cotero;
 		doc.iva_5 = iva5;
 		doc.iva_19 = iva19;
 		doc.base_5 = base5;
@@ -358,7 +361,7 @@ export class CalculosService {
 			let impuesto: number = Number(detalle.impuesto_producto) / 100;
 			let datadetalle: DataDetalleFacturaModel = new DataDetalleFacturaModel();
 			datadetalle.cantidad = "" + detalle.cantidad;
-			datadetalle.codigoProducto = "" + detalle.producto_id;
+			datadetalle.codigoProducto = "" + detalle.documento_detalle_id;
 			datadetalle.nombreProducto = detalle.descripcion;
 			datadetalle.precio = "" + detalle.unitario;
 			datadetalle.subtotal = "" + (detalle.parcial / (1 + impuesto))
@@ -509,6 +512,7 @@ export class CalculosService {
 		dataFactura.metodoDePago = "1";
 		dataFactura.formaDePago = "10";
 		dataFactura.paymentDueDate = "0000-00-00";// si es a credito mando esta fecha  
+		dataFactura.notaFactura=docu.documento.descripcion_trabajador;
 		return dataFactura;
 	}
 
