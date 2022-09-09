@@ -525,7 +525,7 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nueva Factura");
       return;
     }
-    let cliente = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' - ' + cliente.documento == element.value);
+    let cliente = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento == element.value);
     if (cliente == undefined) {
       this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
