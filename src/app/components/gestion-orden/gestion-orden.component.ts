@@ -102,7 +102,7 @@ export class GestionOrdenComponent implements OnInit {
   public articuloPV: string = "";
   public productoIdSelect: ProductoModel = null;
   public impresoraEmpresa: Array<ImpresoraEmpresaModel>;
-  public vehiculosEmpresa: Array<VehiculoModel>;
+  public vehiculosEmpresa: Array<VehiculoModel> = [];
   public factura: FacturaModel;
   public empleados: Array<EmpleadoModel>;
   public empleadoOrdenActivo: boolean = false;
@@ -605,8 +605,8 @@ export class GestionOrdenComponent implements OnInit {
     this.documento.detalle_entrada = element.value;
     this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase();
     element.value = this.documento.detalle_entrada.toUpperCase();
-
-    this.vehiculo = this.vehiculosEmpresa.find(product => product.placa === this.documento.detalle_entrada.toUpperCase().trim());
+ //vehiculo
+    this.vehiculo = this.vehiculosEmpresa.find(product => product.placa == this.documento.detalle_entrada.toUpperCase().trim());
     if (this.vehiculo != undefined) {
       let cliente = this.clientes.find(client => client.cliente_id == this.vehiculo.cliente_id);
       if (cliente != undefined) {
@@ -640,9 +640,11 @@ export class GestionOrdenComponent implements OnInit {
       this.vehiculo = new VehiculoModel();
       this.vehiculo.placa = this.documento.detalle_entrada.toUpperCase().trim();
       this.clienteService.saveVehiculo(this.vehiculo).subscribe(res => {
+       
         this.vehiculo.vehiculo_id = res.vehiculo_id;
+        console.log(this.vehiculo)
         this.vehiculosEmpresa.push(this.vehiculo);
-        this.vehiculos();
+       // this.vehiculos();
       });
     }
     this.documentoService.updateDocumento(this.documento).subscribe(res => {

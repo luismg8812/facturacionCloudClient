@@ -414,7 +414,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let ordenes of ordenesBuscarList">
+                  <tr *ngFor="let ordenes of ordenesBuscarList" class="{{ordenes.impreso==1?'table-success':''}}">
                     <th scope="row">
                       <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" title="Editar"
                         (click)="editarOrden(ordenes)">

@@ -784,7 +784,7 @@ export class ImpresionService {
     this.doc.text("RECIBÍ CONFORME: ", 4, 281);
     this.doc.text("NIT: ", 4, 286);
     this.doc.text("VENDEDOR: ADMINISTRADOR DEL SISTEMA ", 82, 288);
-    this.doc.text("OBSERVACIÓN: " + factura.documento.descripcion_trabajador, 4, 275);
+    this.doc.text("OBSERVACIÓN: " +factura.documento.detalle_entrada+" "+ factura.documento.descripcion_trabajador , 4, 275);
     this.doc.text("Software y factura realizada por effectivesoftware.com.co - info@effectivesoftware.com.co - 3185222474", 5, 292);
   }
 
