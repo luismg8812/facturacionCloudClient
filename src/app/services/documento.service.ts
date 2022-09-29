@@ -121,8 +121,18 @@ export class DocumentoService {
     return this.http.get<CuadreCajaVoModel>(this.server_api + '/documento/getCuadreCaja?tipoDocumentoId='+tipoDocumentoId+'&empresaId=' + empresaId + '&usuarioId=' + usuarioId + '&cerrado=' + cerrado);
   }
 
+  borrarOrdenesEn0(ordenes: string[] ) {
+    return this.http.get<CuadreCajaVoModel>(this.server_api + '/documento/borrarOrdenesEn0?ordenes='+ordenes);
+  }
+
+  
+
   getOrdenesTrabajo(empresaId:string, placa: string,  cliente: string, fechaInicial, fechaFinal,tipoDocumentoId:number,idUsuario:string) {
     return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesTrabajo?empresaId='+empresaId+'&placa='+placa+'&cliente=' + cliente + '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+'&tipoDocumentoId='+tipoDocumentoId+'&idUsuario='+idUsuario);
+  }
+
+  getOrdenesTrabajoEn0(empresaId:number, tipoDocumentoId:number) {
+    return this.http.get<DocumentoModel[]>(this.server_api + '/documento/getOrdenesEnCero?empresaId='+empresaId+'&tipoDocumentoId='+tipoDocumentoId);
   }
 
   getNominaByEmpleado(fechaInicial,fechaFinal,idEmpleados: number[],tipoDocumentoId:string) {

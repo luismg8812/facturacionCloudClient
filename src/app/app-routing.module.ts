@@ -69,7 +69,7 @@ const routes: Routes = [
    { path: 'traslado', component: TrasladoComponent},
    { path: 'aceptacionMercancia', component: AceptacionMercanciaComponent},
    { path: 'reporteTerceros', component: ReporteTercerosComponent},
-   { path: 'controlImventario', component: ControlInventarioComponent},
+   { path: 'Imventario', component: ControlInventarioComponent},
    { path: 'coteros', component: CoteroComponent },
    { path: '', component: MenuComponent, pathMatch:'full' },
    { path: 'tutoriales', component: TutorialesComponent },
