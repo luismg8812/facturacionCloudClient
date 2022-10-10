@@ -1665,18 +1665,16 @@ export class VentasDiaComponent implements OnInit {
 
   updateCantidad(anterior: DocumentoDetalleModel, operacion: string) {
     let newCantidad: number = this.productoIdSelect.cantidad;
-    let product: ProductoModel = new ProductoModel();
-    product = this.productoIdSelect;
     if (operacion == 'suma') {
-      product.cantidad = Number(newCantidad) + Number(anterior.cantidad);
+      this.productoIdSelect.cantidad = Number(newCantidad) + Number(anterior.cantidad);
     } else {
-      product.cantidad = Number(newCantidad) - Number(anterior.cantidad);
+      this.productoIdSelect.cantidad = Number(newCantidad) - Number(anterior.cantidad);
     }
     this.restarCantidadesSubProducto(anterior, operacion);
     this.controlInventario(anterior, operacion);
-    this.productoService.updateCantidad(product).subscribe(res => {
+    this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
       if (res.code == 200) {
-        this.productoIdSelect = product;
+        
         //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
       } else {
         alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");

@@ -225,6 +225,7 @@ export class CalculosService {
 	}
 
 	public calcularExcento(doc: DocumentoModel, productos: Array<DocumentoDetalleModel>) {
+		console.log("calcula exento en item orden");
 		let totalReal: number = 0.0;
 		let exectoReal: number = 0.0;
 		let gravado: number = 0.0;

@@ -41,6 +41,9 @@ import { VehiculoModel } from 'src/app/model/vehiculo.model';
 import { SubMenuModel } from 'src/app/model/submenu.model';
 import { BonoModel } from 'src/app/model/bono.model';
 import { BonoService } from 'src/app/services/bono.service';
+import { SubProductoModel } from 'src/app/model/subProducto.model';
+import { ControlInventarioService } from 'src/app/services/control-inventario.service';
+import { ControlInventarioModel } from 'src/app/model/controlInventario.model';
 
 
 declare var jquery: any;
@@ -162,6 +165,7 @@ export class GestionOrdenComponent implements OnInit {
 
   constructor(public productoService: ProductoService,
     public empresaService: EmpresaService,
+    public controlInventarioService:ControlInventarioService,
     public impresionService: ImpresionService,
     public marcasService: MarcasService,
     public cierreService: CierreService,
@@ -703,6 +707,44 @@ export class GestionOrdenComponent implements OnInit {
     }
   }
 
+  cargarFotoOrden(event) {
+    if (this.documento.documento_id == "") {
+      alert("Debe pulsar el boton nuevo documento");
+      return;
+    }
+    
+    
+      console.log("local");
+      this.toBase64(event.target.files[0]).then(data => {
+        this.usuarioService.postFile(data, event.target.files[0].name).subscribe(res => {
+          if (res.code != 200) {
+            alert("error subiendo la imagen, por favor intentelo nuevamente");
+            return;
+          }
+        });
+      });
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+      reader.onload = (_event) => {
+        this.downloadURLLocal = reader.result;
+      }
+      this.documento.mac = event.target.files[0].name;
+      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+        if (res.code != 200) {
+          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          return;
+        }
+      });
+    
+  }
+
+  toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+
   teclaAnteriorSiguiente(apcion: string) {
     if (this.ordenesList.length == 0) {
       let tipoDocumentoId: Array<number> = [this.TIPO_DOCUMENTO_ORDEN_TRABAJO];
@@ -902,9 +944,9 @@ export class GestionOrdenComponent implements OnInit {
       let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
       docDetalle.descripcion = (this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value);
       docDetalle.estado = 1;
-      docDetalle.cantidad = this.cantidad.nativeElement.value;
+    //this.cantidad.nativeElement.value = esto es igual a cantidad
       docDetalle.unitario = this.pVenta.nativeElement.value;
-      docDetalle.parcial = docDetalle.cantidad * docDetalle.unitario;
+      docDetalle.parcial = Number(this.cantidad.nativeElement.value) * docDetalle.unitario;
       docDetalle.impreso_comanda = this.pCompra.nativeElement.value;
       docDetalle.documento_id = this.documento.documento_id;
       if (this.productoFijoActivo) {
@@ -913,24 +955,28 @@ export class GestionOrdenComponent implements OnInit {
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         docDetalle.url_foto = this.cargarFotoRepuesto(docDetalle);
       }
+      this.updateCantidad(docDetalle, this.cantidad.nativeElement.value);
+      docDetalle.cantidad = this.cantidad.nativeElement.value;
       this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
         if (res.code == 200) {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
           this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
+           console.log(this.documento);
           this.documentoService.updateDocumento(this.documento).subscribe(res => {
             if (res.code != 200) {
               alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
               return;
             }
           });
+       
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
       });
     } else {
       this.detalleSelect.descripcion = this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value;
-      this.detalleSelect.cantidad = this.cantidad.nativeElement.value;
+     
       this.detalleSelect.unitario = this.pVenta.nativeElement.value;
       this.detalleSelect.impreso_comanda = this.pCompra.nativeElement.value;
       if (this.productoFijoActivo) {
@@ -940,6 +986,8 @@ export class GestionOrdenComponent implements OnInit {
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
       }
+      this.updateCantidad(this.detalleSelect, this.cantidad.nativeElement.value);
+      this.detalleSelect.cantidad = this.cantidad.nativeElement.value;
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code != 200) {
           alert("Error agregando repuesto: " + res.error);
@@ -960,9 +1008,10 @@ export class GestionOrdenComponent implements OnInit {
           }
         });
       });
+     
       this.detalleSelect = new DocumentoDetalleModel();
     }
-    this.productoIdSelect = null;
+    
     this.articuloPV = "";
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
@@ -977,6 +1026,53 @@ export class GestionOrdenComponent implements OnInit {
     this.downloadURL2 = null;
     this.detalleSelect = new DocumentoDetalleModel();
     $('#exampleModal').modal('hide');
+  }
+
+  updateCantidad(anterior: DocumentoDetalleModel,cantidadNueva:any) {
+    let newCantidad: number = this.productoIdSelect.cantidad;
+    console.log("almenos aca entra:"+this.productoIdSelect.cantidad);
+    
+      this.productoIdSelect.cantidad = Number(newCantidad) - (Number(cantidadNueva)- Number(anterior.cantidad));
+    
+    //this.restarCantidadesSubProducto(anterior, operacion); hay que ver si en algun momento se necesita subproductos en las ordenes
+    this.controlInventario(anterior, cantidadNueva);
+    this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
+      if (res.code == 200) {
+        this.productoIdSelect = null;
+        //buscar la poscicion del producto y restarle la cantidad en el arreglo de productos
+      } else {
+        alert("error actualizando la cantidad del producto en el inventario, pero el documento es correcto");
+        return;
+      }
+    });
+  }
+
+  controlInventario(anterior: DocumentoDetalleModel, cantidadNueva: any){
+    this.controlInventarioService.getControlInventarioByProductoId(this.productoIdSelect.producto_id).subscribe(res => {
+      if(res.length>0){
+        let ci:ControlInventarioModel=res[0];
+          ci.venta = Number(ci.venta)- (Number(cantidadNueva) - Number(anterior.cantidad));
+        this.controlInventarioService.updateControlInventario(ci).subscribe();
+      }
+    });
+  }
+
+  private restarCantidadesSubProducto(productoSelect3: DocumentoDetalleModel, operacion: string) {
+    this.productoService.getSubProductoByProductoId(productoSelect3.producto_id).subscribe(res => {
+      let subProductoList: Array<SubProductoModel> = res;
+      for (let p of subProductoList) {
+        this.productoService.getProductoById(p.producto_hijo.toString(), this.empresaId.toString()).subscribe(result => {
+          let obj = result[0];
+          
+          if (operacion == 'suma') {
+            obj.cantidad = Number(obj.cantidad) + (p.pesado==1?Number(productoSelect3.cantidad):Number(p.cantidad));
+          } else {
+            obj.cantidad = Number(obj.cantidad) - (p.pesado==1?Number(productoSelect3.cantidad):Number(p.cantidad));
+          }
+          this.productoService.updateCantidad(obj).subscribe();
+        });
+      }
+    });
   }
 
   editarItem(articulo) {
@@ -1406,6 +1502,7 @@ export class GestionOrdenComponent implements OnInit {
 
   eliminar() {
     this.detalleSelect.estado = 0;
+    this.productoIdSelect = this.productosAll.find(product => product.nombre === this.detalleSelect.descripcion);
     this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
       if (res.code == 200) {
         this.documentoDetalleService.getDocumentoDetalleByDocumento(this.documento.documento_id).subscribe(res => {
@@ -1418,7 +1515,9 @@ export class GestionOrdenComponent implements OnInit {
         alert("Error agregando repuesto: " + res.error);
       }
     });
+    this.updateCantidad(this.detalleSelect, 0);
     $('#eliminarModal').modal('hide');
+    this.productoIdSelect = null;
   }
 
   buscarOrdenes(placa, clien, fechaInicial, fechaFinal,usuario) {
@@ -1856,7 +1955,6 @@ export class GestionOrdenComponent implements OnInit {
       } else {
         if (this.documento.mac != '') {
           this.usuarioService.getFile(this.documento.mac == '' ? null : this.documento.mac).subscribe(res => {
-
             const imageBlob = this.dataURItoBlob(res);
             var reader = new FileReader();
             reader.readAsDataURL(imageBlob);
