@@ -44,6 +44,7 @@ import { BonoService } from 'src/app/services/bono.service';
 import { SubProductoModel } from 'src/app/model/subProducto.model';
 import { ControlInventarioService } from 'src/app/services/control-inventario.service';
 import { ControlInventarioModel } from 'src/app/model/controlInventario.model';
+import { RolUsuarioModel } from 'src/app/model/rolUsuario.model';
 
 
 declare var jquery: any;
@@ -73,6 +74,8 @@ export class GestionOrdenComponent implements OnInit {
   readonly INVOICE_SIN_ENVIAR: number = 1;
   readonly NOTA_CREDITO: number = 12;
   readonly NOTA_DEBITO: number = 13;
+
+  readonly ROL_ADMIN: number = 1;
 
   public documento: DocumentoModel = new DocumentoModel();
   public vehiculo: VehiculoModel = new VehiculoModel();
@@ -111,8 +114,9 @@ export class GestionOrdenComponent implements OnInit {
   public empleadoOrdenActivo: boolean = false;
   public facturaOrdenActivo: boolean = false;
   public reabirOrdenActivo: boolean = false;
-  public numOrdenes:number=0;
+  public numOrdenes: number = 0;
   public empresa: EmpresaModel;
+  public usuarios: Array<UsuarioModel>;
 
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
@@ -165,7 +169,7 @@ export class GestionOrdenComponent implements OnInit {
 
   constructor(public productoService: ProductoService,
     public empresaService: EmpresaService,
-    public controlInventarioService:ControlInventarioService,
+    public controlInventarioService: ControlInventarioService,
     public impresionService: ImpresionService,
     public marcasService: MarcasService,
     public cierreService: CierreService,
@@ -197,6 +201,7 @@ export class GestionOrdenComponent implements OnInit {
     this.vehiculos();
     this.opcionesSubmenu();
     this.getEmpresa();
+    this.getUsuarios(this.empresaId);
   }
 
   fechasBusqueda() {
@@ -316,12 +321,12 @@ export class GestionOrdenComponent implements OnInit {
       return;
     }
     this.documentoService.getByDocumentoId(this.documentoSelect.documento_id).subscribe(factura => {
-      newDocu.cliente_id=this.documentoSelect.cliente_id;
-      newDocu.letra_consecutivo=this.documentoSelect.letra_consecutivo;
-      newDocu.consecutivo_dian=this.documentoSelect.consecutivo_dian;
-      newDocu.resolucion_empresa_id=this.documentoSelect.resolucion_empresa_id;
-      newDocu.empresa_id=this.documentoSelect.empresa_id;
-     newDocu.impreso=1;
+      newDocu.cliente_id = this.documentoSelect.cliente_id;
+      newDocu.letra_consecutivo = this.documentoSelect.letra_consecutivo;
+      newDocu.consecutivo_dian = this.documentoSelect.consecutivo_dian;
+      newDocu.resolucion_empresa_id = this.documentoSelect.resolucion_empresa_id;
+      newDocu.empresa_id = this.documentoSelect.empresa_id;
+      newDocu.impreso = 1;
       newDocu.descripcion_trabajador = observacion.value;
       newDocu.fecha_registro = new Date();
       newDocu.usuario_id = this.usuarioId;
@@ -332,7 +337,7 @@ export class GestionOrdenComponent implements OnInit {
       } else {
         newDocu.tipo_documento_id = this.NOTA_DEBITO;
       }
-      factura[0].anulado=1;//se anula el documento
+      factura[0].anulado = 1;//se anula el documento
       this.documentoService.saveDocumento(newDocu).subscribe(res => {
         if (res.code == 200) {
           newDocu.documento_id = res.documento_id;
@@ -354,9 +359,9 @@ export class GestionOrdenComponent implements OnInit {
             if (res.code != 200) {
               alert("error eliminando el documentoOrden, por favor inicie nuevamente la creación del documento");
               return;
-            } 
+            }
           });
-        
+
           $('#notaModal').modal('hide');
         } else {
           alert("error creando documento, por favor inicie nuevamente la creación del documento");
@@ -366,31 +371,31 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  asignarDetalleDevolucion(d:DocumentoModel){
-      let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
-      docDetalle.descripcion = "Prodocto devolución";
-      docDetalle.estado = 1;
-      docDetalle.cantidad = 1;
-      docDetalle.unitario = 0;
-      docDetalle.parcial = 0;
-      docDetalle.impreso_comanda = 0;
-      docDetalle.documento_id = d.documento_id;
-      let dd: Array<DocumentoDetalleModel>=[];
-      this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
-        if (res.code == 200) {
-          docDetalle.documento_detalle_id = res.documento_detalle_id;
-          dd.push(docDetalle);
-          d = this.calculosService.calcularExcento(d, dd);
-          this.documentoService.updateDocumento(d).subscribe(res => {
-            if (res.code != 200) {
-              alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
-              return;
-            }
-          });
-        } else {
-          alert("Error agregando repuesto: " + res.error);
-        }
-      });
+  asignarDetalleDevolucion(d: DocumentoModel) {
+    let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
+    docDetalle.descripcion = "Prodocto devolución";
+    docDetalle.estado = 1;
+    docDetalle.cantidad = 1;
+    docDetalle.unitario = 0;
+    docDetalle.parcial = 0;
+    docDetalle.impreso_comanda = 0;
+    docDetalle.documento_id = d.documento_id;
+    let dd: Array<DocumentoDetalleModel> = [];
+    this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
+      if (res.code == 200) {
+        docDetalle.documento_detalle_id = res.documento_detalle_id;
+        dd.push(docDetalle);
+        d = this.calculosService.calcularExcento(d, dd);
+        this.documentoService.updateDocumento(d).subscribe(res => {
+          if (res.code != 200) {
+            alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+        });
+      } else {
+        alert("Error agregando repuesto: " + res.error);
+      }
+    });
   }
 
 
@@ -529,7 +534,7 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nueva Factura");
       return;
     }
-    let cliente = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento == element.value);
+    let cliente = this.clientes.find(cliente => cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento == element.value);
     if (cliente == undefined) {
       this.clienteNew.nombre = element.value;
       $('#crearClienteModal').modal('show');
@@ -609,12 +614,12 @@ export class GestionOrdenComponent implements OnInit {
     this.documento.detalle_entrada = element.value;
     this.documento.detalle_entrada = this.documento.detalle_entrada.toUpperCase();
     element.value = this.documento.detalle_entrada.toUpperCase();
- //vehiculo
+    //vehiculo
     this.vehiculo = this.vehiculosEmpresa.find(product => product.placa == this.documento.detalle_entrada.toUpperCase().trim());
     if (this.vehiculo != undefined) {
       let cliente = this.clientes.find(client => client.cliente_id == this.vehiculo.cliente_id);
       if (cliente != undefined) {
-        this.clientePV.nativeElement.value =(cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento);
+        this.clientePV.nativeElement.value = (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento);
         this.numeroCliente = cliente.celular + (cliente.fijo != "" ? "-" + cliente.fijo : "");
         this.documento.cliente_id = cliente.cliente_id;
       }
@@ -644,11 +649,11 @@ export class GestionOrdenComponent implements OnInit {
       this.vehiculo = new VehiculoModel();
       this.vehiculo.placa = this.documento.detalle_entrada.toUpperCase().trim();
       this.clienteService.saveVehiculo(this.vehiculo).subscribe(res => {
-       
+
         this.vehiculo.vehiculo_id = res.vehiculo_id;
         console.log(this.vehiculo)
         this.vehiculosEmpresa.push(this.vehiculo);
-       // this.vehiculos();
+        // this.vehiculos();
       });
     }
     this.documentoService.updateDocumento(this.documento).subscribe(res => {
@@ -712,30 +717,30 @@ export class GestionOrdenComponent implements OnInit {
       alert("Debe pulsar el boton nuevo documento");
       return;
     }
-    
-    
-      console.log("local");
-      this.toBase64(event.target.files[0]).then(data => {
-        this.usuarioService.postFile(data, event.target.files[0].name).subscribe(res => {
-          if (res.code != 200) {
-            alert("error subiendo la imagen, por favor intentelo nuevamente");
-            return;
-          }
-        });
-      });
-      var reader = new FileReader();
-      reader.readAsDataURL(event.target.files[0]);
-      reader.onload = (_event) => {
-        this.downloadURLLocal = reader.result;
-      }
-      this.documento.mac = event.target.files[0].name;
-      this.documentoService.updateDocumento(this.documento).subscribe(res => {
+
+
+    console.log("local");
+    this.toBase64(event.target.files[0]).then(data => {
+      this.usuarioService.postFile(data, event.target.files[0].name).subscribe(res => {
         if (res.code != 200) {
-          alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+          alert("error subiendo la imagen, por favor intentelo nuevamente");
           return;
         }
       });
-    
+    });
+    var reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onload = (_event) => {
+      this.downloadURLLocal = reader.result;
+    }
+    this.documento.mac = event.target.files[0].name;
+    this.documentoService.updateDocumento(this.documento).subscribe(res => {
+      if (res.code != 200) {
+        alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
+        return;
+      }
+    });
+
   }
 
   toBase64 = file => new Promise((resolve, reject) => {
@@ -890,23 +895,43 @@ export class GestionOrdenComponent implements OnInit {
       return;
     }
     this.productoNew.empresa_id = this.empresaId;
-    this.productoService.saveProducto(this.productoNew).subscribe(res => {
-      if (res.code == 200) {
-        $('#crearProductoModal').modal('hide');
-        this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(res => {
-          this.productosAll = res;
-          this.productoIdSelect = this.productosAll.find(product => product.nombre === this.productoNew.nombre);
-          console.log(this.productoIdSelect);
-          this.cantidad.nativeElement.value = 1;
-          this.cantidad.nativeElement.select();
-          this.pCompra.nativeElement.value = this.productoIdSelect.costo;
-          this.pVenta.nativeElement.value = this.productoIdSelect.costo_publico;
+    this.usuarioId = Number(localStorage.getItem("usuario_id"));
+    let usuario: UsuarioModel = this.usuarios.find(usua => usua.usuario_id === this.usuarioId);
+    console.log(usuario);
+    this.usuarioService.getRolByUsuario(usuario.usuario_id).subscribe(res => {
+      let rolusurio: RolUsuarioModel[] = res;
+      console.log(rolusurio[0]);
+      let admin = rolusurio.find(rol => rol.rol_id === this.ROL_ADMIN); //se compara con el id del rol admin
+      if (admin != undefined) {
+        this.productoService.saveProducto(this.productoNew).subscribe(res => {
+          if (res.code == 200) {
+            $('#crearProductoModal').modal('hide');
+            this.productoService.getProductosByEmpresa(this.empresaId.toString()).subscribe(res => {
+              this.productosAll = res;
+              this.productoIdSelect = this.productosAll.find(product => product.nombre === this.productoNew.nombre);
+              console.log(this.productoIdSelect);
+              this.cantidad.nativeElement.value = 1;
+              this.cantidad.nativeElement.select();
+              this.pCompra.nativeElement.value = this.productoIdSelect.costo;
+              this.pVenta.nativeElement.value = this.productoNew.costo_publico;
+            });
+          } else {
+            alert("error creando producto, verifique que los valores de los precios y las cantidades no tengas ',/_' u otro caracter especial, si persiste consulte a su proveedor");
+            return;
+          }
         });
       } else {
-        alert("error creando producto, verifique que los valores de los precios y las cantidades no tengas ',/_' u otro caracter especial, si persiste consulte a su proveedor");
-        return;
+        this.productoIdSelect = this.productosAll.find(product => product.producto_id === 1);
+        this.productoIdSelect.nombre = this.productoNew.nombre;
+        console.log(this.productoIdSelect);
+        this.cantidad.nativeElement.value = 1;
+        this.cantidad.nativeElement.select();
+        this.pCompra.nativeElement.value = this.productoIdSelect.costo;
+        this.pVenta.nativeElement.value = this.productoNew.costo_publico;
+        $('#crearProductoModal').modal('hide');
       }
     });
+
   }
 
   agregardetalle() {
@@ -944,7 +969,7 @@ export class GestionOrdenComponent implements OnInit {
       let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
       docDetalle.descripcion = (this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value);
       docDetalle.estado = 1;
-    //this.cantidad.nativeElement.value = esto es igual a cantidad
+      //this.cantidad.nativeElement.value = esto es igual a cantidad
       docDetalle.unitario = this.pVenta.nativeElement.value;
       docDetalle.parcial = Number(this.cantidad.nativeElement.value) * docDetalle.unitario;
       docDetalle.impreso_comanda = this.pCompra.nativeElement.value;
@@ -962,21 +987,21 @@ export class GestionOrdenComponent implements OnInit {
           docDetalle.documento_detalle_id = res.documento_detalle_id;
           this.detallesList.unshift(docDetalle);
           this.documento = this.calculosService.calcularExcento(this.documento, this.detallesList);
-           console.log(this.documento);
+          console.log(this.documento);
           this.documentoService.updateDocumento(this.documento).subscribe(res => {
             if (res.code != 200) {
               alert("error actualizando el documento, por favor inicie nuevamente la creación del documento");
               return;
             }
           });
-       
+
         } else {
           alert("Error agregando repuesto: " + res.error);
         }
       });
     } else {
       this.detalleSelect.descripcion = this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value;
-     
+
       this.detalleSelect.unitario = this.pVenta.nativeElement.value;
       this.detalleSelect.impreso_comanda = this.pCompra.nativeElement.value;
       if (this.productoFijoActivo) {
@@ -1008,10 +1033,10 @@ export class GestionOrdenComponent implements OnInit {
           }
         });
       });
-     
+
       this.detalleSelect = new DocumentoDetalleModel();
     }
-    
+
     this.articuloPV = "";
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
@@ -1028,12 +1053,12 @@ export class GestionOrdenComponent implements OnInit {
     $('#exampleModal').modal('hide');
   }
 
-  updateCantidad(anterior: DocumentoDetalleModel,cantidadNueva:any) {
+  updateCantidad(anterior: DocumentoDetalleModel, cantidadNueva: any) {
     let newCantidad: number = this.productoIdSelect.cantidad;
-    console.log("almenos aca entra:"+this.productoIdSelect.cantidad);
-    
-      this.productoIdSelect.cantidad = Number(newCantidad) - (Number(cantidadNueva)- Number(anterior.cantidad));
-    
+    console.log("almenos aca entra:" + this.productoIdSelect.cantidad);
+
+    this.productoIdSelect.cantidad = Number(newCantidad) - (Number(cantidadNueva) - Number(anterior.cantidad));
+
     //this.restarCantidadesSubProducto(anterior, operacion); hay que ver si en algun momento se necesita subproductos en las ordenes
     this.controlInventario(anterior, cantidadNueva);
     this.productoService.updateCantidad(this.productoIdSelect).subscribe(res => {
@@ -1047,11 +1072,11 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  controlInventario(anterior: DocumentoDetalleModel, cantidadNueva: any){
+  controlInventario(anterior: DocumentoDetalleModel, cantidadNueva: any) {
     this.controlInventarioService.getControlInventarioByProductoId(this.productoIdSelect.producto_id).subscribe(res => {
-      if(res.length>0){
-        let ci:ControlInventarioModel=res[0];
-          ci.venta = Number(ci.venta)- (Number(cantidadNueva) - Number(anterior.cantidad));
+      if (res.length > 0) {
+        let ci: ControlInventarioModel = res[0];
+        ci.venta = Number(ci.venta) - (Number(cantidadNueva) - Number(anterior.cantidad));
         this.controlInventarioService.updateControlInventario(ci).subscribe();
       }
     });
@@ -1063,11 +1088,11 @@ export class GestionOrdenComponent implements OnInit {
       for (let p of subProductoList) {
         this.productoService.getProductoById(p.producto_hijo.toString(), this.empresaId.toString()).subscribe(result => {
           let obj = result[0];
-          
+
           if (operacion == 'suma') {
-            obj.cantidad = Number(obj.cantidad) + (p.pesado==1?Number(productoSelect3.cantidad):Number(p.cantidad));
+            obj.cantidad = Number(obj.cantidad) + (p.pesado == 1 ? Number(productoSelect3.cantidad) : Number(p.cantidad));
           } else {
-            obj.cantidad = Number(obj.cantidad) - (p.pesado==1?Number(productoSelect3.cantidad):Number(p.cantidad));
+            obj.cantidad = Number(obj.cantidad) - (p.pesado == 1 ? Number(productoSelect3.cantidad) : Number(p.cantidad));
           }
           this.productoService.updateCantidad(obj).subscribe();
         });
@@ -1264,79 +1289,113 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   asignarConsecutivo(numImpresiones: number, tipoImpresion: number) {
-      let con: number;
-      let consecutivo: string;
-      let resolucion: ResolucionEmpresaModel = new ResolucionEmpresaModel();
-      if (this.resolucionEmpresa.nativeElement.value != "") {
-        console.log(this.resolucionEmpresa.nativeElement.value);
-        resolucion = this.resolucionAll.find(reso => reso.nombre.trim() == this.resolucionEmpresa.nativeElement.value.toString().trim());
-        console.log(resolucion.nombre);
-      } else {
-        resolucion = this.resolucionAll[0];
-      }
-      if (this.documentoFactura.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA && resolucion.tipo_resolucion_id == 3) { //se alistan documentos para la dian cuando son facturas
-        let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
-        documentoInvoice.documento_id = Number(this.documentoFactura.documento_id);
-        documentoInvoice.fecha_registro = new Date();
-        documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
-        this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
-          if (res.code == 200) {
-            console.log("Se agrega estado para facturación electrónica");
-          } else {
-            alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+    let con: number;
+    let consecutivo: string;
+    let resolucion: ResolucionEmpresaModel = new ResolucionEmpresaModel();
+    if (this.resolucionEmpresa.nativeElement.value != "") {
+      console.log(this.resolucionEmpresa.nativeElement.value);
+      resolucion = this.resolucionAll.find(reso => reso.nombre.trim() == this.resolucionEmpresa.nativeElement.value.toString().trim());
+      console.log(resolucion.nombre);
+    } else {
+      resolucion = this.resolucionAll[0];
+    }
+    if (this.documentoFactura.tipo_documento_id == this.TIPO_DOCUMENTO_FACTURA && resolucion.tipo_resolucion_id == 3) { //se alistan documentos para la dian cuando son facturas
+      let documentoInvoice: DocumentoInvoiceModel = new DocumentoInvoiceModel()
+      documentoInvoice.documento_id = Number(this.documentoFactura.documento_id);
+      documentoInvoice.fecha_registro = new Date();
+      documentoInvoice.invoice_id = this.INVOICE_SIN_ENVIAR;
+      this.documentoService.saveInvoice(documentoInvoice).subscribe(res => {
+        if (res.code == 200) {
+          console.log("Se agrega estado para facturación electrónica");
+        } else {
+          alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
+          return;
+        }
+      });
+      this.documentoFactura.invoice_id = this.INVOICE_SIN_ENVIAR;
+    }
+    console.log(resolucion);
+    this.factura.resolucionEmpresa = resolucion;
+    switch (this.documentoFactura.tipo_documento_id) {
+      case 9:
+        con = resolucion.consecutivo;
+        consecutivo = resolucion.letra_consecutivo + con;
+        this.documentoFactura.consecutivo_dian = consecutivo;
+        console.log("consecutivo documentoId: " + consecutivo);
+        this.tituloFactura = "FACTURA DE VENTA.";
+        break;
+      case 4:
+        this.documentoFactura.impreso = 0;
+        this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
+        // consecutivo dian
+        console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
+        this.tituloFactura = "No. DE COTIZACIÓN";
+        this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento");
             return;
           }
+          this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
+          this.limpiarFactura();
+
         });
-        this.documentoFactura.invoice_id = this.INVOICE_SIN_ENVIAR;
-      }
-      console.log(resolucion);
-      this.factura.resolucionEmpresa = resolucion;
-      switch (this.documentoFactura.tipo_documento_id) {
-        case 9:
-          con = resolucion.consecutivo;
-          consecutivo = resolucion.letra_consecutivo + con;
-          this.documentoFactura.consecutivo_dian = consecutivo;
-          console.log("consecutivo documentoId: " + consecutivo);
-          this.tituloFactura = "FACTURA DE VENTA.";
-          break;
-        case 4:
-          this.documentoFactura.impreso = 0;
-          this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
-          // consecutivo dian
-          console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
-          this.tituloFactura = "No. DE COTIZACIÓN";
-          this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
-            if (res.code != 200) {
-              alert("error creando documento, por favor inicie nuevamente la creación del documento");
-              return;
-            }
-            this.imprimirFactura(numImpresiones,this.empresa, tipoImpresion);
-            this.limpiarFactura();
+        break;
+      case 12:
 
-          });
-          break;
-        case 12:
+        this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
+        // consecutivo dian
+        console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
+        this.tituloFactura = "NOTA CRÉDITO";
+        this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+          this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
+          this.limpiarFactura();
 
-          this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
-          // consecutivo dian
-          console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
-          this.tituloFactura = "NOTA CRÉDITO";
-          this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
-            if (res.code != 200) {
-              alert("error creando documento, por favor inicie nuevamente la creación del documento");
-              return;
-            }
-            this.imprimirFactura(numImpresiones,this.empresa, tipoImpresion);
-            this.limpiarFactura();
+        });
+        break;
+      case 13:
 
-          });
-          break;
-        case 13:
+        this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
+        // consecutivo dian
+        console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
+        this.tituloFactura = "NOTA DÉBITO";
+        this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
+          if (res.code != 200) {
+            alert("error creando documento, por favor inicie nuevamente la creación del documento");
+            return;
+          }
+          this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
+          this.limpiarFactura();
 
-          this.documentoFactura.consecutivo_dian = this.documentoFactura.documento_id// es necesario asignar el
-          // consecutivo dian
-          console.log("consecutivo Cotizacion: " + this.documentoFactura.consecutivo_dian);
-          this.tituloFactura = "NOTA DÉBITO";
+        });
+        break;
+      default:
+        // log
+        console.log(resolucion.consecutivo);
+        con = Number(resolucion.consecutivo) + 1;
+        // dentro de try se valida si faltan 500 facturas para
+        // llegar hasta el tope
+        this.documentoFactura.impreso = 1;
+        let topeConsecutivo = resolucion.autorizacion_hasta;
+        let consegutivo = con;
+        if (consegutivo + 200 > topeConsecutivo) {
+          alert(" se esta agotando el consegutivo DIAN");
+        }
+        if (consegutivo > topeConsecutivo) {
+          alert("Se agotó el consecutivo DIAN");
+          return;
+        }
+        consecutivo = "" + con;
+        this.documentoFactura.letra_consecutivo = resolucion.letra_consecutivo;
+        console.log("consecutivo Dian: " + consecutivo);
+        this.documentoFactura.consecutivo_dian = consecutivo;
+        this.tituloFactura = "FACTURA DE VENTA";
+        resolucion.consecutivo = con;
+        this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
+          console.log("consecutivo actualizado");
           this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
             if (res.code != 200) {
               alert("error creando documento, por favor inicie nuevamente la creación del documento");
@@ -1344,45 +1403,11 @@ export class GestionOrdenComponent implements OnInit {
             }
             this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
             this.limpiarFactura();
-
           });
-          break;
-        default:
-          // log
-          console.log(resolucion.consecutivo);
-          con = Number(resolucion.consecutivo) + 1;
-          // dentro de try se valida si faltan 500 facturas para
-          // llegar hasta el tope
-          this.documentoFactura.impreso = 1;
-          let topeConsecutivo = resolucion.autorizacion_hasta;
-          let consegutivo = con;
-          if (consegutivo + 200 > topeConsecutivo) {
-            alert(" se esta agotando el consegutivo DIAN");
-          }
-          if (consegutivo > topeConsecutivo) {
-            alert("Se agotó el consecutivo DIAN");
-            return;
-          }
-          consecutivo = ""+ con;
-          this.documentoFactura.letra_consecutivo = resolucion.letra_consecutivo;
-          console.log("consecutivo Dian: " + consecutivo);
-          this.documentoFactura.consecutivo_dian = consecutivo;
-          this.tituloFactura = "FACTURA DE VENTA";
-          resolucion.consecutivo = con;
-          this.empresaService.updateConsecutivoEmpresa(resolucion).subscribe(emp => {
-            console.log("consecutivo actualizado");
-            this.documentoService.updateDocumento(this.documentoFactura).subscribe(res => {
-              if (res.code != 200) {
-                alert("error creando documento, por favor inicie nuevamente la creación del documento");
-                return;
-              }
-              this.imprimirFactura(numImpresiones, this.empresa, tipoImpresion);
-              this.limpiarFactura();
-            });
-          });     
-          break;
-      }
- 
+        });
+        break;
+    }
+
   }
 
 
@@ -1520,7 +1545,7 @@ export class GestionOrdenComponent implements OnInit {
     this.productoIdSelect = null;
   }
 
-  buscarOrdenes(placa, clien, fechaInicial, fechaFinal,usuario) {
+  buscarOrdenes(placa, clien, fechaInicial, fechaFinal, usuario) {
     let idCliente = "";
     let idUsuario = "";
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;
@@ -1543,10 +1568,10 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-   
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, ini, fin, tipoDocumentoId,usuario.value).subscribe(res => {
+
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, ini, fin, tipoDocumentoId, usuario.value).subscribe(res => {
       this.ordenesBuscarList = res;
-      this.numOrdenes=res.length;
+      this.numOrdenes = res.length;
     });
   }
 
@@ -1554,10 +1579,10 @@ export class GestionOrdenComponent implements OnInit {
     let idCliente = "";
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente =>(cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId,"").subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, this.calculosService.fechaInicial(this.calculosService.fechaActual()).toLocaleString(), this.calculosService.fechaFinal(this.calculosService.fechaActual()).toLocaleString(), tipoDocumentoId, "").subscribe(res => {
       this.ordenesBuscarList = res;
     });
   }
@@ -1569,7 +1594,7 @@ export class GestionOrdenComponent implements OnInit {
       let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId,"").subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId, "").subscribe(res => {
       this.facturasBuscarList = res;
     });
   }
@@ -1579,11 +1604,11 @@ export class GestionOrdenComponent implements OnInit {
     let idCliente = "";
     let tipoDocumentoId = this.TIPO_DOCUMENTO_ORDEN_TRABAJO;// se buscan ordenes de trabajo
     if (clien.value != "") {
-      let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento)== clien.value);
+      let cliente = this.clientes.find(cliente => (cliente.nombre + ' ' + cliente.apellidos + ' ' + cliente.razon_social + ' - ' + cliente.documento) == clien.value);
       idCliente = cliente.cliente_id.toString();
     }
 
-    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId,"").subscribe(res => {
+    this.documentoService.getOrdenesTrabajo(this.empresaId.toString(), placa.value, idCliente, fechaInicial.value, fechaFinal.value, tipoDocumentoId, "").subscribe(res => {
       this.ordenesBuscarListFactura = res;
     });
   }
@@ -1788,7 +1813,7 @@ export class GestionOrdenComponent implements OnInit {
     if (cliente == undefined) {
       return "";
     } else {
-      return cliente.nombre+" "+cliente.apellidos+" "+(cliente.razon_social==null?'':cliente.razon_social);
+      return cliente.nombre + " " + cliente.apellidos + " " + (cliente.razon_social == null ? '' : cliente.razon_social);
     }
   }
 
@@ -2192,5 +2217,10 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
+  getUsuarios(empresaId: number) {
+    this.usuarioService.getByUsuario(null, empresaId.toString(), null).subscribe(res => {
+      this.usuarios = res;
+    });
+  }
 
 }
