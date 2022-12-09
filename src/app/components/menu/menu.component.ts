@@ -94,7 +94,7 @@ export class MenuComponent implements OnInit {
       }
       this.empresa.nativeElement.value = this.empresaId.toString();
     });
-    if (parametros.ambiente != 'cloud') {
+    /*if (parametros.ambiente != 'cloud') {
       this.empresaService.validarLisencia().subscribe((empre) => {
         if (empre[0].estado_empresa_id=='2') {
           alert("Actualmente tiene inconvenientes con los datos y configuraciones iniciales, por favor comuniquese con soporte:\n Lisencias: 3185222474");
@@ -103,7 +103,7 @@ export class MenuComponent implements OnInit {
           return;
         }
       });
-    }
+    }*/
   }
 
   controlTeclas(event, element) {
