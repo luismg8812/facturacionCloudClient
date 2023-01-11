@@ -935,7 +935,6 @@ export class GestionOrdenComponent implements OnInit {
   }
 
   agregardetalle() {
-
     if (this.documento.documento_id == '') {
       alert("Debe pulsar el boton nueva orden");
       return;
@@ -1007,7 +1006,7 @@ export class GestionOrdenComponent implements OnInit {
       if (this.productoFijoActivo) {
         this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
       }
-      this.detalleSelect.parcial = this.detalleSelect.cantidad * Number(this.detalleSelect.unitario);
+      this.detalleSelect.parcial = Number(this.cantidad.nativeElement.value) * Number(this.detalleSelect.unitario);
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
       }
