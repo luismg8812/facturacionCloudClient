@@ -7,6 +7,7 @@ import { SubGrupoModel } from '../model/subGrupo.model';
 import { ProductoPreciosModel } from '../model/productoPrecios.model';
 import { SubProductoModel } from '../model/subProducto.model';
 import { AuditoriaModel } from '../model/auditoria.model';
+import { ProcedeciaProductoModel } from '../model/procedenciaProducto.model';
 
 
 @Injectable({
@@ -111,7 +112,9 @@ export class ProductoService {
     return this.http.put<any>(this.server_api+'/producto/updateSubGrupo',grupoId);
   }
   
-  
-  
+   
+  public getProcedencias(){
+    return this.http.get<ProcedeciaProductoModel[]>(this.server_api+'/producto/getProcedencias');
+  }
   
 }

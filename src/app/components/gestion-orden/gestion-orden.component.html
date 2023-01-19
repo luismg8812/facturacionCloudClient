@@ -83,11 +83,11 @@
         <div class="form-group col-md-4 col-sm-4">
           <input list="browsers" name="clientePV" #clientePV placeholder="Cliente" [disabled]="documento.impreso==1"
             class="form-control" id="clientePV" (change)="clienteSelectFun(clientePV)">
-            <datalist id="browsers">
-              <option *ngFor="let cliente of clientes"
-                  [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
-                  Cod. interno: {{cliente.cliente_id}}
-              </option>
+          <datalist id="browsers">
+            <option *ngFor="let cliente of clientes"
+              [value]="cliente.nombre + ' ' + cliente.apellidos + ' '+cliente.razon_social +' - ' + cliente.documento">
+              Cod. interno: {{cliente.cliente_id}}
+            </option>
           </datalist>
         </div>
 
@@ -151,8 +151,8 @@
       </div>
       <div class="form-row">
         <div class="form-group col-md-4 col-sm-12">
-          <input type="file" class="form-control-file" capture="camera" #fotoOrden id="fotoOrden" [disabled]="documento.impreso==1"
-          aria-describedby="fileHelp" (change)="cargarFotoOrden($event)">
+          <input type="file" class="form-control-file" capture="camera" #fotoOrden id="fotoOrden"
+            [disabled]="documento.impreso==1" aria-describedby="fileHelp" (change)="cargarFotoOrden($event)">
         </div>
       </div>
 
@@ -249,6 +249,28 @@
                     #pVenta required>
                 </div>
               </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 col-sm-2">
+                  Procedencia
+                  <select id="procedenciaC" name="procedenciaC" #procedenciaC class="form-control">
+                    <option value=""> Seleccione</option>
+                    <option *ngFor="let procedencia of procedencias" [value]="procedencia.procedencia_producto_id">
+                      {{procedencia.nombre}}
+                    </option>  
+                  </select>
+                </div>
+                <div class="form-group col-md-6 col-sm-2" >
+                  Proveedor
+                  <input list="proveedoresList" name="proveedorPV" #proveedorPV placeholder="Proveedor" class="form-control"
+                    id="proveedor">
+                  <datalist id="proveedoresList">  
+                    <option *ngFor="let prov of proveedores"
+                      [value]=" prov.nombre+' '+prov.apellidos+' - '+prov.documento">
+                      Cod. interno: {{prov.proveedor_id}}
+                    </option>
+                  </datalist>
+                </div>
+              </div>
               <br />
               <div class="form-row">
 
@@ -280,23 +302,34 @@
         Launch demo modal
       </button>
       <!-- Button trigger modal .d-none se repete esta parte para todos las pantallas de opciones de punto de venta dia -->
-      <button type="button" class="btn btn-primary d-none" id="hojaVidaArticuloModal" #hojaVidaArticuloModal data-toggle="modal"
-        data-target="#hojaVidaArticuloModa">
+      <button type="button" class="btn btn-primary d-none" id="hojaVidaArticuloModal" #hojaVidaArticuloModal
+        data-toggle="modal" data-target="#hojaVidaArticuloModa">
         hojaVidaArticuloModal
       </button>
+      <!-- Button trigger modal .d-none se repete esta parte para todos las pantallas de opciones de punto de venta dia -->
+      <button type="button" class="btn btn-primary d-none" id="trabajosExternosModal" #trabajosExternosModal data-toggle="modal"
+        data-target="#trabajosExternosModa">
+        Launch demo modal
+      </button>
 
-      
+
       <!-- Modal cuadre de caja -->
       <div class="modal fade" id="abonoModa" tabindex="-1" role="dialog" aria-labelledby="abonoModalLabel"
         aria-hidden="true">
         <app-bonos></app-bonos>
       </div>
 
-         <!-- Modal hojaVidaArticuloModal -->
-         <div class="modal fade" id="hojaVidaArticuloModa" tabindex="-1" role="dialog" aria-labelledby="hojaVidaArticuloModalLabel"
-         aria-hidden="true">
-         <app-hoja-de-vida-articulo></app-hoja-de-vida-articulo>
-       </div>
+      <!-- Modal hojaVidaArticuloModal -->
+      <div class="modal fade" id="hojaVidaArticuloModa" tabindex="-1" role="dialog"
+        aria-labelledby="hojaVidaArticuloModalLabel" aria-hidden="true">
+        <app-hoja-de-vida-articulo></app-hoja-de-vida-articulo>
+      </div>
+
+      <!-- Modal trabajos externos -->
+      <div class="modal fade" id="trabajosExternosModa" tabindex="-1" role="dialog" aria-labelledby="trabajosExternosModalLabel"
+        aria-hidden="true">
+        <app-trabajos-externos></app-trabajos-externos>
+      </div>
 
       <!-- crear producto Modal -->
       <div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -373,7 +406,7 @@
                 </div>
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Final
-                  <input class="form-control" type="date" value="2022-12-31" id="fechaFin" #fechaFin>
+                  <input class="form-control" type="date" value="2023-12-31" id="fechaFin" #fechaFin>
                 </div>
               </div>
               <div class="form-row">
@@ -717,9 +750,9 @@
             <tbody>
               <tr *ngFor="let ordenes of itemsFactura">
 
-                <td>{{ordenes.descripcion}}</td> 
+                <td>{{ordenes.descripcion}}</td>
                 <td>{{ordenes.documento_id}}</td>
-                <td>{{ordenes.cantidad}}</td> 
+                <td>{{ordenes.cantidad}}</td>
                 <td>${{formatearNumber(ordenes.unitarioAntesIva)}}</td>
                 <td>${{formatearNumber(ordenes.unitario)}}</td>
                 <td> <select class="form-control" value="{{ordenes.impuesto_producto}}"
@@ -792,11 +825,11 @@
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Inicial
-                  <input class="form-control" type="date" value="2021-01-01" id="fechaIniFactura" #fechaIniFactura>
+                  <input class="form-control" type="date" value="2023-01-01" id="fechaIniFactura" #fechaIniFactura>
                 </div>
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Final
-                  <input class="form-control" type="date" value="2022-12-31" id="fechaFinFactura" #fechaFinFactura>
+                  <input class="form-control" type="date" value="2023-12-31" id="fechaFinFactura" #fechaFinFactura>
                 </div>
               </div>
               <div class="form-row">
@@ -921,11 +954,11 @@
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Inicial
-                  <input class="form-control" type="date" value="2021-01-01" id="fechaInicial" #fechaInicial>
+                  <input class="form-control" type="date" value="2022-01-01" id="fechaInicial" #fechaInicial>
                 </div>
                 <div class="form-group col-md-6 col-sm-1">
                   Fecha Final
-                  <input class="form-control" type="date" value="2022-12-31" id="fechaFinal" #fechaFinal>
+                  <input class="form-control" type="date" value="2023-12-31" id="fechaFinal" #fechaFinal>
                 </div>
               </div>
               <div class="form-row">
@@ -1037,7 +1070,7 @@
                     placeholder="Descripción corrección"></textarea>
                 </div>
               </div>
-             
+
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-1">
 
@@ -1046,7 +1079,7 @@
                   <button type="button" class="btn btn-secondary" (click)="cerrarNota()">Salir</button>
                 </div>
               </div>
-            
+
             </div>
 
           </div>

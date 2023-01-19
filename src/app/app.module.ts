@@ -55,6 +55,7 @@ import { ControlInventarioComponent } from './components/control-inventario/cont
 import { HojaDeVidaArticuloComponent } from './components/hoja-de-vida-articulo/hoja-de-vida-articulo.component';
 import { CoteroComponent } from './components/cotero/cotero.component';
 import { ReporteProductosComponent } from './components/reporte-productos/reporte-productos.component';
+import { TrabajosExternosComponent } from './components/trabajos-externos/trabajos-externos.component';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => appConfigService.load();
@@ -101,7 +102,8 @@ export function initializeApp(appConfigService: AppConfigService) {
     ReporteTercerosComponent,
     ControlInventarioComponent,
     HojaDeVidaArticuloComponent,
-    CoteroComponent
+    CoteroComponent,
+    TrabajosExternosComponent
   ],
   imports: [
     BrowserModule,

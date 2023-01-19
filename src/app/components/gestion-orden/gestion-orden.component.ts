@@ -45,6 +45,9 @@ import { SubProductoModel } from 'src/app/model/subProducto.model';
 import { ControlInventarioService } from 'src/app/services/control-inventario.service';
 import { ControlInventarioModel } from 'src/app/model/controlInventario.model';
 import { RolUsuarioModel } from 'src/app/model/rolUsuario.model';
+import { ProcedeciaProductoModel } from 'src/app/model/procedenciaProducto.model';
+import { ProveedorService } from 'src/app/services/proveedor.service';
+import { ProveedorModel } from 'src/app/model/proveedor.model';
 
 
 declare var jquery: any;
@@ -62,6 +65,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly ACTIVAR_EMPLEADOS_ORDEN: string = '18';
   readonly ACTIVAR_FACTURACION_ORDEN: string = '24';
   readonly ACTIVAR_REABRIR_ORDEN: string = '26';
+  readonly CANTIDADES_NEGATIVAS: string = '28';
   readonly TIPO_DOCUMENTO_FACTURA: number = 10;
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
@@ -114,9 +118,13 @@ export class GestionOrdenComponent implements OnInit {
   public empleadoOrdenActivo: boolean = false;
   public facturaOrdenActivo: boolean = false;
   public reabirOrdenActivo: boolean = false;
+  public cantidadesNegativasActivo: boolean = false;
   public numOrdenes: number = 0;
   public empresa: EmpresaModel;
   public usuarios: Array<UsuarioModel>;
+  public procedencias: Array<ProcedeciaProductoModel>;
+  public proveedores: Array<ProveedorModel>;
+
 
   //factura
   public ordenesFactura: Array<DocumentoModel> = [];
@@ -154,6 +162,8 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("pVenta") pVenta: ElementRef;
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
   @ViewChild("empleadoPV") empleadoPV: ElementRef;
+  @ViewChild("procedenciaC") procedenciaC: ElementRef;
+  @ViewChild("proveedorPV") proveedorPV: ElementRef;
 
   //campos de factura
   @ViewChild("clienteFactura") clienteFactura: ElementRef;
@@ -165,6 +175,7 @@ export class GestionOrdenComponent implements OnInit {
   //opciones
   @ViewChild("abonoModal") abonoModal: ElementRef;
   @ViewChild("hojaVidaArticuloModal") hojaVidaArticuloModal: ElementRef;
+  @ViewChild("trabajosExternosModal") trabajosExternosModal: ElementRef;
 
 
   constructor(public productoService: ProductoService,
@@ -179,6 +190,7 @@ export class GestionOrdenComponent implements OnInit {
     public documentoService: DocumentoService,
     public usuarioService: UsuarioService,
     public clienteService: ClienteService,
+    public proveedorService: ProveedorService,
     public empleadoService: EmpleadoService) { }
 
   ngOnInit() {
@@ -202,6 +214,8 @@ export class GestionOrdenComponent implements OnInit {
     this.opcionesSubmenu();
     this.getEmpresa();
     this.getUsuarios(this.empresaId);
+    this.getProcedencias();
+    this.getProveedores(this.empresaId);
   }
 
   fechasBusqueda() {
@@ -963,9 +977,24 @@ export class GestionOrdenComponent implements OnInit {
       alert("El valor venta del repuesto es obligatorio");
       return;
     }
+    if ((Number(this.productoIdSelect.cantidad)-Number(this.cantidad.nativeElement.value) < 0) && !this.cantidadesNegativasActivo) {
+      alert("No está habilitado para vender productos con cantidades negativas");
+      return;
+    }
 
     if (this.detalleSelect.documento_detalle_id == null) {
+
       let docDetalle: DocumentoDetalleModel = new DocumentoDetalleModel();
+      let provee: ProveedorModel = this.proveedores.find(provee => provee.nombre + ' ' + provee.apellidos + ' - ' + provee.documento === this.proveedorPV.nativeElement.value);
+      if (provee != undefined) {
+        docDetalle.proveedor_id = provee.proveedor_id;
+
+      }
+      let procede: ProcedeciaProductoModel = this.procedencias.find(proce => proce.procedencia_producto_id == this.procedenciaC.nativeElement.value);
+      console.log(procede);
+      if (procede != undefined) {
+        docDetalle.procedencia_producto_id = procede.procedencia_producto_id;
+      }
       docDetalle.descripcion = (this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value);
       docDetalle.estado = 1;
       //this.cantidad.nativeElement.value = esto es igual a cantidad
@@ -973,6 +1002,7 @@ export class GestionOrdenComponent implements OnInit {
       docDetalle.parcial = Number(this.cantidad.nativeElement.value) * docDetalle.unitario;
       docDetalle.impreso_comanda = this.pCompra.nativeElement.value;
       docDetalle.documento_id = this.documento.documento_id;
+
       if (this.productoFijoActivo) {
         this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
       }
@@ -999,6 +1029,17 @@ export class GestionOrdenComponent implements OnInit {
         }
       });
     } else {
+      let provee: ProveedorModel = this.proveedores.find(provee => provee.nombre + ' ' + provee.apellidos + ' - ' + provee.documento === this.proveedorPV.nativeElement.value);
+      if (provee != undefined) {
+        this.detalleSelect.proveedor_id = provee.proveedor_id;
+
+      }
+      let procede: ProcedeciaProductoModel = this.procedencias.find(proce => proce.procedencia_producto_id == this.procedenciaC.nativeElement.value);
+      console.log(procede);
+      if (procede != undefined) {
+        this.detalleSelect.procedencia_producto_id = procede.procedencia_producto_id;
+      }
+
       this.detalleSelect.descripcion = this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value;
 
       this.detalleSelect.unitario = this.pVenta.nativeElement.value;
@@ -1048,6 +1089,8 @@ export class GestionOrdenComponent implements OnInit {
     this.pVenta.nativeElement.value = "";
     this.pCompra.nativeElement.value = "";
     this.downloadURL2 = null;
+    this.procedenciaC.nativeElement.value = "";
+    this.proveedorPV.nativeElement.value = "";
     this.detalleSelect = new DocumentoDetalleModel();
     $('#exampleModal').modal('hide');
   }
@@ -1111,6 +1154,12 @@ export class GestionOrdenComponent implements OnInit {
     this.pVenta.nativeElement.value = articulo.unitario;
     this.pCompra.nativeElement.value = articulo.impreso_comanda;
     this.detalleSelect = articulo;
+
+    let proveedorN: ProveedorModel = this.proveedores.find(provee => provee.proveedor_id == articulo.proveedor_id);
+    let nombreProveedor = proveedorN.nombre + ' ' + proveedorN.apellidos + ' - ' + proveedorN.documento;
+    this.procedenciaC.nativeElement.value = articulo.procedencia_producto_id;
+    this.proveedorPV.nativeElement.value = nombreProveedor;
+
     this.calcularTOtal();
     $('#exampleModal').modal('show');
   }
@@ -2037,6 +2086,10 @@ export class GestionOrdenComponent implements OnInit {
     if (element.id == "hojaVidaArticulo") {
       this.hojaVidaArticuloModal.nativeElement.click();
     }
+    if (element.id == "trabajosExternos") {
+      this.trabajosExternosModal.nativeElement.click();
+    }
+    
   }
 
   asignarValoresFactura(documento_id: string) {
@@ -2127,6 +2180,10 @@ export class GestionOrdenComponent implements OnInit {
         if (this.activaciones[e].activacion_id == this.ACTIVAR_REABRIR_ORDEN) {
           console.log("reabir orden activo");
           this.reabirOrdenActivo = true;
+        }
+        if (this.activaciones[e].activacion_id == this.CANTIDADES_NEGATIVAS) {
+          console.log("facturar cantidades negativas activo ");
+          this.cantidadesNegativasActivo = true;
         }
       }
     });
@@ -2221,5 +2278,20 @@ export class GestionOrdenComponent implements OnInit {
       this.usuarios = res;
     });
   }
+
+  getProcedencias() {
+    this.productoService.getProcedencias().subscribe(res => {
+      this.procedencias = res;
+      console.log(this.procedencias);
+    });
+  }
+
+  getProveedores(empresaId: number) {
+    this.proveedorService.getProveedoresByEmpresa(empresaId.toString()).subscribe(res => {
+      this.proveedores = res;
+      console.log("lista de proveedores cargados: " + this.proveedores.length);
+    });
+  }
+
 
 }

@@ -35,6 +35,7 @@ import { CarteraClientesComponent } from './components/cartera-clientes/cartera-
 import { ControlInventarioComponent } from './components/control-inventario/control-inventario.component';
 import { CoteroComponent } from './components/cotero/cotero.component';
 import { ReporteProductosComponent } from './components/reporte-productos/reporte-productos.component';
+import { TrabajosExternosComponent } from './components/trabajos-externos/trabajos-externos.component';
 
 const routes: Routes = [
    { path: 'login', component: LoginComponent },
@@ -64,6 +65,7 @@ const routes: Routes = [
    { path: 'liberarCuadre', component: LiberarCuadreComponent },
    { path: 'cuentasContables', component: CuentasContablesComponent },
    { path: 'bonos', component: BonosComponent },
+   { path: 'trabajosExternos', component: TrabajosExternosComponent },
    { path: 'kardex', component: KardexComponent },
    { path: 'requerimiento', component: RequerimientoComponent},
    { path: 'traslado', component: TrasladoComponent},

@@ -35,5 +35,9 @@ export class DocumentoDetalleService {
   getKardex(fechaInicial,fechaFinal,productoId:string,nombreParcial:string, empresaId:number) {
     return this.http.get<any[]>(this.server_api + '/documentoDetalle/getKardex?fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&productoId="+productoId+"&nombreParcial="+nombreParcial+"&empresaId="+empresaId);
   }
+
+  getDetalleExterno(proveedor_id,fechaInicial,fechaFinal,procedencia_producto_id,documento_id) {
+    return this.http.get<DocumentoDetalleModel[]>(this.server_api + '/documentoDetalle/getDetalleExterno?proveedor_id='+proveedor_id+ '&fechaInicial=' + fechaInicial + '&fechaFinal=' + fechaFinal+"&procedencia_producto_id="+procedencia_producto_id+"&documento_id="+documento_id);
+  }
   
 }

@@ -3,6 +3,8 @@ export class DocumentoDetalleModel {
     public cotero_id:number;
     public documento_id:string;
     public producto_id:number;
+    public procedencia_producto_id:number;
+    public proveedor_id:number;
     public fecha_registro:Date;
     public estado:number;
     public parcial:number;
@@ -21,11 +23,14 @@ export class DocumentoDetalleModel {
     public saldo:number;
     
     
+    
     constructor(){
        this.documento_detalle_id=null;
        this.documento_id=null;
        this.producto_id=null; 
        this.cotero_id=null;
+       this.proveedor_id=null;
+       this.procedencia_producto_id=null;
        this.fecha_registro=new Date;
        this.estado=0;
        this.parcial=0;
