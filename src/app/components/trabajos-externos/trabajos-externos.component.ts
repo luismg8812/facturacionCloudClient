@@ -37,6 +37,24 @@ export class TrabajosExternosComponent implements OnInit {
     });
   }
 
+  exportTableToExcel() {
+    /*let filename = "reporte_cartera";
+    var dataType = 'application/vnd.ms-excel';
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push("fecha registro;Cliente;N. interno;Consecutivo DIAN;Valor Factura;Valor Credito;Saldo\n");
+    for (let p of this.cartera) {
+      texto.push(p.fecha_registro + ";" + this.nombreProveedorFun( p.proveedor_id) + ";" + p.documento_id + ";" + p.consecutivo_dian + ";" + p.total + ";" + p.valor + ";" + p.saldo+'\n');
+    }
+    // Specify file name
+    filename = filename ? filename + '.csv' : 'reporte_cartera.csv';
+    var blob = new Blob(texto, {
+      type: dataType
+    });
+    this.descargarArchivo(blob, filename)
+*/
+  }
+
   nombreProveedorFun(id) {
 
     let cliente = this.proveedores.find(cliente => cliente.proveedor_id == id);
