@@ -94,7 +94,7 @@
             <td>{{bono.placa}}</td>
             <td>{{bono.observacion}}</td>
             <td>{{bono.bono_id}}</td>
-            <td>{{bono.estado}}</td>
+            <td>{{bono.estado==1?'Consumido':'sin consumir'}}</td>
             <td>{{bono.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
             <td>{{bono.fecha_uso | date: 'dd/MM/yyyy, h:mm a'}}</td>
             <td>${{formatearNumber(bono.total)}}</td>

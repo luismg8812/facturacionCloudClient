@@ -74,6 +74,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
   readonly TIPO_IMPRESION_PDF50MM: number = 5;
+  readonly TIPO_IMPRESION_PDF80MM: number = 4;
 
   readonly INVOICE_SIN_ENVIAR: number = 1;
   readonly NOTA_CREDITO: number = 12;
@@ -1518,6 +1519,9 @@ export class GestionOrdenComponent implements OnInit {
         //case "TXTCARTA":
         //  this.descargarArchivo(this.impresionService.imprimirFacturaTxtCarta(this.factura, this.configuracion), tituloDocumento + '.txt');
         //  break;
+        case this.TIPO_IMPRESION_PDF80MM:
+          this.impresionService.imprimirFacturaPdf80(this.factura, this.configuracion, false);
+          break;
         case this.TIPO_IMPRESION_PDFCARTA:
           this.impresionService.imprimirFacturaPDFCarta(this.factura, this.configuracion, false);
           break;
