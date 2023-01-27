@@ -10,11 +10,13 @@ export class BonoVOModel {
     public bono:BonoModel;
     public placa:string;
     public linea:string;
+    public tipo:string;
    
     constructor(){
         this.bono=new BonoModel();
         this.placa="";
         this.linea="";
+        this.tipo="";
     }
 }
 

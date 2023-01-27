@@ -344,8 +344,12 @@ export class ImpresionService {
     texto.push('\n');
     texto.push("BONO: " + factura.bono.bono.bono_id + "\n");//consecutivo
     texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toLocaleString(), 19) + "\n");//fecha
-    texto.push("CAJERO: " + factura.documento.usuario_id + " " + factura.nombreUsuario + "\n");//fecha
+    texto.push("USUARIO: " + factura.documento.usuario_id + " " + factura.nombreUsuario + "\n");//fecha
     texto.push("LINEA: " + factura.bono.linea + '\n');
+    texto.push("TIPO: " + factura.bono.tipo + '\n');
+    texto.push("AUTORIZADO POR:_______________________ "  + '\n');
+    texto.push("CC:___________________________________ "  + '\n');
+    texto.push("ORDEN N°: _______"  + '\n');
     if (factura.cliente != undefined) {
       texto.push("CLIENTE: " + factura.cliente.nombre + '\n');
       texto.push("NIT/CC: " + factura.cliente.documento + '\n');

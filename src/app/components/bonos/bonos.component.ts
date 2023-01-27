@@ -111,6 +111,7 @@ export class BonosComponent implements OnInit {
     let vehitemp: VehiculoModel = this.vehiculosEmpresa.find(t => t.vehiculo_id == this.bonoSelect.vehiculo_id);
     vo.placa = vehitemp.placa;
     vo.linea = vehitemp.linea_vehiculo
+    vo.tipo= this.tipoBonoList.find(t => t.tipo_bono_id == this.bonoSelect.tipo_bono_id).nombre;
     this.factura.bono = vo;
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = this.empresa;
