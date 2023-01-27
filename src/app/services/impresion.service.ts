@@ -361,13 +361,14 @@ export class ImpresionService {
     texto.push('DESCRIPCIÓN                        \n');
     texto.push('----------------------------------------\n');
     texto.push(factura.bono.bono.observacion + '\n');
-    let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.bono.bono.total).replace("COP", ""), 10);
+    let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.bono.bono.total).replace("COP", ""), 15);
     texto.push("TOTAL: $" + totalProducto + '\n');
     texto.push('----------------------------------------\n');
     texto.push(this.calculosService.centrarDescripcion("*****GRACIAS POR SU COMPRA*****", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("Software desarrollado por:", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("effectivesoftware.com.co", tamanoMax) + '\n');
     texto.push(this.calculosService.centrarDescripcion("info@effectivesoftware.com.co", tamanoMax) + '\n');
+    texto.push('\n');
     texto.push('\n');
     texto.push('\n');
     texto.push('\n');
