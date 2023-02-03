@@ -373,6 +373,8 @@ export class ImpresionService {
     texto.push('\n');
     texto.push('\n');
     texto.push('\n');
+    texto.push('\n');
+    texto.push('\n');
     return new Blob(texto, {
       type: 'text/plain'
     });

@@ -1265,7 +1265,6 @@ export class MovimientoMesComponent implements OnInit {
   }
 
   unitarioEnter(element) {
-
     if (isNaN(element.value)) {
       console.log("no es numérico:" + element.value);
       return;
@@ -1275,15 +1274,32 @@ export class MovimientoMesComponent implements OnInit {
     }
     this.unitarioVentaPV.nativeElement.focus();
     this.unitarioVentaPV.nativeElement.select();
-    let anterior: DocumentoDetalleModel = this.productos[0];
+    let borar: DocumentoDetalleModel = this.productos[0];
+    let anterior: DocumentoDetalleModel = new DocumentoDetalleModel();
+    anterior.unitario = this.productos[0].unitario;
     if (anterior.unitario == element.value) {
       return;
     }
-
+    anterior.cantidad=this.productos[0].cantidad;
+    anterior.costo_producto = this.productos[0].costo_producto;
+    anterior.cotero_id=this.productos[0].cotero_id;
+    anterior.descripcion=this.productos[0].descripcion;
+    anterior.documento_id=this.productos[0].documento_id;
+    anterior.estado=this.productos[0].estado;
+    anterior.fecha_registro = this.productos[0].fecha_registro;
+    anterior.impreso_comanda=this.productos[0].impreso_comanda;
+    anterior.impuesto_producto = this.productos[0].impuesto_producto;
+    anterior.nombre_producto=this.productos[0].nombre_producto;
+    anterior.parcial=this.productos[0].parcial;
+    anterior.peso_cotero = this.productos[0].peso_cotero;
+    anterior.peso_producto=this.productos[0].peso_producto;
+    anterior.producto_id=this.productos[0].producto_id;
+    anterior.saldo=this.productos[0].saldo;
+    anterior.unitarioAntesIva=this.productos[0].unitarioAntesIva;
+    anterior.varios=this.productos[0].varios;
     this.productos.splice(0, 1);
     anterior.estado = 0;
-    this.updateCantidad(anterior, 'resta');
-    this.documentoDetalleService.updateDocumentoDetalle(anterior).subscribe(res => {
+    this.documentoDetalleService.updateDocumentoDetalle(borar).subscribe(res => {
       if (res.code == 200) {
         this.asignarDocumentoDetalle(anterior.cantidad, element.value);
         console.log("cambio de precio:" + element.value);

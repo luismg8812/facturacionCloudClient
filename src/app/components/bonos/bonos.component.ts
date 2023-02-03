@@ -157,8 +157,14 @@ export class BonosComponent implements OnInit {
 
   editarBono(bono) {
     this.bonoService.getBonoById(bono.bono_id).subscribe(res => {
+      console.log(res);
       this.bonoNew = res[0];
-
+       this.placaCrearBono.nativeElement.value = bono.placa;
+      // this.lineaCrearBono.nativeElement.value = this.tipoBonoList.find(t => t.tipo_bono_id == bono.tipo_bono_id).nombre;
+       //this.tipoCrearBono.nativeElement.value = this.tipoBonoList.find(t => t.tipo_bono_id == bono.tipo_bono_id).nombre;
+       
+       this.totalCrearBono.nativeElement.value = bono.total;
+       this.observacionCrearBono.nativeElement.value = bono.observacion;
     });
   }
 
@@ -191,6 +197,10 @@ export class BonosComponent implements OnInit {
     }
     if (totalCrearBono == "") {
       mensageError += "Total \n";
+      valido = false;
+    }
+    if (tipoCrearBono == "") {
+      mensageError += "Tipo \n";
       valido = false;
     }
     if (valido == false) {

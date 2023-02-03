@@ -978,10 +978,13 @@ export class GestionOrdenComponent implements OnInit {
       alert("El valor venta del repuesto es obligatorio");
       return;
     }
-    if ((Number(this.productoIdSelect.cantidad)-Number(this.cantidad.nativeElement.value) < 0) && !this.cantidadesNegativasActivo) {
-      alert("No está habilitado para vender productos con cantidades negativas");
-      return;
+    if (this.productoFijoActivo) {
+      if ((Number(this.productoIdSelect.cantidad)-Number(this.cantidad.nativeElement.value) < 0) && !this.cantidadesNegativasActivo) {
+        alert("No está habilitado para vender productos con cantidades negativas");
+        return;
+      }
     }
+    
 
     if (this.detalleSelect.documento_detalle_id == null) {
 
@@ -1010,7 +1013,10 @@ export class GestionOrdenComponent implements OnInit {
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         docDetalle.url_foto = this.cargarFotoRepuesto(docDetalle);
       }
-      this.updateCantidad(docDetalle, this.cantidad.nativeElement.value);
+      if (this.productoFijoActivo) {
+        this.updateCantidad(docDetalle, this.cantidad.nativeElement.value);
+      }
+      
       docDetalle.cantidad = this.cantidad.nativeElement.value;
       this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
         if (res.code == 200) {
