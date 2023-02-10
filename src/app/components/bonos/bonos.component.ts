@@ -14,8 +14,13 @@ import { ImpresionService } from 'src/app/services/impresion.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { BonoVOModel } from 'src/app/vo/bonoVO.model';
 import { FacturaModel } from 'src/app/vo/factura.model';
+import { Router } from '@angular/router';
 declare var jquery: any;
 declare var $: any;
+
+$("#abonoModa").on('hidden.bs.modal', function(){
+  alert("Hello World!");
+});
 
 @Component({
   selector: 'app-bonos',
@@ -48,8 +53,11 @@ export class BonosComponent implements OnInit {
   @ViewChild("totalCrearBono") totalCrearBono: ElementRef;
   @ViewChild("observacionCrearBono") observacionCrearBono: ElementRef;
   @ViewChild("downloadZipLink") downloadZipLink: ElementRef;
+ 
+  
 
   constructor(public bonoService: BonoService,
+    private router: Router,
     public calculosService: CalculosService,
     public usuarioService: UsuarioService,
     public empresaService: EmpresaService,
@@ -129,8 +137,16 @@ export class BonosComponent implements OnInit {
       default:
         alert("El tipo de impresion seleccionado no se encuetra configurado para su empresa");
         return;
-    }
+    } 
     $('#imprimirBonoModal').modal('hide');
+    
+    $("#abonoModa").on('hidden.bs.modal', function(){
+      //this.router.navigate(['/login']);
+      //this.router.navigate(['/menu']);
+      alert("Por favor recargue la paguina para ver los cambios");
+      
+    });
+    
   }
 
 
@@ -181,6 +197,17 @@ export class BonosComponent implements OnInit {
     });
   }
 
+  precrearBono(){
+    let orden = localStorage.getItem("ordenId");
+    if(orden== undefined){
+      alert("Debe crear una nueva orden primero");
+      return;
+    }
+    $('#crearBonoModal').modal('show');  
+    this.bonoNew.documento_id=Number(orden);
+  }
+
+
   guardarBono() {
     let placa = this.placaCrearBono.nativeElement.value;
     let lineaCrearBono = this.lineaCrearBono.nativeElement.value;
@@ -214,6 +241,7 @@ export class BonosComponent implements OnInit {
     bono.observacion = observacionCrearBono;
     bono.usuario_id = this.usuarioId;
     bono.tipo_bono_id = tipoCrearBono;
+    bono.documento_id = Number(localStorage.getItem("ordenId"));
     bono.total = totalCrearBono;
     let vehiculo = this.vehiculosEmpresa.find(v => v.placa.toUpperCase() == placa.toUpperCase());
     if (vehiculo == undefined) {
@@ -253,10 +281,8 @@ export class BonosComponent implements OnInit {
     let fin: string = fechaFin.value;
     console.log(fechaIni.value);
     if (ini != '' && fin != '') {
-
       ini = this.calculosService.fechaIniBusqueda(fechaIni.value);
       fin = this.calculosService.fechaFinBusqueda(fechaFin.value);
-
     } else {
       let date: Date = new Date();
       date.setDate(1);
@@ -268,7 +294,7 @@ export class BonosComponent implements OnInit {
       let cliente = this.clientes.find(cliente => (cliente.nombre + " " + cliente.apellidos + " - " + cliente.documento) == client.value);
       idCliente = cliente.cliente_id.toString();
     }
-    this.bonoService.getBonosByEmpresa(placa.value, idCliente, ini, fin, bono.value, estado.value, this.empresaId).subscribe(res => {
+    this.bonoService.getBonosByEmpresa(placa.value, idCliente, ini, fin, bono.value, estado.value, this.empresaId,"").subscribe(res => {
       this.bonosList = res;
     });
   }

@@ -13,10 +13,10 @@ export class BonoService {
   public server_api =this.parametros.serverUrl;
   constructor(public http:HttpClient) { }
 
-  public getBonosByEmpresa(placa:string,cliente,fechaIni,fechaFin,bono:string,estado:string,empresaId:number){
+  public getBonosByEmpresa(placa:string,cliente,fechaIni,fechaFin,bono:string,estado:string,empresaId:number,documentoId:string){
 
     return this.http.get<any>(this.server_api+'/bono/getBonosByEmpresa?placa='+placa+'&clienteId='+cliente
-    +'&bonoId='+bono +'&estado='+estado+'&fechaIni='+fechaIni+'&fechaFin='+fechaFin+'&empresaId='+empresaId);
+    +'&bonoId='+bono +'&estado='+estado+'&fechaIni='+fechaIni+'&fechaFin='+fechaFin+'&empresaId='+empresaId+'&documentoId='+documentoId);
   }
 
   public getTiposBono(){

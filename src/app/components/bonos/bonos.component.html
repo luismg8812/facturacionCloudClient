@@ -47,15 +47,12 @@
         <div class="form-group col-md-6 col-sm-2">
           <button type="button" class="btn btn-primary mr-2"
             (click)="buscarBonos(placaBonoBuscar,clienteBuscarBonoPV,fechaIniBono,fechaFinBono,BonoBuscar,estadoBuscar)">Buscar</button>
-
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#crearBonoModal">
+          <button type="button" class="btn btn-primary"  data-toggle="modal"  (click)="precrearBono()">
             Crear bono
           </button>
-
           <button type="button" class="btn btn-primary" (click)="cerrar()">
             Salir
           </button>
-
         </div>
       </div>
 
@@ -172,11 +169,14 @@
         </div>
         <div class="modal-body">
           <div class="form-row">
-            <div class="form-group col-md-6 col-sm-6">
+            <div class="form-group col-md-4 col-sm-6">
               <b>Fecha Creación:</b> {{bonoNew.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <b>Usuario Que crea:</b> {{nombreUsuario()}}
+            </div>
+            <div class="form-group col-md-4">
+              <b>Orden: </b> {{bonoNew.documento_id}}
             </div>
           </div>
           <div class="form-row">

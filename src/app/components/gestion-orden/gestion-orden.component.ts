@@ -53,6 +53,10 @@ import { ProveedorModel } from 'src/app/model/proveedor.model';
 declare var jquery: any;
 declare var $: any;
 
+$("#abonoModa").on('hidden.bs.modal', function(){
+  alert("Hello World!");
+});
+
 @Component({
   selector: 'app-gestion-orden',
   templateUrl: './gestion-orden.component.html',
@@ -125,6 +129,7 @@ export class GestionOrdenComponent implements OnInit {
   public usuarios: Array<UsuarioModel>;
   public procedencias: Array<ProcedeciaProductoModel>;
   public proveedores: Array<ProveedorModel>;
+  public bonosList: Array<any>;
 
 
   //factura
@@ -186,6 +191,7 @@ export class GestionOrdenComponent implements OnInit {
     public marcasService: MarcasService,
     public cierreService: CierreService,
     public documentoDetalleService: DocumentoDetalleService,
+    public bonoService:BonoService,
     public afStorage: AngularFireStorage,
     public calculosService: CalculosService,
     public documentoService: DocumentoService,
@@ -197,6 +203,7 @@ export class GestionOrdenComponent implements OnInit {
   ngOnInit() {
     this.usuarioId = Number(localStorage.getItem("usuario_id"));
     this.empresaId = Number(localStorage.getItem("empresa_id"));
+    localStorage.removeItem('ordenId');
     this.buscarUsuarios();
     this.getclientes(this.empresaId);
     this.marcas();
@@ -466,6 +473,7 @@ export class GestionOrdenComponent implements OnInit {
     this.documentoService.saveDocumento(this.documento).subscribe(res => {
       if (res.code == 200) {
         this.documento.documento_id = res.documento_id;
+        localStorage.setItem("ordenId", res.documento_id);
       } else {
         alert("error creando documento, por favor inicie nuevamente la creación del documento, si persiste consulte a su proveedor");
         return;
@@ -1482,8 +1490,15 @@ export class GestionOrdenComponent implements OnInit {
       } else {
         this.itemsFactura2 = [];
       }
-
     });
+  }
+
+  cambioProcedencia(procedencia){
+    if(procedencia.value.toString()=='2'){
+      this.productoFijoActivo=false;
+    }else{
+      this.productoFijoActivo=true;
+    }
   }
 
   borrarItem(borrar) {
@@ -1562,7 +1577,7 @@ export class GestionOrdenComponent implements OnInit {
     for (let d of this.detallesList) {
       this.valorTotal = this.valorTotal + Number(d.parcial);
     }
-  }
+  } 
 
   cargarFotoRepuesto(detalle: DocumentoDetalleModel) {
     let parametros: ParametrosModel = new ParametrosModel;
@@ -1674,6 +1689,7 @@ export class GestionOrdenComponent implements OnInit {
   limpiar() {
     this.documento = new DocumentoModel();
     this.detallesList = [];
+    this.bonosList = [];
     this.placa.nativeElement.value = "";
     this.clientePV.nativeElement.value = "";
     this.descripcionCliente.nativeElement.value = "";
@@ -1906,6 +1922,8 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
+ 
+
   duplicarValores(documento_id: DocumentoModel) {
     console.log("nueva orden");
     this.limpiar();
@@ -2020,6 +2038,7 @@ export class GestionOrdenComponent implements OnInit {
 
   asignarValores(documento_id: string) {
     if (documento_id != '') {
+      localStorage.setItem("ordenId", documento_id);
       this.placa.nativeElement.value = this.documento.detalle_entrada;
       let cliente = this.clientes.find(cliente => cliente.cliente_id == this.documento.cliente_id);
       let nombre = "";
@@ -2076,6 +2095,10 @@ export class GestionOrdenComponent implements OnInit {
         this.modelo.nativeElement.value = "";
         this.modeloList = [];
       }
+      this.bonoService.getBonosByEmpresa("", "", "", "", "", "", this.empresaId,documento_id).subscribe(res => {
+        console.log(res);
+        this.bonosList = res;
+      });
       this.documentoDetalleService.getDocumentoDetalleByDocumento(documento_id).subscribe(res => {
         this.detallesList = res;
         this.calcularTOtal();

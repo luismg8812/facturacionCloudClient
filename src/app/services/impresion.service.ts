@@ -344,21 +344,21 @@ export class ImpresionService {
     texto.push('\n');
     texto.push("BONO: " + factura.bono.bono.bono_id + "\n");//consecutivo
     texto.push("FECHA: " + this.calculosService.cortarDescripcion(factura.documento.fecha_registro.toLocaleString(), 19) + "\n");//fecha
-    texto.push("USUARIO: " + factura.documento.usuario_id + " " + factura.nombreUsuario + "\n");//fecha
+    texto.push("USUARIO: "  + factura.nombreUsuario + "\n");//fecha
     texto.push("LINEA: " + factura.bono.linea + '\n');
     texto.push("TIPO: " + factura.bono.tipo + '\n');
     texto.push("AUTORIZADO POR:_______________________ "  + '\n');
     texto.push("CC:___________________________________ "  + '\n');
-    texto.push("ORDEN N°: _______"  + '\n');
+    texto.push("ORDEN N°: "+factura.bono.bono.documento_id  + '\n');
     if (factura.cliente != undefined) {
       texto.push("CLIENTE: " + factura.cliente.nombre + '\n');
       texto.push("NIT/CC: " + factura.cliente.documento + '\n');
       texto.push("TELEFONO: " + factura.cliente.fijo + '\n');
     }
-    texto.push("VEHÍCULO: " + factura.bono.placa + '\n');
+    texto.push("VEHICULO: " + factura.bono.placa + '\n');
     texto.push(factura.documento.descripcion_trabajador + '\n');
     texto.push('----------------------------------------\n');
-    texto.push('DESCRIPCIÓN                        \n');
+    texto.push('DESCRIPCION                        \n');
     texto.push('----------------------------------------\n');
     texto.push(factura.bono.bono.observacion + '\n');
     let totalProducto: string = this.calculosService.cortarCantidades(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(factura.bono.bono.total).replace("COP", ""), 15);

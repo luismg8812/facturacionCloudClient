@@ -168,8 +168,53 @@
           <h5>Total Orden: ${{formatearNumber(documento.total)}}</h5>
         </div>
       </div>
-      <br />
 
+      <br />
+      BONOS
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Opciones</th>
+            <th scope="col">Placa</th>
+            <th scope="col">Observación</th>
+            <th scope="col"># Bono</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Fecha Creación</th>
+            <th scope="col">Fecha uso</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bono of bonosList">
+            <th scope="row">
+              <!-- <button type="button" (click)="editarBono(bono)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                data-target="#crearBonoModal" [disabled]="bono.estado=='1'">
+                Editar
+              </button>
+              <button type="button" (click)="imprimirDetalleBono(bono)" class="btn btn-secondary btn-sm"
+                data-target="#imprimirBonoModal" data-toggle="modal" [disabled]="bono.estado=='1'">
+                Imprimir
+              </button>
+              
+              <button type="button" (click)="preConsumirBono(bono)" class="btn btn-secondary btn-sm" data-toggle="modal"
+                data-target="#consumirModal" [disabled]="bono.estado=='1'">
+                Consumir
+              </button> -->
+            </th>
+            <td>{{bono.placa}}</td>
+            <td>{{bono.observacion}}</td>
+            <td>{{bono.bono_id}}</td>
+            <td>{{bono.estado==1?'Consumido':'sin consumir'}}</td>
+            <td>{{bono.fecha_registro | date: 'dd/MM/yyyy, h:mm a'}}</td>
+            <td>{{bono.fecha_uso | date: 'dd/MM/yyyy, h:mm a'}}</td>
+            <td>${{formatearNumber(bono.total)}}</td>
+
+          </tr>
+        </tbody>
+      </table>
+
+      <br />
+      REPUESTOS
       <table class="table table-hover">
         <thead>
           <tr>
@@ -217,6 +262,21 @@
             </div>
             <div class="modal-body">
               <div class="form-row">
+                <div class="form-group col-md-6 col-sm-2">
+                  Procedencia
+                  <select id="procedenciaC" name="procedenciaC" #procedenciaC class="form-control"
+                    (change)="cambioProcedencia(procedenciaC)">
+                    <option value=""> Seleccione</option>
+                    <option *ngFor="let procedencia of procedencias" [value]="procedencia.procedencia_producto_id">
+                      {{procedencia.nombre}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 col-sm-2">
+
+                </div>
+              </div>
+              <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2" *ngIf="productoFijoActivo">
                   Artículo
                   <input list="articulos" name="articuloC" [value]="articuloPV" #articuloC placeholder="Articulo"
@@ -251,32 +311,27 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2">
-                  Procedencia
-                  <select id="procedenciaC" name="procedenciaC" #procedenciaC class="form-control">
-                    <option value=""> Seleccione</option>
-                    <option *ngFor="let procedencia of procedencias" [value]="procedencia.procedencia_producto_id">
-                      {{procedencia.nombre}}
-                    </option>  
-                  </select>
-                </div>
-                <div class="form-group col-md-6 col-sm-2" >
                   Proveedor
-                  <input list="proveedoresList" name="proveedorPV" #proveedorPV placeholder="Proveedor" class="form-control"
-                    id="proveedor">
-                  <datalist id="proveedoresList">  
+                  <input list="proveedoresList" name="proveedorPV" #proveedorPV placeholder="Proveedor"
+                    class="form-control" id="proveedor">
+                  <datalist id="proveedoresList">
                     <option *ngFor="let prov of proveedores"
                       [value]=" prov.nombre+' '+prov.apellidos+' - '+prov.documento">
                       Cod. interno: {{prov.proveedor_id}}
                     </option>
                   </datalist>
                 </div>
+                <div class="form-group col-md-6 col-sm-2">
+                  Foto repuesto
+                  <input type="file" class="form-control-file" capture="camera" #fotoRepuesto id="fotoRepuesto"
+                    aria-describedby="fileHelp">
+                </div>
               </div>
               <br />
               <div class="form-row">
 
                 <div class="form-group col-md-12 col-sm-1">
-                  <input type="file" class="form-control-file" capture="camera" #fotoRepuesto id="fotoRepuesto"
-                    aria-describedby="fileHelp">
+
                 </div>
               </div>
               <div class="form-row">
@@ -307,8 +362,8 @@
         hojaVidaArticuloModal
       </button>
       <!-- Button trigger modal .d-none se repete esta parte para todos las pantallas de opciones de punto de venta dia -->
-      <button type="button" class="btn btn-primary d-none" id="trabajosExternosModal" #trabajosExternosModal data-toggle="modal"
-        data-target="#trabajosExternosModa">
+      <button type="button" class="btn btn-primary d-none" id="trabajosExternosModal" #trabajosExternosModal
+        data-toggle="modal" data-target="#trabajosExternosModa">
         Launch demo modal
       </button>
 
@@ -326,8 +381,8 @@
       </div>
 
       <!-- Modal trabajos externos -->
-      <div class="modal fade" id="trabajosExternosModa" tabindex="-1" role="dialog" aria-labelledby="trabajosExternosModalLabel"
-        aria-hidden="true">
+      <div class="modal fade" id="trabajosExternosModa" tabindex="-1" role="dialog"
+        aria-labelledby="trabajosExternosModalLabel" aria-hidden="true">
         <app-trabajos-externos></app-trabajos-externos>
       </div>
 
@@ -440,7 +495,11 @@
                 (click)="buscarOrdenes(placaBuscar,clienteBuscarPV,fechaIni,fechaFin,usuariosPV)">Buscar</button>
               <button type="button" class="btn btn-primary ml-2"
                 (click)="buscarOrdenesHoy(placaBuscar,clienteBuscarPV)">Buscar de Hoy</button>
+
+
+
               <br />
+
               <table class="table table-hover">
                 <thead>
                   <tr>
