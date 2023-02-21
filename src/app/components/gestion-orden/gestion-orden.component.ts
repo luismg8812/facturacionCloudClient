@@ -182,6 +182,7 @@ export class GestionOrdenComponent implements OnInit {
   @ViewChild("abonoModal") abonoModal: ElementRef;
   @ViewChild("hojaVidaArticuloModal") hojaVidaArticuloModal: ElementRef;
   @ViewChild("trabajosExternosModal") trabajosExternosModal: ElementRef;
+  @ViewChild("cuadreCajaModal") cuadreCajaModal: ElementRef;
 
 
   constructor(public productoService: ProductoService,
@@ -2121,6 +2122,9 @@ export class GestionOrdenComponent implements OnInit {
     }
     if (element.id == "trabajosExternos") {
       this.trabajosExternosModal.nativeElement.click();
+    }
+    if (element.id == "cuadreCajaPV") {
+      this.cuadreCajaModal.nativeElement.click();
     }
     
   }
