@@ -53,7 +53,7 @@ import { ProveedorModel } from 'src/app/model/proveedor.model';
 declare var jquery: any;
 declare var $: any;
 
-$("#abonoModa").on('hidden.bs.modal', function(){
+$("#abonoModa").on('hidden.bs.modal', function () {
   alert("Hello World!");
 });
 
@@ -74,6 +74,7 @@ export class GestionOrdenComponent implements OnInit {
   readonly TIPO_DOCUMENTO_COTIZACION: number = 4;
   readonly TIPO_DOCUMENTO_ORDEN_TRABAJO: number = 11;
   readonly TIPO_PAGO_EFECTIVO: number = 1;
+  readonly TIPO_PAGO_CREDITO: number = 2;
   readonly TIPO_IMPRESION_TXT80MM: number = 1;
   readonly TIPO_IMPRESION_TXT50MM: number = 2;
   readonly TIPO_IMPRESION_PDFCARTA: number = 3;
@@ -149,6 +150,9 @@ export class GestionOrdenComponent implements OnInit {
   public informeDiario: InformeDiarioModel;
   public fechaI: string = "";
   public fechaF: string = "";
+  public saldoTipoPago: number = 0;
+  public tiposPagosDocumento: TipoPagoDocumentoModel[] = [];
+
 
   public documentoSelect: DocumentoModel = new DocumentoModel();
 
@@ -192,7 +196,7 @@ export class GestionOrdenComponent implements OnInit {
     public marcasService: MarcasService,
     public cierreService: CierreService,
     public documentoDetalleService: DocumentoDetalleService,
-    public bonoService:BonoService,
+    public bonoService: BonoService,
     public afStorage: AngularFireStorage,
     public calculosService: CalculosService,
     public documentoService: DocumentoService,
@@ -805,6 +809,63 @@ export class GestionOrdenComponent implements OnInit {
     this.asignarValores(this.documento.documento_id);
   }
 
+  tipoPagoEnter(element, valor) {
+
+    console.log(element.value);
+    let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
+    let tipoPago = this.tipoPagosAll.find(usua => usua.nombre == element.value);
+    if (tipoPago == undefined) {
+      alert("Tipo de pago no valido")
+      return;
+    }
+    if (this.documentoFactura.cliente_id == 1 && tipoPago.tipo_pago_id == this.TIPO_PAGO_CREDITO) {
+      alert("No existen los creditos para el cliente varios");
+      return;
+    }
+    for (let a of this.tiposPagosDocumento) {
+      if (a.tipo_pago_id == tipoPago.tipo_pago_id) {
+        alert("El tipo de pago ya está en la lista");
+        return;
+      }
+    }
+    if (valor.value <= 0 || valor.value == "" || isNaN(valor.value)) {
+      alert("cantidad invalida");
+      return;
+    }
+    tipoPagoDocumento.nombre = tipoPago.nombre;
+    tipoPagoDocumento.tipo_pago_id = tipoPago.tipo_pago_id;
+    tipoPagoDocumento.valor = valor.value;
+    tipoPagoDocumento.documento_id = this.documentoFactura.documento_id;
+    tipoPagoDocumento.fecha_registro = new Date;
+
+    this.tiposPagosDocumento.unshift(tipoPagoDocumento);
+    let suma: number = 0;
+    if (tipoPagoDocumento.tipo_pago_id != this.TIPO_PAGO_CREDITO) {
+      this.documentoFactura.saldo = Number(this.documentoFactura.saldo) - Number(element.value);
+    }
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
+    }
+    this.saldoTipoPago = Number(this.documentoFactura.total) - Number(suma);
+    this.documentoFactura.cambio = Number(suma) - Number(this.documentoFactura.total);
+  }
+
+  eliminarTipoPago(id: TipoPagoDocumentoModel) {
+    const index = this.tiposPagosDocumento.indexOf(id, 0);
+    if (index > -1) {
+      this.tiposPagosDocumento.splice(index, 1);
+    }
+    let suma: number = 0;
+    if (id.tipo_pago_id != this.TIPO_PAGO_CREDITO) {
+      this.documentoFactura.saldo = Number(this.documentoFactura.saldo) + Number(id.valor);
+    }
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
+    }
+    this.saldoTipoPago = Number(this.documentoFactura.total) - suma;
+    this.documentoFactura.cambio = Number(suma) - Number(this.documentoFactura.total);
+  }
+
   teclaAnteriorSiguienteFactura(apcion: string) {
     if (this.facturasList.length == 0) {
       let tipoDocumentoId: Array<number> = [this.TIPO_DOCUMENTO_FACTURA];
@@ -988,12 +1049,12 @@ export class GestionOrdenComponent implements OnInit {
       return;
     }
     if (this.productoFijoActivo) {
-      if ((Number(this.productoIdSelect.cantidad)-Number(this.cantidad.nativeElement.value) < 0) && !this.cantidadesNegativasActivo) {
+      if ((Number(this.productoIdSelect.cantidad) - Number(this.cantidad.nativeElement.value) < 0) && !this.cantidadesNegativasActivo) {
         alert("No está habilitado para vender productos con cantidades negativas");
         return;
       }
     }
-    
+
 
     if (this.detalleSelect.documento_detalle_id == null) {
 
@@ -1025,7 +1086,7 @@ export class GestionOrdenComponent implements OnInit {
       if (this.productoFijoActivo) {
         this.updateCantidad(docDetalle, this.cantidad.nativeElement.value);
       }
-      
+
       docDetalle.cantidad = this.cantidad.nativeElement.value;
       this.documentoDetalleService.saveDocumentoDetalle(docDetalle).subscribe(res => {
         if (res.code == 200) {
@@ -1254,7 +1315,7 @@ export class GestionOrdenComponent implements OnInit {
 
   enterContinuarImpresion(impresora1: string) {
     if (this.documentoFactura.documento_id == "") {
-      alert("El documento esta corructo, por favor vuelva a crearlo");
+      alert("Click en nueva factura, por favor vuelva a crearlo");
       return;
     }
     if (this.documentoFactura.cliente_id == null && this.clienteObligatorioActivo) {
@@ -1336,19 +1397,9 @@ export class GestionOrdenComponent implements OnInit {
 
 
   asignarTipoPago() {
-    let tiposPagosList: TipoPagoModel[] = [];
-    //si no se agrega un tipo de pago se agrega efectivo por defecto efectivo 
-    let tipoPagoDocumento: TipoPagoDocumentoModel = new TipoPagoDocumentoModel();
-    tipoPagoDocumento.documento_id = this.documentoFactura.documento_id;
-    tipoPagoDocumento.fecha_registro = new Date;
-    if (this.tipoPago.nativeElement.value != "") {
-      let tipoPago = this.tipoPagosAll.find(tp => tp.nombre == this.tipoPago.nativeElement.value);
-      tipoPagoDocumento.tipo_pago_id = tipoPago.tipo_pago_id;
-      tipoPagoDocumento.valor = this.documentoFactura.total;
-      this.documentoService.saveTipoPagoDocumento(tipoPagoDocumento).subscribe(res => {
-      });
-    } else {
-      tipoPagoDocumento.tipo_pago_id = this.TIPO_PAGO_EFECTIVO;//efectivo por defecto
+    this.factura.tipoPago = this.tiposPagosDocumento[0].nombre;
+    for (let tipo of this.tiposPagosDocumento) {
+      this.documentoService.saveTipoPagoDocumento(tipo).subscribe();
     }
   }
 
@@ -1494,11 +1545,11 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  cambioProcedencia(procedencia){
-    if(procedencia.value.toString()=='2'){
-      this.productoFijoActivo=false;
-    }else{
-      this.productoFijoActivo=true;
+  cambioProcedencia(procedencia) {
+    if (procedencia.value.toString() == '2') {
+      this.productoFijoActivo = false;
+    } else {
+      this.productoFijoActivo = true;
     }
   }
 
@@ -1528,6 +1579,14 @@ export class GestionOrdenComponent implements OnInit {
     this.factura.detalle = this.itemsFactura
     this.factura.titulo = tituloDocumento;
     this.factura.empresa = empresa;
+    let suma: number = 0;
+    for (let sum of this.tiposPagosDocumento) {
+      suma = suma + Number(sum.valor);
+    }
+
+    this.factura.pagaCon = suma;
+
+    this.factura.tiposPago = this.tiposPagosDocumento;
     this.factura.nombreUsuario = localStorage.getItem("nombreUsuario");
     this.factura.cliente = this.clientes.find(cliente => cliente.cliente_id == this.documentoFactura.cliente_id);
     for (var i = 0; i < numeroImpresiones; i++) {
@@ -1578,7 +1637,7 @@ export class GestionOrdenComponent implements OnInit {
     for (let d of this.detallesList) {
       this.valorTotal = this.valorTotal + Number(d.parcial);
     }
-  } 
+  }
 
   cargarFotoRepuesto(detalle: DocumentoDetalleModel) {
     let parametros: ParametrosModel = new ParametrosModel;
@@ -1923,7 +1982,7 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
- 
+
 
   duplicarValores(documento_id: DocumentoModel) {
     console.log("nueva orden");
@@ -2096,7 +2155,7 @@ export class GestionOrdenComponent implements OnInit {
         this.modelo.nativeElement.value = "";
         this.modeloList = [];
       }
-      this.bonoService.getBonosByEmpresa("", "", "", "", "", "", this.empresaId,documento_id).subscribe(res => {
+      this.bonoService.getBonosByEmpresa("", "", "", "", "", "", this.empresaId, documento_id).subscribe(res => {
         console.log(res);
         this.bonosList = res;
       });
@@ -2126,7 +2185,7 @@ export class GestionOrdenComponent implements OnInit {
     if (element.id == "cuadreCajaPV") {
       this.cuadreCajaModal.nativeElement.click();
     }
-    
+
   }
 
   asignarValoresFactura(documento_id: string) {
@@ -2330,5 +2389,13 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
+  nombreTipoPago(id) {
+    let tipo = this.tipoPagosAll.find(tipos => tipos.tipo_pago_id == id);
+    if (tipo == undefined) {
+      return "";
+    } else {
+      return tipo.nombre;
+    }
+  }
 
 }

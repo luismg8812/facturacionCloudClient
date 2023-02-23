@@ -1045,7 +1045,7 @@ export class VentasDiaComponent implements OnInit {
 
   enterContinuarImpresion(element) {
     if (this.document.documento_id == "") {
-      alert("El documento esta corructo, por favor vuelva a crearlo");
+      alert("Debe hacer click en crear nuevo factura");
       return;
     }
     let suma: number = 0;
@@ -1090,7 +1090,6 @@ export class VentasDiaComponent implements OnInit {
 
 
   asignarTipoPago() {
-    let tiposPagosList: TipoPagoModel[] = [];
     this.factura.tipoPago=this.tiposPagosDocumento[0].nombre;
     for (let tipo of this.tiposPagosDocumento) {
       this.documentoService.saveTipoPagoDocumento(tipo).subscribe();

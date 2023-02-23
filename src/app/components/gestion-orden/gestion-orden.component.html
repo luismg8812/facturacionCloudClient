@@ -963,23 +963,61 @@
               </button>
             </div>
             <div class="modal-body">
-
-              <div class="form-row">
-                <div class="form-group col-md-6 col-sm-6">
-                  Tipo de pago:
+              <div class="form-row ">
+                <div class="col col-ms-12 ">
+                    <h6>Total a pagar: {{formatearNumber(documentoFactura.total)}}</h6>
                 </div>
-                <div class="form-group col-md-6 col-sm-6">
+            </div>
+            <div class="form-row ">
+                <div class="col col-ms-12 ">
+                    <h6>Saldo: {{formatearNumber(saldoTipoPago )}}</h6>
+                </div>
+            </div>
+ 
+              <div class="form-row ">   
+                <div class="col col-ms-5">
+                  <h6 class="d-none" #tipoPagoLavel name="tipoPagoLavel" id="tipoPagoLavel">Tipo de Pago:
+                  </h6>
                   <select class="form-control" id="tipoPago" #tipoPago>
                     <option *ngFor="let tp of tipoPagosAll">{{tp.nombre}}</option>
-
                   </select>
                 </div>
+                <div class="col col-md-5">
+                  <h6 class="d-none" #valorTipoPagoLavel name="valorTipoPagoLavel" id="valorTipoPagoLavel">
+                    Valor
+                    pago: </h6>
+                  <input name="valorTipoPagoPV" #valorTipoPagoPV placeholder="Valor tipo Pago" class="form-control"
+                    id="valorTipoPagoPV" (keydown.enter)="enterTecla(valorTipoPagoPV)"
+                    (keydown.esc)="scapeTecla(valorTipoPagoPV)">
+                </div>
+                <div class="col col-md-2">
+                  <button type="button" class="btn btn-primary btn-sm" title="Agregar tipo de pago a la factura"  
+                    data-toggle="modal" (click)="tipoPagoEnter(tipoPago,valorTipoPagoPV)">
+                    <i class="fas fa-plus-circle"></i>   
+                  </button>
+                </div>
               </div>
+              <div class="form-row " *ngFor="let tipos of tiposPagosDocumento">
+                <div class="col col-md-4">
+                    <h6>Tipo de Pago: {{nombreTipoPago(tipos.tipo_pago_id) }} </h6>
+   
+                </div>
+                <div class="col col-md-5">
+                    <h6>Valor: {{formatearNumber(tipos.valor) }} </h6>
+                </div>
+                <div class="col col-ms-3">
+                    <button type="button" class="btn btn-outline-danger" id="{{tipos.tipo_pago_id}}" 
+                    (click)="eliminarTipoPago(tipos)">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                </div>
+            </div>
+              <br>
               <div class="form-row">
-                <div class="form-group col-md-6 col-sm-6">
+                <div class="form-group col-md-5 col-sm-5">
                   Resolución de facturación:
                 </div>
-                <div class="form-group col-md-6 col-sm-6">
+                <div class="form-group col-md-7 col-sm-7">
                   <select class="form-control" id="resolucionEmpresa" #resolucionEmpresa>
                     <option *ngFor="let tp of resolucionAll">{{tp.nombre}}</option>
 

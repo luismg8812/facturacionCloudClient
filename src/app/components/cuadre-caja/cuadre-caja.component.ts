@@ -229,6 +229,7 @@ export class CuadreCajaComponent implements OnInit {
       Number(this.cuadreCajaVo.tarjetas) +
       Number(this.cuadreCajaVo.varios) +
       Number(this.cuadreCajaVo.vales) +
+      Number(this.cuadreCajaVo.consignaciones) +
       Number(this.cuadreCajaVo.gastado) +
       Number(this.cuadreCajaVo.nomina) +
       Number(this.cuadreCajaVo.descuento) +
