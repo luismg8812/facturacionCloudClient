@@ -248,7 +248,7 @@ export class CalculosService {
 			peso = Number(peso) + Number(productos[i].peso_producto);
 			peso_cotero=Number(productos[i].peso_cotero)+Number(peso_cotero);
 			totalReal = Number(totalReal) + Number(costoPublico)-Number(valorPesoCotero);
-			costoTotal = costoTotal + costo;
+			costoTotal = Number(costoTotal) + Number(costo);
 			let temp: number = 0;
 			ivatotal = ivatotal + ((costoPublico / (1 + iva1)) * iva1);
 			// si es iva del 19 se agrega al documento junto con la base

@@ -1064,19 +1064,19 @@ export class GestionOrdenComponent implements OnInit {
         docDetalle.proveedor_id = provee.proveedor_id;
 
       }
-      let procede: ProcedeciaProductoModel = this.procedencias.find(proce => proce.procedencia_producto_id == this.procedenciaC.nativeElement.value);
+      /*let procede: ProcedeciaProductoModel = this.procedencias.find(proce => proce.procedencia_producto_id == this.procedenciaC.nativeElement.value);
       console.log(procede);
       if (procede != undefined) {
         docDetalle.procedencia_producto_id = procede.procedencia_producto_id;
-      }
+      }*/
       docDetalle.descripcion = (this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value);
       docDetalle.estado = 1;
       //this.cantidad.nativeElement.value = esto es igual a cantidad
       docDetalle.unitario = this.pVenta.nativeElement.value;
       docDetalle.parcial = Number(this.cantidad.nativeElement.value) * docDetalle.unitario;
-      docDetalle.impreso_comanda = this.pCompra.nativeElement.value;
+      docDetalle.costo_producto = this.pCompra.nativeElement.value;
       docDetalle.documento_id = this.documento.documento_id;
-
+     
       if (this.productoFijoActivo) {
         this.detalleSelect.producto_id = this.productoIdSelect.producto_id;
       }
@@ -1111,12 +1111,12 @@ export class GestionOrdenComponent implements OnInit {
         this.detalleSelect.proveedor_id = provee.proveedor_id;
 
       }
-      let procede: ProcedeciaProductoModel = this.procedencias.find(proce => proce.procedencia_producto_id == this.procedenciaC.nativeElement.value);
+      /*let procede: ProcedeciaProductoModel = this.procedencias.find(proce => proce.procedencia_producto_id == this.procedenciaC.nativeElement.value);
       console.log(procede);
       if (procede != undefined) {
         this.detalleSelect.procedencia_producto_id = procede.procedencia_producto_id;
-      }
-
+      }*/
+      this.detalleSelect.costo_producto = this.pCompra.nativeElement.value;
       this.detalleSelect.descripcion = this.productoFijoActivo ? this.productoIdSelect.nombre : this.item.nativeElement.value;
 
       this.detalleSelect.unitario = this.pVenta.nativeElement.value;
@@ -1128,7 +1128,9 @@ export class GestionOrdenComponent implements OnInit {
       if ($('#fotoRepuesto')[0].files[0] != undefined) {
         this.detalleSelect.url_foto = this.cargarFotoRepuesto(this.detalleSelect);
       }
-      this.updateCantidad(this.detalleSelect, this.cantidad.nativeElement.value);
+      if (this.productoFijoActivo) {
+        this.updateCantidad(this.detalleSelect, this.cantidad.nativeElement.value);
+      } 
       this.detalleSelect.cantidad = this.cantidad.nativeElement.value;
       this.documentoDetalleService.updateDocumentoDetalle(this.detalleSelect).subscribe(res => {
         if (res.code != 200) {
@@ -1150,23 +1152,20 @@ export class GestionOrdenComponent implements OnInit {
           }
         });
       });
-
       this.detalleSelect = new DocumentoDetalleModel();
     }
-
     this.articuloPV = "";
     if (!this.productoFijoActivo) {
       this.item.nativeElement.value = "";
     } else {
       this.articuloC.nativeElement.value = "";
-
     }
     this.articuloPV = "";
     this.cantidad.nativeElement.value = "";
     this.pVenta.nativeElement.value = "";
     this.pCompra.nativeElement.value = "";
     this.downloadURL2 = null;
-    this.procedenciaC.nativeElement.value = "";
+    //this.procedenciaC.nativeElement.value = "";
     this.proveedorPV.nativeElement.value = "";
     this.detalleSelect = new DocumentoDetalleModel();
     $('#exampleModal').modal('hide');
@@ -1219,8 +1218,35 @@ export class GestionOrdenComponent implements OnInit {
     });
   }
 
-  editarItem(articulo) {
+  editarItem(articulo:DocumentoDetalleModel) {
+    $('#exampleModal').modal('show');
     this.cantidad.nativeElement.value = articulo.cantidad;
+    this.pVenta.nativeElement.value = articulo.unitario;
+    
+    this.pCompra.nativeElement.value = articulo.costo_producto;
+    let proveedorN: ProveedorModel = this.proveedores.find(provee => provee.proveedor_id == articulo.proveedor_id);
+    if(proveedorN!=undefined){
+      let nombreProveedor = proveedorN.nombre + ' ' + proveedorN.apellidos + ' - ' + proveedorN.documento;
+      this.proveedorPV.nativeElement.value = nombreProveedor;
+    }
+    let procede: ProcedeciaProductoModel = this.procedencias.find(proce => proce.procedencia_producto_id == articulo.procedencia_producto_id);
+    if(procede!=undefined){
+      this.procedenciaC.nativeElement.value = procede.nombre;
+    }
+    /*if (articulo.procedencia_producto_id.toString() == '2') {
+      this.productoFijoActivo = false;
+      
+      
+      
+    } else {
+      this.productoFijoActivo = true;
+      
+
+      
+    }*/
+    this.detalleSelect = articulo;
+
+    this.calcularTOtal();
     if (this.productoFijoActivo) {
       let productoNombre: string = articulo.descripcion;
       this.productoIdSelect = this.productosAll.find(product => product.nombre === productoNombre);
@@ -1228,17 +1254,6 @@ export class GestionOrdenComponent implements OnInit {
     } else {
       this.item.nativeElement.value = articulo.descripcion;
     }
-    this.pVenta.nativeElement.value = articulo.unitario;
-    this.pCompra.nativeElement.value = articulo.impreso_comanda;
-    this.detalleSelect = articulo;
-
-    let proveedorN: ProveedorModel = this.proveedores.find(provee => provee.proveedor_id == articulo.proveedor_id);
-    let nombreProveedor = proveedorN.nombre + ' ' + proveedorN.apellidos + ' - ' + proveedorN.documento;
-    this.procedenciaC.nativeElement.value = articulo.procedencia_producto_id;
-    this.proveedorPV.nativeElement.value = nombreProveedor;
-
-    this.calcularTOtal();
-    $('#exampleModal').modal('show');
   }
 
   imprimirOrden(impresora) {
@@ -2284,6 +2299,35 @@ export class GestionOrdenComponent implements OnInit {
       }
     });
   }
+
+  exportTableToExcel() {
+    
+    let filename = "productos";
+    var dataType = 'application/vnd.ms-excel';
+    
+    var texto = [];
+    let tamanoMax: number = 40;
+    texto.push("Orden:"+this.documento.documento_id+"\n");
+    texto.push("Placa:"+this.documento.detalle_entrada+"\n");
+    texto.push("Descripcion;cantidad;unitario_compra;unitario_venta;parcial_costo;parcial_venta\n");
+    for (let p of this.detallesList) {
+      texto.push(p.descripcion + ";"+ p.cantidad+ ";"+p.costo_producto+ ";"+p.unitario + ";" + ";"+ p.parcial+ '\n');
+    }
+
+
+    // Specify file name
+    filename = filename ? filename + '.csv' : 'excel_data.csv';
+
+
+
+    var blob = new Blob(texto, {
+      type: dataType
+    });
+    this.descargarArchivo(blob, filename)
+
+  }
+
+  
 
   nombreUsuario() {
     let id = this.documento.usuario_id;

@@ -44,6 +44,8 @@
           <button type="button" class="btn btn-primary ml-2" (click)="reabrir()">
             Reapertura de orden
           </button>
+          <button type="button" class="btn btn-primary ml-2"
+    (click)="exportTableToExcel()">Exportar </button>
         </div>
         <div class="form-group col-md-1 col-sm-12 ">
           <div class="dropdown">
@@ -150,9 +152,12 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-4 col-sm-12">
+        <div class="form-group col-md-6 col-sm-6">
           <input type="file" class="form-control-file" capture="camera" #fotoOrden id="fotoOrden"
             [disabled]="documento.impreso==1" aria-describedby="fileHelp" (change)="cargarFotoOrden($event)">
+        </div>
+        <div class="form-group col-md-6 col-sm-6">
+          <h5>Total Venta: ${{formatearNumber(documento.total)}}</h5>
         </div>
       </div>
 
@@ -165,7 +170,7 @@
           </button>
         </div>
         <div class="form-group col-md-6 col-sm-6">
-          <h5>Total Orden: ${{formatearNumber(documento.total)}}</h5>
+          <h5>Total Compra: ${{formatearNumber(documento.total_costo)}}</h5>
         </div>
       </div>
 
@@ -221,7 +226,8 @@
             <th scope="col">Opciones</th>
             <th scope="col">Nombre</th>
             <th scope="col">Cant.</th>
-            <th scope="col" class="d-none d-sm-block">Precio Venta</th>
+            <th scope="col" class="d-none d-sm-block">P. Compra</th>
+            <th scope="col">P. Venta</th>
             <th scope="col">Total</th>
 
 
@@ -242,7 +248,8 @@
             </th>
             <td>{{ordenes.descripcion}}</td>
             <td>{{ordenes.cantidad}}</td>
-            <td class="d-none d-sm-block">${{formatearNumber(ordenes.unitario)}}</td>
+            <td class="d-none d-sm-block">${{formatearNumber(ordenes.costo_producto)}}</td>
+            <td >${{formatearNumber(ordenes.unitario)}}</td>
             <td>${{formatearNumber(ordenes.parcial)}}</td>
 
           </tr>
@@ -261,12 +268,11 @@
               </button>
             </div>
             <div class="modal-body">
-              <div class="form-row">
+              <!-- <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2">
                   Procedencia
                   <select id="procedenciaC" name="procedenciaC" #procedenciaC class="form-control"
                     (change)="cambioProcedencia(procedenciaC)">
-                    <option value=""> Seleccione</option>
                     <option *ngFor="let procedencia of procedencias" [value]="procedencia.procedencia_producto_id">
                       {{procedencia.nombre}}
                     </option>
@@ -275,7 +281,7 @@
                 <div class="form-group col-md-6 col-sm-2">
 
                 </div>
-              </div>
+              </div> -->
               <div class="form-row">
                 <div class="form-group col-md-6 col-sm-2" *ngIf="productoFijoActivo">
                   Artículo

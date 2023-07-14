@@ -70,6 +70,7 @@ export class ImpresionService {
     let tarjetas: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.tarjetas), 12);
     let varios: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.varios), 12);
     let vales: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.vales), 12);
+    let consignaciones = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.consignaciones), 12);
     let gastos: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.gastado), 12);
     let propina: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.propina), 12);
     let credito: string = this.calculosService.cortarCantidades(new Intl.NumberFormat().format(factura.cartera), 12);
@@ -92,6 +93,7 @@ export class ImpresionService {
     texto.push("TARJET DEBIT Y CREDITO.: " + tarjetas + "\n");
     texto.push("VARIOS:................: " + varios + "\n");
     texto.push("VALES:.................: " + vales + "\n");
+    texto.push("CONSIGNACIONES:........: " + consignaciones + "\n");
     texto.push("NOMINA:................:           0" + "\n");
     texto.push("GASTOS:................: " + gastos + "\n");
     texto.push("PROPIAS:...............: " + propina + "\n");

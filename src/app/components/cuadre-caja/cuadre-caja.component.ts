@@ -215,8 +215,7 @@ export class CuadreCajaComponent implements OnInit {
       Number(this.cuadreCajaVo.abonos) +
       Number(this.cuadreCajaVo.avanceEfectivo) +
       Number(this.cuadreCajaVo.chequesRecogidos) +
-      Number(this.cuadreCajaVo.otros) +
-      Number(this.cuadreCajaVo.consignaciones);
+      Number(this.cuadreCajaVo.otros) ;
     this.cuadreCajaVo.totalIngresos = totalingresos;
   }
 
